@@ -4,8 +4,9 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Button } from "@rneui/themed";
+
 import { supabase } from "@/lib/supabase";
+import { Button } from "react-native-paper";
 
 export default function HomeScreen() {
   async function signOut() {
@@ -27,8 +28,12 @@ export default function HomeScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Hello World!!</ThemedText>
         <HelloWave />
+        <Button icon="camera">Press me</Button>
       </ThemedView>
-      <Button title="Sign out" onPress={() => signOut()} />
+      <Button mode="contained" onPress={() => signOut()}>
+        {" "}
+        Sign Out
+      </Button>
     </ParallaxScrollView>
   );
 }

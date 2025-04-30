@@ -14,8 +14,10 @@ import { supabase } from "../lib/supabase";
 import Auth from "../components/auth";
 import { View, Text } from "react-native";
 import { Session } from "@supabase/supabase-js";
+import { PaperProvider } from "react-native-paper";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import TopBar from "@/components/TopBar";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -50,19 +52,25 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      {!session ? (
-        <Auth />
-      ) : (
-        session.user && (
-          <>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </>
-        )
-      )}
+      <PaperProvider>
+        {!session ? (
+          <Auth />
+        ) : (
+          session.user && (
+            <>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="profile"
+                  options={{ title: "Profile", headerBackTitle: "Back" }}
+                />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" />
+            </>
+          )
+        )}
+      </PaperProvider>
     </ThemeProvider>
   );
 }
