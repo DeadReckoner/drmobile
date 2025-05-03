@@ -3,7 +3,6 @@ import { Alert, StyleSheet, View } from "react-native";
 import { supabase } from "../lib/supabase";
 import { Button, Input } from "@rneui/themed";
 import { Session } from "@supabase/supabase-js";
-import { Icon } from "react-native-paper";
 
 enum AuthOpts {
   Hidden = 0,

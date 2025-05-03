@@ -1,17 +1,38 @@
-import { Image, StyleSheet, Platform, View } from "react-native";
-
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { StyleSheet, View } from "react-native";
 
 import { supabase } from "@/lib/supabase";
 import { Avatar, Button, Text } from "react-native-paper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Session } from "@supabase/supabase-js";
+import { useSessionContext } from "../SessionContext";
 
 export default function Profile() {
+  const session = useSessionContext();
   const [firstName, setFirstName] = useState("John");
   const [lastName, setLastName] = useState("Smith");
+
+  useEffect(() => {
+    async function getUserInfo() {
+      try {
+        const res = await fetch("http://127.0.0.1:8080/user", {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.session?.access_token}`,
+          },
+        });
+        const json = await res.json();
+        console.log(json);
+        setFirstName(json.first_name);
+        setLastName(json.last_name);
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      }
+    }
+
+    getUserInfo();
+  }, [session.session?.access_token]);
+
   async function signOut() {
     let { error } = await supabase.auth.signOut();
     if (error) {
@@ -104,4 +125,22 @@ const styles = StyleSheet.create({
   },
 });
 
-function GetUserInfo() {}
+function GetUserInfo() {
+  const session = useSessionContext();
+
+  return fetch("http://127.0.0.1:8080/user", {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + session.session?.access_token,
+    },
+  })
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json);
+      return json;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
