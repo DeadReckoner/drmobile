@@ -11,7 +11,7 @@ import "react-native-reanimated";
 import "react-native-url-polyfill/auto";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import Auth from "../components/auth";
+import Auth from "../components/Authentication";
 import { View, Text } from "react-native";
 import { Session } from "@supabase/supabase-js";
 import { PaperProvider } from "react-native-paper";

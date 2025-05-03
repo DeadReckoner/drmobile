@@ -9,22 +9,12 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 
 export default function TabFourScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }
-    >
+    <>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Messages</ThemedText>
       </ThemedView>
       <ThemedText>This is where you view your messages.</ThemedText>
-    </ParallaxScrollView>
+    </>
   );
 }
 

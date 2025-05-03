@@ -9,24 +9,14 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 
 export default function TabTwoScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#D0D0D0", dark: "#353636" }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }
-    >
+    <>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Progress</ThemedText>
       </ThemedView>
       <ThemedText>
         This is where youll view your progress metrics for each goal.
       </ThemedText>
-    </ParallaxScrollView>
+    </>
   );
 }
 
