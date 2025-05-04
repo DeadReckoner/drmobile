@@ -191,7 +191,6 @@ function SignUp() {
           label="Last Name"
           onChangeText={(text) => ctx.setLastName(text)}
           value={ctx.lastName}
-          secureTextEntry={true}
           placeholder="Smith"
           autoCapitalize={"words"}
         />

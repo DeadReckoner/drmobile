@@ -4,7 +4,12 @@
     "slug": "dead-reckoner",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/dead-reckoner-logo.png",
+    "splash": {
+      "image": "./assets/images/dead-reckoner-logo.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -19,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mcboll.deadreckoner"
     },
     "web": {
       "bundler": "metro",
@@ -31,9 +37,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
+          "image": "./assets/images/dead-reckoner-logo.png",
+          "resizeMode": "cover",
           "backgroundColor": "#ffffff"
         }
       ]

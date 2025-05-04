@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { Avatar, Button, Text } from "react-native-paper";
 import { useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js";
 import { useSessionContext } from "../SessionContext";
 
 export default function Profile() {
@@ -66,15 +65,7 @@ export default function Profile() {
           },
         ]}
       >
-        <Text
-          variant="displayMedium"
-          // style={[
-          //   styles.container,
-          //   {
-          //     marginLeft: 25,
-          //   },
-          // ]}
-        >
+        <Text variant="displayMedium">
           {firstName}
           {"  "}
           {lastName}
@@ -84,7 +75,6 @@ export default function Profile() {
         style={[
           styles.container,
           {
-            // Try setting `flexDirection` to `"row"`.
             flexDirection: "column",
             justifyContent: "flex-end",
           },
@@ -124,23 +114,3 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-function GetUserInfo() {
-  const session = useSessionContext();
-
-  return fetch("http://127.0.0.1:8080/user", {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + session.session?.access_token,
-    },
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      console.log(json);
-      return json;
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}
