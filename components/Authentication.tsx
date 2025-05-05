@@ -34,6 +34,8 @@ function useAuthContext() {
   return context;
 }
 
+const HostUrl = process.env.EXPO_PUBLIC_SERVER_URL;
+
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -229,7 +231,7 @@ function SignUp() {
 
 function CreateUser(ctx: AuthContextOpts, session: Session | null) {
   if (session) {
-    fetch("http://127.0.0.1:8080/user", {
+    fetch(HostUrl + "/user", {
       method: "POST",
       headers: {
         Accept: "application/json",
