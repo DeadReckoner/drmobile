@@ -40,52 +40,26 @@ export default function Profile() {
   }
   return (
     <>
-      <View
-        style={[
-          styles.container,
-          {
-            flexDirection: "row",
-            justifyContent: "center",
-          },
-        ]}
-      >
+      <View style={[styles.container, styles.centerRow]}>
         <Avatar.Icon
           size={200}
           icon="account-circle-outline"
           color="black"
-          style={[styles.userIcon]}
+          style={styles.userIcon}
         />
       </View>
-      <View
-        style={[
-          styles.container,
-          {
-            flexDirection: "row",
-            justifyContent: "center",
-          },
-        ]}
-      >
+      <View style={[styles.container, styles.centerRow]}>
         <Text variant="displayMedium">
-          {firstName}
-          {"  "}
-          {lastName}
+          {firstName} {"  "} {lastName}
         </Text>
       </View>
       <View
         style={[
           styles.container,
-          {
-            flexDirection: "column",
-            justifyContent: "flex-end",
-          },
+          { flexDirection: "column", justifyContent: "flex-end" },
         ]}
       >
-        <Button
-          style={[styles.signOut]}
-          mode="contained"
-          onPress={() => signOut()}
-        >
-          {" "}
+        <Button style={styles.signOut} mode="contained" onPress={signOut}>
           Sign Out
         </Button>
       </View>
@@ -97,6 +71,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  centerRow: {
+    flexDirection: "row",
+    justifyContent: "center",
   },
   titleContainer: {
     flexDirection: "row",

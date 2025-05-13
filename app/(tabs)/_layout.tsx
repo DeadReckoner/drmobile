@@ -7,7 +7,6 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import TopBar from "@/components/TopBar";
 
 export default function TabLayout() {
