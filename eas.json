@@ -15,10 +15,22 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "ios": {
+        "simulator": false,
+        "buildConfiguration": "Release"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "autoIncrement": true,
+      "distribution": "store"
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "michael.c.bollinger@gmail.com"
+      }
+    }
   }
 }
