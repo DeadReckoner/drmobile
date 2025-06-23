@@ -16,7 +16,7 @@ import { ThemedView } from "@/components/ThemedView";
 const THREADS: Record<string, { id: string; text: string; sender: string }[]> =
   {
     "1": [
-      { id: "1", text: "Hey there!", sender: "them" },
+      { id: "1", text: "Hey there nerd!", sender: "them" },
       { id: "2", text: "Hi! How are you?", sender: "me" },
       { id: "3", text: "Doing well, thanks!", sender: "them" },
     ],
