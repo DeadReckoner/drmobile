@@ -1,18 +1,13 @@
 {
   "expo": {
-    "name": "dead-reckoner",
-    "slug": "dead-reckoner",
+    "name": "dead-reckoner-expo",
+    "slug": "dead-reckoner-expo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/dead-reckoner-logo.png",
-    "splash": {
-      "image": "./assets/images/dead-reckoner-logo.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
-    },
-    "scheme": "myapp",
+    "icon": "./assets/images/icon.png",
+    "scheme": "deadreckonerexpo",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mcboll.deadreckoner",
@@ -37,22 +32,15 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/dead-reckoner-logo.png",
-          "resizeMode": "cover",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "f705a6d0-838c-4b3c-92a4-d3af418ef3d8"
-      }
     }
   }
 }
