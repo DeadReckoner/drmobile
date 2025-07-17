@@ -1,6 +1,6 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { SymbolWeight } from "expo-symbols";
-import { OpaqueColorValue, type StyleProp, type TextStyle } from "react-native";
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { SymbolWeight } from 'expo-symbols';
+import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
 type IconSymbolName = keyof typeof AntDesign.glyphMap;
 
