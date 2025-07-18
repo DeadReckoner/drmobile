@@ -1,0 +1,20 @@
+{
+  "authentication": {
+    "login": "Se connecter",
+    "login_subtitle": "Restez concentré et continuez d'avancer.",
+    "your_email": "Votre adresse e-mail",
+    "password": "Mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "forgot_password_subtitle": "Saisissez votre e-mail et nous vous enverrons un lien pour réinitialiser le mot de passe de votre compte.",
+    "dont_have_an_account": "Vous n'avez pas de compte ?",
+    "sign_up": "S'inscrire",
+    "signup_subtitle": "Créez votre compte et commencez à avancer avec détermination.",
+    "first_name": "Prénom",
+    "last_name": "Nom de famille",
+    "already_have_an_account": "Vous avez déjà un compte ?",
+    "remember_password": "Vous souvenez-vous du mot de passe ?",
+    "check_your_email": "Vérifiez votre e-mail",
+    "check_your_email_subtitle": "Vérifiez votre boîte de réception pour continuer. Si vous ne voyez pas l’e-mail, vérifiez vos spams.",
+    "go_to_login": "Aller à la connexion"
+  }
+}

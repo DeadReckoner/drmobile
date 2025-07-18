@@ -37,6 +37,15 @@
           "resizeMode": "contain",
           "backgroundColor": "#434E58"
         }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["en", "es", "fr"],
+            "android": ["en", "es", "fr"]
+          }
+        }
       ]
     ],
     "experiments": {
