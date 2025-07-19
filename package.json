@@ -11,16 +11,18 @@
     "lint": "expo lint",
     "format": "prettier --write .",
     "prepare": "husky",
-    "prebuild-ios": "expo prebuild --platform ios",
-    "prebuild-android": "expo prebuild --platform android",
+    "prebuild:ios": "expo prebuild --platform ios",
+    "prebuild:android": "expo prebuild --platform android",
     "prebuild": "expo prebuild"
   },
   "dependencies": {
+    "@expo-google-fonts/unbounded": "^0.4.0",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
+    "@reduxjs/toolkit": "^2.8.2",
     "@supabase/supabase-js": "^2.51.0",
     "expo": "~53.0.17",
     "expo-blur": "~14.1.5",
@@ -47,7 +49,9 @@
     "react-native-ui-lib": "^7.44.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "react-redux": "^9.2.0",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

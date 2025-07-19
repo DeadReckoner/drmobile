@@ -1,16 +1,14 @@
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useLocalization } from '@/hooks/useLocalization';
+import { IconSymbol } from '@/components/ui';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
 export default function TabLayout() {
-  const { t } = useLocalization();
   return (
     <Tabs>
       <Tabs.Screen
         name="index"
         options={{
-          title: t('authentication.login'),
+          title: 'home',
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="calendar" color={color} />
           ),

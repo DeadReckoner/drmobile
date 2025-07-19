@@ -1,7 +1,8 @@
+import { TLocalStorageKeys } from '@/constants/types/localStorage.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const useLocalStorage = () => {
-  const setValue = async (key: string, value: string) => {
+  const setValue = async (key: TLocalStorageKeys, value: string) => {
     try {
       await AsyncStorage.setItem(key, value);
       return true;
@@ -10,7 +11,7 @@ export const useLocalStorage = () => {
     }
   };
 
-  const getValue = async (key: string): Promise<string | null> => {
+  const getValue = async (key: TLocalStorageKeys): Promise<string | null> => {
     try {
       const value = await AsyncStorage.getItem(key);
       return value;
@@ -19,7 +20,7 @@ export const useLocalStorage = () => {
     }
   };
 
-  const removeValue = async (key: string) => {
+  const removeValue = async (key: TLocalStorageKeys) => {
     try {
       await AsyncStorage.removeItem(key);
       return true;

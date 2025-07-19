@@ -1,30 +1,48 @@
-import {
-  TSupportedLanguage,
-  TTranslationKeys,
-} from '@/lib/localization/i18n.types';
 import i18nConfig from '@/lib/localization/i18nConfig';
-import { useState } from 'react';
+import {
+  TSupportedLanguages,
+  TTranslationKeys,
+} from '@/lib/localization/types/i18n.types';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectLanguage,
+  setLanguageAction,
+} from '@/store/slices/settingsSlice';
+import { useDispatch } from 'react-redux';
+
+const LANGUAGE_OPTIONS: TSupportedLanguages[] = [
+  { languageName: 'English', languageCode: 'en' },
+  { languageName: 'Español', languageCode: 'es' },
+  { languageName: 'Français', languageCode: 'fr' },
+];
 
 export const useLocalization = () => {
-  const [locale, setLocale] = useState<TSupportedLanguage>('en');
+  const dispatch = useDispatch();
+  const selectedLanguage = useAppSelector(selectLanguage);
 
   const t = (key: TTranslationKeys, options?: Record<string, any>) => {
     return i18nConfig.t(key, options);
   };
 
-  const setLanguage = async (lang: TSupportedLanguage) => {
-    i18nConfig.locale = lang;
-    setLocale(lang);
+  const setLanguage = async (language: TSupportedLanguages) => {
+    i18nConfig.locale = language.languageCode;
+    dispatch(setLanguageAction(language));
   };
 
-  const getTSupportedLanguages = (): TSupportedLanguage[] => {
-    return ['en', 'es', 'fr'];
+  const getSupportedLanguages = (): TSupportedLanguages[] => {
+    return LANGUAGE_OPTIONS;
+  };
+
+  const initializeLocalization = async () => {
+    i18nConfig.locale = selectedLanguage.languageCode ?? 'en';
+    dispatch(setLanguageAction(selectedLanguage));
   };
 
   return {
+    selectedLanguage,
     t,
-    locale,
     setLanguage,
-    getTSupportedLanguages,
+    getSupportedLanguages,
+    initializeLocalization,
   };
 };

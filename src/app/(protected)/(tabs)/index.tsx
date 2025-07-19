@@ -9,7 +9,6 @@ const index = () => {
           height: 1800,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: 'red',
         }}>
         <Text>index</Text>
       </View>

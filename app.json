@@ -46,6 +46,16 @@
             "android": ["en", "es", "fr"]
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/unbounded/400Regular/Unbounded_400Regular.ttf",
+            "node_modules/@expo-google-fonts/unbounded/700Bold/Unbounded_700Bold.ttf",
+            "node_modules/@expo-google-fonts/unbounded/600SemiBold/Unbounded_600SemiBold.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {
