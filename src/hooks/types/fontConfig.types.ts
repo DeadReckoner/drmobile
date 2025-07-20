@@ -1,6 +1,6 @@
 import { TextStyle } from 'react-native';
 
-export type TFontTextStyle = Pick<
+export type FontTextStyleType = Pick<
   TextStyle,
   | 'fontFamily'
   | 'fontSize'

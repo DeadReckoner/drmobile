@@ -1,5 +1,5 @@
 import { DarkColorCodes, LightColorCodes } from '@/constants/ColorCodes';
-import { TFontTextStyle } from '@/hooks/types/fontConfig.types';
+import { FontTextStyleType } from '@/hooks/types/fontConfig.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectTheme,
@@ -7,7 +7,12 @@ import {
   toggleThemeAction,
 } from '@/store/slices/settingsSlice';
 import { Platform } from 'react-native';
-import { Colors, Typography } from 'react-native-ui-lib';
+import {
+  Colors,
+  TextFieldProps,
+  ThemeManager,
+  Typography,
+} from 'react-native-ui-lib';
 
 const UNBOUNDED_BOLD = Platform.select({
   ios: 'Unbounded-Bold',
@@ -22,7 +27,7 @@ const UNBOUNDED_REGULAR = Platform.select({
   android: 'Unbounded_400Regular',
 });
 
-const FONT_CONFIG_MAP: Record<string, TFontTextStyle> = {
+const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   hero: {
     fontFamily: UNBOUNDED_BOLD,
     fontSize: 32,
@@ -51,7 +56,6 @@ const FONT_CONFIG_MAP: Record<string, TFontTextStyle> = {
 
 export const useAppTheme = () => {
   const theme = useAppSelector(selectTheme);
-
   const dispatch = useAppDispatch();
 
   const loadTypography = () => {
@@ -65,9 +69,22 @@ export const useAppTheme = () => {
     });
   };
 
+  const loadTextFieldTheme = () => {
+    ThemeManager.setComponentTheme('TextField', (props: TextFieldProps) => {
+      return {
+        color: Colors.textColor,
+        labelStyle: Typography.body2,
+        labelColor: Colors.textColor,
+        placeholderTextColor: Colors.outline,
+        ...props,
+      };
+    });
+  };
+
   const initializeTheme = () => {
     loadTypography();
     loadColorSchemes();
+    loadTextFieldTheme();
     Colors.setScheme(theme);
     dispatch(setThemeAction(theme));
   };

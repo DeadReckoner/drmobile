@@ -1,43 +1,16 @@
-import { AppText, IconSymbol, TranslatedText } from '@/components/ui';
-import { useAppTheme } from '@/hooks/useAppTheme';
-import { useLocalization } from '@/hooks/useLocalization';
-import React from 'react';
-import { Button, View } from 'react-native-ui-lib';
+import { AppScreen } from '@/components/AppScreen';
+import { LoginForm } from '@/components/auth/LoginForm';
+import { ScreenHeader } from '@/components/ScreenHeader';
 
 const Login = () => {
-  const { toggleTheme, theme } = useAppTheme();
-  const { setLanguage, selectedLanguage } = useLocalization();
-
   return (
-    <View flex-1 center bg-screenBackground>
-      <IconSymbol name="CodeSandbox" color="red" />
-      <AppText hero text>
-        {theme}
-      </AppText>
-      <Button onPress={toggleTheme} label="Toggle theme" />
-      <Button
-        onPress={() => {
-          if (selectedLanguage.languageCode === 'es') {
-            setLanguage({
-              languageCode: 'en',
-              languageName: 'English',
-            });
-            return;
-          }
-          setLanguage({
-            languageCode: 'es',
-            languageName: 'Español',
-          });
-        }}
-        label="change lang"
+    <AppScreen spread paddingT-60>
+      <ScreenHeader
+        title="authentication.login"
+        subtitle="authentication.login_subtitle"
       />
-      <TranslatedText
-        translationKey="authentication.login"
-        text70
-        center
-        marginV-20
-      />
-    </View>
+      <LoginForm />
+    </AppScreen>
   );
 };
 

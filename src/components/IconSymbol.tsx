@@ -2,12 +2,12 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
 type IconSymbolName = keyof typeof AntDesign.glyphMap;
-type IconSymbolProps = {
+interface IconSymbolProps {
   name: IconSymbolName;
   size?: number;
   color: string | OpaqueColorValue;
   style?: StyleProp<TextStyle>;
-};
+}
 
 export const IconSymbol = ({
   name,

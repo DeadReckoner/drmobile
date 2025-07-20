@@ -1,10 +1,10 @@
 import en from '@/lib/localization/translations/en.json';
 import es from '@/lib/localization/translations/es.json';
 import fr from '@/lib/localization/translations/fr.json';
-import { TSupportedLanguageCodes } from '@/lib/localization/types/i18n.types';
+import { SupportedLanguageCodesType } from '@/lib/localization/types/i18n.types';
 import { I18n } from 'i18n-js';
 
-const translations: Record<TSupportedLanguageCodes, typeof en> = {
+const translations: Record<SupportedLanguageCodesType, typeof en> = {
   en,
   es,
   fr,

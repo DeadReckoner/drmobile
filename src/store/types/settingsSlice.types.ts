@@ -1,9 +1,10 @@
-import { TSupportedLanguages } from '@/lib/localization/types/i18n.types';
+import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 
-type TThemeMode = 'light' | 'dark';
+type ThemeModeType = 'light' | 'dark';
 
-type TSettingsState = {
-  theme: TThemeMode;
-  language: TSupportedLanguages;
+type SettingsStateType = {
+  theme: ThemeModeType;
+  language: SupportedLanguagesType;
 };
-export type { TSettingsState, TThemeMode };
+
+export type { SettingsStateType, ThemeModeType };

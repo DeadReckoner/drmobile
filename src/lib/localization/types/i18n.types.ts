@@ -1,14 +1,14 @@
 import en from '@/lib/localization/translations/en.json';
 
-type RecursiveKeyOf<TObj, TPrefix extends string = ''> = {
+type RecursiveKeyOfType<TObj, TPrefix extends string = ''> = {
   [K in keyof TObj]: TObj[K] extends Record<string, any>
-    ? RecursiveKeyOf<TObj[K], `${TPrefix}${K & string}.`>
+    ? RecursiveKeyOfType<TObj[K], `${TPrefix}${K & string}.`>
     : `${TPrefix}${K & string}`;
 }[keyof TObj];
 
-export type TTranslationKeys = RecursiveKeyOf<typeof en>;
+export type TranslationKeysType = RecursiveKeyOfType<typeof en>;
 
-export type TSupportedLanguages =
+export type SupportedLanguagesType =
   | {
       languageName: 'English';
       languageCode: 'en';
@@ -22,4 +22,4 @@ export type TSupportedLanguages =
       languageCode: 'fr';
     };
 
-export type TSupportedLanguageCodes = TSupportedLanguages['languageCode'];
+export type SupportedLanguageCodesType = SupportedLanguagesType['languageCode'];
