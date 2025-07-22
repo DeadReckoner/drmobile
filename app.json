@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "Dead Reckoner",
-    "slug": "dead-reckoner-expo",
+    "slug": "dead-reckoner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "deadreckonerexpo",
+    "scheme": "deadreckoner",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -18,9 +18,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#434E58"
+        "backgroundColor": "#5F6D76"
       },
-      "package": "com.mcboll.deadreckoner"
+      "package": "com.mcboll.deadreckoner",
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "bundler": "metro",
@@ -35,7 +36,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#434E58"
+          "backgroundColor": "#5F6D76"
         }
       ],
       [
@@ -55,6 +56,13 @@
             "node_modules/@expo-google-fonts/unbounded/700Bold/Unbounded_700Bold.ttf",
             "node_modules/@expo-google-fonts/unbounded/600SemiBold/Unbounded_600SemiBold.ttf"
           ]
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          // TODO: remove this test account id
+          "iosUrlScheme": "com.googleusercontent.apps.734448856073-6v14fmhdrf4svu697tpol30kmcrtjhqg"
         }
       ]
     ],

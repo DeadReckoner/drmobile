@@ -1,7 +1,7 @@
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
-import React from 'react';
+
 import { TextProps } from 'react-native-ui-lib';
 
 interface ScreenHeaderProps {

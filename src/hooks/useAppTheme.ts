@@ -75,7 +75,7 @@ export const useAppTheme = () => {
         color: Colors.textColor,
         labelStyle: Typography.body2,
         labelColor: Colors.textColor,
-        placeholderTextColor: Colors.outline,
+        placeholderTextColor: Colors.secondary,
         ...props,
       };
     });

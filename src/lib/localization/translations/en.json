@@ -3,7 +3,9 @@
     "login": "Log In",
     "login_subtitle": "Stay focused and keep moving forward.",
     "your_email": "Your email",
+    "email_placeholder": "Enter your email",
     "password": "Password",
+    "password_placeholder": "Enter your password",
     "forgot_password": "Forgot password?",
     "forgot_password_subtitle": "Enter your email and we’ll send you the link to reset the password of your account.",
     "dont_have_an_account": "Don’t have an account?",
@@ -15,6 +17,28 @@
     "remember_password": "Remember password?",
     "check_your_email": "Check your email",
     "check_your_email_subtitle": "Check your inbox to proceed. If you don’t see the email, check your spam/junk folder.",
-    "go_to_login": "Go to Login"
+    "go_to_login": "Go to Login",
+    "errors": {
+      "invalid_credentials": "Incorrect email or password.",
+      "email_exists": "This email is already registered.",
+      "email_not_confirmed": "Please confirm your email before logging in.",
+      "email_address_invalid": "Please enter a valid email address.",
+      "weak_password": "Your password is too weak. Please choose a stronger one.",
+      "user_not_found": "No user found with these credentials.",
+      "user_banned": "Your account has been suspended.",
+      "session_expired": "Your session has expired. Please log in again.",
+      "provider_email_needs_verification": "We’ve sent a verification email to complete your sign-in.",
+      "provider_disabled": "This login method is currently disabled.",
+      "oauth_provider_not_supported": "This login provider is not supported.",
+      "bad_oauth_callback": "There was a problem logging in. Please try again.",
+      "bad_oauth_state": "The login process was interrupted. Please try again.",
+      "over_request_rate_limit": "Too many requests. Please wait and try again.",
+      "over_email_send_rate_limit": "Too many emails sent. Please wait a moment before trying again.",
+      "unexpected_failure": "An unexpected error occurred. Please try again later.",
+      "default": "Something went wrong. Please try again."
+    }
+  },
+  "common": {
+    "or": "Or"
   }
 }
