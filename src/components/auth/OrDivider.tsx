@@ -4,7 +4,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-const OrDivider = () => {
+export const OrDivider = () => {
   return (
     <AppView center row margin-32>
       <AppView
@@ -17,8 +17,6 @@ const OrDivider = () => {
     </AppView>
   );
 };
-
-export default OrDivider;
 
 const styles = StyleSheet.create({
   divider: {

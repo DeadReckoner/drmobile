@@ -1,23 +1,34 @@
-import { IAuthService, IUser } from '@/hooks/auth/types/auth.types';
+import { AuthResult, IAuthService, IUser } from '@/hooks/auth/types/auth.types';
 import { useSupabaseAuth } from '@/hooks/auth/useSupabaseAuth';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setUserAction } from '@/store/slices/authSlice';
 
-const useAuth = (): IAuthService => {
+export const useAuth = (): IAuthService => {
+  const dispatch = useAppDispatch();
   const authProvider = useSupabaseAuth();
 
-  const signInWithGoogle = async (
+  const linkGoogleWithAuthProvider = async (
     idToken: string,
-  ): Promise<IUser | undefined> => {
-    try {
-      const response = await authProvider.signInWithGoogle(idToken);
-      return response;
-    } catch {
-      // console.error(error);
+  ): Promise<AuthResult<IUser>> => {
+    const response = await authProvider.linkGoogleWithAuthProvider(idToken);
+    if (response.data) {
+      dispatch(setUserAction(response.data));
     }
+    return response;
+  };
+
+  const linkAppleWithAuthProvider = async (
+    idToken: string,
+  ): Promise<AuthResult<IUser>> => {
+    const response = await authProvider.linkAppleWithAuthProvider(idToken);
+    if (response.data) {
+      dispatch(setUserAction(response.data));
+    }
+    return response;
   };
 
   return {
-    signInWithGoogle,
+    linkGoogleWithAuthProvider,
+    linkAppleWithAuthProvider,
   };
 };
-
-export default useAuth;

@@ -8,8 +8,12 @@ export const LightColorCodes = {
   outline: '#E6E6E1',
   error: '#8B0000',
   success: '#3BAF66',
+  warning: '#8B6A00',
 
   screenBG: '#FFFFFF',
+
+  btnAuth: '#000000',
+  textOnButtonAuth: '#FFFFFF',
 };
 
 export const DarkColorCodes = {
@@ -22,6 +26,10 @@ export const DarkColorCodes = {
   outline: '#616161',
   error: '#ED4848',
   success: '#3BAF66',
+  warning: '#C1A700',
 
   screenBG: '#121414',
+
+  btnAuth: '#FFFFFF',
+  textOnButtonAuth: '#000000',
 };

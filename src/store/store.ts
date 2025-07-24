@@ -12,14 +12,15 @@ import {
 } from 'redux-persist';
 import { rootReducer } from './rootReducer';
 
-const persistConfig = {
-  key: 'root',
-  version: 1,
-  storage: AsyncStorage,
-  whitelist: ['settings'],
-};
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(
+  {
+    key: 'root',
+    version: 1,
+    storage: AsyncStorage,
+    blacklist: ['settings'],
+  },
+  rootReducer,
+);
 
 const store = configureStore({
   reducer: persistedReducer,

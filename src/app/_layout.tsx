@@ -5,6 +5,7 @@ import { persistedStore, store } from '@/store/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as SplashScreen from 'expo-splash-screen';
 import { ActivityIndicator } from 'react-native';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -23,9 +24,11 @@ export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={<ActivityIndicator />} persistor={persistedStore}>
-        <SplashScreenController>
-          <RootNavigator />
-        </SplashScreenController>
+        <KeyboardProvider>
+          <SplashScreenController>
+            <RootNavigator />
+          </SplashScreenController>
+        </KeyboardProvider>
       </PersistGate>
     </Provider>
   );

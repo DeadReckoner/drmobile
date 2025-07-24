@@ -8,6 +8,7 @@ import {
 } from '@/store/slices/settingsSlice';
 import { Platform } from 'react-native';
 import {
+  Assets,
   Colors,
   TextFieldProps,
   ThemeManager,
@@ -26,6 +27,10 @@ const UNBOUNDED_REGULAR = Platform.select({
   ios: 'Unbounded-Regular',
   android: 'Unbounded_400Regular',
 });
+const UNBOUNDED_LIGHT = Platform.select({
+  ios: 'Unbounded-Light',
+  android: 'Unbounded_300Light',
+});
 
 const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   hero: {
@@ -40,6 +45,11 @@ const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
 
   caption: {
     fontFamily: UNBOUNDED_REGULAR,
+    fontSize: 12,
+  },
+
+  captionLight: {
+    fontFamily: UNBOUNDED_LIGHT,
     fontSize: 12,
   },
 
@@ -69,6 +79,12 @@ export const useAppTheme = () => {
     });
   };
 
+  const loadAssets = () => {
+    Assets.loadAssetsGroup('logo', {
+      google: require('assets/images/google-logo.webp'),
+    });
+  };
+
   const loadTextFieldTheme = () => {
     ThemeManager.setComponentTheme('TextField', (props: TextFieldProps) => {
       return {
@@ -85,6 +101,7 @@ export const useAppTheme = () => {
     loadTypography();
     loadColorSchemes();
     loadTextFieldTheme();
+    loadAssets();
     Colors.setScheme(theme);
     dispatch(setThemeAction(theme));
   };

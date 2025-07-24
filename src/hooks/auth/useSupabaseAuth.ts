@@ -1,6 +1,5 @@
-import { IAuthService, IUser } from '@/hooks/auth/types/auth.types';
+import { IAuthService } from '@/hooks/auth/types/auth.types';
 import { useLocalization } from '@/hooks/useLocalization';
-import i18nConfig from '@/lib/localization/i18nConfig';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { AuthError } from '@supabase/supabase-js';
@@ -29,38 +28,85 @@ const SUPABASE_AUTH_ERRORS = [
   'unexpected_failure',
 ] as const;
 
+type SupabaseAuthErrorCodeType = (typeof SUPABASE_AUTH_ERRORS)[number];
+
 export const useSupabaseAuth = (): IAuthService => {
   const { t } = useLocalization();
 
-  const signInWithGoogle = async (idToken: string): Promise<IUser> => {
-    const { data, error } = await supabaseClient.auth.signInWithIdToken({
-      provider: 'google',
-      token: idToken,
-    });
-    if (error) {
-      error.message = getLocalizedErrorMessage(error);
-      throw error;
-    }
-    return {
-      email: data.user.email,
-      id: data.user.id,
+  const linkGoogleWithAuthProvider: IAuthService['linkGoogleWithAuthProvider'] =
+    async (idToken: string) => {
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithIdToken({
+          provider: 'google',
+          token: idToken,
+        });
+
+        if (error) {
+          return getSupabaseAuthError(error);
+        }
+
+        return {
+          data: {
+            email: data.user.email,
+            id: data.user.id,
+            name: data.user.user_metadata?.name,
+            avatar: data.user.user_metadata?.avatar_url,
+          },
+        };
+      } catch {
+        return getSupabaseAuthError();
+      }
     };
-  };
 
-  const getLocalizedErrorMessage = (error: AuthError): string => {
-    const fallback = i18nConfig.t('authentication.errors.default');
+  const linkAppleWithAuthProvider: IAuthService['linkAppleWithAuthProvider'] =
+    async (idToken: string) => {
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithIdToken({
+          provider: 'apple',
+          token: idToken,
+        });
 
-    if (!error || typeof error !== 'object' || !('message' in error)) {
+        if (error) {
+          return getSupabaseAuthError(error);
+        }
+
+        return {
+          data: {
+            email: data.user.email,
+            id: data.user.id,
+            name: data.user.user_metadata?.name,
+            avatar: data.user.user_metadata?.avatar_url,
+          },
+        };
+      } catch {
+        return getSupabaseAuthError();
+      }
+    };
+
+  const getLocalizedErrorMessage = (error?: AuthError): string => {
+    const fallback = t('authentication.errors.default');
+
+    if (!error) {
       return fallback;
     }
 
-    const errorKey = error.code as (typeof SUPABASE_AUTH_ERRORS)[number];
+    const errorKey = error.code as SupabaseAuthErrorCodeType;
     return SUPABASE_AUTH_ERRORS.includes(errorKey)
       ? t(`authentication.errors.${errorKey}` as TranslationKeysType)
       : fallback;
   };
 
+  const getSupabaseAuthError = (error?: AuthError) => {
+    return {
+      error: {
+        message: getLocalizedErrorMessage(error),
+        code: error?.code || 'unexpected_failure',
+      },
+    };
+  };
+
   return {
-    signInWithGoogle,
+    linkGoogleWithAuthProvider,
+    linkAppleWithAuthProvider,
   };
 };

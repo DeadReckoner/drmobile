@@ -1,7 +1,6 @@
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
-
 import { TextProps } from 'react-native-ui-lib';
 
 interface ScreenHeaderProps {
@@ -18,7 +17,7 @@ export const ScreenHeader = ({
   subtileProps,
 }: ScreenHeaderProps) => {
   return (
-    <AppView>
+    <AppView marginT-24>
       <TranslatedText
         h2
         marginB-8
@@ -27,7 +26,7 @@ export const ScreenHeader = ({
         {...titleProps}
       />
       <TranslatedText
-        caption
+        captionLight
         textColor
         translationKey={subtitle}
         {...subtileProps}

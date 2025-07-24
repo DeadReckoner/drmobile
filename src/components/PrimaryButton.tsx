@@ -1,56 +1,46 @@
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppTouchableOpacity } from '@/components/ui';
+import { useToggleAnimation } from '@/hooks/useToggleAnimation';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
-  WithTimingConfig,
-} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Colors, TouchableOpacityProps } from 'react-native-ui-lib';
 
 interface PrimaryButtonProps {
   label: TranslationKeysType;
   onPress: TouchableOpacityProps['onPress'];
   isLoading?: boolean;
+  shouldShowLoader?: boolean;
 }
 
-const DURATION = 200;
-const ANIMATION_DURATION: WithTimingConfig = {
-  duration: DURATION,
-  easing: Easing.ease,
-};
+export const PrimaryButton = ({
+  label,
+  onPress,
+  isLoading,
+  shouldShowLoader,
+}: PrimaryButtonProps) => {
+  const { animatedStyle: textAnimatedStyle, set: setTextLabelVisibility } =
+    useToggleAnimation({ initialValue: 1 });
 
-const PrimaryButton = ({ label, onPress, isLoading }: PrimaryButtonProps) => {
-  const textAnimationStyle = useSharedValue(1);
-  const loaderAnimationStyle = useSharedValue(0);
+  const { animatedStyle: loaderAnimatedStyle, set: setLoaderVisibility } =
+    useToggleAnimation({ initialValue: 0 });
 
-  const loaderStyle = useAnimatedStyle(() => ({
-    opacity: loaderAnimationStyle.value,
-  }));
-
-  const textStyle = useAnimatedStyle(() => ({
-    opacity: textAnimationStyle.value,
-  }));
-
-  const timingAnimation = (timingValue: number) =>
-    withTiming(timingValue, ANIMATION_DURATION);
-
-  const delayAnimation = (timingValue: number) =>
-    withDelay(DURATION, timingAnimation(timingValue));
-
-  const showLoader = () => {
-    if (!isLoading) {
-      textAnimationStyle.value = delayAnimation(1);
-      loaderAnimationStyle.value = timingAnimation(0);
-      return;
+  useEffect(() => {
+    if (!shouldShowLoader) return;
+    if (isLoading) {
+      setTextLabelVisibility(0);
+      setLoaderVisibility(1);
+    } else {
+      setTextLabelVisibility(1);
+      setLoaderVisibility(0);
     }
-    textAnimationStyle.value = timingAnimation(0);
-    loaderAnimationStyle.value = delayAnimation(1);
-  };
+  }, [
+    isLoading,
+    shouldShowLoader,
+    setTextLabelVisibility,
+    setLoaderVisibility,
+  ]);
 
   return (
     <AppTouchableOpacity
@@ -58,24 +48,23 @@ const PrimaryButton = ({ label, onPress, isLoading }: PrimaryButtonProps) => {
       padding-16
       bg-primary
       br30
-      onPress={() => {
-        onPress?.();
-        showLoader();
-      }}
-      //   disabled={isLoading}
-    >
-      <Animated.View style={textStyle}>
+      activeOpacity={0.6}
+      onPress={onPress}
+      disabled={isLoading}>
+      <Animated.View style={textAnimatedStyle}>
         <TranslatedText buttonLable translationKey={label} />
       </Animated.View>
 
-      <Animated.View
-        style={[
-          styles.loaderContainer,
-          loaderStyle,
-          StyleSheet.absoluteFillObject,
-        ]}>
-        <ActivityIndicator color={Colors.textOnPrimary} />
-      </Animated.View>
+      {shouldShowLoader && (
+        <Animated.View
+          style={[
+            styles.loaderContainer,
+            loaderAnimatedStyle,
+            StyleSheet.absoluteFillObject,
+          ]}>
+          <ActivityIndicator color={Colors.textOnPrimary} />
+        </Animated.View>
+      )}
     </AppTouchableOpacity>
   );
 };
@@ -86,5 +75,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-export default PrimaryButton;

@@ -1,16 +1,27 @@
-export interface IAuthService {
-  //eslint-disable-next-line no-unused-vars
-  signInWithGoogle: (idToken: string) => Promise<IUser | undefined>;
-}
-
 export interface IUser {
   id: string;
-  email?: string;
-  name?: string;
+  email: string;
+  name: string;
   avatar?: string;
+  access_token: string;
 }
 
 export interface IAuthError {
+  message: string;
+  code?: string;
+}
+
+export type AuthResult<T = IUser> = {
+  data?: T;
+  error?: IAuthError;
+};
+
+export interface IAuthService {
+  linkGoogleWithAuthProvider: (_idToken: string) => Promise<AuthResult<IUser>>;
+  linkAppleWithAuthProvider: (_idToken: string) => Promise<AuthResult<IUser>>;
+}
+
+export interface ISupabaseAuthError {
   message: string;
   code: string;
 }
