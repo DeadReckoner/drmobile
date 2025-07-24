@@ -5,7 +5,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: AuthStateType = {
   isLoading: false,
-  user: { id: '', avatar: '', email: '', name: '' },
+  user: { id: '', avatar: '', email: '', name: '', access_token: '' },
 };
 
 const authSlice = createSlice({
@@ -26,7 +26,8 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUserAction } = authSlice.actions;
+export const { setUserLoadingAction, setUserAction, clearAuthAction } =
+  authSlice.actions;
 
 export const selectAuth = createAppSelector((state) => state.auth);
 export const selectUser = createAppSelector((state) => state.auth.user);

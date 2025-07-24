@@ -47,10 +47,11 @@ export const useSupabaseAuth = (): IAuthService => {
 
         return {
           data: {
-            email: data.user.email,
             id: data.user.id,
+            email: data.user.email || '',
             name: data.user.user_metadata?.name,
             avatar: data.user.user_metadata?.avatar_url,
+            access_token: data.session.access_token,
           },
         };
       } catch {
@@ -72,10 +73,11 @@ export const useSupabaseAuth = (): IAuthService => {
 
         return {
           data: {
-            email: data.user.email,
+            email: data.user.email || '',
             id: data.user.id,
             name: data.user.user_metadata?.name,
             avatar: data.user.user_metadata?.avatar_url,
+            access_token: data.session.access_token,
           },
         };
       } catch {

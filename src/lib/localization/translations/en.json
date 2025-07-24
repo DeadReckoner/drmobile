@@ -40,6 +40,14 @@
       "google": {
         "in_progress": "Google Sign-In is already in progress.",
         "play_services_not_availabel": "Google Play Services are not available."
+      },
+      "email": {
+        "email_required": "Email is required",
+        "email_invalid": "Enter a valid email",
+        "name_required": "Name is required",
+        "name_invalid": "Enter a valid name",
+        "password_required": "Password is required",
+        "password_complexity": "Password must include an uppercase letter, lowercase letter, number and special character of each."
       }
     }
   },

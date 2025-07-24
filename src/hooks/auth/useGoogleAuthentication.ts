@@ -1,6 +1,8 @@
 import { AuthResult, IAuthError, IUser } from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setUserLoadingAction } from '@/store/slices/authSlice';
 import {
   GoogleSignin,
   isErrorWithCode,
@@ -12,11 +14,13 @@ import { AuthError, isAuthError } from '@supabase/supabase-js';
 export const useGoogleAuthentication = () => {
   const { linkGoogleWithAuthProvider } = useAuth();
   const { t } = useLocalization();
+  const dispatch = useAppDispatch();
 
   const signInWithGoogle = async (): Promise<
     AuthResult<IUser | IAuthError>
   > => {
     try {
+      dispatch(setUserLoadingAction());
       await GoogleSignin.hasPlayServices();
       const googleAuthResponse = await GoogleSignin.signIn();
 

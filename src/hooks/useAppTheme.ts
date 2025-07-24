@@ -58,6 +58,12 @@ const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
     fontSize: 14,
   },
 
+  sm: {
+    fontFamily: UNBOUNDED_LIGHT,
+    fontSize: 10,
+    letterSpacing: 0.5,
+  },
+
   buttonLable: {
     fontFamily: UNBOUNDED_BOLD,
     fontSize: 16,

@@ -5,45 +5,49 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
-import { Link, router } from 'expo-router';
+import { useLoginForm } from '@/hooks/auth/useLoginForm';
+import { Link } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSuccessfullLogin = () => {
-    router.replace('/(protected)/(tabs)');
-  };
+  const { handleChange, handleBlur, touched, errors } = useLoginForm({
+    onSubmit: () => {},
+  });
 
   return (
-    <KeyboardAwareScrollView>
-      <AppView>
-        <TranslatedTextInput
-          labelKey="authentication.your_email"
-          placeholderKey="authentication.email_placeholder"
-        />
-        <TranslatedTextInput
-          labelKey="authentication.password"
-          placeholderKey="authentication.password_placeholder"
-        />
-        <AppView right>
-          <Link href="/(auth)/sign-up" asChild>
-            <TranslatedText translationKey="authentication.forgot_password" />
-          </Link>
-        </AppView>
-        <Divider />
-        <PrimaryButton
-          shouldShowLoader
-          label="authentication.login"
-          onPress={() => {
-            setIsLoading((isLoading) => !isLoading);
-          }}
-          isLoading={isLoading}
-        />
-        <OrDivider />
-        <SocialLogin onSuccessfullLogin={onSuccessfullLogin} />
+    <AppView marginV-40>
+      <TranslatedTextInput
+        labelKey="authentication.your_email"
+        placeholderKey="authentication.email_placeholder"
+        onChangeText={handleChange('email')}
+        onBlur={handleBlur('email')}
+        error={touched.email && errors.email}
+      />
+      <TranslatedTextInput
+        labelKey="authentication.password"
+        placeholderKey="authentication.password_placeholder"
+        onChangeText={handleChange('password')}
+        onBlur={handleBlur('password')}
+        error={touched.password && errors.password}
+      />
+      <AppView right>
+        <Link href="/(auth)/sign-up" asChild>
+          <TranslatedText translationKey="authentication.forgot_password" />
+        </Link>
       </AppView>
-    </KeyboardAwareScrollView>
+      <Divider />
+      <PrimaryButton
+        shouldShowLoader
+        label="authentication.login"
+        onPress={() => {
+          setIsLoading((isLoading) => !isLoading);
+        }}
+        isLoading={isLoading}
+      />
+      <OrDivider />
+      <SocialLogin />
+    </AppView>
   );
 };

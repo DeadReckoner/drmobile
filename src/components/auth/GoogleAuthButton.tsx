@@ -6,13 +6,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Assets } from 'react-native-ui-lib';
 
-interface GoogleAuthButtonProps {
-  onSuccessfullLogin: () => void;
-}
-
-export const GoogleAuthButton = ({
-  onSuccessfullLogin,
-}: GoogleAuthButtonProps) => {
+export const GoogleAuthButton = () => {
   const { signInWithGoogle } = useGoogleAuthentication();
   const { showToast } = useToast();
 
@@ -21,7 +15,6 @@ export const GoogleAuthButton = ({
     if (error?.message) {
       return showToast({ message: error.message });
     }
-    onSuccessfullLogin();
   };
 
   return (

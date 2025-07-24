@@ -4,13 +4,7 @@ import useToast from '@/hooks/useToast';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { StyleSheet } from 'react-native';
 
-interface AppleAuthButtonProps {
-  onSuccessfullLogin: () => void;
-}
-
-export const AppleAuthButton = ({
-  onSuccessfullLogin,
-}: AppleAuthButtonProps) => {
+export const AppleAuthButton = () => {
   const { theme } = useAppTheme();
   const { signInWithApple } = useAppleAuthentication();
   const { showToast } = useToast();
@@ -20,7 +14,6 @@ export const AppleAuthButton = ({
     if (error?.message) {
       return showToast({ message: error.message });
     }
-    onSuccessfullLogin();
   };
   return (
     <AppleAuthentication.AppleAuthenticationButton
