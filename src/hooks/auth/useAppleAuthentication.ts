@@ -1,14 +1,21 @@
 import { AuthResult, IAuthError, IUser } from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import {
+  setAuthLoadingAction,
+  setAuthResolvedAction,
+} from '@/store/slices/authSlice';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 export const useAppleAuthentication = () => {
   const { linkAppleWithAuthProvider } = useAuth();
   const { t } = useLocalization();
+  const dispatch = useAppDispatch();
 
   const signInWithApple = async (): Promise<AuthResult<IUser | IAuthError>> => {
     try {
+      dispatch(setAuthLoadingAction());
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -34,8 +41,9 @@ export const useAppleAuthentication = () => {
       if (authError.code === 'ERR_REQUEST_CANCELED') {
         structuredError.error.message = '';
       }
-
       return structuredError;
+    } finally {
+      dispatch(setAuthResolvedAction());
     }
   };
   return { signInWithApple };

@@ -7,6 +7,7 @@ import {
 } from '@/store/types/settingsSlice.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Colors } from 'react-native-ui-lib';
 import { persistReducer } from 'redux-persist';
 
 const initialState: SettingsStateType = {
@@ -17,7 +18,7 @@ const initialState: SettingsStateType = {
   },
   toast: {
     isVisible: false,
-    toastProps: {},
+    toastProps: { type: 'general' },
   },
 };
 
@@ -27,6 +28,7 @@ const settingsSlice = createSlice({
   reducers: {
     setThemeAction(state, action: PayloadAction<ThemeModeType>) {
       state.theme = action.payload;
+      Colors.setScheme(action.payload);
     },
     toggleThemeAction(state) {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
@@ -36,13 +38,12 @@ const settingsSlice = createSlice({
       state.language = action.payload;
     },
 
-    showToast(state, action: PayloadAction<Partial<ToastStateType>>) {
+    showToastAction(state, action: PayloadAction<Partial<ToastStateType>>) {
       state.toast.isVisible = true;
       state.toast.toastProps = action.payload.toastProps;
     },
-    hideToast(state) {
+    hideToastAction(state) {
       state.toast.isVisible = false;
-      state.toast.toastProps = {};
     },
   },
 });
@@ -51,8 +52,8 @@ export const {
   setThemeAction,
   toggleThemeAction,
   setLanguageAction,
-  showToast,
-  hideToast,
+  showToastAction,
+  hideToastAction,
 } = settingsSlice.actions;
 
 export const selectTheme = createAppSelector((state) => state.settings.theme);

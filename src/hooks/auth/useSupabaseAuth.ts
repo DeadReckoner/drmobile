@@ -2,7 +2,7 @@ import { IAuthService } from '@/hooks/auth/types/auth.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
-import { AuthError } from '@supabase/supabase-js';
+import { AuthError, Session, User } from '@supabase/supabase-js';
 
 const SUPABASE_AUTH_ERRORS = [
   'invalid_credentials',
@@ -33,6 +33,24 @@ type SupabaseAuthErrorCodeType = (typeof SUPABASE_AUTH_ERRORS)[number];
 export const useSupabaseAuth = (): IAuthService => {
   const { t } = useLocalization();
 
+  const signInEmailWithAuthProvider: IAuthService['signInEmailWithAuthProvider'] =
+    async (email: string, password: string) => {
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          return getSupabaseAuthError(error);
+        }
+
+        return getAppUserFromSupabase(data);
+      } catch {
+        return getSupabaseAuthError();
+      }
+    };
+
   const linkGoogleWithAuthProvider: IAuthService['linkGoogleWithAuthProvider'] =
     async (idToken: string) => {
       try {
@@ -45,15 +63,7 @@ export const useSupabaseAuth = (): IAuthService => {
           return getSupabaseAuthError(error);
         }
 
-        return {
-          data: {
-            id: data.user.id,
-            email: data.user.email || '',
-            name: data.user.user_metadata?.name,
-            avatar: data.user.user_metadata?.avatar_url,
-            access_token: data.session.access_token,
-          },
-        };
+        return getAppUserFromSupabase(data);
       } catch {
         return getSupabaseAuthError();
       }
@@ -71,15 +81,7 @@ export const useSupabaseAuth = (): IAuthService => {
           return getSupabaseAuthError(error);
         }
 
-        return {
-          data: {
-            email: data.user.email || '',
-            id: data.user.id,
-            name: data.user.user_metadata?.name,
-            avatar: data.user.user_metadata?.avatar_url,
-            access_token: data.session.access_token,
-          },
-        };
+        return getAppUserFromSupabase(data);
       } catch {
         return getSupabaseAuthError();
       }
@@ -107,7 +109,26 @@ export const useSupabaseAuth = (): IAuthService => {
     };
   };
 
+  const getAppUserFromSupabase = ({
+    user,
+    session,
+  }: {
+    user: User;
+    session: Session;
+  }) => {
+    return {
+      data: {
+        id: user.id,
+        email: user.email || '',
+        name: user.user_metadata?.name,
+        avatar: user.user_metadata?.avatar_url,
+        access_token: session.access_token,
+      },
+    };
+  };
+
   return {
+    signInEmailWithAuthProvider,
     linkGoogleWithAuthProvider,
     linkAppleWithAuthProvider,
   };

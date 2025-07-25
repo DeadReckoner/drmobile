@@ -52,7 +52,7 @@ export const PrimaryButton = ({
       onPress={onPress}
       disabled={isLoading}>
       <Animated.View style={textAnimatedStyle}>
-        <TranslatedText buttonLable translationKey={label} />
+        <TranslatedText textOnPrimary buttonLable translationKey={label} />
       </Animated.View>
 
       {shouldShowLoader && (

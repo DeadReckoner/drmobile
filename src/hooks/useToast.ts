@@ -1,26 +1,32 @@
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
-  hideToast,
+  hideToastAction,
   selectToastSettings,
-  showToast,
+  showToastAction,
 } from '@/store/slices/settingsSlice';
 import { ToastStateType } from '@/store/types/settingsSlice.types';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-const useToast = () => {
+const HIDE_SHOW_DELAY = 150;
+
+export const useToast = () => {
   const dispatch = useDispatch();
   const { isVisible, toastProps } = useAppSelector(selectToastSettings);
-  const HIDE_SHOW_DELAY = 150;
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const showAppToast = (toastProps?: ToastStateType['toastProps']) => {
+  const showToast = (toastProps?: ToastStateType['toastProps']) => {
     if (!isVisible) {
-      dispatch(showToast({ toastProps }));
+      dispatch(showToastAction({ toastProps }));
     } else {
-      dispatch(hideToast());
+      dispatch(hideToastAction());
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
       timeoutRef.current = setTimeout(() => {
-        dispatch(showToast({ toastProps }));
+        dispatch(showToastAction({ toastProps }));
       }, HIDE_SHOW_DELAY);
     }
   };
@@ -33,16 +39,14 @@ const useToast = () => {
     };
   }, []);
 
-  const hideAppToast = () => {
-    dispatch(hideToast());
+  const hideToast = () => {
+    dispatch(hideToastAction());
   };
 
   return {
     isVisible,
     toastProps,
-    hideToast: hideAppToast,
-    showToast: showAppToast,
+    hideToast,
+    showToast,
   };
 };
-
-export default useToast;

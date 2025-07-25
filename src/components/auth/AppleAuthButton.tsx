@@ -1,32 +1,44 @@
+import { Loader } from '@/components/Loader';
 import { useAppleAuthentication } from '@/hooks/auth/useAppleAuthentication';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import useToast from '@/hooks/useToast';
+import { useToast } from '@/hooks/useToast';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
 
 export const AppleAuthButton = () => {
   const { theme } = useAppTheme();
   const { signInWithApple } = useAppleAuthentication();
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onPress = async () => {
+    setIsLoading(true);
     const { error } = await signInWithApple();
     if (error?.message) {
-      return showToast({ message: error.message });
+      showToast({
+        message: error.message,
+        type: 'failure',
+      });
     }
+    setIsLoading(false);
   };
+
   return (
-    <AppleAuthentication.AppleAuthenticationButton
-      buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
-      buttonStyle={
-        theme === 'dark'
-          ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
-          : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-      }
-      cornerRadius={10}
-      style={styles.button}
-      onPress={onPress}
-    />
+    <Pressable pointerEvents="auto" disabled={isLoading}>
+      {isLoading && <Loader />}
+      <AppleAuthentication.AppleAuthenticationButton
+        buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+        buttonStyle={
+          theme === 'dark'
+            ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+            : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+        }
+        cornerRadius={10}
+        style={styles.button}
+        onPress={onPress}
+      />
+    </Pressable>
   );
 };
 

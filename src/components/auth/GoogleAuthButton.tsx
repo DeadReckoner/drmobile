@@ -1,39 +1,47 @@
+import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppImage, AppTouchableOpacity } from '@/components/ui';
+import { AppImage, AppTouchableOpacity, AppView } from '@/components/ui';
 import { useGoogleAuthentication } from '@/hooks/auth/useGoogleAuthentication';
-import useToast from '@/hooks/useToast';
-import React from 'react';
+import { useToast } from '@/hooks/useToast';
+import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Assets } from 'react-native-ui-lib';
 
 export const GoogleAuthButton = () => {
   const { signInWithGoogle } = useGoogleAuthentication();
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onPress = async () => {
+    setIsLoading(true);
     const { error } = await signInWithGoogle();
     if (error?.message) {
-      return showToast({ message: error.message });
+      showToast({ message: error.message, type: 'failure' });
     }
+    setIsLoading(false);
   };
 
   return (
-    <AppTouchableOpacity
-      row
-      center
-      br30
-      bg-btnAuth
-      style={styles.googleSigninButton}
-      activeOpacity={0.6}
-      onPress={onPress}>
-      <AppImage source={Assets.logo.google} style={styles.logo} />
-      <TranslatedText
-        style={styles.continue}
-        translationKey="authentication.continue_with_google"
-        textOnButtonAuth
-        marginL-6
-      />
-    </AppTouchableOpacity>
+    <AppView>
+      {isLoading && <Loader />}
+      <AppTouchableOpacity
+        row
+        center
+        br30
+        bg-inverseBackground
+        style={styles.googleSigninButton}
+        activeOpacity={0.6}
+        disabled={isLoading}
+        onPress={onPress}>
+        <AppImage source={Assets.logo.google} style={styles.logo} />
+        <TranslatedText
+          style={styles.continue}
+          translationKey="authentication.continue_with_google"
+          inverseText
+          marginL-6
+        />
+      </AppTouchableOpacity>
+    </AppView>
   );
 };
 

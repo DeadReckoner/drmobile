@@ -18,16 +18,9 @@ export const ScreenHeader = ({
 }: ScreenHeaderProps) => {
   return (
     <AppView marginT-24>
-      <TranslatedText
-        h2
-        marginB-8
-        textColor
-        translationKey={title}
-        {...titleProps}
-      />
+      <TranslatedText h2 marginB-8 translationKey={title} {...titleProps} />
       <TranslatedText
         captionLight
-        textColor
         translationKey={subtitle}
         {...subtileProps}
       />

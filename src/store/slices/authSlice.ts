@@ -12,10 +12,13 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setUserLoadingAction(state) {
+    setAuthLoadingAction(state) {
       state.isLoading = true;
     },
-    setUserAction(state, action: PayloadAction<IUser>) {
+    setAuthResolvedAction(state) {
+      state.isLoading = false;
+    },
+    setAuthUserAction(state, action: PayloadAction<IUser>) {
       state.user = action.payload;
       state.isLoading = false;
     },
@@ -26,8 +29,12 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUserLoadingAction, setUserAction, clearAuthAction } =
-  authSlice.actions;
+export const {
+  setAuthLoadingAction,
+  setAuthResolvedAction,
+  setAuthUserAction,
+  clearAuthAction,
+} = authSlice.actions;
 
 export const selectAuth = createAppSelector((state) => state.auth);
 export const selectUser = createAppSelector((state) => state.auth.user);

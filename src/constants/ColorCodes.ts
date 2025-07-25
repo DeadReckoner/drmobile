@@ -6,14 +6,14 @@ export const LightColorCodes = {
   textColor: '#5F6D76',
   textOnPrimary: '#FFFFFF',
   outline: '#E6E6E1',
-  error: '#8B0000',
+  error: '#e93b3b',
   success: '#3BAF66',
-  warning: '#8B6A00',
+  warning: '#e5bb00',
 
   screenBG: '#FFFFFF',
 
-  btnAuth: '#000000',
-  textOnButtonAuth: '#FFFFFF',
+  inverseBackground: '#000000',
+  inverseText: '#FFFFFF',
 };
 
 export const DarkColorCodes = {
@@ -24,12 +24,13 @@ export const DarkColorCodes = {
   textColor: '#FFFFFF',
   textOnPrimary: '#FFFFFF',
   outline: '#616161',
+
   error: '#ED4848',
   success: '#3BAF66',
   warning: '#C1A700',
 
   screenBG: '#121414',
 
-  btnAuth: '#FFFFFF',
-  textOnButtonAuth: '#000000',
+  inverseBackground: '#FFFFFF',
+  inverseText: '#000000',
 };

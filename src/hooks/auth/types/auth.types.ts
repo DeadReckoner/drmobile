@@ -19,6 +19,10 @@ export type AuthResult<T = IUser> = {
 export interface IAuthService {
   linkGoogleWithAuthProvider: (_idToken: string) => Promise<AuthResult<IUser>>;
   linkAppleWithAuthProvider: (_idToken: string) => Promise<AuthResult<IUser>>;
+  signInEmailWithAuthProvider: (
+    _email: string,
+    _password: string,
+  ) => Promise<AuthResult<IUser>>;
 }
 
 export interface ISupabaseAuthError {

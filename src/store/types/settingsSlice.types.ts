@@ -4,9 +4,10 @@ import { Incubator } from 'react-native-ui-lib';
 type ThemeModeType = 'light' | 'dark';
 
 type ToastProps = React.ComponentProps<typeof Incubator.Toast>;
+type ToastType = `${Incubator.ToastPresets}` | 'warning';
 type ToastStateType = {
   isVisible: boolean;
-  toastProps?: Pick<ToastProps, 'message'>;
+  toastProps?: Pick<ToastProps, 'message' | 'icon'> & { type: ToastType };
 };
 
 type SettingsStateType = {
@@ -15,4 +16,4 @@ type SettingsStateType = {
   toast: ToastStateType;
 };
 
-export type { SettingsStateType, ThemeModeType, ToastStateType };
+export type { SettingsStateType, ThemeModeType, ToastStateType, ToastType };

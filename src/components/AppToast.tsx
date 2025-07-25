@@ -1,24 +1,52 @@
-import useToast from '@/hooks/useToast';
+import { useToast } from '@/hooks/useToast';
+import { ToastType } from '@/store/types/settingsSlice.types';
 import React from 'react';
-import { Colors, Incubator, Typography } from 'react-native-ui-lib';
+import { Colors, Incubator, ToastProps, Typography } from 'react-native-ui-lib';
 
-const AppToast = () => {
-  const { isVisible, hideToast, toastProps } = useToast();
+export const AppToast = () => {
+  const { isVisible, toastProps, hideToast } = useToast();
+  const toastTypeMap: Record<
+    ToastType,
+    Pick<ToastProps, 'preset' | 'backgroundColor' | 'messageStyle'>
+  > = {
+    success: {
+      preset: 'success',
+      backgroundColor: Colors.success,
+    },
+    failure: {
+      preset: 'failure',
+      backgroundColor: Colors.error,
+    },
+    warning: {
+      preset: 'failure',
+      backgroundColor: Colors.warning,
+      messageStyle: { color: Colors.black },
+    },
+    offline: {
+      preset: 'failure',
+      backgroundColor: Colors.$backgroundDark,
+    },
+    general: {
+      preset: 'general',
+      backgroundColor: Colors.primary,
+    },
+  };
+  const toastConfig = toastTypeMap[toastProps?.type ?? 'general'];
+
   return (
     <Incubator.Toast
       visible={isVisible}
       position={'bottom'}
-      preset={'general'}
+      preset={toastConfig.preset}
+      message={toastProps?.message}
       swipeable={false}
       onDismiss={hideToast}
       autoDismiss={3000}
-      backgroundColor={Colors.error}
+      backgroundColor={toastConfig.backgroundColor}
       iconColor={Colors.white}
-      messageStyle={Typography.caption}
+      messageStyle={[Typography.caption, { color: Colors.textOnPrimary }]}
       enableHapticFeedback
       {...toastProps}
     />
   );
 };
-
-export default AppToast;

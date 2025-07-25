@@ -2,7 +2,10 @@ import { AuthResult, IAuthError, IUser } from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setUserLoadingAction } from '@/store/slices/authSlice';
+import {
+  setAuthLoadingAction,
+  setAuthResolvedAction,
+} from '@/store/slices/authSlice';
 import {
   GoogleSignin,
   isErrorWithCode,
@@ -20,7 +23,7 @@ export const useGoogleAuthentication = () => {
     AuthResult<IUser | IAuthError>
   > => {
     try {
-      dispatch(setUserLoadingAction());
+      dispatch(setAuthLoadingAction());
       await GoogleSignin.hasPlayServices();
       const googleAuthResponse = await GoogleSignin.signIn();
 
@@ -62,6 +65,8 @@ export const useGoogleAuthentication = () => {
         }
       }
       return structuredError;
+    } finally {
+      dispatch(setAuthResolvedAction());
     }
   };
 

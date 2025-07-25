@@ -29,10 +29,7 @@ const SignUp = () => {
                 translationKey="authentication.already_have_an_account"
               />
               <Link dismissTo href="/(auth)/login">
-                <TranslatedText
-                  textColor
-                  translationKey="authentication.login"
-                />
+                <TranslatedText translationKey="authentication.login" />
               </Link>
             </AppView>
           </AppView>
