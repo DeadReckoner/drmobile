@@ -1,4 +1,4 @@
-import { IUser } from '@/hooks/auth/types/auth.types';
+import { UserType } from '@/hooks/auth/types/auth.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import { AuthStateType } from '@/store/types/authSlice.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -18,7 +18,7 @@ const authSlice = createSlice({
     setAuthResolvedAction(state) {
       state.isLoading = false;
     },
-    setAuthUserAction(state, action: PayloadAction<IUser>) {
+    setAuthUserAction(state, action: PayloadAction<UserType>) {
       state.user = action.payload;
       state.isLoading = false;
     },

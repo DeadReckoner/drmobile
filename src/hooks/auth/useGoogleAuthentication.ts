@@ -1,4 +1,8 @@
-import { AuthResult, IAuthError, IUser } from '@/hooks/auth/types/auth.types';
+import {
+  AuthErrorType,
+  AuthResultType,
+  UserType,
+} from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
@@ -20,7 +24,7 @@ export const useGoogleAuthentication = () => {
   const dispatch = useAppDispatch();
 
   const signInWithGoogle = async (): Promise<
-    AuthResult<IUser | IAuthError>
+    AuthResultType<UserType | AuthErrorType>
   > => {
     try {
       dispatch(setAuthLoadingAction());
@@ -39,14 +43,14 @@ export const useGoogleAuthentication = () => {
         throw new AuthError('', 400, statusCodes.SIGN_IN_CANCELLED);
       }
     } catch (error) {
-      const structuredError: { error: IAuthError } = {
+      const structuredError: { error: AuthErrorType } = {
         error: {
           code: '',
           message: t('authentication.errors.default'),
         },
       };
 
-      structuredError.error.code = (error as IAuthError).code || '';
+      structuredError.error.code = (error as AuthErrorType).code || '';
       if (isAuthError(error)) {
         structuredError.error.message =
           error.code === statusCodes.SIGN_IN_CANCELLED ? '' : error.message;

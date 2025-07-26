@@ -73,5 +73,6 @@ const styles = StyleSheet.create({
   loaderContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1000,
   },
 });

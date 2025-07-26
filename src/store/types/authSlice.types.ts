@@ -1,8 +1,8 @@
-import { IUser } from '@/hooks/auth/types/auth.types';
+import { UserType } from '@/hooks/auth/types/auth.types';
 
 type AuthStateType = {
   isLoading: boolean;
-  user: IUser;
+  user: UserType;
 };
 
 export type { AuthStateType };

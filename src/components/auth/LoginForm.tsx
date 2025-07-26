@@ -5,16 +5,25 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
+import { AuthErrorType } from '@/hooks/auth/types/auth.types';
 import { useLoginForm } from '@/hooks/auth/useLoginForm';
+import { useToast } from '@/hooks/useToast';
 import { Link } from 'expo-router';
-import { useState } from 'react';
 
 export const LoginForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToast();
 
-  const { handleChange, handleBlur, touched, errors } = useLoginForm({
-    onSubmit: () => {},
-  });
+  const onError = (error: AuthErrorType) => {
+    showToast({
+      type: 'failure',
+      message: error.message,
+    });
+  };
+
+  const { isLoading, handleChange, handleBlur, handleSubmit, touched, errors } =
+    useLoginForm({
+      onError,
+    });
 
   return (
     <AppView marginV-40>
@@ -41,9 +50,7 @@ export const LoginForm = () => {
       <PrimaryButton
         shouldShowLoader
         label="authentication.login"
-        onPress={() => {
-          setIsLoading((isLoading) => !isLoading);
-        }}
+        onPress={handleSubmit}
         isLoading={isLoading}
       />
       <OrDivider />

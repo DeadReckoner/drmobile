@@ -17,6 +17,9 @@ export const useToast = () => {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showToast = (toastProps?: ToastStateType['toastProps']) => {
+    if (!toastProps?.message) {
+      return;
+    }
     if (!isVisible) {
       dispatch(showToastAction({ toastProps }));
     } else {

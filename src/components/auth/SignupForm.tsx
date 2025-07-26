@@ -5,14 +5,34 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
+import {
+  AuthErrorType,
+  SessionLessUserType,
+} from '@/hooks/auth/types/auth.types';
 import { useSignupForm } from '@/hooks/auth/useSignupForm';
-import { Link } from 'expo-router';
+import { useToast } from '@/hooks/useToast';
+import { Link, router } from 'expo-router';
 import { useState } from 'react';
 
 export const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { showToast } = useToast();
+
+  const onSuccess = (user: SessionLessUserType) => {
+    if (!user?.access_token) {
+      router.replace('/check-email');
+    }
+  };
+
+  const onError = (error: AuthErrorType) => {
+    showToast({
+      type: 'failure',
+      message: error.message,
+    });
+  };
   const { handleChange, handleBlur, touched, errors } = useSignupForm({
-    onSubmit: () => {},
+    onSuccess,
+    onError,
   });
 
   return (

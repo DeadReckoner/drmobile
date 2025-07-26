@@ -1,6 +1,9 @@
+import { AuthErrorType, UserType } from '@/hooks/auth/types/auth.types';
+import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useFormik } from 'formik';
+import { useState } from 'react';
 import * as Yup from 'yup';
 
 const createLoginValidationSchema = (t: (_: TranslationKeysType) => string) => {
@@ -24,21 +27,39 @@ type LoginSchemaType = Yup.InferType<
 >;
 
 interface LoginFormHookProps {
-  onSubmit: (_values: LoginSchemaType) => void;
+  onSuccess?: (_user: UserType) => void;
+  onError?: (_error: AuthErrorType) => void;
 }
 
-export const useLoginForm = ({ onSubmit }: LoginFormHookProps) => {
+export const useLoginForm = ({ onSuccess, onError }: LoginFormHookProps) => {
   const { t } = useLocalization();
   const schema = createLoginValidationSchema(t);
+  const { signInEmailWithAuthProvider } = useAuth();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onLoginSubmit = async ({ email, password }: LoginSchemaType) => {
+    setIsLoading(true);
+
+    const { data, error } = await signInEmailWithAuthProvider(email, password);
+    setIsLoading(false);
+
+    if (error) {
+      onError?.(error);
+      return;
+    }
+    if (data) onSuccess?.(data);
+  };
 
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<LoginSchemaType>({
       initialValues: { email: '', password: '' },
       validationSchema: schema,
-      onSubmit,
+      onSubmit: onLoginSubmit,
     });
 
   return {
+    isLoading,
     handleChange: handleChange<keyof LoginSchemaType>,
     handleBlur: handleBlur<keyof LoginSchemaType>,
     ...restFormikOptions,

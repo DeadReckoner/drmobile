@@ -1,4 +1,6 @@
-export interface IUser {
+import { Session, User } from '@supabase/supabase-js';
+
+export interface UserType {
   id: string;
   email: string;
   name: string;
@@ -6,26 +8,43 @@ export interface IUser {
   access_token: string;
 }
 
-export interface IAuthError {
+export type AuthErrorType = {
   message: string;
   code?: string;
-}
+};
 
-export type AuthResult<T = IUser> = {
+export type AuthUserSessionType = {
+  user: User;
+  session: Session;
+};
+
+export type AuthUserWithoutSessionType = {
+  user: User;
+  session?: Session;
+};
+
+export type SessionLessUserType = Omit<UserType, 'access_token'> & {
+  access_token?: string;
+};
+
+export type AuthResultType<T = UserType> = {
   data?: T;
-  error?: IAuthError;
+  error?: AuthErrorType;
 };
 
 export interface IAuthService {
-  linkGoogleWithAuthProvider: (_idToken: string) => Promise<AuthResult<IUser>>;
-  linkAppleWithAuthProvider: (_idToken: string) => Promise<AuthResult<IUser>>;
+  linkGoogleWithAuthProvider: (
+    _idToken: string,
+  ) => Promise<AuthResultType<UserType>>;
+  linkAppleWithAuthProvider: (
+    _idToken: string,
+  ) => Promise<AuthResultType<UserType>>;
   signInEmailWithAuthProvider: (
     _email: string,
     _password: string,
-  ) => Promise<AuthResult<IUser>>;
-}
-
-export interface ISupabaseAuthError {
-  message: string;
-  code: string;
+  ) => Promise<AuthResultType<UserType>>;
+  signUpEmailWithAuthProvider: (
+    _email: string,
+    _password: string,
+  ) => Promise<AuthResultType<SessionLessUserType>>;
 }

@@ -1,8 +1,12 @@
-import { IAuthService } from '@/hooks/auth/types/auth.types';
+import {
+  AuthUserSessionType,
+  AuthUserWithoutSessionType,
+  IAuthService,
+} from '@/hooks/auth/types/auth.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
-import { AuthError, Session, User } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
 
 const SUPABASE_AUTH_ERRORS = [
   'invalid_credentials',
@@ -46,6 +50,27 @@ export const useSupabaseAuth = (): IAuthService => {
         }
 
         return getAppUserFromSupabase(data);
+      } catch {
+        return getSupabaseAuthError();
+      }
+    };
+
+  const signUpEmailWithAuthProvider: IAuthService['signUpEmailWithAuthProvider'] =
+    async (email: string, password: string) => {
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          return getSupabaseAuthError(error);
+        }
+        if (!data?.user) {
+          return getSupabaseAuthError();
+        }
+
+        return getAppSessionLessUserFromSupabase({ user: data.user });
       } catch {
         return getSupabaseAuthError();
       }
@@ -109,13 +134,7 @@ export const useSupabaseAuth = (): IAuthService => {
     };
   };
 
-  const getAppUserFromSupabase = ({
-    user,
-    session,
-  }: {
-    user: User;
-    session: Session;
-  }) => {
+  const getAppUserFromSupabase = ({ user, session }: AuthUserSessionType) => {
     return {
       data: {
         id: user.id,
@@ -127,7 +146,21 @@ export const useSupabaseAuth = (): IAuthService => {
     };
   };
 
+  const getAppSessionLessUserFromSupabase = ({
+    user,
+  }: AuthUserWithoutSessionType) => {
+    return {
+      data: {
+        id: user.id,
+        email: user.email || user.user_metadata?.email || '',
+        name: user.user_metadata?.name,
+        avatar: user.user_metadata?.avatar_url,
+      },
+    };
+  };
+
   return {
+    signUpEmailWithAuthProvider,
     signInEmailWithAuthProvider,
     linkGoogleWithAuthProvider,
     linkAppleWithAuthProvider,

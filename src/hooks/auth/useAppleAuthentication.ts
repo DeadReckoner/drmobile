@@ -1,4 +1,8 @@
-import { AuthResult, IAuthError, IUser } from '@/hooks/auth/types/auth.types';
+import {
+  AuthErrorType,
+  AuthResultType,
+  UserType,
+} from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
@@ -13,7 +17,9 @@ export const useAppleAuthentication = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
 
-  const signInWithApple = async (): Promise<AuthResult<IUser | IAuthError>> => {
+  const signInWithApple = async (): Promise<
+    AuthResultType<UserType | AuthErrorType>
+  > => {
     try {
       dispatch(setAuthLoadingAction());
       const credential = await AppleAuthentication.signInAsync({
@@ -31,8 +37,8 @@ export const useAppleAuthentication = () => {
         throw new Error();
       }
     } catch (error) {
-      const authError = error as IAuthError;
-      const structuredError: { error: IAuthError } = {
+      const authError = error as AuthErrorType;
+      const structuredError: { error: AuthErrorType } = {
         error: {
           code: authError.code,
           message: t('authentication.errors.default'),

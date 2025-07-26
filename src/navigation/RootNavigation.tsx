@@ -1,8 +1,8 @@
 import { AppToast } from '@/components/AppToast';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import { clearAuthAction, selectAuth } from '@/store/slices/authSlice';
+import { useSupabaseAutoRefresh } from '@/hooks/auth/useSupabaseAuthListener';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectAuth } from '@/store/slices/authSlice';
 import { Stack } from 'expo-router';
-import { useEffect } from 'react';
 
 type StackProps = React.ComponentProps<typeof Stack>['screenOptions'];
 const screenOptions: StackProps = {
@@ -11,12 +11,9 @@ const screenOptions: StackProps = {
 };
 
 export const RootNavigator = () => {
+  useSupabaseAutoRefresh();
   const { user } = useAppSelector(selectAuth);
-  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(clearAuthAction());
-  }, [dispatch]);
   return (
     <>
       <Stack screenOptions={screenOptions}>

@@ -7,7 +7,7 @@ type ToastProps = React.ComponentProps<typeof Incubator.Toast>;
 type ToastType = `${Incubator.ToastPresets}` | 'warning';
 type ToastStateType = {
   isVisible: boolean;
-  toastProps?: Pick<ToastProps, 'message' | 'icon'> & { type: ToastType };
+  toastProps: Pick<ToastProps, 'message' | 'icon'> & { type: ToastType };
 };
 
 type SettingsStateType = {
