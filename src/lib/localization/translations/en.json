@@ -19,6 +19,7 @@
     "check_your_email_subtitle": "Check your inbox to proceed. If you don’t see the email, check your spam/junk folder.",
     "go_to_login": "Go to Login",
     "continue_with_google": "Continue with Google",
+    "reset_password": "Send Reset Email",
     "errors": {
       "invalid_credentials": "Incorrect email or password.",
       "email_exists": "This email is already registered.",

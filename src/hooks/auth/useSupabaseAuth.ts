@@ -1,7 +1,9 @@
 import {
+  AuthResultType,
   AuthUserSessionType,
   AuthUserWithoutSessionType,
   IAuthService,
+  SupabaseProviderErrorResponseType,
 } from '@/hooks/auth/types/auth.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -112,6 +114,24 @@ export const useSupabaseAuth = (): IAuthService => {
       }
     };
 
+  const resetPasswordWithAuthProvider: IAuthService['resetPasswordWithAuthProvider'] =
+    async (email: string) => {
+      try {
+        const { error } =
+          await supabaseClient.auth.resetPasswordForEmail(email);
+
+        if (error) {
+          return getSupabaseAuthError(error);
+        }
+
+        return {
+          data: { isMailSent: true },
+        };
+      } catch {
+        return getSupabaseAuthError();
+      }
+    };
+
   const getLocalizedErrorMessage = (error?: AuthError): string => {
     const fallback = t('authentication.errors.default');
 
@@ -125,7 +145,9 @@ export const useSupabaseAuth = (): IAuthService => {
       : fallback;
   };
 
-  const getSupabaseAuthError = (error?: AuthError) => {
+  const getSupabaseAuthError = (
+    error?: AuthError,
+  ): SupabaseProviderErrorResponseType => {
     return {
       error: {
         message: getLocalizedErrorMessage(error),
@@ -134,7 +156,10 @@ export const useSupabaseAuth = (): IAuthService => {
     };
   };
 
-  const getAppUserFromSupabase = ({ user, session }: AuthUserSessionType) => {
+  const getAppUserFromSupabase = ({
+    user,
+    session,
+  }: AuthUserSessionType): AuthResultType => {
     return {
       data: {
         id: user.id,
@@ -160,6 +185,7 @@ export const useSupabaseAuth = (): IAuthService => {
   };
 
   return {
+    resetPasswordWithAuthProvider,
     signUpEmailWithAuthProvider,
     signInEmailWithAuthProvider,
     linkGoogleWithAuthProvider,

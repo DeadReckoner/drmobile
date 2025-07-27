@@ -1,6 +1,7 @@
 import {
   AuthResultType,
   IAuthService,
+  SentMailResponseType,
   SessionLessUserType,
   UserType,
 } from '@/hooks/auth/types/auth.types';
@@ -60,11 +61,19 @@ export const useAuth = (): IAuthService => {
     return response;
   };
 
+  const resetPasswordWithAuthProvider = async (
+    email: string,
+  ): Promise<AuthResultType<SentMailResponseType>> => {
+    const response = await authProvider.resetPasswordWithAuthProvider(email);
+    return response;
+  };
+
   function isUserWithSession(user: SessionLessUserType): user is UserType {
     return typeof user.access_token === 'string';
   }
 
   return {
+    resetPasswordWithAuthProvider,
     signUpEmailWithAuthProvider,
     signInEmailWithAuthProvider,
     linkGoogleWithAuthProvider,

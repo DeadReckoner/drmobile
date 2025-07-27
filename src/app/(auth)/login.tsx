@@ -31,7 +31,7 @@ const Login = () => {
                   secondary
                   translationKey="authentication.dont_have_an_account"
                 />
-                <Link href="/(auth)/sign-up">
+                <Link href="/sign-up">
                   <TranslatedText translationKey="authentication.sign_up" />
                 </Link>
               </AppView>

@@ -31,7 +31,7 @@ export const TranslatedTextInput = ({
         placeholder={placeholderKey && t(placeholderKey)}
         {...restProps}
       />
-      {error && (
+      {!!error && (
         <AppText error sm marginT-8>
           {error}
         </AppText>

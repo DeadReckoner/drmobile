@@ -2,7 +2,9 @@ import { AppToast } from '@/components/AppToast';
 import { useSupabaseAutoRefresh } from '@/hooks/auth/useSupabaseAuthListener';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectAuth } from '@/store/slices/authSlice';
+import { selectTheme } from '@/store/slices/settingsSlice';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'react-native';
 
 type StackProps = React.ComponentProps<typeof Stack>['screenOptions'];
 const screenOptions: StackProps = {
@@ -13,6 +15,7 @@ const screenOptions: StackProps = {
 export const RootNavigator = () => {
   useSupabaseAutoRefresh();
   const { user } = useAppSelector(selectAuth);
+  const theme = useAppSelector(selectTheme);
 
   return (
     <>
@@ -27,6 +30,10 @@ export const RootNavigator = () => {
       </Stack>
 
       <AppToast />
+      <StatusBar
+        barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
+        translucent
+      />
     </>
   );
 };

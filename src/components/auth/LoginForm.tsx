@@ -42,7 +42,7 @@ export const LoginForm = () => {
         error={touched.password && errors.password}
       />
       <AppView right>
-        <Link href="/(auth)/sign-up" asChild>
+        <Link href="/forgot-password" asChild>
           <TranslatedText translationKey="authentication.forgot_password" />
         </Link>
       </AppView>

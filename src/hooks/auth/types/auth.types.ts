@@ -32,6 +32,14 @@ export type AuthResultType<T = UserType> = {
   error?: AuthErrorType;
 };
 
+export type SentMailResponseType = {
+  isMailSent: boolean;
+};
+
+export type SupabaseProviderErrorResponseType = {
+  error: AuthErrorType;
+};
+
 export interface IAuthService {
   linkGoogleWithAuthProvider: (
     _idToken: string,
@@ -47,4 +55,7 @@ export interface IAuthService {
     _email: string,
     _password: string,
   ) => Promise<AuthResultType<SessionLessUserType>>;
+  resetPasswordWithAuthProvider: (
+    _email: string,
+  ) => Promise<AuthResultType<SentMailResponseType>>;
 }

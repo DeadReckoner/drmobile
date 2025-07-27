@@ -2,7 +2,6 @@ import { OrDivider } from '@/components/auth/OrDivider';
 import { SocialLogin } from '@/components/auth/SocialLogin';
 import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import {
@@ -11,11 +10,9 @@ import {
 } from '@/hooks/auth/types/auth.types';
 import { useSignupForm } from '@/hooks/auth/useSignupForm';
 import { useToast } from '@/hooks/useToast';
-import { Link, router } from 'expo-router';
-import { useState } from 'react';
+import { router } from 'expo-router';
 
 export const SignupForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
 
   const onSuccess = (user: SessionLessUserType) => {
@@ -30,10 +27,11 @@ export const SignupForm = () => {
       message: error.message,
     });
   };
-  const { handleChange, handleBlur, touched, errors } = useSignupForm({
-    onSuccess,
-    onError,
-  });
+  const { isLoading, handleSubmit, handleChange, handleBlur, touched, errors } =
+    useSignupForm({
+      onSuccess,
+      onError,
+    });
 
   return (
     <AppView marginV-40>
@@ -65,18 +63,11 @@ export const SignupForm = () => {
         onBlur={handleBlur('password')}
         error={touched.password && errors.password}
       />
-      <AppView right>
-        <Link href="/(auth)/sign-up" asChild>
-          <TranslatedText translationKey="authentication.forgot_password" />
-        </Link>
-      </AppView>
-      <Divider />
+      <Divider margin-8 />
       <PrimaryButton
         shouldShowLoader
         label="authentication.sign_up"
-        onPress={() => {
-          setIsLoading((isLoading) => !isLoading);
-        }}
+        onPress={handleSubmit}
         isLoading={isLoading}
       />
       <OrDivider />
