@@ -18,6 +18,11 @@ const UNBOUNDED_LIGHT = Platform.select({
   android: 'Unbounded_300Light',
 });
 
+const UNBOUNDED_EXTRA_LIGHT = Platform.select({
+  ios: 'Unbounded-ExtraLight',
+  android: 'Unbounded_200ExtraLight',
+});
+
 export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   hero: {
     fontFamily: UNBOUNDED_BOLD,
@@ -40,6 +45,11 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
     lineHeight: 18,
   },
 
+  body1: {
+    fontFamily: UNBOUNDED_REGULAR,
+    fontSize: 16,
+  },
+
   body2: {
     fontFamily: UNBOUNDED_REGULAR,
     fontSize: 14,
@@ -48,6 +58,13 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   sm: {
     fontFamily: UNBOUNDED_LIGHT,
     fontSize: 10,
+    letterSpacing: 0.5,
+  },
+
+  xsm: {
+    fontFamily: UNBOUNDED_EXTRA_LIGHT,
+    fontSize: 10,
+    lineHeight: 16,
     letterSpacing: 0.5,
   },
 

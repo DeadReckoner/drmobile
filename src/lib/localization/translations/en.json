@@ -65,7 +65,15 @@
     "today": "Today",
     "progress": "Progress",
     "create": "Create",
-    "messages": "Messages"
+    "messages": "Messages",
+    "create_tab": {
+      "build_roadmap_ai": "Use AI to Build My Roadmap",
+      "build_roadmap_ai_desc": "Let our AI craft a personalized roadmap based on your goals and aspirations.",
+      "build_roadmap_custom": "Create My Own Roadmap",
+      "build_roadmap_custom_desc": "Design your own roadmap from scratch, tailoring every step to your unique vision.",
+      "add_new_task": "Add a New Task",
+      "add_new_task_desc": "Create a stand-alone task to capture your next step or idea."
+    }
   },
   "common": {
     "or": "Or"

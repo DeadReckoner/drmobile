@@ -32,6 +32,7 @@ export const useAppTheme = () => {
   const loadAssets = () => {
     Assets.loadAssetsGroup('logo', {
       google: require('assets/images/google-logo.webp'),
+      aiRoadmapBG: require('assets/images/ai-roadmap-bg.png'),
     });
   };
 

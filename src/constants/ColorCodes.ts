@@ -11,6 +11,7 @@ export const LightColorCodes = {
   warning: '#e5bb00',
 
   screenBG: '#FFFFFF',
+  cardBG: '#ebebebff',
 
   inverseBackground: '#000000',
   inverseText: '#FFFFFF',
@@ -34,6 +35,7 @@ export const DarkColorCodes = {
   warning: '#C1A700',
 
   screenBG: '#121414',
+  cardBG: '#191C1E',
 
   inverseBackground: '#FFFFFF',
   inverseText: '#000000',

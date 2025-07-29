@@ -53,6 +53,7 @@
         "expo-font",
         {
           "fonts": [
+            "node_modules/@expo-google-fonts/unbounded/200ExtraLight/Unbounded_200ExtraLight.ttf",
             "node_modules/@expo-google-fonts/unbounded/300Light/Unbounded_300Light.ttf",
             "node_modules/@expo-google-fonts/unbounded/400Regular/Unbounded_400Regular.ttf",
             "node_modules/@expo-google-fonts/unbounded/700Bold/Unbounded_700Bold.ttf",
