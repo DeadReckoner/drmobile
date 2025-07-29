@@ -78,7 +78,7 @@ export const ForgotPasswordForm = () => {
           />
         ) : (
           <PrimaryButton
-            label="authentication.reset_password"
+            label="authentication.login"
             onPress={handleOTPSubmit}
             isLoading={isOTPLoading}
             shouldShowLoader

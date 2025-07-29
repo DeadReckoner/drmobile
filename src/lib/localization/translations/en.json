@@ -61,6 +61,12 @@
       "otp_required": "OTP is required"
     }
   },
+  "tabs": {
+    "today": "Today",
+    "progress": "Progress",
+    "create": "Create",
+    "messages": "Messages"
+  },
   "common": {
     "or": "Or"
   }

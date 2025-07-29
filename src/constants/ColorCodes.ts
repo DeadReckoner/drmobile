@@ -14,6 +14,10 @@ export const LightColorCodes = {
 
   inverseBackground: '#000000',
   inverseText: '#FFFFFF',
+
+  bottomTabBar: '#FFFFFF',
+  tabInactiveColor: '#989898',
+  tabActiveColor: '#252C30',
 };
 
 export const DarkColorCodes = {
@@ -33,4 +37,8 @@ export const DarkColorCodes = {
 
   inverseBackground: '#FFFFFF',
   inverseText: '#000000',
+
+  bottomTabBar: '#242629',
+  tabInactiveColor: '#B2B8B6', //secondary
+  tabActiveColor: '#FFFFFF',
 };

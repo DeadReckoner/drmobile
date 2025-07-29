@@ -1,0 +1,63 @@
+import { FontTextStyleType } from '@/hooks/types/fontConfig.types';
+import { Platform } from 'react-native';
+
+const UNBOUNDED_BOLD = Platform.select({
+  ios: 'Unbounded-Bold',
+  android: 'Unbounded_700Bold',
+});
+const UNBOUNDED_SEMIBOLD = Platform.select({
+  ios: 'Unbounded-SemiBold',
+  android: 'Unbounded_600SemiBold',
+});
+const UNBOUNDED_REGULAR = Platform.select({
+  ios: 'Unbounded-Regular',
+  android: 'Unbounded_400Regular',
+});
+const UNBOUNDED_LIGHT = Platform.select({
+  ios: 'Unbounded-Light',
+  android: 'Unbounded_300Light',
+});
+
+export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
+  hero: {
+    fontFamily: UNBOUNDED_BOLD,
+    fontSize: 32,
+  },
+
+  h2: {
+    fontFamily: UNBOUNDED_SEMIBOLD,
+    fontSize: 24,
+  },
+
+  caption: {
+    fontFamily: UNBOUNDED_REGULAR,
+    fontSize: 12,
+  },
+
+  captionLight: {
+    fontFamily: UNBOUNDED_LIGHT,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+
+  body2: {
+    fontFamily: UNBOUNDED_REGULAR,
+    fontSize: 14,
+  },
+
+  sm: {
+    fontFamily: UNBOUNDED_LIGHT,
+    fontSize: 10,
+    letterSpacing: 0.5,
+  },
+
+  buttonLable: {
+    fontFamily: UNBOUNDED_BOLD,
+    fontSize: 16,
+  },
+
+  tabLabel: {
+    fontFamily: UNBOUNDED_REGULAR,
+    fontSize: 10,
+  },
+};

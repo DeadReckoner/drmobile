@@ -1,18 +1,12 @@
-import { ScrollView, Text, View } from 'react-native';
+import { AppScreen } from '@/components/AppScreen';
+import { AppText } from '@/components/ui';
 
-const index = () => {
+const Today = () => {
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <View
-        style={{
-          height: 1800,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text>index</Text>
-      </View>
-    </ScrollView>
+    <AppScreen>
+      <AppText>Today Screen</AppText>
+    </AppScreen>
   );
 };
 
-export default index;
+export default Today;

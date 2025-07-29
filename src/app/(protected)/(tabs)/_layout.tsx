@@ -1,15 +1,73 @@
+import { BottomTabBarButton } from '@/components/BottomTabBarButton';
 import { IconSymbol } from '@/components/IconSymbol';
+import { useLocalization } from '@/hooks/useLocalization';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectTheme } from '@/store/slices/settingsSlice';
+import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Tabs } from 'expo-router';
+import { useMemo } from 'react';
+import { Colors, Typography } from 'react-native-ui-lib';
 
 export default function TabLayout() {
+  const { t } = useLocalization();
+  const theme = useAppSelector(selectTheme);
+
+  const screenOptions: BottomTabNavigationOptions = useMemo(
+    () => ({
+      tabBarStyle: {
+        backgroundColor: Colors.bottomTabBar,
+        height: 100,
+        paddingTop: 16,
+      },
+      tabBarInactiveTintColor: Colors.tabInactiveColor,
+      tabBarActiveTintColor: Colors.tabActiveColor,
+      tabBarLabelStyle: [Typography.tabLabel, { marginTop: 8 }],
+      tabBarButton: BottomTabBarButton,
+      headerShown: false,
+    }),
+
+    // LintRuleDisabledReason
+    // The 'theme' dependency is included to ensure tab bar colors update when the theme changes.
+    // Although not directly referenced, it triggers re-computation for correct react-native-ui-lib colors.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme],
+  );
+
   return (
-    <Tabs>
+    <Tabs screenOptions={screenOptions}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'home',
+          title: t('tabs.today'),
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="calendar" color={color} />
+            <IconSymbol size={28} name="home" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="progress"
+        options={{
+          title: t('tabs.progress'),
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="barschart" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: t('tabs.create'),
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="plus" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: t('tabs.messages'),
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={24} name="message1" color={color} />
           ),
         }}
       />
