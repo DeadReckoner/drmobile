@@ -3,14 +3,9 @@ import { useSupabaseAutoRefresh } from '@/hooks/auth/useSupabaseAuthListener';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectAuth } from '@/store/slices/authSlice';
 import { selectTheme } from '@/store/slices/settingsSlice';
+import { resetStackScreenOptions } from '@/utils/navigation.utils';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'react-native';
-
-type StackProps = React.ComponentProps<typeof Stack>['screenOptions'];
-const screenOptions: StackProps = {
-  headerShown: false,
-  animation: 'fade_from_bottom',
-};
 
 export const RootNavigator = () => {
   useSupabaseAutoRefresh();
@@ -19,7 +14,7 @@ export const RootNavigator = () => {
 
   return (
     <>
-      <Stack screenOptions={screenOptions}>
+      <Stack screenOptions={resetStackScreenOptions}>
         <Stack.Protected guard={!!user?.id}>
           <Stack.Screen name="(protected)" />
         </Stack.Protected>

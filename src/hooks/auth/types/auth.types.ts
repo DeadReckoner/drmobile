@@ -1,4 +1,4 @@
-import { Session, User } from '@supabase/supabase-js';
+import { Session, User, UserAttributes } from '@supabase/supabase-js';
 
 export interface UserType {
   id: string;
@@ -40,6 +40,10 @@ export type SupabaseProviderErrorResponseType = {
   error: AuthErrorType;
 };
 
+export type UserAttributesType = {
+  password: UserAttributes['password'];
+};
+
 export interface IAuthService {
   linkGoogleWithAuthProvider: (
     _idToken: string,
@@ -55,7 +59,14 @@ export interface IAuthService {
     _email: string,
     _password: string,
   ) => Promise<AuthResultType<SessionLessUserType>>;
-  resetPasswordWithAuthProvider: (
+  sendOTPViaEmailWithAuthProvider: (
     _email: string,
   ) => Promise<AuthResultType<SentMailResponseType>>;
+  updateUserWithAuthProvider: (
+    _attributes: UserAttributesType,
+  ) => Promise<AuthResultType<SessionLessUserType>>;
+  verifyOTPViaEmailWithAuthProvider: (
+    _email: string,
+    _otp: string,
+  ) => Promise<AuthResultType<UserType>>;
 }

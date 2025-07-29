@@ -1,14 +1,13 @@
+import { AppRouterLink } from '@/components/AppLink';
 import { OrDivider } from '@/components/auth/OrDivider';
 import { SocialLogin } from '@/components/auth/SocialLogin';
 import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import { AuthErrorType } from '@/hooks/auth/types/auth.types';
 import { useLoginForm } from '@/hooks/auth/useLoginForm';
 import { useToast } from '@/hooks/useToast';
-import { Link } from 'expo-router';
 
 export const LoginForm = () => {
   const { showToast } = useToast();
@@ -42,9 +41,10 @@ export const LoginForm = () => {
         error={touched.password && errors.password}
       />
       <AppView right>
-        <Link href="/forgot-password" asChild>
-          <TranslatedText translationKey="authentication.forgot_password" />
-        </Link>
+        <AppRouterLink
+          href="/forgot-password"
+          translationKey="authentication.forgot_password"
+        />
       </AppView>
       <Divider />
       <PrimaryButton

@@ -1,11 +1,44 @@
+import { AppRouterLink } from '@/components/AppLink';
+import { AppScreen } from '@/components/AppScreen';
+import { IconSymbol } from '@/components/IconSymbol';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { FadeIn } from 'react-native-reanimated';
+import { Colors } from 'react-native-ui-lib';
 
 const CheckEmail = () => {
   return (
-    <View>
-      <Text></Text>
-    </View>
+    <AppScreen entering={FadeIn} spread padding-32>
+      <AppView />
+      <AppView center>
+        <AppView center bg-success br100 width={100} height={100}>
+          <IconSymbol name="check" color={Colors.white} size={48} />
+        </AppView>
+        <TranslatedText
+          marginT-32
+          h2
+          translationKey="authentication.check_your_email"
+        />
+        <TranslatedText
+          marginT-16
+          captionLight
+          center
+          translationKey="authentication.check_your_email_subtitle"
+        />
+      </AppView>
+      <AppView row center gap-8 marginB-40>
+        <TranslatedText
+          secondary
+          translationKey="authentication.remember_password"
+        />
+        <AppRouterLink
+          dismissTo
+          href="/login"
+          translationKey="authentication.login"
+        />
+      </AppView>
+    </AppScreen>
   );
 };
 

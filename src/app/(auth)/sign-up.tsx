@@ -1,9 +1,9 @@
+import { AppRouterLink } from '@/components/AppLink';
 import { AppScreen } from '@/components/AppScreen';
 import { SignupForm } from '@/components/auth/SignupForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import { Link } from 'expo-router';
 import {
   KeyboardAwareScrollView,
   KeyboardGestureArea,
@@ -28,9 +28,11 @@ const SignUp = () => {
                 secondary
                 translationKey="authentication.already_have_an_account"
               />
-              <Link dismissTo href="/login">
-                <TranslatedText translationKey="authentication.login" />
-              </Link>
+              <AppRouterLink
+                dismissTo
+                href="/login"
+                translationKey="authentication.login"
+              />
             </AppView>
           </AppView>
         </KeyboardAwareScrollView>

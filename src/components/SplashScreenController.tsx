@@ -1,8 +1,9 @@
 import { ChildWrapperProps } from '@/components/types/component.types';
+import { AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { SplashScreen } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 
 export const SplashScreenController = ({ children }: ChildWrapperProps) => {
   const { initializeTheme } = useAppTheme();
@@ -12,13 +13,22 @@ export const SplashScreenController = ({ children }: ChildWrapperProps) => {
   useEffect(() => {
     initializeTheme();
     initializeLocalization();
-    SplashScreen.hide();
     setIsAppReady(true);
   }, [initializeLocalization, initializeTheme]);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (isReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [isReady]);
 
   if (!isReady) {
     return null;
   }
 
-  return children;
+  return (
+    <AppView flex-1 onLayout={onLayoutRootView}>
+      {children}
+    </AppView>
+  );
 };

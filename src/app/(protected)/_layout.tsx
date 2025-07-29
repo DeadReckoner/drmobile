@@ -1,5 +1,8 @@
-import { Slot } from 'expo-router';
+import { resetStackScreenOptions } from '@/utils/navigation.utils';
+import { Stack } from 'expo-router';
 
 export default function ProtectedLayout() {
-  return <Slot />;
+  return (
+    <Stack initialRouteName="(tabs)" screenOptions={resetStackScreenOptions} />
+  );
 }

@@ -4,6 +4,7 @@ import {
   AuthUserWithoutSessionType,
   IAuthService,
   SupabaseProviderErrorResponseType,
+  UserAttributesType,
 } from '@/hooks/auth/types/auth.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -16,6 +17,7 @@ const SUPABASE_AUTH_ERRORS = [
   'email_not_confirmed',
   'email_address_invalid',
   'weak_password',
+  'same_password',
   'user_not_found',
   'user_banned',
   // Session/refresh
@@ -114,11 +116,12 @@ export const useSupabaseAuth = (): IAuthService => {
       }
     };
 
-  const resetPasswordWithAuthProvider: IAuthService['resetPasswordWithAuthProvider'] =
+  const sendOTPViaEmailWithAuthProvider: IAuthService['sendOTPViaEmailWithAuthProvider'] =
     async (email: string) => {
       try {
-        const { error } =
-          await supabaseClient.auth.resetPasswordForEmail(email);
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email,
+        });
 
         if (error) {
           return getSupabaseAuthError(error);
@@ -127,6 +130,52 @@ export const useSupabaseAuth = (): IAuthService => {
         return {
           data: { isMailSent: true },
         };
+      } catch {
+        return getSupabaseAuthError();
+      }
+    };
+
+  const verifyOTPViaEmailWithAuthProvider: IAuthService['verifyOTPViaEmailWithAuthProvider'] =
+    async (email: string, otp: string) => {
+      try {
+        const { error: verifyOTPError, data } =
+          await supabaseClient.auth.verifyOtp({
+            email,
+            token: otp,
+            type: 'email',
+          });
+
+        if (verifyOTPError) {
+          return getSupabaseAuthError(verifyOTPError);
+        }
+        if (!data.user || !data.session?.access_token) {
+          return getSupabaseAuthError();
+        }
+
+        return getAppUserFromSupabase({
+          user: data.user,
+          session: data.session,
+        });
+      } catch {
+        return getSupabaseAuthError();
+      }
+    };
+
+  const updateUserWithAuthProvider: IAuthService['updateUserWithAuthProvider'] =
+    async (attributes: UserAttributesType) => {
+      try {
+        const { error, data } =
+          await supabaseClient.auth.updateUser(attributes);
+
+        if (error) {
+          return getSupabaseAuthError(error);
+        }
+
+        if (!data?.user) {
+          return getSupabaseAuthError();
+        }
+
+        return getAppSessionLessUserFromSupabase({ user: data.user });
       } catch {
         return getSupabaseAuthError();
       }
@@ -185,7 +234,9 @@ export const useSupabaseAuth = (): IAuthService => {
   };
 
   return {
-    resetPasswordWithAuthProvider,
+    updateUserWithAuthProvider,
+    sendOTPViaEmailWithAuthProvider,
+    verifyOTPViaEmailWithAuthProvider,
     signUpEmailWithAuthProvider,
     signInEmailWithAuthProvider,
     linkGoogleWithAuthProvider,

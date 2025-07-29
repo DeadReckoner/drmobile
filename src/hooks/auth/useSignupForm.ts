@@ -5,6 +5,7 @@ import {
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { VALIDATION_RULES } from '@/utils/validation.utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
@@ -23,7 +24,10 @@ const createSignupValidationSchema = (
       .required(t('authentication.errors.email.name_required')),
     email: Yup.string()
       .label(t('authentication.your_email'))
-      .email(t('authentication.errors.email.email_invalid'))
+      .matches(
+        VALIDATION_RULES.email,
+        t('authentication.errors.email.email_invalid'),
+      )
       .required(t('authentication.errors.email.email_required')),
     password: Yup.string()
       .label(t('authentication.password'))

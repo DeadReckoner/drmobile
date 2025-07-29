@@ -1,5 +1,12 @@
-import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+import * as Linking from 'expo-linking';
+import { Href, Stack } from 'expo-router';
 
-export const screenOptions: NativeStackNavigationOptions = {
+type StackProps = React.ComponentProps<typeof Stack>['screenOptions'];
+export const resetStackScreenOptions: StackProps = {
   headerShown: false,
+};
+
+export const getAppRedirectUriScheme = (path: Href) => {
+  const sanatisedPath = path.toString().replace('/', '');
+  return Linking.createURL(sanatisedPath);
 };

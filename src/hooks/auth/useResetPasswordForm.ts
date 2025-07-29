@@ -1,10 +1,11 @@
 import {
   AuthErrorType,
-  SentMailResponseType,
+  SessionLessUserType,
 } from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { VALIDATION_RULES } from '@/utils/validation.utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
@@ -13,10 +14,13 @@ const createResetPasswordValidationSchema = (
   t: (_: TranslationKeysType) => string,
 ) => {
   return Yup.object({
-    email: Yup.string()
-      .label(t('authentication.your_email'))
-      .email(t('authentication.errors.email.email_invalid'))
-      .required(t('authentication.errors.email.email_required')),
+    password: Yup.string()
+      .label(t('authentication.new_password'))
+      .matches(
+        VALIDATION_RULES.password,
+        t('authentication.errors.email.password_complexity'),
+      )
+      .required(t('authentication.errors.email.password_required')),
   });
 };
 
@@ -25,7 +29,7 @@ type ResetPasswordSchemaType = Yup.InferType<
 >;
 
 interface ResetPasswordFormHookProps {
-  onSuccess?: (_mailResponse: SentMailResponseType) => void;
+  onSuccess?: (_user: SessionLessUserType) => void;
   onError?: (_error: AuthErrorType) => void;
 }
 
@@ -34,15 +38,18 @@ export const useResetPasswordForm = ({
   onError,
 }: ResetPasswordFormHookProps) => {
   const { t } = useLocalization();
+
   const schema = createResetPasswordValidationSchema(t);
-  const { resetPasswordWithAuthProvider } = useAuth();
+  const { updateUserWithAuthProvider } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const onResetPasswordSubmit = async ({ email }: ResetPasswordSchemaType) => {
+  const onResetPasswordSubmit = async ({
+    password,
+  }: ResetPasswordSchemaType) => {
     setIsLoading(true);
 
-    const { data, error } = await resetPasswordWithAuthProvider(email);
+    const { error, data } = await updateUserWithAuthProvider({ password });
     setIsLoading(false);
 
     if (error) {
@@ -54,7 +61,7 @@ export const useResetPasswordForm = ({
 
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<ResetPasswordSchemaType>({
-      initialValues: { email: '' },
+      initialValues: { password: '' },
       validationSchema: schema,
       onSubmit: onResetPasswordSubmit,
     });

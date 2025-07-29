@@ -1,10 +1,10 @@
+import { Loader } from '@/components/Loader';
+import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { Env } from '@/constants/Env';
-import { RootNavigator } from '@/navigation/RootNavigation';
 import { persistedStore, store } from '@/store/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as SplashScreen from 'expo-splash-screen';
-import { ActivityIndicator } from 'react-native';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 import { Provider } from 'react-redux';
@@ -13,6 +13,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
   fade: true,
+  duration: 300,
 });
 
 GoogleSignin.configure({
@@ -23,7 +24,7 @@ GoogleSignin.configure({
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <PersistGate loading={<ActivityIndicator />} persistor={persistedStore}>
+      <PersistGate loading={<Loader />} persistor={persistedStore}>
         <KeyboardProvider>
           <SplashScreenController>
             <RootNavigator />

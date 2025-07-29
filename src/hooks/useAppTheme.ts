@@ -51,6 +51,7 @@ const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   captionLight: {
     fontFamily: UNBOUNDED_LIGHT,
     fontSize: 12,
+    lineHeight: 18,
   },
 
   body2: {
