@@ -28,15 +28,15 @@ type ResetPasswordSchemaType = Yup.InferType<
   ReturnType<typeof createResetPasswordValidationSchema>
 >;
 
-interface ResetPasswordFormHookProps {
+interface UpdatePasswordFormHookProps {
   onSuccess?: (_user: SessionLessUserType) => void;
   onError?: (_error: AuthErrorType) => void;
 }
 
-export const useResetPasswordForm = ({
+export const useUpdatePasswordForm = ({
   onSuccess,
   onError,
-}: ResetPasswordFormHookProps) => {
+}: UpdatePasswordFormHookProps) => {
   const { t } = useLocalization();
 
   const schema = createResetPasswordValidationSchema(t);

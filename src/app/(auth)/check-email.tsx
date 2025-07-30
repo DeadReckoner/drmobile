@@ -1,9 +1,9 @@
+import { IconSymbol } from '@/components/AppIcon';
 import { AppRouterLink } from '@/components/AppLink';
 import { AppScreen } from '@/components/AppScreen';
-import { IconSymbol } from '@/components/IconSymbol';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import React from 'react';
+
 import { FadeIn } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 

@@ -53,8 +53,10 @@
       "email": {
         "email_required": "Email is required",
         "email_invalid": "Enter a valid email",
-        "name_required": "Name is required",
-        "name_invalid": "Enter a valid name",
+        "firstname_required": "Name is required",
+        "firstname_invalid": "Enter a valid name",
+        "lastname_required": "Name is required",
+        "lastname_invalid": "Enter a valid name",
         "password_required": "Password is required",
         "password_complexity": "Password must include an uppercase letter, lowercase letter, number and special character of each."
       },
@@ -72,7 +74,28 @@
       "build_roadmap_custom": "Create My Own Roadmap",
       "build_roadmap_custom_desc": "Design your own roadmap from scratch, tailoring every step to your unique vision.",
       "add_new_task": "Add a New Task",
-      "add_new_task_desc": "Create a stand-alone task to capture your next step or idea."
+      "add_new_task_desc": "Create a stand-alone task to capture your next step or idea.",
+      "ai_roadmap": "AI Roadmap",
+      "custom_roadmap": "Custom Roadmap",
+      "goal_name_label": "Goal Name",
+      "goal_name_placeholder": "Enter your goal name",
+      "goal_description_label": "Goal Description",
+      "goal_description_placeholder": "Enter your goal description",
+      "why_matters_label": "Why this matters?",
+      "why_matters_placeholder": "Enter the reason why it matters?",
+      "target_completion_date_label": "Target Completion Date",
+      "target_completion_date_placeholder": "Select completion date",
+      "create_roadmap_button": "Create Roadmap",
+      "errors": {
+        "goal_name_required": "Goal name is required",
+        "goal_name_invalid": "Enter a valid goal name",
+        "goal_desc_required": "Goal description is required",
+        "goal_desc_invalid": "Enter a valid Goal description",
+        "goal_reason_required": "Goal reason is required",
+        "goal_reason_invalid": "Enter a valid goal reason",
+        "goal_date_required": "Completion date is required",
+        "goal_date_invalid": "Enter a valid completion date"
+      }
     }
   },
   "common": {

@@ -1,6 +1,6 @@
 import { AppTouchableOpacity, AppView } from '@/components/ui';
 import { Link } from 'expo-router';
-import React from 'react';
+
 import { Text } from 'react-native';
 
 const Settings = () => {

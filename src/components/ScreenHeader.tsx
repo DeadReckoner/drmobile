@@ -17,8 +17,8 @@ export const ScreenHeader = ({
   subtileProps,
 }: ScreenHeaderProps) => {
   return (
-    <AppView marginT-24>
-      <TranslatedText h2 marginB-8 translationKey={title} {...titleProps} />
+    <AppView marginT-24 gap-8>
+      <TranslatedText h2 translationKey={title} {...titleProps} />
       <TranslatedText
         captionLight
         translationKey={subtitle}

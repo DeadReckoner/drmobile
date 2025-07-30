@@ -1,6 +1,6 @@
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import React from 'react';
+
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 

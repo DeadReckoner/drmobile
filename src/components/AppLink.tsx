@@ -2,7 +2,6 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppTouchableOpacity } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { Link, LinkProps } from 'expo-router';
-import React from 'react';
 
 interface AppRouterLinkProps extends LinkProps {
   translationKey: TranslationKeysType;

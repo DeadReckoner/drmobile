@@ -1,5 +1,5 @@
+import { AppIcon } from '@/components/AppIcon';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
-import { IconSymbol } from '@/components/IconSymbol';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectTheme } from '@/store/slices/settingsSlice';
@@ -17,13 +17,15 @@ export default function TabLayout() {
       tabBarStyle: {
         backgroundColor: Colors.bottomTabBar,
         height: 100,
-        paddingTop: 16,
+        paddingTop: 8,
       },
       tabBarInactiveTintColor: Colors.tabInactiveColor,
       tabBarActiveTintColor: Colors.tabActiveColor,
       tabBarLabelStyle: [Typography.tabLabel, { marginTop: 8 }],
       tabBarButton: BottomTabBarButton,
       headerShown: false,
+      tabBarHideOnKeyboard: true,
+      animation: 'shift',
     }),
 
     // LintRuleDisabledReason
@@ -40,7 +42,7 @@ export default function TabLayout() {
         options={{
           title: t('tabs.today'),
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="home" color={color} />
+            <AppIcon size={28} name="home" color={color} />
           ),
         }}
       />
@@ -49,7 +51,7 @@ export default function TabLayout() {
         options={{
           title: t('tabs.progress'),
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="barschart" color={color} />
+            <AppIcon name="barschart" size={28} color={color} />
           ),
         }}
       />
@@ -58,7 +60,7 @@ export default function TabLayout() {
         options={{
           title: t('tabs.create'),
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="plus" color={color} />
+            <AppIcon size={28} name="plus" color={color} />
           ),
         }}
       />
@@ -67,7 +69,7 @@ export default function TabLayout() {
         options={{
           title: t('tabs.messages'),
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={24} name="message1" color={color} />
+            <AppIcon size={24} name="message1" color={color} />
           ),
         }}
       />

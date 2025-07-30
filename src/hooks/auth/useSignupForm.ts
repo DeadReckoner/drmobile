@@ -16,12 +16,12 @@ const createSignupValidationSchema = (
   return Yup.object({
     firstName: Yup.string()
       .label(t('authentication.first_name'))
-      .min(2, t('authentication.errors.email.name_invalid'))
-      .required(t('authentication.errors.email.name_required')),
+      .min(2, t('authentication.errors.email.firstname_invalid'))
+      .required(t('authentication.errors.email.firstname_required')),
     lastName: Yup.string()
       .label(t('authentication.last_name'))
-      .min(2, t('authentication.errors.email.name_invalid'))
-      .required(t('authentication.errors.email.name_required')),
+      .min(2, t('authentication.errors.email.lastname_invalid'))
+      .required(t('authentication.errors.email.lastname_required')),
     email: Yup.string()
       .label(t('authentication.your_email'))
       .matches(

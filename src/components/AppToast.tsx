@@ -1,6 +1,6 @@
 import { useToast } from '@/hooks/useToast';
 import { ToastType } from '@/store/types/settingsSlice.types';
-import React from 'react';
+
 import { Colors, Incubator, ToastProps, Typography } from 'react-native-ui-lib';
 
 export const AppToast = () => {

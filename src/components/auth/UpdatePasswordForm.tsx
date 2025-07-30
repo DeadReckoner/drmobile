@@ -2,13 +2,12 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import { AuthErrorType } from '@/hooks/auth/types/auth.types';
-import { useResetPasswordForm } from '@/hooks/auth/useResetPasswordForm';
+import { useUpdatePasswordForm } from '@/hooks/auth/useUpdatePasswordForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { router } from 'expo-router';
-import React from 'react';
 
-export const ResetPasswordForm = () => {
+export const UpdatePasswordForm = () => {
   const { showToast } = useToast();
   const { t } = useLocalization();
 
@@ -28,7 +27,7 @@ export const ResetPasswordForm = () => {
   };
 
   const { isLoading, handleChange, handleBlur, handleSubmit, touched, errors } =
-    useResetPasswordForm({
+    useUpdatePasswordForm({
       onError,
       onSuccess,
     });

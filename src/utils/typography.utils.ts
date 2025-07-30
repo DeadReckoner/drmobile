@@ -45,6 +45,11 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
     lineHeight: 18,
   },
 
+  subtitle1: {
+    fontFamily: UNBOUNDED_REGULAR,
+    fontSize: 18,
+  },
+
   body1: {
     fontFamily: UNBOUNDED_REGULAR,
     fontSize: 16,
@@ -63,8 +68,8 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
 
   xsm: {
     fontFamily: UNBOUNDED_EXTRA_LIGHT,
-    fontSize: 10,
-    lineHeight: 16,
+    fontSize: 12,
+    lineHeight: 18,
     letterSpacing: 0.5,
   },
 

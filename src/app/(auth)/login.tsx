@@ -4,6 +4,7 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { StyleSheet } from 'react-native';
 import {
   KeyboardAwareScrollView,
   KeyboardGestureArea,
@@ -14,12 +15,12 @@ const Login = () => {
   return (
     <>
       <AppScreen>
-        <KeyboardGestureArea style={{ flex: 1 }} interpolator="ios">
+        <KeyboardGestureArea style={styles.gestureWrapper} interpolator="ios">
           <KeyboardAwareScrollView
             bottomOffset={100}
             keyboardDismissMode="interactive"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ flexGrow: 1 }}>
+            contentContainerStyle={styles.contentScrollview}>
             <AppView flex paddingT-60 spread>
               <ScreenHeader
                 title="authentication.login"
@@ -46,3 +47,12 @@ const Login = () => {
 };
 
 export default Login;
+
+const styles = StyleSheet.create({
+  gestureWrapper: {
+    flex: 1,
+  },
+  contentScrollview: {
+    flexGrow: 1,
+  },
+});

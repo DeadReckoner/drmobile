@@ -19,7 +19,11 @@ export const TranslatedText = ({
   const { t } = useLocalization();
 
   return (
-    <AppText body2 textColor {...restProps}>
+    <AppText
+      body2
+      textColor
+      style={[{ includeFontPadding: false }, restProps.style]}
+      {...restProps}>
       {t(translationKey)}
     </AppText>
   );

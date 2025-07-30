@@ -3,7 +3,6 @@ import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 import { Divider } from '@/components/Divider';
 import { AppView } from '@/components/ui';
 import { isIOS } from '@/utils/platform.utils';
-import React from 'react';
 
 export const SocialLogin = () => {
   return (

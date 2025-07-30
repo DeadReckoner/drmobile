@@ -1,23 +1,49 @@
+import { AppCard } from '@/components/AppCard';
+import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
+import { AppImage, AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
-import React from 'react';
+import { JSX } from 'react';
+import { StyleSheet } from 'react-native';
+import { Assets } from 'react-native-ui-lib';
 
-interface CreateTabListItemProps {
-  titleTranslationKey: TranslationKeysType;
-  descriptionTranslationKey: TranslationKeysType;
+interface TaskAndRoadmapCreationItem {
+  titleKey: TranslationKeysType;
+  descriptionKey: TranslationKeysType;
+  type?: 'ai' | 'custom' | 'task';
+  onPress: () => void;
+  icon?: JSX.Element;
 }
 
 export const CreateTabListItem = ({
-  titleTranslationKey,
-  descriptionTranslationKey,
-}: CreateTabListItemProps) => {
+  titleKey,
+  descriptionKey,
+  type = 'task',
+  onPress,
+  icon,
+}: TaskAndRoadmapCreationItem) => {
   return (
-    <AppView row paddingH-16 paddingV-20 bg-cardBG br40 gap-16>
-      <AppView>
-        <TranslatedText body1 translationKey={titleTranslationKey} />
-        <TranslatedText xsm translationKey={descriptionTranslationKey} />
+    <AppCard paddingV-20 onPress={onPress}>
+      <AppView bg-primary br30 center style={styles.iconContainer}>
+        {type === 'ai' && (
+          <AppImage
+            style={[StyleSheet.absoluteFillObject]}
+            source={Assets.logo.aiRoadmapBG}
+          />
+        )}
+        {icon ?? <AppIcon name="addfile" />}
       </AppView>
-    </AppView>
+      <AppView gap-6 style={styles.textContentWrapper}>
+        <TranslatedText body1 translationKey={titleKey} />
+        <TranslatedText xsm translationKey={descriptionKey} />
+      </AppView>
+    </AppCard>
   );
 };
+
+const styles = StyleSheet.create({
+  iconContainer: { width: 50, height: 50 },
+  textContentWrapper: {
+    flex: 1,
+  },
+});

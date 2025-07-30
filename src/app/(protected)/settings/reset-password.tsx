@@ -1,8 +1,7 @@
 import { AppScreen } from '@/components/AppScreen';
-import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
+import { UpdatePasswordForm } from '@/components/auth/UpdatePasswordForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AppView } from '@/components/ui';
-import React from 'react';
 
 const ResetPassword = () => {
   return (
@@ -12,7 +11,7 @@ const ResetPassword = () => {
           title="authentication.reset_password"
           subtitle="authentication.reset_password_subtitle"
         />
-        <ResetPasswordForm />
+        <UpdatePasswordForm />
       </AppView>
     </AppScreen>
   );

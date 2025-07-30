@@ -1,6 +1,4 @@
-import { AppRouterLink } from '@/components/AppLink';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import { AuthErrorType } from '@/hooks/auth/types/auth.types';
@@ -49,53 +47,40 @@ export const ForgotPasswordForm = () => {
     onError,
   });
   return (
-    <AppView flex marginV-40 spread>
-      <AppView>
-        <TranslatedTextInput
-          labelKey="authentication.your_email"
-          placeholderKey="authentication.email_placeholder"
-          onChangeText={handleChange('email')}
-          onBlur={handleBlur('email')}
-          error={touched.email && errors.email}
-          editable={step === 'email'}
-        />
+    <AppView marginV-40>
+      <TranslatedTextInput
+        labelKey="authentication.your_email"
+        placeholderKey="authentication.email_placeholder"
+        onChangeText={handleChange('email')}
+        onBlur={handleBlur('email')}
+        error={touched.email && errors.email}
+        editable={step === 'email'}
+      />
 
-        {step === 'otp' && (
-          <TranslatedTextInput
-            labelKey="authentication.your_otp"
-            placeholderKey="authentication.otp_placeholder"
-            onChangeText={handleOTPChange('otp')}
-            onBlur={handleOTPBlur('otp')}
-            error={otpTouched.otp && otpErrors.otp}
-          />
-        )}
-        {step === 'email' ? (
-          <PrimaryButton
-            label="authentication.send_otp"
-            onPress={handleSubmit}
-            isLoading={isLoading}
-            shouldShowLoader
-          />
-        ) : (
-          <PrimaryButton
-            label="authentication.login"
-            onPress={handleOTPSubmit}
-            isLoading={isOTPLoading}
-            shouldShowLoader
-          />
-        )}
-      </AppView>
-      <AppView row center gap-8 marginB-40 marginT-24>
-        <TranslatedText
-          secondary
-          translationKey="authentication.remember_password"
+      {step === 'otp' && (
+        <TranslatedTextInput
+          labelKey="authentication.your_otp"
+          placeholderKey="authentication.otp_placeholder"
+          onChangeText={handleOTPChange('otp')}
+          onBlur={handleOTPBlur('otp')}
+          error={otpTouched.otp && otpErrors.otp}
         />
-        <AppRouterLink
-          dismissTo
-          href="/login"
-          translationKey="authentication.login"
+      )}
+      {step === 'email' ? (
+        <PrimaryButton
+          label="authentication.send_otp"
+          onPress={handleSubmit}
+          isLoading={isLoading}
+          shouldShowLoader
         />
-      </AppView>
+      ) : (
+        <PrimaryButton
+          label="authentication.login"
+          onPress={handleOTPSubmit}
+          isLoading={isOTPLoading}
+          shouldShowLoader
+        />
+      )}
     </AppView>
   );
 };
