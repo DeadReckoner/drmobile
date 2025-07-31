@@ -1,5 +1,5 @@
+import AppButton from '@/components/AppButton';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppTouchableOpacity } from '@/components/ui';
 import { useToggleAnimation } from '@/hooks/useToggleAnimation';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useEffect } from 'react';
@@ -43,12 +43,11 @@ export const PrimaryButton = ({
   ]);
 
   return (
-    <AppTouchableOpacity
+    <AppButton
       center
       padding-16
       bg-primary
       br30
-      activeOpacity={0.6}
       onPress={onPress}
       disabled={isLoading}>
       <Animated.View style={textAnimatedStyle}>
@@ -65,7 +64,7 @@ export const PrimaryButton = ({
           <ActivityIndicator color={Colors.textOnPrimary} />
         </Animated.View>
       )}
-    </AppTouchableOpacity>
+    </AppButton>
   );
 };
 

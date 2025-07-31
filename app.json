@@ -72,6 +72,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f705a6d0-838c-4b3c-92a4-d3af418ef3d8"
+      }
+    },
+    "owner": "dead-reckoner"
   }
 }

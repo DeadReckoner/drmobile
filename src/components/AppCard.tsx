@@ -1,17 +1,13 @@
-import { AppTouchableOpacity, AppView } from '@/components/ui';
+import AppButton from '@/components/AppButton';
+import { AppView } from '@/components/ui';
 import { TouchableOpacityProps } from 'react-native-ui-lib';
 
 export const AppCard = ({ children, ...props }: TouchableOpacityProps) => {
   return (
-    <AppTouchableOpacity
-      bg-cardBG
-      padding-16
-      br40
-      activeOpacity={0.6}
-      {...props}>
+    <AppButton bg-cardBG padding-16 br40 {...props}>
       <AppView row gap-16>
         {children}
       </AppView>
-    </AppTouchableOpacity>
+    </AppButton>
   );
 };

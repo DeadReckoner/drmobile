@@ -36,7 +36,6 @@ export const {
   clearAuthAction,
 } = authSlice.actions;
 
-export const selectAuth = createAppSelector((state) => state.auth);
 export const selectUser = createAppSelector((state) => state.auth.user);
 
 export const authReducer = authSlice.reducer;

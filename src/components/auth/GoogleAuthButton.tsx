@@ -1,6 +1,7 @@
+import AppButton from '@/components/AppButton';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppImage, AppTouchableOpacity, AppView } from '@/components/ui';
+import { AppImage, AppView } from '@/components/ui';
 import { useGoogleAuthentication } from '@/hooks/auth/useGoogleAuthentication';
 import { useToast } from '@/hooks/useToast';
 import React, { useState } from 'react';
@@ -24,13 +25,12 @@ export const GoogleAuthButton = () => {
   return (
     <AppView>
       {isLoading && <Loader />}
-      <AppTouchableOpacity
+      <AppButton
         row
         center
         br30
         bg-inverseBackground
         style={styles.googleSigninButton}
-        activeOpacity={0.6}
         disabled={isLoading}
         onPress={onPress}>
         <AppImage source={Assets.logo.google} style={styles.logo} />
@@ -40,7 +40,7 @@ export const GoogleAuthButton = () => {
           inverseText
           marginL-6
         />
-      </AppTouchableOpacity>
+      </AppButton>
     </AppView>
   );
 };

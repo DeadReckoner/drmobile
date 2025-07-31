@@ -1,7 +1,7 @@
 import { AppToast } from '@/components/AppToast';
 import { useSupabaseAutoRefresh } from '@/hooks/auth/useSupabaseAuthListener';
 import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectAuth } from '@/store/slices/authSlice';
+import { selectUser } from '@/store/slices/authSlice';
 import { selectTheme } from '@/store/slices/settingsSlice';
 import { resetStackScreenOptions } from '@/utils/navigation.utils';
 import { Stack } from 'expo-router';
@@ -9,7 +9,7 @@ import { StatusBar } from 'react-native';
 
 export const RootNavigator = () => {
   useSupabaseAutoRefresh();
-  const { user } = useAppSelector(selectAuth);
+  const user = useAppSelector(selectUser);
   const theme = useAppSelector(selectTheme);
 
   return (

@@ -17,7 +17,7 @@ const persistedReducer = persistReducer(
     key: 'root',
     version: 1,
     storage: AsyncStorage,
-    blacklist: ['settings'],
+    blacklist: ['roadmapDraft'],
   },
   rootReducer,
 );

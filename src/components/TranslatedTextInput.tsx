@@ -11,6 +11,7 @@ type TranslatedTextProps = TextFieldProps & {
   labelKey: TranslationKeysType;
   placeholderKey?: TranslationKeysType;
   error?: string | boolean;
+  onInputPress?: Function;
 };
 
 export const TranslatedTextInput = ({

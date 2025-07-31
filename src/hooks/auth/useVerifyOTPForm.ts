@@ -52,7 +52,7 @@ export const useVerifyOTPForm = ({
 
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<VerifyOTPSchemaType>({
-      initialValues: { otp: '123456' },
+      initialValues: { otp: '' },
       validationSchema: schema,
       onSubmit: onVerifyOTPSubmit,
     });

@@ -10,7 +10,7 @@ import { Assets } from 'react-native-ui-lib';
 interface TaskAndRoadmapCreationItem {
   titleKey: TranslationKeysType;
   descriptionKey: TranslationKeysType;
-  type?: 'ai' | 'custom' | 'task';
+  type?: 'ai' | 'custom' | 'task' | 'import_plan';
   onPress: () => void;
   icon?: JSX.Element;
 }

@@ -1,4 +1,5 @@
-import { AppTouchableOpacity, AppView } from '@/components/ui';
+import AppButton from '@/components/AppButton';
+import { AppView } from '@/components/ui';
 import { Link } from 'expo-router';
 
 import { Text } from 'react-native';
@@ -6,11 +7,11 @@ import { Text } from 'react-native';
 const Settings = () => {
   return (
     <AppView flex center>
-      <AppTouchableOpacity>
+      <AppButton>
         <Link href="/settings/reset-password">
           <Text>Go to update password</Text>
         </Link>
-      </AppTouchableOpacity>
+      </AppButton>
     </AppView>
   );
 };

@@ -41,6 +41,13 @@ const Create = () => {
           descriptionKey="tabs.create_tab.add_new_task_desc"
           onPress={onAddNewTaskPress}
         />
+        <CreateTabListItem
+          type="import_plan"
+          titleKey="tabs.create_tab.import_plan"
+          descriptionKey="tabs.create_tab.import_plan_desc"
+          onPress={onAddNewTaskPress}
+          icon={<AppIcon name="export" />}
+        />
       </AppView>
     </AppScreen>
   );
