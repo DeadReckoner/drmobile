@@ -10,7 +10,7 @@ export const SocialLogin = () => {
       <GoogleAuthButton />
       {isIOS && (
         <>
-          <Divider margin-8 />
+          <Divider />
           <AppleAuthButton />
         </>
       )}

@@ -46,7 +46,7 @@ export const LoginForm = () => {
           translationKey="authentication.forgot_password"
         />
       </AppView>
-      <Divider />
+      <Divider margin-16 />
       <PrimaryButton
         shouldShowLoader
         label="authentication.login"

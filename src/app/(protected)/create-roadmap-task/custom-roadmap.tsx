@@ -9,7 +9,7 @@ const CustomRoadmap = () => {
   return (
     <AppKeyboardController>
       <HeaderWithBack headerKey="tabs.create_tab.custom_roadmap" />
-      <Divider margin-8 />
+      <Divider />
       <ScreenHeader
         title="tabs.create_tab.build_roadmap_custom"
         subtitle="tabs.create_tab.build_roadmap_custom_desc"

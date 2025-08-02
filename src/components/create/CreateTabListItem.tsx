@@ -1,5 +1,4 @@
 import { AppCard } from '@/components/AppCard';
-import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -24,18 +23,20 @@ export const CreateTabListItem = ({
 }: TaskAndRoadmapCreationItem) => {
   return (
     <AppCard paddingV-20 onPress={onPress}>
-      <AppView bg-primary br30 center style={styles.iconContainer}>
-        {type === 'ai' && (
-          <AppImage
-            style={[StyleSheet.absoluteFillObject]}
-            source={Assets.logo.aiRoadmapBG}
-          />
-        )}
-        {icon ?? <AppIcon name="addfile" />}
-      </AppView>
-      <AppView gap-6 style={styles.textContentWrapper}>
-        <TranslatedText body1 translationKey={titleKey} />
-        <TranslatedText xsm translationKey={descriptionKey} />
+      <AppView row gap-16>
+        <AppView bg-primary br30 center style={styles.iconContainer}>
+          {type === 'ai' && (
+            <AppImage
+              style={[StyleSheet.absoluteFillObject]}
+              source={Assets.logo.aiRoadmapBG}
+            />
+          )}
+          {icon}
+        </AppView>
+        <AppView flex gap-6>
+          <TranslatedText body1 translationKey={titleKey} />
+          <TranslatedText xsm translationKey={descriptionKey} />
+        </AppView>
       </AppView>
     </AppCard>
   );
@@ -43,7 +44,4 @@ export const CreateTabListItem = ({
 
 const styles = StyleSheet.create({
   iconContainer: { width: 50, height: 50 },
-  textContentWrapper: {
-    flex: 1,
-  },
 });

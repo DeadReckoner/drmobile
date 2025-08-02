@@ -75,6 +75,7 @@
       "build_roadmap_custom_desc": "Design your own roadmap from scratch, tailoring every step to your unique vision.",
       "add_new_task": "Add a New Task or Habit",
       "add_new_task_desc": "Create a one-time task or set a recurring habit, whatever you need to keep moving forward.",
+      "add_milestone_task_desc": "Add a new task to the milestone to better manage your roadmap goal.",
       "import_plan": "Import an Existing Plan",
       "import_plan_desc": "Upload any existing roadmap, program, or outline and AI will translate it into a structured, editable plan.",
       "ai_roadmap": "AI Roadmap",

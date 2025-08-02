@@ -39,6 +39,7 @@ const Create = () => {
           type="task"
           titleKey="tabs.create_tab.add_new_task"
           descriptionKey="tabs.create_tab.add_new_task_desc"
+          icon={<AppIcon name="addfile" />}
           onPress={onAddNewTaskPress}
         />
         <CreateTabListItem

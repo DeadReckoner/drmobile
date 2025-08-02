@@ -1,7 +1,7 @@
 import AppButton from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
+import { AppText, AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { router } from 'expo-router';
 import React from 'react';
@@ -10,10 +10,12 @@ interface HeaderWithBackProps {
   headerKey?: TranslationKeysType;
   onBackPress?: () => void;
   onHeaderTitlePress?: () => void;
+  headerText?: string; //For dynamic title strings
 }
 
 export const HeaderWithBack = ({
   headerKey,
+  headerText,
   onBackPress,
   onHeaderTitlePress,
 }: HeaderWithBackProps) => {
@@ -30,12 +32,18 @@ export const HeaderWithBack = ({
       <AppButton center onPress={onBackArrowPress}>
         <AppIcon name="arrowleft" size={28} />
       </AppButton>
-      {!!headerKey && (
+      {(headerKey || headerText) && (
         <AppButton
           center
           disabled={!onHeaderTitlePress}
           onPress={onHeaderTitlePress}>
-          <TranslatedText subtitle1 translationKey={headerKey} />
+          {headerKey ? (
+            <TranslatedText subtitle1 translationKey={headerKey} />
+          ) : (
+            <AppText textColor subtitle1>
+              {headerText}
+            </AppText>
+          )}
         </AppButton>
       )}
     </AppView>

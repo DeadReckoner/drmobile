@@ -1,6 +1,7 @@
 import { AppText } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { StyleSheet } from 'react-native';
 
 import { TextProps } from 'react-native-ui-lib';
 
@@ -22,9 +23,15 @@ export const TranslatedText = ({
     <AppText
       body2
       textColor
-      style={[{ includeFontPadding: false }, restProps.style]}
+      style={[styles.text, restProps.style]}
       {...restProps}>
       {t(translationKey)}
     </AppText>
   );
 };
+
+const styles = StyleSheet.create({
+  text: {
+    includeFontPadding: false,
+  },
+});

@@ -63,7 +63,7 @@ export const SignupForm = () => {
         onBlur={handleBlur('password')}
         error={touched.password && errors.password}
       />
-      <Divider margin-8 />
+      <Divider />
       <PrimaryButton
         shouldShowLoader
         label="authentication.sign_up"
