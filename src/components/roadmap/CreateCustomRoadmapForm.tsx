@@ -16,7 +16,7 @@ const CreateCustomRoadmapForm = () => {
 
   const onSuccessCreateCustomRooadmap = (roadmap: FormRoadmapType) => {
     setRoadmapMetadata(roadmap);
-    router.navigate('/create-roadmap-task/add-task');
+    router.navigate('/roadmap/add-task');
   };
 
   const {

@@ -1,19 +1,18 @@
-import { IconSymbol } from '@/components/AppIcon';
+import { AppIcon } from '@/components/AppIcon';
 import { AppRouterLink } from '@/components/AppLink';
 import { AppScreen } from '@/components/AppScreen';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-
 import { FadeIn } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const CheckEmail = () => {
   return (
-    <AppScreen entering={FadeIn} spread padding-32>
+    <AppScreen entering={FadeIn} spread paddingH-32>
       <AppView />
       <AppView center>
         <AppView center bg-success br100 width={100} height={100}>
-          <IconSymbol name="check" color={Colors.white} size={48} />
+          <AppIcon name="check" color={Colors.white} size={48} />
         </AppView>
         <TranslatedText
           marginT-32

@@ -1,4 +1,4 @@
-import AppButton from '@/components/AppButton';
+import { PrimaryButtonContainer } from '@/components/PrimaryButtonContainer';
 import { TranslatedText } from '@/components/TranslatedText';
 import { useToggleAnimation } from '@/hooks/useToggleAnimation';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -43,13 +43,7 @@ export const PrimaryButton = ({
   ]);
 
   return (
-    <AppButton
-      center
-      padding-16
-      bg-primary
-      br30
-      onPress={onPress}
-      disabled={isLoading}>
+    <PrimaryButtonContainer onPress={onPress} disabled={isLoading}>
       <Animated.View style={textAnimatedStyle}>
         <TranslatedText textOnPrimary buttonLable translationKey={label} />
       </Animated.View>
@@ -64,7 +58,7 @@ export const PrimaryButton = ({
           <ActivityIndicator color={Colors.textOnPrimary} />
         </Animated.View>
       )}
-    </AppButton>
+    </PrimaryButtonContainer>
   );
 };
 

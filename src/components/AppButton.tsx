@@ -16,7 +16,7 @@ const AppButton = ({ onPress, ...restProps }: TouchableOpacityProps) => {
   };
   return (
     <AppTouchableOpacity
-      activeOpacity={0.6}
+      activeOpacity={onPress ? 0.6 : 1}
       onPress={handlePress}
       {...restProps}
     />

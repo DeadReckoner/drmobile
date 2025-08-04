@@ -1,8 +1,6 @@
-import { AppView } from '@/components/ui';
+import { LegendList, LegendListProps } from '@legendapp/list';
 import React from 'react';
-import { FlatList, FlatListProps } from 'react-native';
 
-export const AppList = <T,>(props: FlatListProps<T>) => {
-  const renderFooter = () => <AppView />;
-  return <FlatList ListFooterComponent={renderFooter} {...props} />;
+export const AppList = <T,>(props: LegendListProps<T>) => {
+  return <LegendList<T> recycleItems {...props} />;
 };

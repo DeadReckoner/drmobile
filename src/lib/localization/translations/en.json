@@ -74,6 +74,7 @@
       "build_roadmap_custom": "Create My Own Roadmap",
       "build_roadmap_custom_desc": "Design your own roadmap from scratch, tailoring every step to your unique vision.",
       "add_new_task": "Add a New Task or Habit",
+      "add_new_milestone": "Add new milestone",
       "add_new_task_desc": "Create a one-time task or set a recurring habit, whatever you need to keep moving forward.",
       "add_milestone_task_desc": "Add a new task to the milestone to better manage your roadmap goal.",
       "import_plan": "Import an Existing Plan",
@@ -89,6 +90,8 @@
       "target_completion_date_label": "Target Completion Date",
       "target_completion_date_placeholder": "Select completion date",
       "create_roadmap_button": "Create Roadmap",
+      "no_milestones_yet": "No Milestones yet!",
+      "no_milestones_yet_desc": "Create a milestone to break your roadmap into manageable phases.",
       "errors": {
         "goal_name_required": "Goal name is required",
         "goal_name_invalid": "Enter a valid goal name",
@@ -102,6 +105,9 @@
     }
   },
   "common": {
-    "or": "Or"
+    "or": "Or",
+    "milestones": "Milestones",
+    "next_milestone": "Next Milestone",
+    "days": "Days"
   }
 }

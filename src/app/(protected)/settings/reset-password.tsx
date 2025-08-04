@@ -6,7 +6,7 @@ import { AppView } from '@/components/ui';
 const ResetPassword = () => {
   return (
     <AppScreen>
-      <AppView flex paddingT-60>
+      <AppView flex paddingT-16>
         <ScreenHeader
           title="authentication.reset_password"
           subtitle="authentication.reset_password_subtitle"

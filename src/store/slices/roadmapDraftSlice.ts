@@ -9,6 +9,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type DraftState = {
   roadmap: RoadmapType;
+  selectedMilestone?: MilestoneType | null;
 };
 
 const DRAFT_IDs = {
@@ -29,6 +30,7 @@ const initialState: DraftState = {
     Milestones: [],
     Reason: '',
   },
+  selectedMilestone: null,
 };
 
 const roadmapDraftSlice = createSlice({
@@ -177,6 +179,12 @@ const roadmapDraftSlice = createSlice({
       if (!task) return;
       task.Steps = task.Steps.filter((s) => s.Number !== action.payload.number);
     },
+    setSelectedMilestoneAction(
+      state,
+      action: PayloadAction<MilestoneType | null>,
+    ) {
+      state.selectedMilestone = action.payload;
+    },
   },
 });
 
@@ -192,10 +200,13 @@ export const {
   addStepAction,
   updateStepAction,
   removeStepAction,
+  setSelectedMilestoneAction,
 } = roadmapDraftSlice.actions;
 
 export const selectDraftRoadmap = createAppSelector(
   (state) => state.roadmapDraft.roadmap,
 );
-
+export const selectSelectedMilestone = createAppSelector(
+  (state) => state.roadmapDraft.selectedMilestone,
+);
 export const draftRoadmapReducer = roadmapDraftSlice.reducer;

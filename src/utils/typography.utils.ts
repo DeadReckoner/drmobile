@@ -50,6 +50,11 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
     fontSize: 18,
   },
 
+  subtitle2: {
+    fontFamily: UNBOUNDED_SEMIBOLD,
+    fontSize: 16,
+  },
+
   body1: {
     fontFamily: UNBOUNDED_REGULAR,
     fontSize: 16,

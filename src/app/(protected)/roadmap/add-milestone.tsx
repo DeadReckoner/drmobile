@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-const AddTask = () => {
+const AddMilestone = () => {
   return (
     <View>
-      <Text>AddTask</Text>
+      <Text>AddMilestone</Text>
     </View>
   );
 };
 
-export default AddTask;
+export default AddMilestone;

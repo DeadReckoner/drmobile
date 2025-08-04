@@ -1,23 +1,23 @@
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
-import { CreateTabListItem } from '@/components/create/CreateTabListItem';
 import { Divider } from '@/components/Divider';
+import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { router } from 'expo-router';
 
 const Create = () => {
   const onAIRoadmapPress = () => {
-    router.push('/create-roadmap-task/ai-roadmap');
+    router.push('/roadmap/ai-roadmap');
   };
   const onCustomRoadmapPress = () => {
-    router.push('/create-roadmap-task/custom-roadmap');
+    router.push('/roadmap/custom-roadmap');
   };
   const onAddNewTaskPress = () => {
-    router.push('/create-roadmap-task/add-task');
+    router.push('/task/add-task');
   };
   return (
-    <AppScreen>
+    <AppScreen safeArea>
       <TranslatedText h2 translationKey="tabs.create" />
       <Divider />
       <AppView gap-16>

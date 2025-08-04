@@ -1,11 +1,10 @@
-import { ChildWrapperProps } from '@/components/types/component.types';
 import { AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
 import { SplashScreen } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
 
-export const SplashScreenController = ({ children }: ChildWrapperProps) => {
+export const SplashScreenController = ({ children }: PropsWithChildren) => {
   const { initializeTheme } = useAppTheme();
   const { initializeLocalization } = useLocalization();
   const [isReady, setIsAppReady] = useState(false);

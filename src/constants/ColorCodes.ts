@@ -12,6 +12,7 @@ export const LightColorCodes = {
 
   screenBG: '#FFFFFF',
   cardBG: '#ebebebff',
+  lightCardBG: 'E6E6E1',
 
   inverseBackground: '#000000',
   inverseText: '#FFFFFF',
@@ -19,6 +20,8 @@ export const LightColorCodes = {
   bottomTabBar: '#FFFFFF',
   tabInactiveColor: '#989898',
   tabActiveColor: '#252C30',
+
+  lineDivider: '#98989830',
 };
 
 export const DarkColorCodes = {
@@ -36,6 +39,7 @@ export const DarkColorCodes = {
 
   screenBG: '#121414',
   cardBG: '#191C1E',
+  lightCardBG: '#22262A',
 
   inverseBackground: '#FFFFFF',
   inverseText: '#000000',
@@ -43,4 +47,6 @@ export const DarkColorCodes = {
   bottomTabBar: '#242629',
   tabInactiveColor: '#B2B8B6', //secondary
   tabActiveColor: '#FFFFFF',
+
+  lineDivider: '#B2B8B630', //secondary
 };
