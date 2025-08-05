@@ -3,11 +3,11 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import CreateCustomRoadmapForm from '@/components/roadmap/CreateCustomRoadmapForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import React from 'react';
+import { StyleSheet } from 'react-native';
 
 const CustomRoadmap = () => {
   return (
-    <AppKeyboardController>
+    <AppKeyboardController containerStyle={styles.container}>
       <HeaderWithBack headerKey="tabs.create_tab.custom_roadmap" />
       <Divider />
       <ScreenHeader
@@ -22,3 +22,9 @@ const CustomRoadmap = () => {
 };
 
 export default CustomRoadmap;
+
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 60,
+  },
+});

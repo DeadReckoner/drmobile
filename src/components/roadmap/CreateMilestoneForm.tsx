@@ -3,7 +3,6 @@ import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import { useMilestoneForm } from '@/hooks/roadmap/useMilestoneForm';
 import { router } from 'expo-router';
-import React from 'react';
 
 const CreateMilestoneForm = () => {
   const { handleBlur, handleChange, touched, errors, handleSubmit } =

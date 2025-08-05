@@ -1,14 +1,21 @@
 import { AppScreen } from '@/components/AppScreen';
 import { AppView } from '@/components/ui';
 import React, { PropsWithChildren } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import {
   KeyboardAwareScrollView,
   KeyboardGestureArea,
   KeyboardToolbar,
 } from 'react-native-keyboard-controller';
 
-export const AppKeyboardController = ({ children }: PropsWithChildren) => {
+interface AppKeyboardControllerProps extends PropsWithChildren {
+  containerStyle?: StyleProp<ViewStyle>;
+}
+
+export const AppKeyboardController = ({
+  children,
+  containerStyle,
+}: AppKeyboardControllerProps) => {
   return (
     <>
       <AppScreen>
@@ -17,9 +24,8 @@ export const AppKeyboardController = ({ children }: PropsWithChildren) => {
             keyboardDismissMode="interactive"
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
-            contentOffset={{ y: 100, x: 0 }}
             bottomOffset={100}
-            contentContainerStyle={styles.contentScrollview}>
+            contentContainerStyle={[styles.contentScrollview, containerStyle]}>
             <AppView flex>{children}</AppView>
           </KeyboardAwareScrollView>
         </KeyboardGestureArea>

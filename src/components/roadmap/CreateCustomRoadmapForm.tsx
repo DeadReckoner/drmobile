@@ -8,7 +8,6 @@ import { useCreateCustomRoadmapForm } from '@/hooks/roadmap/useCreateCustomRoadm
 import { useDraftRoadmapBuilder } from '@/hooks/roadmap/useDraftRoadmapBuilder';
 import { DateUtils } from '@/utils/date.utils';
 import { router } from 'expo-router';
-import React from 'react';
 import { StyleSheet } from 'react-native';
 
 const CreateCustomRoadmapForm = () => {
@@ -16,7 +15,7 @@ const CreateCustomRoadmapForm = () => {
 
   const onSuccessCreateCustomRooadmap = (roadmap: FormRoadmapType) => {
     setRoadmapMetadata(roadmap);
-    router.navigate('/(protected)/task/add-task');
+    router.navigate('/(protected)/roadmap/roadmap-details');
   };
 
   const {

@@ -5,7 +5,6 @@ import CreateMilestoneForm from '@/components/roadmap/CreateMilestoneForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
-import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 const AddMilestone = () => {

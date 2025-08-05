@@ -10,7 +10,6 @@ import type { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setSelectedMilestoneAction } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
-import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -68,7 +67,7 @@ export const MilestonesList = ({
       keyExtractor={(item) => item.MilestoneId}
       renderItem={renderMilestone}
       ItemSeparatorComponent={renderItemSeparator}
-      ListFooterComponent={renderFooterComponent}
+      ListFooterComponent={milestones.length > 0 ? renderFooterComponent : null}
       ListEmptyComponent={renderEmptyMilestoneComponent}
       contentContainerStyle={[
         styles.listContentContainer,

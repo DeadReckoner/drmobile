@@ -4,7 +4,6 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { router } from 'expo-router';
-import React from 'react';
 
 interface HeaderWithBackProps {
   headerKey?: TranslationKeysType;

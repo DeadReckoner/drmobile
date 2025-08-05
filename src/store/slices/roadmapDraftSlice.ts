@@ -12,35 +12,19 @@ type DraftState = {
   selectedMilestone?: MilestoneType | null;
 };
 
-// const DRAFT_IDs = {
-//   roadmap: `Roadmap-${Date.now().toString()}`,
-//   milestone: `Roadmap-${Date.now().toString()}`,
-//   tasks: `Roadmap-${Date.now().toString()}`,
-// };
 const getId = (type: 'roadmap' | 'milestone' | 'task') =>
   `${type}-${Date.now().toString()}`;
 
 const initialState: DraftState = {
   roadmap: {
-    RoadmapId: getId('roadmap'),
+    RoadmapId: '',
     UserId: '',
-    Goal: 'Weight loss',
-    Description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown print",
+    Goal: '',
+    Description: '',
     Days: 0,
     Completed: false,
     StartDate: undefined,
-    Milestones: [
-      {
-        Day: 0,
-        Description: 'Milestone description',
-        MilestoneId: 'first-mile',
-        Reached: false,
-        RoadmapId: '',
-        SubGoal: 'My first milestone',
-        Tasks: [],
-      },
-    ],
+    Milestones: [],
     Reason: '',
   },
   selectedMilestone: null,
