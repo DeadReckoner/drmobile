@@ -1,9 +1,9 @@
-import {
+import type {
   MilestoneType,
   RoadmapType,
   StepType,
   TaskType,
-} from '@/hooks/create/types/roadmap.types';
+} from '@/hooks/roadmap/types/roadmap.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -12,22 +12,35 @@ type DraftState = {
   selectedMilestone?: MilestoneType | null;
 };
 
-const DRAFT_IDs = {
-  roadmap: `Roadmap-${Date.now().toString()}`,
-  milestone: `Roadmap-${Date.now().toString()}`,
-  tasks: `Roadmap-${Date.now().toString()}`,
-};
+// const DRAFT_IDs = {
+//   roadmap: `Roadmap-${Date.now().toString()}`,
+//   milestone: `Roadmap-${Date.now().toString()}`,
+//   tasks: `Roadmap-${Date.now().toString()}`,
+// };
+const getId = (type: 'roadmap' | 'milestone' | 'task') =>
+  `${type}-${Date.now().toString()}`;
 
 const initialState: DraftState = {
   roadmap: {
-    RoadmapId: DRAFT_IDs.roadmap,
+    RoadmapId: getId('roadmap'),
     UserId: '',
-    Goal: '',
-    Description: '',
+    Goal: 'Weight loss',
+    Description:
+      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown print",
     Days: 0,
     Completed: false,
     StartDate: undefined,
-    Milestones: [],
+    Milestones: [
+      {
+        Day: 0,
+        Description: 'Milestone description',
+        MilestoneId: 'first-mile',
+        Reached: false,
+        RoadmapId: '',
+        SubGoal: 'My first milestone',
+        Tasks: [],
+      },
+    ],
     Reason: '',
   },
   selectedMilestone: null,
@@ -56,7 +69,7 @@ const roadmapDraftSlice = createSlice({
     ) => {
       state.roadmap.Milestones.push({
         ...action.payload,
-        MilestoneId: DRAFT_IDs.milestone,
+        MilestoneId: getId('milestone'),
         RoadmapId: state.roadmap.RoadmapId,
         Tasks: [],
       });
@@ -86,7 +99,7 @@ const roadmapDraftSlice = createSlice({
       if (!milestone) return;
       milestone.Tasks.push({
         ...action.payload.task,
-        TaskId: DRAFT_IDs.tasks,
+        TaskId: getId('task'),
         MilestoneId: action.payload.milestoneId,
         Steps: [],
       });

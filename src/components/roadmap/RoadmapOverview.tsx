@@ -2,7 +2,7 @@ import { AppCard } from '@/components/AppCard';
 import { LineDivider } from '@/components/LineDivider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
-import { RoadmapType } from '@/hooks/create/types/roadmap.types';
+import type { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 

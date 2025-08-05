@@ -2,6 +2,7 @@ import { AuthErrorType, UserType } from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
@@ -9,10 +10,9 @@ import * as Yup from 'yup';
 const createVerifyOTPValidationSchema = (
   t: (_: TranslationKeysType) => string,
 ) => {
+  const otp = t('authentication.your_otp');
   return Yup.object({
-    otp: Yup.string()
-      .label(t('authentication.your_otp'))
-      .required(t('authentication.errors.otp_required')),
+    otp: Yup.string().label(otp).required(isRequiredMessage(otp, t)),
   });
 };
 

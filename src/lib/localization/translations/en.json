@@ -51,13 +51,6 @@
         "play_services_not_availabel": "Google Play Services are not available."
       },
       "email": {
-        "email_required": "Email is required",
-        "email_invalid": "Enter a valid email",
-        "firstname_required": "Name is required",
-        "firstname_invalid": "Enter a valid name",
-        "lastname_required": "Name is required",
-        "lastname_invalid": "Enter a valid name",
-        "password_required": "Password is required",
         "password_complexity": "Password must include an uppercase letter, lowercase letter, number and special character of each."
       },
       "otp_required": "OTP is required"
@@ -75,6 +68,7 @@
       "build_roadmap_custom_desc": "Design your own roadmap from scratch, tailoring every step to your unique vision.",
       "add_new_task": "Add a New Task or Habit",
       "add_new_milestone": "Add new milestone",
+      "add_new_task_btn": "Add new task",
       "add_new_task_desc": "Create a one-time task or set a recurring habit, whatever you need to keep moving forward.",
       "add_milestone_task_desc": "Add a new task to the milestone to better manage your roadmap goal.",
       "import_plan": "Import an Existing Plan",
@@ -91,23 +85,23 @@
       "target_completion_date_placeholder": "Select completion date",
       "create_roadmap_button": "Create Roadmap",
       "no_milestones_yet": "No Milestones yet!",
-      "no_milestones_yet_desc": "Create a milestone to break your roadmap into manageable phases.",
-      "errors": {
-        "goal_name_required": "Goal name is required",
-        "goal_name_invalid": "Enter a valid goal name",
-        "goal_desc_required": "Goal description is required",
-        "goal_desc_invalid": "Enter a valid Goal description",
-        "goal_reason_required": "Goal reason is required",
-        "goal_reason_invalid": "Enter a valid goal reason",
-        "goal_date_required": "Completion date is required",
-        "goal_date_invalid": "Enter a valid completion date"
-      }
+      "add_new_milestone_desc": "Create a milestone to break your roadmap into manageable phases.",
+      "milestone_name_label": "Milestone Name",
+      "milestone_name_placeholder": "Enter milestone name",
+      "milestone_desc_label": "Milestone Description",
+      "milestone_desc_placeholder": "Enter milestone description",
+      "task_name_label": "Task Name",
+      "task_name_placeholder": "Enter task name",
+      "task_desc_label": "Task Description",
+      "task_desc_placeholder": "Enter task description"
     }
   },
   "common": {
     "or": "Or",
     "milestones": "Milestones",
     "next_milestone": "Next Milestone",
-    "days": "Days"
+    "days": "Days",
+    "is_required": "is required",
+    "is_invalid": "is invalid!"
   }
 }

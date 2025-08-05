@@ -23,7 +23,7 @@ export const EmptyMilestoneListPlaceholder = ({
         <TranslatedText
           xsm
           center
-          translationKey="tabs.create_tab.no_milestones_yet_desc"
+          translationKey="tabs.create_tab.add_new_milestone_desc"
         />
       </AppView>
       <Divider margin-16 />

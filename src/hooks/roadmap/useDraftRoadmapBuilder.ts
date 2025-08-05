@@ -1,9 +1,9 @@
-import {
+import type {
   MilestoneType,
   RoadmapType,
   StepType,
   TaskType,
-} from '@/hooks/create/types/roadmap.types';
+} from '@/hooks/roadmap/types/roadmap.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addMilestoneAction,

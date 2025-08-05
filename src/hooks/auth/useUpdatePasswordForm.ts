@@ -5,6 +5,7 @@ import {
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { isRequiredMessage } from '@/utils/form.utils';
 import { VALIDATION_RULES } from '@/utils/validation.utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
@@ -13,14 +14,15 @@ import * as Yup from 'yup';
 const createResetPasswordValidationSchema = (
   t: (_: TranslationKeysType) => string,
 ) => {
+  const passwordLabel = t('authentication.new_password');
   return Yup.object({
     password: Yup.string()
-      .label(t('authentication.new_password'))
+      .label(passwordLabel)
       .matches(
         VALIDATION_RULES.password,
         t('authentication.errors.email.password_complexity'),
       )
-      .required(t('authentication.errors.email.password_required')),
+      .required(isRequiredMessage(passwordLabel, t)),
   });
 };
 

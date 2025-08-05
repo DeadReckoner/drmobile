@@ -1,19 +1,30 @@
 import { Divider } from '@/components/Divider';
 import { MilestonesList } from '@/components/roadmap/MilestonesList';
 import { RoadmapOverview } from '@/components/roadmap/RoadmapOverview';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import { RoadmapType } from '@/hooks/create/types/roadmap.types';
+import type { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { router } from 'expo-router';
 
 interface RoadmapDetailsProps {
   roadmap: RoadmapType;
 }
 export const RoadmapDetails = ({ roadmap }: RoadmapDetailsProps) => {
+  const handleOnAddNewMilestone = () => {
+    router.navigate({
+      pathname: '/(protected)/roadmap/add-milestone',
+    });
+  };
   return (
     <AppView flex>
       <RoadmapOverview roadmap={roadmap} />
-      <Divider marginT-32 />
-      <MilestonesList milestones={roadmap.Milestones} />
-      <Divider marginT-32 />
+      <Divider marginT-16 />
+      <TranslatedText body1 marginB-16 translationKey="common.milestones" />
+      <Divider marginT-16 />
+      <MilestonesList
+        milestones={roadmap.Milestones}
+        handleOnAddNewMilestone={handleOnAddNewMilestone}
+      />
     </AppView>
   );
 };

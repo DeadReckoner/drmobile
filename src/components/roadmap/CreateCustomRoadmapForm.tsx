@@ -3,9 +3,9 @@ import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
-import { FormRoadmapType } from '@/hooks/create/types/roadmap.types';
-import { useCreateCustomRoadmapForm } from '@/hooks/create/useCreateCustomRoadmapForm';
-import { useDraftRoadmapBuilder } from '@/hooks/create/useDraftRoadmapBuilder';
+import type { FormRoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { useCreateCustomRoadmapForm } from '@/hooks/roadmap/useCreateCustomRoadmapForm';
+import { useDraftRoadmapBuilder } from '@/hooks/roadmap/useDraftRoadmapBuilder';
 import { DateUtils } from '@/utils/date.utils';
 import { router } from 'expo-router';
 import React from 'react';
@@ -16,7 +16,7 @@ const CreateCustomRoadmapForm = () => {
 
   const onSuccessCreateCustomRooadmap = (roadmap: FormRoadmapType) => {
     setRoadmapMetadata(roadmap);
-    router.navigate('/roadmap/add-task');
+    router.navigate('/(protected)/task/add-task');
   };
 
   const {

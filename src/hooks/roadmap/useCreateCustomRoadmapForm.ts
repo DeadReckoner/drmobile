@@ -1,26 +1,35 @@
-import { FormRoadmapType } from '@/hooks/create/types/roadmap.types';
+import type { FormRoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { DateUtils } from '@/utils/date.utils';
+import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 const createCustomRoadmapValidationSchema = (
   t: (_: TranslationKeysType) => string,
 ) => {
+  const goal = t('tabs.create_tab.goal_name_label');
+  const goalDescription = t('tabs.create_tab.goal_description_label');
+  const reason = t('authentication.your_email');
+  const targetDate = t('authentication.password');
   return Yup.object({
     goal: Yup.string()
-      .min(2, t('tabs.create_tab.errors.goal_name_invalid'))
-      .required(t('tabs.create_tab.errors.goal_desc_required')),
+      .label(goal)
+      .min(2, isInvalidMessage(goal, t))
+      .required(isRequiredMessage(goal, t)),
     goalDescription: Yup.string()
-      .min(2, t('tabs.create_tab.errors.goal_desc_required'))
-      .required(t('tabs.create_tab.errors.goal_desc_required')),
+      .label(goalDescription)
+      .min(2, isInvalidMessage(goalDescription, t))
+      .required(isRequiredMessage(goalDescription, t)),
     reason: Yup.string()
-      .min(2, t('tabs.create_tab.errors.goal_reason_invalid'))
-      .required(t('tabs.create_tab.errors.goal_reason_required')),
+      .label(reason)
+      .min(2, isInvalidMessage(reason, t))
+      .required(isRequiredMessage(reason, t)),
     targetDate: Yup.string()
-      .min(2, t('tabs.create_tab.errors.goal_date_invalid'))
-      .required(t('tabs.create_tab.errors.goal_date_required')),
+      .label(targetDate)
+      .min(2, isInvalidMessage(targetDate, t))
+      .required(isRequiredMessage(targetDate, t)),
   });
 };
 

@@ -1,28 +1,31 @@
+import AppButton from '@/components/AppButton';
 import { AppList } from '@/components/AppList';
 import { LineDivider } from '@/components/LineDivider';
+import { ListAddItemIcon } from '@/components/ListAddItemIcon';
 import { EmptyMilestoneListPlaceholder } from '@/components/roadmap/EmptyMilestoneListPlaceholder';
 import { MilestoneListItem } from '@/components/roadmap/MilestoneListItem';
 import { TranslatedText } from '@/components/TranslatedText';
-import { MilestoneType } from '@/hooks/create/types/roadmap.types';
+import { AppView } from '@/components/ui';
+import type { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setSelectedMilestoneAction } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
-import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { Colors } from 'react-native-ui-lib';
 
 interface MilestonesListProps {
   milestones: MilestoneType[];
+  handleOnAddNewMilestone: () => void;
 }
 
-export const MilestonesList = ({ milestones = [] }: MilestonesListProps) => {
+export const MilestonesList = ({
+  milestones = [],
+  handleOnAddNewMilestone,
+}: MilestonesListProps) => {
   const dispatch = useAppDispatch();
   const onMilestonePress = (milestone: MilestoneType | null) => {
     dispatch(setSelectedMilestoneAction(milestone));
-  };
-
-  const onEmptyMilestoneButtonPress = () => {
-    router.push('/roadmap/add-milestone');
   };
 
   const renderMilestone = ({
@@ -38,21 +41,40 @@ export const MilestonesList = ({ milestones = [] }: MilestonesListProps) => {
   };
 
   const renderEmptyMilestoneComponent = () => (
-    <EmptyMilestoneListPlaceholder onPress={onEmptyMilestoneButtonPress} />
+    <EmptyMilestoneListPlaceholder onPress={handleOnAddNewMilestone} />
   );
 
+  const renderItemSeparator = () => <LineDivider marginV-0 />;
+
+  const renderFooterComponent = () => {
+    return (
+      <AppButton onPress={handleOnAddNewMilestone}>
+        <LineDivider marginV-0 />
+        <AppView bg- row padding-16 centerV gap-16>
+          <ListAddItemIcon />
+          <TranslatedText
+            body2
+            translationKey="tabs.create_tab.add_new_milestone"
+          />
+        </AppView>
+      </AppButton>
+    );
+  };
+
   return (
-    <>
-      <TranslatedText body1 marginB-32 translationKey="common.milestones" />
-      <AppList
-        data={milestones}
-        keyExtractor={(item) => item.MilestoneId}
-        renderItem={renderMilestone}
-        ItemSeparatorComponent={() => <LineDivider marginV-0 />}
-        ListEmptyComponent={renderEmptyMilestoneComponent}
-        contentContainerStyle={styles.listContentContainer}
-      />
-    </>
+    <AppList
+      scrollEnabled={false}
+      data={milestones}
+      keyExtractor={(item) => item.MilestoneId}
+      renderItem={renderMilestone}
+      ItemSeparatorComponent={renderItemSeparator}
+      ListFooterComponent={renderFooterComponent}
+      ListEmptyComponent={renderEmptyMilestoneComponent}
+      contentContainerStyle={[
+        styles.listContentContainer,
+        { backgroundColor: Colors.cardBG },
+      ]}
+    />
   );
 };
 

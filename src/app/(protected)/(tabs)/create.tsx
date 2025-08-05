@@ -8,13 +8,13 @@ import { router } from 'expo-router';
 
 const Create = () => {
   const onAIRoadmapPress = () => {
-    router.push('/roadmap/ai-roadmap');
+    router.navigate('/roadmap/ai-roadmap');
   };
   const onCustomRoadmapPress = () => {
-    router.push('/roadmap/custom-roadmap');
+    router.navigate('/roadmap/custom-roadmap');
   };
   const onAddNewTaskPress = () => {
-    router.push('/task/add-task');
+    router.navigate('/roadmap/roadmap-details');
   };
   return (
     <AppScreen safeArea>

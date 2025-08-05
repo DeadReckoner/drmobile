@@ -2,27 +2,27 @@ import { AuthErrorType, UserType } from '@/hooks/auth/types/auth.types';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { VALIDATION_RULES } from '@/utils/validation.utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import * as Yup from 'yup';
 
 const createLoginValidationSchema = (t: (_: TranslationKeysType) => string) => {
+  const email = t('authentication.your_email');
+  const password = t('authentication.password');
   return Yup.object({
     email: Yup.string()
-      .label(t('authentication.your_email'))
-      .matches(
-        VALIDATION_RULES.email,
-        t('authentication.errors.email.email_invalid'),
-      )
-      .required(t('authentication.errors.email.email_required')),
+      .label(email)
+      .matches(VALIDATION_RULES.email, isInvalidMessage(email, t))
+      .required(isRequiredMessage(email, t)),
     password: Yup.string()
-      .label(t('authentication.password'))
+      .label(password)
       .matches(
         VALIDATION_RULES.password,
         t('authentication.errors.email.password_complexity'),
       )
-      .required(t('authentication.errors.email.password_required')),
+      .required(isRequiredMessage(password, t)),
   });
 };
 

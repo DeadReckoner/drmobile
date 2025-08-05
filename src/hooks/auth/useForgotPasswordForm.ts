@@ -5,6 +5,7 @@ import {
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { VALIDATION_RULES } from '@/utils/validation.utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
@@ -13,14 +14,12 @@ import * as Yup from 'yup';
 const createForgotPasswordValidationSchema = (
   t: (_: TranslationKeysType) => string,
 ) => {
+  const emailLabel = t('authentication.your_email');
   return Yup.object({
     email: Yup.string()
-      .label(t('authentication.your_email'))
-      .matches(
-        VALIDATION_RULES.email,
-        t('authentication.errors.email.email_invalid'),
-      )
-      .required(t('authentication.errors.email.email_required')),
+      .label(emailLabel)
+      .matches(VALIDATION_RULES.email, isInvalidMessage(emailLabel, t))
+      .required(isRequiredMessage(emailLabel, t)),
   });
 };
 

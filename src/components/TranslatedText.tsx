@@ -2,7 +2,6 @@ import { AppText } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { StyleSheet } from 'react-native';
-
 import { TextProps } from 'react-native-ui-lib';
 
 /**

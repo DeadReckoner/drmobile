@@ -1,6 +1,6 @@
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
-import {
+import type {
   SettingsStateType,
   ThemeModeType,
   ToastStateType,
@@ -38,7 +38,10 @@ const settingsSlice = createSlice({
       state.language = action.payload;
     },
 
-    showToastAction(state, action: PayloadAction<Partial<ToastStateType>>) {
+    showToastAction(
+      state,
+      action: PayloadAction<Pick<ToastStateType, 'toastProps'>>,
+    ) {
       state.toast.isVisible = true;
       state.toast.toastProps = action.payload.toastProps;
     },

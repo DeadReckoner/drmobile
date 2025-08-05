@@ -5,6 +5,7 @@ import {
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { VALIDATION_RULES } from '@/utils/validation.utils';
 import { useFormik } from 'formik';
 import { useState } from 'react';
@@ -13,29 +14,30 @@ import * as Yup from 'yup';
 const createSignupValidationSchema = (
   t: (_: TranslationKeysType) => string,
 ) => {
+  const firstName = t('authentication.first_name');
+  const lastName = t('authentication.last_name');
+  const email = t('authentication.your_email');
+  const passwordLabel = t('authentication.password');
   return Yup.object({
     firstName: Yup.string()
-      .label(t('authentication.first_name'))
-      .min(2, t('authentication.errors.email.firstname_invalid'))
-      .required(t('authentication.errors.email.firstname_required')),
+      .label(firstName)
+      .min(2, isInvalidMessage(firstName, t))
+      .required(isRequiredMessage(firstName, t)),
     lastName: Yup.string()
-      .label(t('authentication.last_name'))
-      .min(2, t('authentication.errors.email.lastname_invalid'))
-      .required(t('authentication.errors.email.lastname_required')),
+      .label(lastName)
+      .min(2, isInvalidMessage(lastName, t))
+      .required(isRequiredMessage(lastName, t)),
     email: Yup.string()
-      .label(t('authentication.your_email'))
-      .matches(
-        VALIDATION_RULES.email,
-        t('authentication.errors.email.email_invalid'),
-      )
-      .required(t('authentication.errors.email.email_required')),
+      .label(email)
+      .matches(VALIDATION_RULES.email, isInvalidMessage(email, t))
+      .required(isRequiredMessage(email, t)),
     password: Yup.string()
-      .label(t('authentication.password'))
+      .label(passwordLabel)
       .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
+        VALIDATION_RULES.password,
         t('authentication.errors.email.password_complexity'),
       )
-      .required(t('authentication.errors.email.password_required')),
+      .required(isRequiredMessage(passwordLabel, t)),
   });
 };
 
