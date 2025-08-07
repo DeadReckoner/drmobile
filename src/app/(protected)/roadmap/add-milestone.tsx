@@ -91,7 +91,7 @@ const AddMilestone = () => {
               entering={FadeInDown.duration(300).delay(100)}
               exiting={FadeOutDown.duration(200)}>
               <AppText subtitle1 textColor marginB-8>
-                {selectedMilestone?.SubGoal} Hello
+                {selectedMilestone?.SubGoal}
               </AppText>
               <AppText captionLight textColor style={{ fontSize: 14 }}>
                 {selectedMilestone?.Description}

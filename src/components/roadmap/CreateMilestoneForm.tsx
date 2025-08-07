@@ -32,7 +32,11 @@ export const CreateMilestoneForm = ({ mode }: { mode: FormEditModeType }) => {
         value={values.milestoneDescription}
       />
       <PrimaryButton
-        label="tabs.create_tab.add_new_milestone"
+        label={
+          mode === 'create'
+            ? 'tabs.create_tab.add_new_milestone'
+            : 'tabs.create_tab.update_milestone'
+        }
         onPress={handleSubmit}
       />
     </AppView>

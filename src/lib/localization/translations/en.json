@@ -70,6 +70,7 @@
       "add_new_milestone": "Add new milestone",
       "add_new_task": "Add new task",
       "update_task": "Update task",
+      "update_milestone": "Update Milestone",
       "add_new_task_desc": "Create a one-time task or set a recurring habit, whatever you need to keep moving forward.",
       "add_milestone_task_desc": "Add a new task to the milestone to better manage your roadmap goal.",
       "import_plan": "Import an Existing Plan",
