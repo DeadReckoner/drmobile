@@ -1,7 +1,12 @@
+import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { addMilestoneAction } from '@/store/slices/roadmapDraftSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  addMilestoneAction,
+  selectSelectedMilestone,
+  updateMilestoneAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -29,31 +34,50 @@ type MilestoneSchemaType = Yup.InferType<
 
 interface MilestoneFormHookProps {
   onSuccess?: () => void;
+  mode: FormEditModeType;
 }
 
-export const useMilestoneForm = ({ onSuccess }: MilestoneFormHookProps) => {
+export const useMilestoneForm = ({
+  mode,
+  onSuccess,
+}: MilestoneFormHookProps) => {
   const { t } = useLocalization();
   const schema = createMilestoneValidationSchema(t);
+  const selectedMilestone = useAppSelector(selectSelectedMilestone);
   const dispatch = useAppDispatch();
+  const canEdit = mode === 'edit';
 
   const onMilestoneSubmit = async ({
     milestoneName,
     milestoneDescription,
   }: MilestoneSchemaType) => {
-    dispatch(
-      addMilestoneAction({
-        Day: 0,
-        Description: milestoneDescription,
-        Reached: false,
-        SubGoal: milestoneName,
-      }),
-    );
+    if (canEdit) {
+      dispatch(
+        updateMilestoneAction({
+          Description: milestoneDescription,
+          SubGoal: milestoneName,
+        }),
+      );
+    } else {
+      dispatch(
+        addMilestoneAction({
+          Day: 0,
+          Description: milestoneDescription,
+          Reached: false,
+          SubGoal: milestoneName,
+        }),
+      );
+    }
+
     onSuccess?.();
   };
 
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<MilestoneSchemaType>({
-      initialValues: { milestoneName: '', milestoneDescription: '' },
+      initialValues: {
+        milestoneName: (canEdit && selectedMilestone?.SubGoal) || '',
+        milestoneDescription: (canEdit && selectedMilestone?.Description) || '',
+      },
       validationSchema: schema,
       onSubmit: onMilestoneSubmit,
     });

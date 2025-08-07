@@ -72,3 +72,5 @@ export type FormRoadmapType = Pick<
   RoadmapType,
   'Goal' | 'Description' | 'Days' | 'Reason'
 >;
+
+export type FormEditModeType = 'edit' | 'create';

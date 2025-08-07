@@ -1,4 +1,4 @@
-import AppButton from '@/components/AppButton';
+import { AppButton } from '@/components/AppButton';
 import { TouchableOpacityProps } from 'react-native-ui-lib';
 
 export const PrimaryButtonContainer = ({

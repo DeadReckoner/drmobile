@@ -10,7 +10,7 @@ import { DateUtils } from '@/utils/date.utils';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
-const CreateCustomRoadmapForm = () => {
+export const CreateCustomRoadmapForm = () => {
   const { setRoadmapMetadata } = useDraftRoadmapBuilder();
 
   const onSuccessCreateCustomRooadmap = (roadmap: FormRoadmapType) => {
@@ -84,5 +84,3 @@ const CreateCustomRoadmapForm = () => {
     </AppView>
   );
 };
-
-export default CreateCustomRoadmapForm;

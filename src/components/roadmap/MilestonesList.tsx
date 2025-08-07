@@ -1,4 +1,4 @@
-import AppButton from '@/components/AppButton';
+import { AppButton } from '@/components/AppButton';
 import { AppList } from '@/components/AppList';
 import { LineDivider } from '@/components/LineDivider';
 import { ListAddItemIcon } from '@/components/ListAddItemIcon';
@@ -6,27 +6,27 @@ import { EmptyMilestoneListPlaceholder } from '@/components/roadmap/EmptyMilesto
 import { MilestoneListItem } from '@/components/roadmap/MilestoneListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import type { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setSelectedMilestoneAction } from '@/store/slices/roadmapDraftSlice';
+import type {
+  MilestoneType,
+  TaskType,
+} from '@/hooks/roadmap/types/roadmap.types';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 interface MilestonesListProps {
   milestones: MilestoneType[];
-  handleOnAddNewMilestone: () => void;
+  onAddNewMilestonePress: () => void;
+  onMilestonePress: (_milestone: MilestoneType | null) => void;
+  onTaskPress: (_task: TaskType) => void;
 }
 
 export const MilestonesList = ({
   milestones = [],
-  handleOnAddNewMilestone,
+  onAddNewMilestonePress,
+  onMilestonePress,
+  onTaskPress,
 }: MilestonesListProps) => {
-  const dispatch = useAppDispatch();
-  const onMilestonePress = (milestone: MilestoneType | null) => {
-    dispatch(setSelectedMilestoneAction(milestone));
-  };
-
   const renderMilestone = ({
     item,
   }: LegendListRenderItemProps<MilestoneType>) => {
@@ -35,19 +35,20 @@ export const MilestonesList = ({
         key={item.MilestoneId}
         milestone={item}
         onMilestonePress={onMilestonePress}
+        onTaskPress={onTaskPress}
       />
     );
   };
 
   const renderEmptyMilestoneComponent = () => (
-    <EmptyMilestoneListPlaceholder onPress={handleOnAddNewMilestone} />
+    <EmptyMilestoneListPlaceholder onPress={onAddNewMilestonePress} />
   );
 
   const renderItemSeparator = () => <LineDivider marginV-0 />;
 
   const renderFooterComponent = () => {
     return (
-      <AppButton onPress={handleOnAddNewMilestone}>
+      <AppButton onPress={onAddNewMilestonePress}>
         <LineDivider marginV-0 />
         <AppView bg- row padding-16 centerV gap-16>
           <ListAddItemIcon />

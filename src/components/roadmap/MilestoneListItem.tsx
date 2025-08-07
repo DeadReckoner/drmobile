@@ -1,18 +1,28 @@
-import AppButton from '@/components/AppButton';
+import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppList } from '@/components/AppList';
+import { LineDivider } from '@/components/LineDivider';
 import { ListAddItemIcon } from '@/components/ListAddItemIcon';
+import { MilestoneTaskItem } from '@/components/roadmap/MilestoneTaskItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppCheckbox, AppText, AppView } from '@/components/ui';
 import type {
   MilestoneType,
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectSelectedMilestone } from '@/store/slices/roadmapDraftSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectSelectedMilestone,
+  setSelectedMilestoneAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
+import {
+  MenuComponentRef,
+  MenuView,
+  NativeActionEvent,
+} from '@react-native-menu/menu';
 import { router } from 'expo-router';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated, {
   Easing,
@@ -28,15 +38,19 @@ import { Colors } from 'react-native-ui-lib';
 interface MilestoneListItemProps {
   milestone: MilestoneType;
   onMilestonePress: (_milestone: MilestoneType | null) => void;
+  onTaskPress: (_task: TaskType) => void;
 }
 
-const MilestoneListI = ({
+export const MilestoneListItem = ({
   milestone,
   onMilestonePress,
+  onTaskPress,
 }: MilestoneListItemProps) => {
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
   const sharedHeight = useSharedValue(0);
   const chevronDeg = useSharedValue('0deg');
+  const menuRef = useRef<MenuComponentRef>(null);
+  const dispatch = useAppDispatch();
 
   const isExpanded = useMemo(
     () => Number(milestone.MilestoneId === selectedMilestone?.MilestoneId),
@@ -85,43 +99,61 @@ const MilestoneListI = ({
     router.navigate('/(protected)/task/add-task');
   };
 
-  const renderItem = ({ item }: LegendListRenderItemProps<TaskType>) => (
-    <AppView>
-      <AppText>{item.Title}</AppText>
-    </AppView>
+  const renderTaskItem = ({ item }: LegendListRenderItemProps<TaskType>) => (
+    <MilestoneTaskItem task={item} onPress={() => onTaskPress(item)} />
   );
+
+  const renderItemSeparator = () => <LineDivider marginV-0 />;
 
   const renderFooterComponent = () => {
     return (
       <AppButton onPress={handleOnAddNewTask}>
-        <AppView row padding-16 centerV gap-16>
+        <LineDivider marginV-0 />
+        <AppView row padding-16 paddingL-32 centerV gap-16>
           <ListAddItemIcon />
-          <TranslatedText
-            body2
-            translationKey="tabs.create_tab.add_new_task_btn"
-          />
+          <TranslatedText body2 translationKey="tabs.create_tab.add_new_task" />
         </AppView>
       </AppButton>
     );
   };
 
+  const onMenuAction = ({ nativeEvent }: NativeActionEvent) => {
+    if (nativeEvent.event === 'open') {
+      dispatch(setSelectedMilestoneAction(milestone));
+      router.navigate({
+        pathname: '/roadmap/add-milestone',
+        params: { mode: 'edit' },
+      });
+    }
+  };
+
   return (
     <AppView bg-cardBG key={milestone.MilestoneId}>
       <AppButton onPress={onPress}>
-        <AppView row padding-16 gap-16 center>
-          <AppCheckbox
-            bg-primary
-            borderRadius={4}
-            containerStyle={{ borderWidth: 0 }}
-            value={milestone.Reached}
-          />
-          <AppText flex textColor body2>
-            {milestone.SubGoal}
-          </AppText>
-          <AppView reanimated style={chevronStyle}>
-            <AppIcon set="Feather" name={'chevron-down'} />
+        <MenuView
+          ref={menuRef}
+          title={milestone.SubGoal}
+          themeVariant="dark"
+          onPressAction={onMenuAction}
+          actions={MENU_ACTIONS}
+          shouldOpenOnLongPress={true}>
+          <AppView row padding-16 gap-16 center>
+            <AppCheckbox
+              bg-primary
+              borderRadius={4}
+              containerStyle={{ borderWidth: 0 }}
+              value={milestone.Reached}
+            />
+            <AppText flex textColor body2>
+              {milestone.SubGoal}
+            </AppText>
+            <AppButton onPress={onPress} style={{ pointerEvents: 'box-only' }}>
+              <AppView reanimated style={chevronStyle}>
+                <AppIcon set="Feather" name={'chevron-down'} />
+              </AppView>
+            </AppButton>
           </AppView>
-        </AppView>
+        </MenuView>
       </AppButton>
 
       <Animated.View
@@ -132,12 +164,13 @@ const MilestoneListI = ({
           onLayout={({ nativeEvent }) => {
             sharedHeight.value = nativeEvent.layout.height;
           }}
-          style={styles.content}>
+          style={[styles.content, { backgroundColor: Colors.lightCardBG }]}>
           <AppList
             scrollEnabled={false}
             data={milestone.Tasks}
             ListFooterComponent={renderFooterComponent}
-            renderItem={renderItem}
+            ItemSeparatorComponent={renderItemSeparator}
+            renderItem={renderTaskItem}
           />
         </Animated.View>
       </Animated.View>
@@ -145,13 +178,24 @@ const MilestoneListI = ({
   );
 };
 
-export const MilestoneListItem = React.memo(MilestoneListI);
-
 const styles = StyleSheet.create({
   content: {
     width: '100%',
     position: 'absolute',
     top: 0,
-    left: 16,
   },
 });
+
+const MENU_ACTIONS = [
+  {
+    id: 'open',
+    title: 'Open Milestone',
+  },
+  {
+    id: 'cancel',
+    title: 'Cancel',
+    attributes: {
+      destructive: true,
+    },
+  },
+];

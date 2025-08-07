@@ -1,4 +1,4 @@
-import AppButton from '@/components/AppButton';
+import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
@@ -29,7 +29,7 @@ export const HeaderWithBack = ({
   return (
     <AppView row gap-16>
       <AppButton center onPress={onBackArrowPress}>
-        <AppIcon name="arrowleft" size={28} />
+        <AppIcon name="arrowleft" />
       </AppButton>
       {(headerKey || headerText) && (
         <AppButton

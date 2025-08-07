@@ -1,4 +1,4 @@
-import AppButton from '@/components/AppButton';
+import { AppButton } from '@/components/AppButton';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppView } from '@/components/ui';

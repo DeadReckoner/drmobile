@@ -10,7 +10,9 @@ const RoadmapDetailsPage = () => {
   const roadmap = useAppSelector(selectDraftRoadmap);
   return (
     <AppScreen>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}>
         <HeaderWithBack headerText={roadmap.Goal} />
         <Divider />
         <RoadmapDetails roadmap={roadmap} />

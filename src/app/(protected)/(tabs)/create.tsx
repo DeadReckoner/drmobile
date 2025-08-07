@@ -12,7 +12,7 @@ const Create = () => {
     router.navigate('/roadmap/ai-roadmap');
   };
   const onCustomRoadmapPress = () => {
-    router.navigate('/roadmap/custom-roadmap');
+    router.navigate('/roadmap/create-custom-roadmap');
   };
   const onAddNewTaskPress = () => {
     router.navigate('/roadmap/roadmap-details');
@@ -39,7 +39,7 @@ const Create = () => {
           />
           <CreateTabListItem
             type="task"
-            titleKey="tabs.create_tab.add_new_task"
+            titleKey="tabs.create_tab.add_new_task_or_habit"
             descriptionKey="tabs.create_tab.add_new_task_desc"
             icon={<AppIcon name="addfile" />}
             onPress={onAddNewTaskPress}

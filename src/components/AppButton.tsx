@@ -4,7 +4,7 @@ import { TouchableOpacityProps } from 'react-native-ui-lib';
 
 const DELAY = 300;
 
-const AppButton = ({ onPress, ...restProps }: TouchableOpacityProps) => {
+export const AppButton = ({ onPress, ...restProps }: TouchableOpacityProps) => {
   const lastPress = useRef(0);
 
   const handlePress = () => {
@@ -22,5 +22,3 @@ const AppButton = ({ onPress, ...restProps }: TouchableOpacityProps) => {
     />
   );
 };
-
-export default AppButton;

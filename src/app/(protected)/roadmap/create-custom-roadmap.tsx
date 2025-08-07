@@ -1,11 +1,11 @@
 import { AppKeyboardController } from '@/components/AppKeyboardController';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
-import CreateCustomRoadmapForm from '@/components/roadmap/CreateCustomRoadmapForm';
+import { CreateCustomRoadmapForm } from '@/components/roadmap/CreateCustomRoadmapForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { StyleSheet } from 'react-native';
 
-const CustomRoadmap = () => {
+const CreateCustomRoadmap = () => {
   return (
     <AppKeyboardController containerStyle={styles.container}>
       <HeaderWithBack headerKey="tabs.create_tab.custom_roadmap" />
@@ -21,7 +21,7 @@ const CustomRoadmap = () => {
   );
 };
 
-export default CustomRoadmap;
+export default CreateCustomRoadmap;
 
 const styles = StyleSheet.create({
   container: {

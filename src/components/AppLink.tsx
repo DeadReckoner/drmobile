@@ -1,4 +1,4 @@
-import AppButton from '@/components/AppButton';
+import { AppButton } from '@/components/AppButton';
 import { TranslatedText } from '@/components/TranslatedText';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { Link, LinkProps } from 'expo-router';

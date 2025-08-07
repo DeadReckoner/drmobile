@@ -33,7 +33,7 @@ export const DarkColorCodes = {
   textOnPrimary: '#FFFFFF',
   outline: '#616161',
 
-  error: '#ED4848',
+  error: '#FF4E4E',
   success: '#3BAF66',
   warning: '#C1A700',
 

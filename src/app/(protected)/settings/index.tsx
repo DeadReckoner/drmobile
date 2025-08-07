@@ -1,4 +1,4 @@
-import AppButton from '@/components/AppButton';
+import { AppButton } from '@/components/AppButton';
 import { AppView } from '@/components/ui';
 import { Link } from 'expo-router';
 

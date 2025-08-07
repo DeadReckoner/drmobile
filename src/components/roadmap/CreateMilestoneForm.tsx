@@ -1,12 +1,14 @@
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
+import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useMilestoneForm } from '@/hooks/roadmap/useMilestoneForm';
 import { router } from 'expo-router';
 
-const CreateMilestoneForm = () => {
-  const { handleBlur, handleChange, touched, errors, handleSubmit } =
+export const CreateMilestoneForm = ({ mode }: { mode: FormEditModeType }) => {
+  const { handleBlur, handleChange, touched, errors, handleSubmit, values } =
     useMilestoneForm({
+      mode,
       onSuccess: () => {
         router.back();
       },
@@ -19,6 +21,7 @@ const CreateMilestoneForm = () => {
         onChangeText={handleChange('milestoneName')}
         onBlur={handleBlur('milestoneName')}
         error={touched.milestoneName && errors.milestoneName}
+        value={values.milestoneName}
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.milestone_desc_label"
@@ -26,6 +29,7 @@ const CreateMilestoneForm = () => {
         onChangeText={handleChange('milestoneDescription')}
         onBlur={handleBlur('milestoneDescription')}
         error={touched.milestoneDescription && errors.milestoneDescription}
+        value={values.milestoneDescription}
       />
       <PrimaryButton
         label="tabs.create_tab.add_new_milestone"
@@ -34,5 +38,3 @@ const CreateMilestoneForm = () => {
     </AppView>
   );
 };
-
-export default CreateMilestoneForm;

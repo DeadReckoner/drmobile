@@ -66,9 +66,10 @@
       "build_roadmap_ai_desc": "Let our AI generate a step-by-step roadmap based on your objectives and priorities.",
       "build_roadmap_custom": "Create My Own Roadmap",
       "build_roadmap_custom_desc": "Design your own roadmap from scratch, tailoring every step to your unique vision.",
-      "add_new_task": "Add a New Task or Habit",
+      "add_new_task_or_habit": "Add a New Task or Habit",
       "add_new_milestone": "Add new milestone",
-      "add_new_task_btn": "Add new task",
+      "add_new_task": "Add new task",
+      "update_task": "Update task",
       "add_new_task_desc": "Create a one-time task or set a recurring habit, whatever you need to keep moving forward.",
       "add_milestone_task_desc": "Add a new task to the milestone to better manage your roadmap goal.",
       "import_plan": "Import an Existing Plan",
@@ -102,6 +103,9 @@
     "next_milestone": "Next Milestone",
     "days": "Days",
     "is_required": "is required",
-    "is_invalid": "is invalid!"
+    "is_invalid": "is invalid!",
+    "deleted_successfully": "Deleted successfully",
+    "updated_successfully": "Updated successfully",
+    "created_successfully": "Created successfully"
   }
 }
