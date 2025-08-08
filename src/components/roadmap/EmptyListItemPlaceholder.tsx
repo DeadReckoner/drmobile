@@ -4,36 +4,37 @@ import { Divider } from '@/components/Divider';
 import { PrimaryButtonContainer } from '@/components/PrimaryButtonContainer';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 
-interface EmptyMilestoneListPlaceholderProps {
+interface EmptyListItemPlaceholderProps {
   onPress: () => void;
+  title: TranslationKeysType;
+  subtitle?: TranslationKeysType;
+  btnText: TranslationKeysType;
 }
 
-export const EmptyMilestoneListPlaceholder = ({
+export const EmptyListItemPlaceholder = ({
+  title,
+  subtitle,
+  btnText,
   onPress,
-}: EmptyMilestoneListPlaceholderProps) => {
+}: EmptyListItemPlaceholderProps) => {
   return (
     <AppCard paddingV-40>
       <AppView paddingH-16 center>
-        <TranslatedText
-          subtitle2
-          translationKey="tabs.create_tab.no_milestones_yet"
-        />
-        <Divider />
-        <TranslatedText
-          xsm
-          center
-          translationKey="tabs.create_tab.add_new_milestone_desc"
-        />
+        <TranslatedText subtitle2 translationKey={title} />
+        {!!subtitle && (
+          <>
+            <Divider />
+            <TranslatedText xsm center translationKey={subtitle} />
+          </>
+        )}
       </AppView>
       <Divider margin-16 />
       <PrimaryButtonContainer row onPress={onPress}>
         <AppIcon name="plus" size={18} />
         <Divider margin-4 />
-        <TranslatedText
-          body2
-          translationKey="tabs.create_tab.add_new_milestone"
-        />
+        <TranslatedText body2 translationKey={btnText} />
       </PrimaryButtonContainer>
     </AppCard>
   );

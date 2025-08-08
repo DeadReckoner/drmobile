@@ -2,7 +2,7 @@ import { AppButton } from '@/components/AppButton';
 import { AppList } from '@/components/AppList';
 import { LineDivider } from '@/components/LineDivider';
 import { ListAddItemIcon } from '@/components/ListAddItemIcon';
-import { EmptyMilestoneListPlaceholder } from '@/components/roadmap/EmptyMilestoneListPlaceholder';
+import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { MilestoneListItem } from '@/components/roadmap/MilestoneListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
@@ -41,7 +41,12 @@ export const MilestonesList = ({
   };
 
   const renderEmptyMilestoneComponent = () => (
-    <EmptyMilestoneListPlaceholder onPress={onAddNewMilestonePress} />
+    <EmptyListItemPlaceholder
+      title="tabs.create_tab.no_milestones_yet"
+      subtitle="tabs.create_tab.milestone_desc_placeholder"
+      btnText="tabs.create_tab.add_new_milestone"
+      onPress={onAddNewMilestonePress}
+    />
   );
 
   const renderItemSeparator = () => <LineDivider marginV-0 />;

@@ -96,7 +96,7 @@ export const MilestoneListItem = ({
   );
 
   const handleOnAddNewTask = () => {
-    router.navigate('/(protected)/task/add-task');
+    router.navigate('/(protected)/task/add-edit-task');
   };
 
   const renderTaskItem = ({ item }: LegendListRenderItemProps<TaskType>) => (
@@ -121,7 +121,7 @@ export const MilestoneListItem = ({
     if (nativeEvent.event === 'open') {
       dispatch(setSelectedMilestoneAction(milestone));
       router.navigate({
-        pathname: '/roadmap/add-milestone',
+        pathname: '/roadmap/add-edit-milestone',
         params: { mode: 'edit' },
       });
     }

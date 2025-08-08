@@ -25,18 +25,13 @@ export const RoadmapDetails = ({ roadmap }: RoadmapDetailsProps) => {
     dispatch(setSelectedMilestoneAction(milestone));
   };
   const handleOnAddNewMilestone = () => {
-    router.navigate({
-      pathname: '/(protected)/roadmap/add-milestone',
-      params: {
-        roadmapId: roadmap.RoadmapId,
-      },
-    });
+    router.navigate('/(protected)/roadmap/add-edit-milestone');
   };
 
   const handleOnTaskPress = (task: TaskType) => {
     dispatch(setSelectedTaskAction(task));
     router.navigate({
-      pathname: '/task/add-task',
+      pathname: '/task/add-edit-task',
       params: { mode: 'edit' },
     });
   };

@@ -3,7 +3,8 @@ import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
-import { CreateTaskForm } from '@/components/roadmap/CreateTaskForm';
+import { LineDivider } from '@/components/LineDivider';
+import { CreateMilestoneForm } from '@/components/roadmap/CreateMilestoneForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AppText, AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
@@ -11,33 +12,31 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
-  removeTaskAction,
+  removeMilestoneAction,
   selectSelectedMilestone,
-  selectSelectedTask,
 } from '@/store/slices/roadmapDraftSlice';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import Animated, {
+import {
   FadeInDown,
   FadeOutDown,
   LinearTransition,
 } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
-const AddTask = () => {
+const AddMilestone = () => {
   const { mode } = useLocalSearchParams<{ mode: FormEditModeType }>();
-  const dispatch = useAppDispatch();
-  const selectedMilestone = useAppSelector(selectSelectedMilestone);
-  const selectedTask = useAppSelector(selectSelectedTask);
-  const { showToast } = useToast();
-  const { t } = useLocalization();
   const [isEditing, setIsEditing] = useState(false);
-
   const canEdit = mode === 'edit';
 
+  const dispatch = useAppDispatch();
+  const selectedMilestone = useAppSelector(selectSelectedMilestone);
+  const { showToast } = useToast();
+  const { t } = useLocalization();
+
   const onDelete = () => {
-    dispatch(removeTaskAction());
+    dispatch(removeMilestoneAction());
     showToast({
       type: 'success',
       message: t('common.deleted_successfully'),
@@ -47,11 +46,9 @@ const AddTask = () => {
 
   return (
     <AppScreen>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <AppView spread row centerV>
-          <HeaderWithBack headerText={selectedMilestone?.SubGoal} />
+          <HeaderWithBack />
           {canEdit && (
             <AppView row gap-12 center>
               <AppButton onPress={() => setIsEditing((edit) => !edit)}>
@@ -74,40 +71,47 @@ const AddTask = () => {
           paddingL-4
           layout={LinearTransition.springify().damping(15).stiffness(150)}>
           {!canEdit && (
-            <Animated.View
+            <AppView
+              reanimated
               entering={FadeInDown.duration(300).delay(100)}
               exiting={FadeOutDown.duration(200)}>
               <ScreenHeader
-                title="tabs.create_tab.add_new_task"
-                subtitle="tabs.create_tab.add_new_task_desc"
+                title="tabs.create_tab.add_new_milestone"
+                subtitle="tabs.create_tab.add_new_milestone_desc"
                 titleProps={{ body1: true }}
                 subtileProps={{ xsm: true }}
-                marginT-0
               />
               <Divider margin-8 />
-              <CreateTaskForm mode="create" />
-            </Animated.View>
+              <CreateMilestoneForm mode="create" />
+            </AppView>
           )}
 
-          {selectedTask && canEdit && !isEditing && (
-            <Animated.View
+          {selectedMilestone && canEdit && !isEditing && (
+            <AppView
+              reanimated
+              bg-lightCardBG
+              padding-16
+              br30
               entering={FadeInDown.duration(300).delay(100)}
               exiting={FadeOutDown.duration(200)}>
-              <AppText subtitle1 textColor marginB-8>
-                {selectedTask?.Title}
+              <AppText body1 textColor>
+                {selectedMilestone?.SubGoal}
               </AppText>
+              <LineDivider marginV-16 />
               <AppText captionLight textColor style={{ fontSize: 14 }}>
-                {selectedTask?.Description}
+                {selectedMilestone?.Description}
               </AppText>
-            </Animated.View>
+            </AppView>
           )}
 
           {isEditing && (
-            <Animated.View
+            <AppView
+              paddingT-16
+              reanimated
               entering={FadeInDown.duration(300).delay(100)}
               exiting={FadeOutDown.duration(200)}>
-              <CreateTaskForm mode="edit" />
-            </Animated.View>
+              <CreateMilestoneForm mode="edit" />
+            </AppView>
           )}
         </AppView>
       </ScrollView>
@@ -115,10 +119,8 @@ const AddTask = () => {
   );
 };
 
-export default AddTask;
+export default AddMilestone;
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    paddingTop: 60,
-  },
+  scrollContainer: { paddingTop: 60 },
 });

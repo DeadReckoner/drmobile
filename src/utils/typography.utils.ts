@@ -42,7 +42,8 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   captionLight: {
     fontFamily: UNBOUNDED_LIGHT,
     fontSize: 12,
-    lineHeight: 18,
+    lineHeight: 22,
+    letterSpacing: 1,
   },
 
   subtitle1: {

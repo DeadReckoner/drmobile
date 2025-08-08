@@ -3,13 +3,26 @@ import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useMilestoneForm } from '@/hooks/roadmap/useMilestoneForm';
+import { useLocalization } from '@/hooks/useLocalization';
+import { useToast } from '@/hooks/useToast';
 import { router } from 'expo-router';
 
 export const CreateMilestoneForm = ({ mode }: { mode: FormEditModeType }) => {
+  const { showToast } = useToast();
+  const { t } = useLocalization();
+
   const { handleBlur, handleChange, touched, errors, handleSubmit, values } =
     useMilestoneForm({
       mode,
       onSuccess: () => {
+        showToast({
+          type: 'success',
+          message: t(
+            mode === 'create'
+              ? 'common.created_successfully'
+              : 'common.updated_successfully',
+          ),
+        });
         router.back();
       },
     });
