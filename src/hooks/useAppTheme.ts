@@ -30,19 +30,23 @@ export const useAppTheme = () => {
     });
   };
 
-  const loadTextFieldTheme = () => {
+  const loadComponentThemes = () => {
     ThemeManager.setComponentTheme('TextField', {
       color: Colors.textColor,
       labelStyle: Typography.body2,
       labelColor: Colors.textColor,
       placeholderTextColor: Colors.secondary,
     });
+    ThemeManager.setComponentTheme('Checkbox', {
+      color: Colors.primary,
+      style: { backgroundColor: Colors.primary, borderRadius: 4 },
+    });
   };
 
   const initializeTheme = () => {
     loadTypography();
     loadColorSchemes();
-    loadTextFieldTheme();
+    loadComponentThemes();
     loadAssets();
     Colors.setScheme(theme);
     dispatch(setThemeAction(theme));

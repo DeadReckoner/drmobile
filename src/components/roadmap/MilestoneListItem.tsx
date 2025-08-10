@@ -162,6 +162,7 @@ export const MilestoneListItem = ({
           }}
           style={[styles.content, { backgroundColor: Colors.lightCardBG }]}>
           <AppList
+            keyExtractor={(task) => task.TaskId}
             scrollEnabled={false}
             data={milestone.Tasks}
             ListFooterComponent={renderFooterComponent}

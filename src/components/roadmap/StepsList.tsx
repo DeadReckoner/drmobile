@@ -10,6 +10,7 @@ import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addStepAction,
   selectSelectedTask,
+  updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import React from 'react';
@@ -27,16 +28,23 @@ const StepsList = () => {
     );
   };
 
-  const renderItem = ({ item: task }: LegendListRenderItemProps<StepType>) => (
+  const onCompleteStep = (value: boolean, step: StepType) => {
+    dispatch(
+      updateStepAction({
+        Completed: value,
+        Number: step.Number,
+      }),
+    );
+  };
+
+  const renderItem = ({ item: step }: LegendListRenderItemProps<StepType>) => (
     <AppView row padding-16 gap-16 center>
       <AppCheckbox
-        bg-primary
-        borderRadius={4}
-        containerStyle={{ borderWidth: 0 }}
-        value={task.Completed}
+        value={step.Completed}
+        onValueChange={(value) => onCompleteStep(value, step)}
       />
       <AppText flex textColor body2>
-        {task.Description}
+        {step.Description}
       </AppText>
     </AppView>
   );
@@ -59,6 +67,7 @@ const StepsList = () => {
       <AppCard padding-0>
         <AppList
           data={task?.Steps || []}
+          keyExtractor={(s) => s.Number.toString()}
           renderItem={renderItem}
           ListEmptyComponent={renderEmptyItem}
           ItemSeparatorComponent={() => <LineDivider marginV-0 />}

@@ -126,15 +126,8 @@ const roadmapDraftSlice = createSlice({
       state,
       action: PayloadAction<Pick<StepType, 'Description'>>,
     ) => {
-      const milestone = state.roadmap.Milestones.find(
-        (m) => m.MilestoneId === state.selectedTask?.MilestoneId,
-      );
-      if (!milestone) return;
-      const task = milestone.Tasks.find(
-        (t) => t.TaskId === state.selectedTask?.TaskId,
-      );
-
-      if (!task) return;
+      if (!state.selectedTask) return;
+      const task = state.selectedTask;
       const stepNumber = task.Steps.length + 1;
       task.Steps.push({
         ...action.payload,
@@ -143,26 +136,17 @@ const roadmapDraftSlice = createSlice({
         Number: stepNumber,
       });
     },
-    updateStepAction: (
-      state,
-      action: PayloadAction<{
-        milestoneId: string;
-        taskId: string;
-        step: StepType;
-      }>,
-    ) => {
-      const milestone = state.roadmap.Milestones.find(
-        (m) => m.MilestoneId === action.payload.milestoneId,
-      );
-      if (!milestone) return;
-      const task = milestone.Tasks.find(
-        (t) => t.TaskId === action.payload.taskId,
-      );
-      if (!task) return;
-      const idx = task.Steps.findIndex(
-        (s) => s.Number === action.payload.step.Number,
-      );
-      if (idx !== -1) task.Steps[idx] = action.payload.step;
+    updateStepAction: (state, action: PayloadAction<Partial<StepType>>) => {
+      if (!state.selectedMilestone || !state.selectedTask) return;
+      state.selectedTask.Steps = state.selectedTask.Steps.map((step) => {
+        if (step.Number === action.payload.Number) {
+          return {
+            ...step,
+            ...action.payload,
+          };
+        }
+        return step;
+      });
     },
     removeStepAction: (
       state,
