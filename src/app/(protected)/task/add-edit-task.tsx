@@ -16,14 +16,11 @@ import {
   removeTaskAction,
   selectSelectedTask,
 } from '@/store/slices/roadmapDraftSlice';
+import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import {
-  FadeInDown,
-  FadeOutDown,
-  LinearTransition,
-} from 'react-native-reanimated';
+import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const AddTask = () => {
@@ -76,8 +73,8 @@ const AddTask = () => {
           {!canEdit && (
             <AppView
               reanimated
-              entering={FadeInDown.duration(300).delay(100)}
-              exiting={FadeOutDown.duration(200)}>
+              entering={Animations.Entry.FadeInDown}
+              exiting={Animations.Exit.FadeOutDown}>
               <ScreenHeader
                 title="tabs.create_tab.add_new_task"
                 subtitle="tabs.create_tab.add_new_task_desc"
@@ -91,33 +88,30 @@ const AddTask = () => {
           )}
 
           {selectedTask && canEdit && !isEditing && (
-            <>
-              <AppView
-                reanimated
-                bg-lightCardBG
-                padding-16
-                br30
-                entering={FadeInDown.duration(300).delay(100)}
-                exiting={FadeOutDown.duration(200)}>
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring}
+              exiting={Animations.Exit.FadeOutDown}>
+              <AppView bg-lightCardBG padding-16 br30>
                 <AppText body1 textColor>
                   {selectedTask?.Title}
                 </AppText>
-                <LineDivider marginV-16 />
-                <AppText captionLight textColor style={{ fontSize: 14 }}>
+                <LineDivider marginV-12 marginB-8 />
+                <AppText captionLight textColor>
                   {selectedTask?.Description}
                 </AppText>
               </AppView>
               <Divider margin-16 />
               <StepsList />
-            </>
+            </AppView>
           )}
 
           {isEditing && (
             <AppView
               reanimated
               paddingT-16
-              entering={FadeInDown.duration(300).delay(100)}
-              exiting={FadeOutDown.duration(200)}>
+              entering={Animations.Entry.FadeInDown}
+              exiting={Animations.Exit.FadeOutDown}>
               <CreateTaskForm mode="edit" />
             </AppView>
           )}

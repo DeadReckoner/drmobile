@@ -1,4 +1,5 @@
 import { AppCard } from '@/components/AppCard';
+import { AppList } from '@/components/AppList';
 import { Divider } from '@/components/Divider';
 import { LineDivider } from '@/components/LineDivider';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
@@ -10,9 +11,8 @@ import {
   addStepAction,
   selectSelectedTask,
 } from '@/store/slices/roadmapDraftSlice';
+import { LegendListRenderItemProps } from '@legendapp/list';
 import React from 'react';
-import { ListRenderItem } from 'react-native';
-import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
 import { useDispatch } from 'react-redux';
 
 const StepsList = () => {
@@ -27,7 +27,7 @@ const StepsList = () => {
     );
   };
 
-  const renderItem: ListRenderItem<StepType> = ({ item: task }) => (
+  const renderItem = ({ item: task }: LegendListRenderItemProps<StepType>) => (
     <AppView row padding-16 gap-16 center>
       <AppCheckbox
         bg-primary
@@ -57,9 +57,7 @@ const StepsList = () => {
       <TranslatedText body1 translationKey="common.steps" />
       <Divider marginV-8 />
       <AppCard padding-0>
-        <Animated.FlatList
-          layout={LinearTransition}
-          entering={FadeIn.delay(300).duration(300)}
+        <AppList
           data={task?.Steps || []}
           renderItem={renderItem}
           ListEmptyComponent={renderEmptyItem}

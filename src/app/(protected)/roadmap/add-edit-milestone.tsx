@@ -15,14 +15,10 @@ import {
   removeMilestoneAction,
   selectSelectedMilestone,
 } from '@/store/slices/roadmapDraftSlice';
+import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import {
-  FadeInDown,
-  FadeOutDown,
-  LinearTransition,
-} from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const AddMilestone = () => {
@@ -66,22 +62,17 @@ const AddMilestone = () => {
         </AppView>
         <Divider margin-16 />
 
-        <AppView
-          reanimated
-          paddingL-4
-          layout={LinearTransition.springify().damping(15).stiffness(150)}>
+        <AppView paddingL-4>
           {!canEdit && (
-            <AppView
-              reanimated
-              entering={FadeInDown.duration(300).delay(100)}
-              exiting={FadeOutDown.duration(200)}>
+            <AppView>
               <ScreenHeader
                 title="tabs.create_tab.add_new_milestone"
                 subtitle="tabs.create_tab.add_new_milestone_desc"
                 titleProps={{ body1: true }}
                 subtileProps={{ xsm: true }}
+                marginT-0
               />
-              <Divider margin-8 />
+              <Divider margin-16 />
               <CreateMilestoneForm mode="create" />
             </AppView>
           )}
@@ -92,13 +83,13 @@ const AddMilestone = () => {
               bg-lightCardBG
               padding-16
               br30
-              entering={FadeInDown.duration(300).delay(100)}
-              exiting={FadeOutDown.duration(200)}>
+              entering={Animations.Entry.FadeInDownWithSpring}
+              exiting={Animations.Exit.FadeOutDown}>
               <AppText body1 textColor>
                 {selectedMilestone?.SubGoal}
               </AppText>
-              <LineDivider marginV-16 />
-              <AppText captionLight textColor style={{ fontSize: 14 }}>
+              <LineDivider marginV-12 marginB-8 />
+              <AppText captionLight textColor>
                 {selectedMilestone?.Description}
               </AppText>
             </AppView>
@@ -106,10 +97,9 @@ const AddMilestone = () => {
 
           {isEditing && (
             <AppView
-              paddingT-16
               reanimated
-              entering={FadeInDown.duration(300).delay(100)}
-              exiting={FadeOutDown.duration(200)}>
+              entering={Animations.Entry.FadeInDown}
+              exiting={Animations.Exit.FadeOutDown}>
               <CreateMilestoneForm mode="edit" />
             </AppView>
           )}

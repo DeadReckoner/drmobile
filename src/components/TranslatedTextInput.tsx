@@ -18,6 +18,7 @@ export const TranslatedTextInput = ({
   labelKey,
   placeholderKey,
   error,
+  editable = true,
   ...restProps
 }: TranslatedTextProps) => {
   const { t } = useLocalization();
@@ -26,9 +27,16 @@ export const TranslatedTextInput = ({
     <AppView marginB-16>
       <AppTextField
         body2
-        fieldStyle={[styles.fieldStyle, { borderColor: Colors.secondary }]}
+        fieldStyle={[
+          styles.fieldStyle,
+          {
+            borderColor: Colors.secondary,
+            opacity: editable ? 1 : 0.3,
+          },
+        ]}
         labelProps={{ 'marginB-8': true }}
         label={t(labelKey)}
+        multiline
         placeholder={placeholderKey && t(placeholderKey)}
         {...restProps}
       />
@@ -46,6 +54,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 16,
+    maxHeight: 150,
   },
   labelStyle: {
     marginBottom: 8,

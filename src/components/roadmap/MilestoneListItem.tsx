@@ -26,8 +26,6 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import Animated, {
   Easing,
-  FadeInUp,
-  FadeOutUp,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
@@ -157,8 +155,6 @@ export const MilestoneListItem = ({
       </AppButton>
 
       <Animated.View
-        entering={FadeInUp.duration(300)}
-        exiting={FadeOutUp.duration(300)}
         style={[bodyStyle, { backgroundColor: Colors.lightCardBG }]}>
         <Animated.View
           onLayout={({ nativeEvent }) => {
