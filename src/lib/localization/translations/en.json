@@ -72,6 +72,7 @@
       "add_new_step": "Add new step",
       "update_task": "Update task",
       "update_milestone": "Update Milestone",
+      "update_step": "Update Step",
       "add_new_task_desc": "Create a one-time task or set a recurring habit, whatever you need to keep moving forward.",
       "add_milestone_task_desc": "Add a new task to the milestone to better manage your roadmap goal.",
       "import_plan": "Import an Existing Plan",
@@ -98,7 +99,9 @@
       "task_name_label": "Task Name",
       "task_name_placeholder": "Enter task name",
       "task_desc_label": "Task Description",
-      "task_desc_placeholder": "Enter task description"
+      "task_desc_placeholder": "Enter task description",
+      "step_label": "Step",
+      "step_desc_placeholder": "Enter step description"
     }
   },
   "common": {

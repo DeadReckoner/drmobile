@@ -1,18 +1,20 @@
+import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppList } from '@/components/AppList';
 import { Divider } from '@/components/Divider';
 import { LineDivider } from '@/components/LineDivider';
+import { ListAddItemIcon } from '@/components/ListAddItemIcon';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppCheckbox, AppText, AppView } from '@/components/ui';
 import { StepType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
-  addStepAction,
   selectSelectedTask,
   updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
+import { router } from 'expo-router';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -21,11 +23,20 @@ const StepsList = () => {
   const dispatch = useDispatch();
 
   const onAddNewStepPress = () => {
-    dispatch(
-      addStepAction({
-        Description: Math.random().toString(),
-      }),
-    );
+    router.navigate({
+      pathname: '/task/add-edit-step',
+    });
+  };
+
+  const onStepPress = (step: StepType) => {
+    router.navigate({
+      pathname: '/task/add-edit-step',
+      params: {
+        mode: 'edit',
+        stepDescription: step.Description,
+        stepNumber: step.Number,
+      },
+    });
   };
 
   const onCompleteStep = (value: boolean, step: StepType) => {
@@ -38,14 +49,16 @@ const StepsList = () => {
   };
 
   const renderItem = ({ item: step }: LegendListRenderItemProps<StepType>) => (
-    <AppView row padding-16 gap-16 center>
+    <AppView row paddingH-16 gap-16 center>
       <AppCheckbox
         value={step.Completed}
         onValueChange={(value) => onCompleteStep(value, step)}
       />
-      <AppText flex textColor body2>
-        {step.Description}
-      </AppText>
+      <AppButton flex paddingV-20 centerV onPress={() => onStepPress(step)}>
+        <AppText textColor body2>
+          {step.Description}
+        </AppText>
+      </AppButton>
     </AppView>
   );
 
@@ -60,6 +73,18 @@ const StepsList = () => {
     );
   };
 
+  const renderFooterComponent = () => {
+    return (
+      <AppButton onPress={onAddNewStepPress}>
+        <LineDivider marginV-0 />
+        <AppView row padding-16 centerV gap-16>
+          <ListAddItemIcon />
+          <TranslatedText body2 translationKey="tabs.create_tab.add_new_step" />
+        </AppView>
+      </AppButton>
+    );
+  };
+
   return (
     <>
       <TranslatedText body1 translationKey="common.steps" />
@@ -70,6 +95,7 @@ const StepsList = () => {
           keyExtractor={(s) => s.Number.toString()}
           renderItem={renderItem}
           ListEmptyComponent={renderEmptyItem}
+          ListFooterComponent={renderFooterComponent}
           ItemSeparatorComponent={() => <LineDivider marginV-0 />}
           scrollEnabled={false}
         />

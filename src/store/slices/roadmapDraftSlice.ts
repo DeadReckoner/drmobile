@@ -151,26 +151,20 @@ const roadmapDraftSlice = createSlice({
     removeStepAction: (
       state,
       action: PayloadAction<{
-        milestoneId: string;
-        taskId: string;
         number: number;
       }>,
     ) => {
-      const milestone = state.roadmap.Milestones.find(
-        (m) => m.MilestoneId === action.payload.milestoneId,
+      if (!state.selectedMilestone || !state.selectedTask) return;
+      state.selectedTask.Steps = state.selectedTask.Steps.filter(
+        (s) => s.Number !== Number(action.payload.number),
       );
-      if (!milestone) return;
-      const task = milestone.Tasks.find(
-        (t) => t.TaskId === action.payload.taskId,
-      );
-      if (!task) return;
-      task.Steps = task.Steps.filter((s) => s.Number !== action.payload.number);
     },
     setSelectedMilestoneAction(
       state,
       action: PayloadAction<MilestoneType | null>,
     ) {
       state.selectedMilestone = action.payload;
+      state.selectedTask = null;
     },
     setSelectedTaskAction(state, action: PayloadAction<TaskType | null>) {
       state.selectedTask = action.payload;
