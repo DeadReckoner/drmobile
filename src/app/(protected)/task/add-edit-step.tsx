@@ -37,7 +37,7 @@ const AddEditStep = () => {
   const canEdit = mode === 'edit';
 
   const onDelete = () => {
-    dispatch(removeStepAction({ number: stepNumber }));
+    dispatch(removeStepAction({ number: Number(stepNumber) }));
     showToast({
       type: 'success',
       message: t('common.deleted_successfully'),

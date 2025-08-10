@@ -156,7 +156,7 @@ const roadmapDraftSlice = createSlice({
     ) => {
       if (!state.selectedMilestone || !state.selectedTask) return;
       state.selectedTask.Steps = state.selectedTask.Steps.filter(
-        (s) => s.Number !== Number(action.payload.number),
+        (s) => s.Number !== action.payload.number,
       );
     },
     setSelectedMilestoneAction(
