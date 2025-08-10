@@ -50,14 +50,10 @@ export const useDraftRoadmapBuilder = () => {
 
   const removeTaskItem = () => dispatch(removeTaskAction());
 
-  const addStepItem = (
-    milestoneId: string,
-    taskId: string,
-    s: Omit<StepType, 'TaskId' | 'Number'>,
-  ) => dispatch(addStepAction({ milestoneId, taskId, step: s }));
+  const addStepItem = (s: Omit<StepType, 'TaskId' | 'Number'>) =>
+    dispatch(addStepAction(s));
 
-  const updateStepItem = (milestoneId: string, taskId: string, s: StepType) =>
-    dispatch(updateStepAction({ milestoneId, taskId, step: s }));
+  const updateStepItem = (s: StepType) => dispatch(updateStepAction(s));
 
   const removeStepItem = (
     milestoneId: string,
