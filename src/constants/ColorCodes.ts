@@ -11,8 +11,8 @@ export const LightColorCodes = {
   warning: '#e5bb00',
 
   screenBG: '#FFFFFF',
-  cardBG: '#ebebebff',
-  lightCardBG: 'E6E6E1',
+  cardBG: '#f7f7f7',
+  lightCardBG: '#e7e8e9e5',
 
   inverseBackground: '#000000',
   inverseText: '#FFFFFF',
@@ -22,6 +22,9 @@ export const LightColorCodes = {
   tabActiveColor: '#252C30',
 
   lineDivider: '#98989830',
+  checkboxBG: '#989898',
+
+  dialogOverlay: '#5f6d76df',
 };
 
 export const DarkColorCodes = {
@@ -49,4 +52,7 @@ export const DarkColorCodes = {
   tabActiveColor: '#FFFFFF',
 
   lineDivider: '#B2B8B630', //secondary
+  checkboxBG: '#5F6D76',
+
+  dialogOverlay: '#22262af4',
 };

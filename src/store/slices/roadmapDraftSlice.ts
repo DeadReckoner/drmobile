@@ -32,6 +32,24 @@ const initialState: DraftState = {
   selectedTask: null,
 };
 
+const findSelectedMilestone = (state: DraftState) => {
+  if (!state.selectedMilestone) return undefined;
+  return state.roadmap.Milestones.find(
+    (m) => m.MilestoneId === state.selectedMilestone!.MilestoneId,
+  );
+};
+
+const findSelectedTask = (state: DraftState) => {
+  const milestone = findSelectedMilestone(state);
+  if (!milestone || !state.selectedTask) return undefined;
+  return milestone.Tasks.find((t) => t.TaskId === state.selectedTask!.TaskId);
+};
+
+const syncSelectedTask = (state: DraftState) => {
+  const task = findSelectedTask(state);
+  if (task) state.selectedTask = task;
+};
+
 const roadmapDraftSlice = createSlice({
   name: 'roadmapDraft',
   initialState,
@@ -40,11 +58,11 @@ const roadmapDraftSlice = createSlice({
       state,
       action: PayloadAction<Partial<Omit<RoadmapType, 'Milestones'>>>,
     ) => {
-      state.roadmap = { ...state.roadmap, ...action.payload };
+      Object.assign(state.roadmap, action.payload);
     },
 
     resetDraftAction: (state) => {
-      state.roadmap = initialState.roadmap;
+      state.roadmap = { ...initialState.roadmap };
     },
 
     addMilestoneAction: (
@@ -60,18 +78,18 @@ const roadmapDraftSlice = createSlice({
         Tasks: [],
       });
     },
+
     updateMilestoneAction: (
       state,
       action: PayloadAction<Pick<MilestoneType, 'SubGoal' | 'Description'>>,
     ) => {
-      const idx = state.roadmap.Milestones.findIndex(
-        (m) => m.MilestoneId === state.selectedMilestone?.MilestoneId,
-      );
-      if (idx !== -1) {
-        state.roadmap.Milestones[idx].SubGoal = action.payload.SubGoal;
-        state.roadmap.Milestones[idx].Description = action.payload.Description;
-      }
+      const milestone = findSelectedMilestone(state);
+      if (!milestone) return;
+      milestone.SubGoal = action.payload.SubGoal;
+      milestone.Description = action.payload.Description;
+      state.selectedMilestone = milestone;
     },
+
     removeMilestoneAction: (state) => {
       state.roadmap.Milestones = state.roadmap.Milestones.filter(
         (m) => m.MilestoneId !== state.selectedMilestone?.MilestoneId,
@@ -82,9 +100,7 @@ const roadmapDraftSlice = createSlice({
       state,
       action: PayloadAction<Pick<TaskType, 'Title' | 'Description'>>,
     ) => {
-      const milestone = state.roadmap.Milestones.find(
-        (m) => m.MilestoneId === state.selectedMilestone?.MilestoneId,
-      );
+      const milestone = findSelectedMilestone(state);
       if (!milestone) return;
       milestone.Tasks.push({
         ...action.payload,
@@ -95,27 +111,20 @@ const roadmapDraftSlice = createSlice({
         Day: 0,
       });
     },
+
     updateTaskAction: (
       state,
       action: PayloadAction<Pick<TaskType, 'Title' | 'Description'>>,
     ) => {
-      const milestone = state.roadmap.Milestones.find(
-        (m) => m.MilestoneId === state.selectedMilestone?.MilestoneId,
-      );
-      if (!milestone) return;
-      const idx = milestone.Tasks.findIndex(
-        (t) => t.TaskId === state.selectedTask?.TaskId,
-      );
-      if (idx !== -1) {
-        const { Title, Description } = action.payload;
-        milestone.Tasks[idx].Title = Title;
-        milestone.Tasks[idx].Description = Description;
-      }
+      const task = findSelectedTask(state);
+      if (!task) return;
+      task.Title = action.payload.Title;
+      task.Description = action.payload.Description;
+      syncSelectedTask(state);
     },
+
     removeTaskAction: (state) => {
-      const milestone = state.roadmap.Milestones.find(
-        (m) => m.MilestoneId === state.selectedMilestone?.MilestoneId,
-      );
+      const milestone = findSelectedMilestone(state);
       if (!milestone) return;
       milestone.Tasks = milestone.Tasks.filter(
         (t) => t.TaskId !== state.selectedTask?.TaskId,
@@ -126,46 +135,48 @@ const roadmapDraftSlice = createSlice({
       state,
       action: PayloadAction<Pick<StepType, 'Description'>>,
     ) => {
-      if (!state.selectedTask) return;
-      const task = state.selectedTask;
-      const stepNumber = task.Steps.length + 1;
-      task.Steps.push({
+      const task = findSelectedTask(state);
+      if (!task) return;
+
+      const newStep: StepType = {
         ...action.payload,
         Completed: false,
         TaskId: task.TaskId,
-        Number: stepNumber,
-      });
+        Number: task.Steps.length + 1,
+      };
+
+      task.Steps.push(newStep);
+      syncSelectedTask(state);
     },
+
     updateStepAction: (state, action: PayloadAction<Partial<StepType>>) => {
-      if (!state.selectedMilestone || !state.selectedTask) return;
-      state.selectedTask.Steps = state.selectedTask.Steps.map((step) => {
-        if (step.Number === action.payload.Number) {
-          return {
-            ...step,
-            ...action.payload,
-          };
-        }
-        return step;
-      });
-    },
-    removeStepAction: (
-      state,
-      action: PayloadAction<{
-        number: number;
-      }>,
-    ) => {
-      if (!state.selectedMilestone || !state.selectedTask) return;
-      state.selectedTask.Steps = state.selectedTask.Steps.filter(
-        (s) => s.Number !== action.payload.number,
+      const task = findSelectedTask(state);
+      if (!task || action.payload.Number == null) return;
+
+      const idx = task.Steps.findIndex(
+        (s) => s.Number === action.payload.Number,
       );
+      if (idx === -1) return;
+
+      task.Steps[idx] = { ...task.Steps[idx], ...action.payload };
+      syncSelectedTask(state);
     },
+
+    removeStepAction: (state, action: PayloadAction<{ number: number }>) => {
+      const task = findSelectedTask(state);
+      if (!task) return;
+
+      task.Steps = task.Steps.filter((s) => s.Number !== action.payload.number);
+      syncSelectedTask(state);
+    },
+
     setSelectedMilestoneAction(
       state,
       action: PayloadAction<MilestoneType | null>,
     ) {
       state.selectedMilestone = action.payload;
-      state.selectedTask = null;
     },
+
     setSelectedTaskAction(state, action: PayloadAction<TaskType | null>) {
       state.selectedTask = action.payload;
     },
@@ -197,4 +208,5 @@ export const selectSelectedMilestone = createAppSelector(
 export const selectSelectedTask = createAppSelector(
   (state) => state.roadmapDraft.selectedTask,
 );
+
 export const draftRoadmapReducer = roadmapDraftSlice.reducer;

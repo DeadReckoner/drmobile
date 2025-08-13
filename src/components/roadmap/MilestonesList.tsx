@@ -1,4 +1,5 @@
 import { AppButton } from '@/components/AppButton';
+import { AppCard } from '@/components/AppCard';
 import { AppList } from '@/components/AppList';
 import { LineDivider } from '@/components/LineDivider';
 import { ListAddItemIcon } from '@/components/ListAddItemIcon';
@@ -11,8 +12,6 @@ import type {
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
 import { LegendListRenderItemProps } from '@legendapp/list';
-import { StyleSheet } from 'react-native';
-import { Colors } from 'react-native-ui-lib';
 
 interface MilestonesListProps {
   milestones: MilestoneType[];
@@ -43,7 +42,7 @@ export const MilestonesList = ({
   const renderEmptyMilestoneComponent = () => (
     <EmptyListItemPlaceholder
       title="tabs.create_tab.no_milestones_yet"
-      subtitle="tabs.create_tab.milestone_desc_placeholder"
+      subtitle="tabs.create_tab.add_new_milestone_desc"
       btnText="tabs.create_tab.add_new_milestone"
       onPress={onAddNewMilestonePress}
     />
@@ -52,6 +51,7 @@ export const MilestonesList = ({
   const renderItemSeparator = () => <LineDivider marginV-0 />;
 
   const renderFooterComponent = () => {
+    if (milestones.length === 0) return;
     return (
       <AppButton onPress={onAddNewMilestonePress}>
         <LineDivider marginV-0 />
@@ -67,22 +67,16 @@ export const MilestonesList = ({
   };
 
   return (
-    <AppList
-      scrollEnabled={false}
-      data={milestones}
-      keyExtractor={(item) => item.MilestoneId}
-      renderItem={renderMilestone}
-      ItemSeparatorComponent={renderItemSeparator}
-      ListFooterComponent={milestones.length > 0 ? renderFooterComponent : null}
-      ListEmptyComponent={renderEmptyMilestoneComponent}
-      contentContainerStyle={[
-        styles.listContentContainer,
-        { backgroundColor: Colors.cardBG },
-      ]}
-    />
+    <AppCard padding-0>
+      <AppList
+        scrollEnabled={false}
+        data={milestones}
+        keyExtractor={(item) => item.MilestoneId}
+        renderItem={renderMilestone}
+        ItemSeparatorComponent={renderItemSeparator}
+        ListFooterComponent={renderFooterComponent}
+        ListEmptyComponent={renderEmptyMilestoneComponent}
+      />
+    </AppCard>
   );
 };
-
-const styles = StyleSheet.create({
-  listContentContainer: { borderRadius: 10, overflow: 'hidden' },
-});

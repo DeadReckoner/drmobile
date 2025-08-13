@@ -41,5 +41,6 @@ const styles = StyleSheet.create({
   },
   contentScrollview: {
     flexGrow: 1,
+    paddingVertical: 60,
   },
 });

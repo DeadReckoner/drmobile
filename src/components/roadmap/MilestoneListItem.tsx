@@ -126,7 +126,7 @@ export const MilestoneListItem = ({
   };
 
   return (
-    <AppView bg-cardBG key={milestone.MilestoneId}>
+    <AppView key={milestone.MilestoneId}>
       <AppButton onPress={onPress}>
         <MenuView
           ref={menuRef}
@@ -136,12 +136,7 @@ export const MilestoneListItem = ({
           actions={MENU_ACTIONS}
           shouldOpenOnLongPress={true}>
           <AppView row padding-16 gap-16 center>
-            <AppCheckbox
-              bg-primary
-              borderRadius={4}
-              containerStyle={{ borderWidth: 0 }}
-              value={milestone.Reached}
-            />
+            <AppCheckbox value={milestone.Reached} />
             <AppText flex textColor body2>
               {milestone.SubGoal}
             </AppText>
@@ -154,8 +149,7 @@ export const MilestoneListItem = ({
         </MenuView>
       </AppButton>
 
-      <Animated.View
-        style={[bodyStyle, { backgroundColor: Colors.lightCardBG }]}>
+      <Animated.View style={bodyStyle}>
         <Animated.View
           onLayout={({ nativeEvent }) => {
             sharedHeight.value = nativeEvent.layout.height;

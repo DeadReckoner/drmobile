@@ -1,6 +1,8 @@
 import { AppButton } from '@/components/AppButton';
+import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
-import { AppScreen } from '@/components/AppScreen';
+import { AppKeyboardController } from '@/components/AppKeyboardController';
+import ConfirmationDialog from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
@@ -18,7 +20,6 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const AddMilestone = () => {
@@ -31,7 +32,17 @@ const AddMilestone = () => {
   const { showToast } = useToast();
   const { t } = useLocalization();
 
-  const onDelete = () => {
+  const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
+    useState(false);
+
+  const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
+  const showDialog = () => setIsDeleteMilestoneDialogOpen(true);
+
+  const onBackPress = () => {
+    router.back();
+  };
+
+  const onDeleteConfirmation = () => {
     dispatch(removeMilestoneAction());
     showToast({
       type: 'success',
@@ -41,76 +52,89 @@ const AddMilestone = () => {
   };
 
   return (
-    <AppScreen>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <AppView spread row centerV>
-          <HeaderWithBack />
-          {canEdit && (
-            <AppView row gap-12 center>
-              <AppButton onPress={() => setIsEditing((edit) => !edit)}>
-                <AppIcon
-                  set="Feather"
-                  name={isEditing ? 'x' : 'edit'}
-                  size={20}
-                />
-              </AppButton>
-              <AppButton onPress={onDelete}>
-                <AppIcon name={'delete'} color={Colors.error} size={22} />
-              </AppButton>
-            </AppView>
-          )}
-        </AppView>
-        <Divider margin-16 />
-
-        <AppView paddingL-4>
-          {!canEdit && (
-            <AppView>
-              <ScreenHeader
-                title="tabs.create_tab.add_new_milestone"
-                subtitle="tabs.create_tab.add_new_milestone_desc"
-                titleProps={{ body1: true }}
-                subtileProps={{ xsm: true }}
-                marginT-0
+    <AppKeyboardController>
+      <AppView spread row centerV>
+        <AppView>{!isEditing && <HeaderWithBack />}</AppView>
+        {canEdit && (
+          <AppView row gap-12 center>
+            <AppButton onPress={() => setIsEditing((edit) => !edit)}>
+              <AppIcon
+                set="Feather"
+                name={isEditing ? 'x' : 'edit'}
+                size={20}
               />
-              <Divider margin-16 />
-              <CreateMilestoneForm mode="create" />
-            </AppView>
-          )}
+            </AppButton>
+            <AppButton onPress={showDialog}>
+              <AppIcon name={'delete'} color={Colors.error} size={20} />
+            </AppButton>
+          </AppView>
+        )}
+      </AppView>
+      <Divider margin-16 />
 
-          {selectedMilestone && canEdit && !isEditing && (
-            <AppView
-              reanimated
-              bg-lightCardBG
-              padding-16
-              br30
-              entering={Animations.Entry.FadeInDownWithSpring}
-              exiting={Animations.Exit.FadeOutDown}>
+      <AppView paddingL-4>
+        {!canEdit && (
+          <AppView>
+            <ScreenHeader
+              title="tabs.create_tab.add_new_milestone"
+              subtitle="tabs.create_tab.add_new_milestone_desc"
+              titleProps={{ body1: true }}
+              subtileProps={{ xsm: true }}
+              marginT-0
+            />
+            <Divider margin-16 />
+            <CreateMilestoneForm mode="create" onSuccess={onBackPress} />
+          </AppView>
+        )}
+
+        {selectedMilestone && canEdit && !isEditing && (
+          <AppView
+            reanimated
+            entering={Animations.Entry.FadeInDownWithSpring}
+            exiting={Animations.Exit.FadeOutDown}>
+            <AppCard>
               <AppText body1 textColor>
                 {selectedMilestone?.SubGoal}
               </AppText>
-              <LineDivider marginV-12 marginB-8 />
+              <LineDivider marginV-12 />
               <AppText captionLight textColor>
                 {selectedMilestone?.Description}
               </AppText>
-            </AppView>
-          )}
+            </AppCard>
+          </AppView>
+        )}
 
-          {isEditing && (
-            <AppView
-              reanimated
-              entering={Animations.Entry.FadeInDown}
-              exiting={Animations.Exit.FadeOutDown}>
-              <CreateMilestoneForm mode="edit" />
-            </AppView>
-          )}
-        </AppView>
-      </ScrollView>
-    </AppScreen>
+        {isEditing && (
+          <AppView
+            reanimated
+            entering={Animations.Entry.FadeInDown}
+            exiting={Animations.Exit.FadeOutDown}>
+            <CreateMilestoneForm
+              mode="edit"
+              onSuccess={() => setIsEditing(false)}
+            />
+          </AppView>
+        )}
+      </AppView>
+
+      <ConfirmationDialog
+        isDialogOpen={isDeleteMilestoneDialogOpen}
+        onDismiss={hideDialog}
+        title="common.are_you_sure"
+        subtitle="common.delete_milestone"
+        onNegativePress={hideDialog}
+        onPositivePress={onDeleteConfirmation}
+        negativeText="common.cancel"
+        positiveText="common.remove"
+        negativeButtonIcon={
+          <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
+        }
+        positiveButtonIcon={
+          <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
+        }
+      />
+    </AppKeyboardController>
   );
 };
 
 export default AddMilestone;
-
-const styles = StyleSheet.create({
-  scrollContainer: { paddingTop: 60 },
-});

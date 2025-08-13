@@ -5,33 +5,24 @@ import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useStepForm } from '@/hooks/roadmap/useStepForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
-import { router } from 'expo-router';
+
+interface CreateStepFormProps {
+  mode: FormEditModeType;
+  stepDescription?: string;
+  stepNumber?: number;
+  taskId?: string;
+  onSuccess?: () => void;
+}
 
 export const CreateStepForm = ({
   mode,
   stepDescription = '',
   stepNumber,
   taskId,
-}: {
-  mode: FormEditModeType;
-  stepDescription?: string;
-  stepNumber?: number;
-  taskId?: string;
-}) => {
+  onSuccess,
+}: CreateStepFormProps) => {
   const { showToast } = useToast();
   const { t } = useLocalization();
-
-  const onSuccess = () => {
-    showToast({
-      type: 'success',
-      message: t(
-        mode === 'create'
-          ? 'common.created_successfully'
-          : 'common.updated_successfully',
-      ),
-    });
-    router.back();
-  };
 
   const { handleBlur, handleChange, touched, errors, handleSubmit, values } =
     useStepForm({
@@ -39,7 +30,17 @@ export const CreateStepForm = ({
       stepDescription,
       stepNumber,
       taskId,
-      onSuccess,
+      onSuccess: () => {
+        showToast({
+          type: 'success',
+          message: t(
+            mode === 'create'
+              ? 'common.created_successfully'
+              : 'common.updated_successfully',
+          ),
+        });
+        onSuccess?.();
+      },
     });
   return (
     <AppView>

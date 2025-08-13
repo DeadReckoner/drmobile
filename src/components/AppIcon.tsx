@@ -37,7 +37,7 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
       <Feather
         name={name as FeatherGlyphsType}
         size={size}
-        color={color || (theme === 'dark' ? Colors.white : Colors.black)}
+        color={color || (theme === 'dark' ? Colors.white : Colors.primary)}
         style={style}
       />
     );
@@ -46,7 +46,7 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
     <AntDesign
       name={name as AntDesignGlyphsType}
       size={size}
-      color={color || (theme === 'dark' ? Colors.white : Colors.black)}
+      color={color || (theme === 'dark' ? Colors.white : Colors.primary)}
       style={style}
     />
   );

@@ -37,6 +37,7 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   caption: {
     fontFamily: UNBOUNDED_REGULAR,
     fontSize: 12,
+    letterSpacing: 0.5,
   },
 
   captionLight: {

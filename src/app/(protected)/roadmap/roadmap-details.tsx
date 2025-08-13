@@ -1,28 +1,19 @@
-import { AppScreen } from '@/components/AppScreen';
+import { AppKeyboardController } from '@/components/AppKeyboardController';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
-import { ScrollView, StyleSheet } from 'react-native';
 
 const RoadmapDetailsPage = () => {
   const roadmap = useAppSelector(selectDraftRoadmap);
   return (
-    <AppScreen>
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}>
-        <HeaderWithBack headerText={roadmap.Goal} />
-        <Divider />
-        <RoadmapDetails roadmap={roadmap} />
-      </ScrollView>
-    </AppScreen>
+    <AppKeyboardController>
+      <HeaderWithBack headerText={roadmap.Goal} />
+      <Divider marginT-16 />
+      <RoadmapDetails roadmap={roadmap} />
+    </AppKeyboardController>
   );
 };
 
 export default RoadmapDetailsPage;
-
-const styles = StyleSheet.create({
-  scrollContainer: { paddingTop: 60 },
-});

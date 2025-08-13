@@ -5,13 +5,17 @@ import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useTaskForm } from '@/hooks/roadmap/useTaskForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
-import { router } from 'expo-router';
 
-export const CreateTaskForm = ({ mode }: { mode: FormEditModeType }) => {
+interface CreateTaskFormProps {
+  mode: FormEditModeType;
+  onSuccess?: () => void;
+}
+
+export const CreateTaskForm = ({ mode, onSuccess }: CreateTaskFormProps) => {
   const { showToast } = useToast();
   const { t } = useLocalization();
 
-  const onSuccess = () => {
+  const onFormSuccess = () => {
     showToast({
       type: 'success',
       message: t(
@@ -20,13 +24,13 @@ export const CreateTaskForm = ({ mode }: { mode: FormEditModeType }) => {
           : 'common.updated_successfully',
       ),
     });
-    router.back();
+    onSuccess?.();
   };
 
   const { handleBlur, handleChange, touched, errors, handleSubmit, values } =
     useTaskForm({
       mode,
-      onSuccess,
+      onSuccess: onFormSuccess,
     });
   return (
     <AppView>

@@ -3,6 +3,8 @@ import { LineDivider } from '@/components/LineDivider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
 import type { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectTheme } from '@/store/slices/settingsSlice';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -11,6 +13,7 @@ interface RoadmapOverviewProps {
 }
 
 export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
+  const theme = useAppSelector(selectTheme);
   const currentMilestone = roadmap.Milestones.find((m) => !m.Reached);
 
   const totalMilestoneDays = currentMilestone
@@ -49,11 +52,11 @@ export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
           <AppProgressBar
             style={[
               styles.roadmapProgressBar,
-              { backgroundColor: Colors.highlight },
+              { backgroundColor: Colors.outline },
             ]}
             fullWidth={false}
             progress={isNaN(progress) ? 0 : progress}
-            progressColor={Colors.primary}
+            progressColor={theme === 'dark' ? Colors.white : Colors.primary}
           />
           <AppText xsm textColor>
             {isNaN(progress) ? 0 : progress}%

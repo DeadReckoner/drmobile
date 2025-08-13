@@ -5,9 +5,16 @@ import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useMilestoneForm } from '@/hooks/roadmap/useMilestoneForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
-import { router } from 'expo-router';
 
-export const CreateMilestoneForm = ({ mode }: { mode: FormEditModeType }) => {
+interface CreateMilestoneFormProps {
+  mode: FormEditModeType;
+  onSuccess?: () => void;
+}
+
+export const CreateMilestoneForm = ({
+  mode,
+  onSuccess,
+}: CreateMilestoneFormProps) => {
   const { showToast } = useToast();
   const { t } = useLocalization();
 
@@ -23,7 +30,7 @@ export const CreateMilestoneForm = ({ mode }: { mode: FormEditModeType }) => {
               : 'common.updated_successfully',
           ),
         });
-        router.back();
+        onSuccess?.();
       },
     });
   return (

@@ -1,5 +1,6 @@
 import Checkbox from 'react-native-ui-lib/checkbox';
 import ExpandableSection from 'react-native-ui-lib/expandableSection';
+import { Dialog, Toast } from 'react-native-ui-lib/incubator';
 import ProgressBar from 'react-native-ui-lib/progressBar';
 import Text from 'react-native-ui-lib/text';
 import TextField from 'react-native-ui-lib/textField';
@@ -11,6 +12,8 @@ export {
   Checkbox as AppCheckbox,
   ExpandableSection as AppExpandableSection,
   ProgressBar as AppProgressBar,
+  Dialog as AppRNUIDialog,
+  Toast as AppRNUIToast,
   Text as AppText,
   TextField as AppTextField,
   TouchableOpacity as AppTouchableOpacity,

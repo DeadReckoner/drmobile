@@ -1,7 +1,8 @@
+import { AppRNUIToast } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { ToastType } from '@/store/types/settingsSlice.types';
 
-import { Colors, Incubator, ToastProps, Typography } from 'react-native-ui-lib';
+import { Colors, ToastProps, Typography } from 'react-native-ui-lib';
 
 export const AppToast = () => {
   const { isVisible, toastProps, hideToast } = useToast();
@@ -34,7 +35,7 @@ export const AppToast = () => {
   const toastConfig = toastTypeMap[toastProps?.type ?? 'general'];
 
   return (
-    <Incubator.Toast
+    <AppRNUIToast
       visible={isVisible}
       position={'bottom'}
       preset={toastConfig.preset}

@@ -1,11 +1,7 @@
-import { Text, View } from 'react-native';
+import { AppScreen } from '@/components/AppScreen';
 
 const Messages = () => {
-  return (
-    <View>
-      <Text>Messages</Text>
-    </View>
-  );
+  return <AppScreen></AppScreen>;
 };
 
 export default Messages;

@@ -11,7 +11,7 @@ export const ListAddItemIcon = () => {
       height={24}
       bg-primary
       style={[styles.icon, { borderColor: Colors.textColor }]}>
-      <AppIcon name="plus" size={18} />
+      <AppIcon name="plus" size={18} color={Colors.white} />
     </AppView>
   );
 };

@@ -5,8 +5,9 @@ import { Divider } from '@/components/Divider';
 import { LineDivider } from '@/components/LineDivider';
 import { ListAddItemIcon } from '@/components/ListAddItemIcon';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
+import { StepItem } from '@/components/roadmap/StepItem';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppCheckbox, AppText, AppView } from '@/components/ui';
+import { AppView } from '@/components/ui';
 import { StepType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -33,7 +34,6 @@ const StepsList = () => {
       pathname: '/task/add-edit-step',
       params: {
         mode: 'edit',
-        stepDescription: step.Description,
         stepNumber: step.Number,
       },
     });
@@ -49,17 +49,11 @@ const StepsList = () => {
   };
 
   const renderItem = ({ item: step }: LegendListRenderItemProps<StepType>) => (
-    <AppView row paddingH-16 gap-16 center>
-      <AppCheckbox
-        value={step.Completed}
-        onValueChange={(value) => onCompleteStep(value, step)}
-      />
-      <AppButton flex paddingV-20 centerV onPress={() => onStepPress(step)}>
-        <AppText textColor body2>
-          {step.Description}
-        </AppText>
-      </AppButton>
-    </AppView>
+    <StepItem
+      step={step}
+      onCompleteStep={onCompleteStep}
+      onStepPress={onStepPress}
+    />
   );
 
   const renderEmptyItem = () => {
@@ -74,6 +68,7 @@ const StepsList = () => {
   };
 
   const renderFooterComponent = () => {
+    if (task?.Steps?.length === 0) return;
     return (
       <AppButton onPress={onAddNewStepPress}>
         <LineDivider marginV-0 />

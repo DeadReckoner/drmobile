@@ -10,6 +10,7 @@ interface HeaderWithBackProps {
   onBackPress?: () => void;
   onHeaderTitlePress?: () => void;
   headerText?: string; //For dynamic title strings
+  goBackOnPress?: boolean; //go back to previous screen automatically on back press
 }
 
 export const HeaderWithBack = ({
@@ -17,11 +18,11 @@ export const HeaderWithBack = ({
   headerText,
   onBackPress,
   onHeaderTitlePress,
+  goBackOnPress = true,
 }: HeaderWithBackProps) => {
   const onBackArrowPress = () => {
-    if (onBackPress) {
-      onBackPress();
-    } else {
+    onBackPress?.();
+    if (goBackOnPress) {
       router.back();
     }
   };

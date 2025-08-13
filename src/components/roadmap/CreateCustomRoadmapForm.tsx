@@ -5,16 +5,17 @@ import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import type { FormRoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useCreateCustomRoadmapForm } from '@/hooks/roadmap/useCreateCustomRoadmapForm';
-import { useDraftRoadmapBuilder } from '@/hooks/roadmap/useDraftRoadmapBuilder';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setMetaAction } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 export const CreateCustomRoadmapForm = () => {
-  const { setRoadmapMetadata } = useDraftRoadmapBuilder();
+  const dispatch = useAppDispatch();
 
   const onSuccessCreateCustomRooadmap = (roadmap: FormRoadmapType) => {
-    setRoadmapMetadata(roadmap);
+    dispatch(setMetaAction(roadmap));
     router.navigate('/(protected)/roadmap/roadmap-details');
   };
 
@@ -35,7 +36,6 @@ export const CreateCustomRoadmapForm = () => {
 
   const renderCustomDateInput = ({ value }: { value?: string }) => (
     <TranslatedTextInput
-      editable={false}
       labelKey="tabs.create_tab.target_completion_date_label"
       placeholderKey="tabs.create_tab.target_completion_date_placeholder"
       onChangeText={handleChange('targetDate')}

@@ -36,6 +36,7 @@ export const TranslatedTextInput = ({
         ]}
         labelProps={{ 'marginB-8': true }}
         label={t(labelKey)}
+        editable={editable}
         multiline
         placeholder={placeholderKey && t(placeholderKey)}
         {...restProps}

@@ -1,4 +1,5 @@
 import { AppIcon } from '@/components/AppIcon';
+import { AppScreen } from '@/components/AppScreen';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useAppSelector } from '@/store/hooks/store.hooks';
@@ -36,43 +37,45 @@ export default function TabLayout() {
   );
 
   return (
-    <Tabs screenOptions={screenOptions}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: t('tabs.today'),
-          tabBarIcon: ({ color }) => (
-            <AppIcon size={28} name="home" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="progress"
-        options={{
-          title: t('tabs.progress'),
-          tabBarIcon: ({ color }) => (
-            <AppIcon name="barschart" size={28} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="create"
-        options={{
-          title: t('tabs.create'),
-          tabBarIcon: ({ color }) => (
-            <AppIcon size={28} name="plus" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: t('tabs.messages'),
-          tabBarIcon: ({ color }) => (
-            <AppIcon size={24} name="message1" color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    <AppScreen paddingH-0>
+      <Tabs screenOptions={screenOptions}>
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: t('tabs.today'),
+            tabBarIcon: ({ color }) => (
+              <AppIcon size={28} name="home" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="progress"
+          options={{
+            title: t('tabs.progress'),
+            tabBarIcon: ({ color }) => (
+              <AppIcon name="barschart" size={28} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="create"
+          options={{
+            title: t('tabs.create'),
+            tabBarIcon: ({ color }) => (
+              <AppIcon size={28} name="plus" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="messages"
+          options={{
+            title: t('tabs.messages'),
+            tabBarIcon: ({ color }) => (
+              <AppIcon size={24} name="message1" color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    </AppScreen>
   );
 }
