@@ -9,7 +9,7 @@ const RoadmapDetailsPage = () => {
   const roadmap = useAppSelector(selectDraftRoadmap);
   return (
     <AppKeyboardController>
-      <HeaderWithBack headerText={roadmap.Goal} />
+      <HeaderWithBack headerText={roadmap.goal} />
       <Divider marginT-16 />
       <RoadmapDetails roadmap={roadmap} />
     </AppKeyboardController>

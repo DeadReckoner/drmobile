@@ -31,9 +31,9 @@ export const MilestoneTaskItem = ({
   };
   return (
     <AppView row paddingL-32 paddingV-16 paddingR-18 gap-16 center>
-      <AppCheckbox value={task.Completed} />
+      <AppCheckbox value={task.completed} />
       <AppText flex textColor body2>
-        {task.Title}
+        {task.title}
       </AppText>
       <AppButton
         onPress={() => onPress(task)}

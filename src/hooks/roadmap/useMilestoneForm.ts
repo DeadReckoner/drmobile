@@ -54,17 +54,17 @@ export const useMilestoneForm = ({
     if (canEdit) {
       dispatch(
         updateMilestoneAction({
-          Description: milestoneDescription,
-          SubGoal: milestoneName,
+          description: milestoneDescription,
+          sub_goal: milestoneName,
         }),
       );
     } else {
       dispatch(
         addMilestoneAction({
-          Day: 0,
-          Description: milestoneDescription,
-          Reached: false,
-          SubGoal: milestoneName,
+          day: 0,
+          description: milestoneDescription,
+          reached: false,
+          sub_goal: milestoneName,
         }),
       );
     }
@@ -75,8 +75,8 @@ export const useMilestoneForm = ({
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<MilestoneSchemaType>({
       initialValues: {
-        milestoneName: (canEdit && selectedMilestone?.SubGoal) || '',
-        milestoneDescription: (canEdit && selectedMilestone?.Description) || '',
+        milestoneName: (canEdit && selectedMilestone?.sub_goal) || '',
+        milestoneDescription: (canEdit && selectedMilestone?.description) || '',
       },
       validationSchema: schema,
       onSubmit: onMilestoneSubmit,

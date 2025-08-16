@@ -42,7 +42,7 @@ export const RoadmapDetails = ({ roadmap }: RoadmapDetailsProps) => {
       <TranslatedText body1 marginB-16 translationKey="common.milestones" />
       <Divider marginT-4 />
       <MilestonesList
-        milestones={roadmap.Milestones}
+        milestones={roadmap.milestones}
         onAddNewMilestonePress={handleOnAddNewMilestone}
         onMilestonePress={handleMilestonePress}
         onTaskPress={handleOnTaskPress}

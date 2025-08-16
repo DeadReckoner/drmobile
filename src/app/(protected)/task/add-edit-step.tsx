@@ -32,7 +32,7 @@ const AddEditStep = () => {
   const dispatch = useAppDispatch();
   const selectedTask = useAppSelector(selectSelectedTask);
   const step = useMemo(
-    () => selectedTask?.Steps.find((s) => s.Number === Number(stepNumber)),
+    () => selectedTask?.steps.find((s) => s.number === Number(stepNumber)),
     [selectedTask, stepNumber],
   );
   const { showToast } = useToast();
@@ -113,7 +113,7 @@ const AddEditStep = () => {
               </AppText>
               <LineDivider marginV-12 />
               <AppText captionLight textColor>
-                {step?.Description}
+                {step?.description}
               </AppText>
             </AppCard>
           </AppView>
@@ -126,9 +126,9 @@ const AddEditStep = () => {
             exiting={Animations.Exit.FadeOutDown}>
             <CreateStepForm
               mode="edit"
-              stepDescription={step?.Description}
+              stepDescription={step?.description}
               stepNumber={Number(stepNumber)}
-              taskId={selectedTask?.TaskId}
+              taskId={selectedTask?.task_id}
               onSuccess={() => setIsEditing(false)}
             />
           </AppView>

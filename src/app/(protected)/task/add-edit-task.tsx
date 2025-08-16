@@ -103,11 +103,11 @@ const AddTask = () => {
             exiting={Animations.Exit.FadeOutDown}>
             <AppCard>
               <AppText body1 textColor>
-                {selectedTask?.Title}
+                {selectedTask?.title}
               </AppText>
               <LineDivider marginV-12 />
               <AppText captionLight textColor>
-                {selectedTask?.Description}
+                {selectedTask?.description}
               </AppText>
             </AppCard>
             <Divider margin-16 />

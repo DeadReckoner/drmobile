@@ -47,17 +47,17 @@ export const useStepForm = ({
   const canEdit = mode === 'edit';
 
   const onStepSubmit = async ({ stepDescription }: StepSchemaType) => {
-    if (selectedMilestone?.MilestoneId) {
+    if (selectedMilestone?.milestone_id) {
       if (canEdit) {
         dispatch(
           updateStepAction({
-            Description: stepDescription,
-            Number: stepNumber || 0,
-            TaskId: taskId,
+            description: stepDescription,
+            number: stepNumber || 0,
+            task_id: taskId,
           }),
         );
       } else {
-        dispatch(addStepAction({ Description: stepDescription }));
+        dispatch(addStepAction({ description: stepDescription }));
       }
       onSuccess?.();
     }

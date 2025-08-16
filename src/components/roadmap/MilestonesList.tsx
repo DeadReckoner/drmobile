@@ -31,7 +31,7 @@ export const MilestonesList = ({
   }: LegendListRenderItemProps<MilestoneType>) => {
     return (
       <MilestoneListItem
-        key={item.MilestoneId}
+        key={item.milestone_id}
         milestone={item}
         onMilestonePress={onMilestonePress}
         onTaskPress={onTaskPress}
@@ -71,7 +71,7 @@ export const MilestonesList = ({
       <AppList
         scrollEnabled={false}
         data={milestones}
-        keyExtractor={(item) => item.MilestoneId}
+        keyExtractor={(item) => item.milestone_id}
         renderItem={renderMilestone}
         ItemSeparatorComponent={renderItemSeparator}
         ListFooterComponent={renderFooterComponent}

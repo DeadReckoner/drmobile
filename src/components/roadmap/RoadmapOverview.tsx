@@ -14,13 +14,13 @@ interface RoadmapOverviewProps {
 
 export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
   const theme = useAppSelector(selectTheme);
-  const currentMilestone = roadmap.Milestones.find((m) => !m.Reached);
+  const currentMilestone = roadmap.milestones.find((m) => !m.reached);
 
   const totalMilestoneDays = currentMilestone
-    ? Math.max(...currentMilestone.Tasks.map((t) => t.Day), 0)
+    ? Math.max(...currentMilestone.tasks.map((t) => t.day), 0)
     : 0;
   const completedTaskDays =
-    currentMilestone?.Tasks.filter((t) => t.Completed).map((t) => t.Day) || [];
+    currentMilestone?.tasks.filter((t) => t.completed).map((t) => t.day) || [];
   const lastCompletedDay = completedTaskDays.length
     ? Math.max(...completedTaskDays)
     : 0;
@@ -30,13 +30,13 @@ export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
     0,
   );
 
-  const progressPecentage = (lastCompletedDay / roadmap.Days) * 100;
+  const progressPecentage = (lastCompletedDay / roadmap.days) * 100;
   const progress = isNaN(progressPecentage) ? 0 : progressPecentage;
 
   return (
     <AppCard>
       <AppText xsm textColor>
-        {roadmap.Description}
+        {roadmap.description}
       </AppText>
       <LineDivider bg-secondary />
       <AppView row centerV spread>

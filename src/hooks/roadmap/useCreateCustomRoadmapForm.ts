@@ -54,10 +54,10 @@ export const useCreateCustomRoadmapForm = ({
     reason,
   }: CustomRoadmapSchemaType) => {
     onSuccess?.({
-      Goal: goal,
-      Description: goalDescription,
-      Reason: reason,
-      Days: DateUtils.daysBetween(DateUtils.createDate(), targetDate),
+      goal: goal,
+      description: goalDescription,
+      reason: reason,
+      days: DateUtils.daysBetween(DateUtils.createDate(), targetDate),
     });
   };
 

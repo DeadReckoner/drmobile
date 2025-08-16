@@ -34,7 +34,7 @@ const StepsList = () => {
       pathname: '/task/add-edit-step',
       params: {
         mode: 'edit',
-        stepNumber: step.Number,
+        stepNumber: step.number,
       },
     });
   };
@@ -42,8 +42,8 @@ const StepsList = () => {
   const onCompleteStep = (value: boolean, step: StepType) => {
     dispatch(
       updateStepAction({
-        Completed: value,
-        Number: step.Number,
+        completed: value,
+        number: step.number,
       }),
     );
   };
@@ -68,7 +68,7 @@ const StepsList = () => {
   };
 
   const renderFooterComponent = () => {
-    if (task?.Steps?.length === 0) return;
+    if (task?.steps?.length === 0) return;
     return (
       <AppButton onPress={onAddNewStepPress}>
         <LineDivider marginV-0 />
@@ -86,8 +86,8 @@ const StepsList = () => {
       <Divider marginV-8 />
       <AppCard padding-0>
         <AppList
-          data={task?.Steps || []}
-          keyExtractor={(s) => s.Number.toString()}
+          data={task?.steps || []}
+          keyExtractor={(s) => s.number.toString()}
           renderItem={renderItem}
           ListEmptyComponent={renderEmptyItem}
           ListFooterComponent={renderFooterComponent}

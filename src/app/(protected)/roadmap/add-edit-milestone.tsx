@@ -94,11 +94,11 @@ const AddMilestone = () => {
             exiting={Animations.Exit.FadeOutDown}>
             <AppCard>
               <AppText body1 textColor>
-                {selectedMilestone?.SubGoal}
+                {selectedMilestone?.sub_goal}
               </AppText>
               <LineDivider marginV-12 />
               <AppText captionLight textColor>
-                {selectedMilestone?.Description}
+                {selectedMilestone?.description}
               </AppText>
             </AppCard>
           </AppView>

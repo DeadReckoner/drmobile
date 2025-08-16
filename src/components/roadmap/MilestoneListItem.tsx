@@ -51,12 +51,12 @@ export const MilestoneListItem = ({
   const dispatch = useAppDispatch();
 
   const isExpanded = useMemo(
-    () => Number(milestone.MilestoneId === selectedMilestone?.MilestoneId),
-    [milestone.MilestoneId, selectedMilestone?.MilestoneId],
+    () => Number(milestone.milestone_id === selectedMilestone?.milestone_id),
+    [milestone.milestone_id, selectedMilestone?.milestone_id],
   );
   const onPress = () => {
     onMilestonePress(
-      milestone.MilestoneId === selectedMilestone?.MilestoneId
+      milestone.milestone_id === selectedMilestone?.milestone_id
         ? null
         : milestone,
     );
@@ -126,19 +126,19 @@ export const MilestoneListItem = ({
   };
 
   return (
-    <AppView key={milestone.MilestoneId}>
+    <AppView key={milestone.milestone_id}>
       <AppButton onPress={onPress}>
         <MenuView
           ref={menuRef}
-          title={milestone.SubGoal}
+          title={milestone.sub_goal}
           themeVariant="dark"
           onPressAction={onMenuAction}
           actions={MENU_ACTIONS}
           shouldOpenOnLongPress={true}>
           <AppView row padding-16 gap-16 center>
-            <AppCheckbox value={milestone.Reached} />
+            <AppCheckbox value={milestone.reached} />
             <AppText flex textColor body2>
-              {milestone.SubGoal}
+              {milestone.sub_goal}
             </AppText>
             <AppButton onPress={onPress} style={{ pointerEvents: 'box-only' }}>
               <AppView reanimated style={chevronStyle}>
@@ -156,9 +156,9 @@ export const MilestoneListItem = ({
           }}
           style={[styles.content, { backgroundColor: Colors.lightCardBG }]}>
           <AppList
-            keyExtractor={(task) => task.TaskId}
+            keyExtractor={(task) => task.task_id}
             scrollEnabled={false}
-            data={milestone.Tasks}
+            data={milestone.tasks}
             ListFooterComponent={renderFooterComponent}
             ItemSeparatorComponent={renderItemSeparator}
             renderItem={renderTaskItem}

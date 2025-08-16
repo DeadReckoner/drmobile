@@ -51,19 +51,19 @@ export const useTaskForm = ({
     taskName,
     taskDescription,
   }: TaskSchemaType) => {
-    if (selectedMilestone?.MilestoneId) {
+    if (selectedMilestone?.milestone_id) {
       if (canEdit) {
         dispatch(
           updateTaskAction({
-            Description: taskDescription,
-            Title: taskName,
+            description: taskDescription,
+            title: taskName,
           }),
         );
       } else {
         dispatch(
           addTaskAction({
-            Description: taskDescription,
-            Title: taskName,
+            description: taskDescription,
+            title: taskName,
           }),
         );
       }
@@ -74,8 +74,8 @@ export const useTaskForm = ({
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<TaskSchemaType>({
       initialValues: {
-        taskName: (canEdit && selectedTask?.Title) || '',
-        taskDescription: (canEdit && selectedTask?.Description) || '',
+        taskName: (canEdit && selectedTask?.title) || '',
+        taskDescription: (canEdit && selectedTask?.description) || '',
       },
       validationSchema: schema,
       onSubmit: onTaskSubmit,

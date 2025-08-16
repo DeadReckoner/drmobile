@@ -34,11 +34,11 @@ export const StepItem = ({
   return (
     <AppView row padding-16 gap-16 center>
       <AppCheckbox
-        value={step.Completed}
+        value={step.completed}
         onValueChange={(value) => onCompleteStep(value, step)}
       />
       <AppText textColor body2 flex>
-        {step.Description}
+        {step.description}
       </AppText>
       <AppButton
         onPress={() => onStepPress(step)}
