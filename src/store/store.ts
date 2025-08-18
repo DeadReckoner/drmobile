@@ -1,3 +1,4 @@
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import {
@@ -29,7 +30,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(roadmapApi.middleware),
 });
 
 const persistedStore = persistStore(store);
