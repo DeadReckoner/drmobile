@@ -182,6 +182,10 @@ const roadmapDraftSlice = createSlice({
     setSelectedTaskAction(state, action: PayloadAction<TaskType | null>) {
       state.selectedTask = action.payload;
     },
+
+    setDraftRoadmapAction(state, action: PayloadAction<RoadmapType>) {
+      state.roadmap = action.payload;
+    },
   },
 });
 
@@ -199,6 +203,7 @@ export const {
   removeStepAction,
   setSelectedMilestoneAction,
   setSelectedTaskAction,
+  setDraftRoadmapAction,
 } = roadmapDraftSlice.actions;
 
 export const selectDraftRoadmap = createAppSelector(

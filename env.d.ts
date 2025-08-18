@@ -5,5 +5,6 @@ declare namespace NodeJS {
     EXPO_PUBLIC_GOOGLE_AUTH_WEB_CIENT_ID: string;
     EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID: string;
     EXPO_OS: 'android' | 'ios' | 'web';
+    EXPO_PUBLIC_API_URL: string;
   }
 }

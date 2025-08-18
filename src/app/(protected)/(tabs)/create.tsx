@@ -5,7 +5,7 @@ import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Create = () => {
@@ -22,7 +22,7 @@ const Create = () => {
     <AppScreen>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.container}>
+        contentInsetAdjustmentBehavior="always">
         <Divider />
         <TranslatedText h2 translationKey="tabs.create" />
         <Divider />
@@ -63,7 +63,3 @@ const Create = () => {
 };
 
 export default Create;
-
-const styles = StyleSheet.create({
-  container: { paddingTop: 60 },
-});
