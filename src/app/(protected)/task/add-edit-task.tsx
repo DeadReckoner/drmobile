@@ -59,7 +59,7 @@ const AddTask = () => {
       <AppView spread row centerV>
         <AppView>{!isEditing && <HeaderWithBack />}</AppView>
         {canEdit && (
-          <AppView row gap-12 center>
+          <AppView row gap-12 center style={styles.headerOptions}>
             <AppButton onPress={() => setIsEditing((edit) => !edit)}>
               <AppIcon
                 set="Feather"
@@ -149,5 +149,8 @@ export default AddTask;
 const styles = StyleSheet.create({
   scrollContainer: {
     paddingVertical: 60,
+  },
+  headerOptions: {
+    minHeight: 24,
   },
 });

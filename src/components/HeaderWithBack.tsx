@@ -19,6 +19,7 @@ export const HeaderWithBack = ({
   onBackPress,
   onHeaderTitlePress,
   goBackOnPress = true,
+  ...containerStyles
 }: HeaderWithBackProps) => {
   const onBackArrowPress = () => {
     onBackPress?.();
@@ -28,19 +29,20 @@ export const HeaderWithBack = ({
   };
 
   return (
-    <AppView row gap-16>
-      <AppButton center onPress={onBackArrowPress}>
+    <AppView row gap-16 {...containerStyles}>
+      <AppButton onPress={onBackArrowPress}>
         <AppIcon name="arrowleft" />
       </AppButton>
       {(headerKey || headerText) && (
         <AppButton
-          center
+          centerV
+          flex-1
           disabled={!onHeaderTitlePress}
           onPress={onHeaderTitlePress}>
           {headerKey ? (
-            <TranslatedText subtitle1 translationKey={headerKey} />
+            <TranslatedText body1 translationKey={headerKey} />
           ) : (
-            <AppText textColor subtitle1>
+            <AppText textColor body1 textBreakStrategy="highQuality">
               {headerText}
             </AppText>
           )}

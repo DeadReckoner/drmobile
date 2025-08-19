@@ -3,6 +3,7 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { CreateCustomRoadmapForm } from '@/components/roadmap/CreateCustomRoadmapForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
 const CreateCustomRoadmap = () => {
@@ -16,7 +17,12 @@ const CreateCustomRoadmap = () => {
         titleProps={{ body1: true }}
         subtileProps={{ xsm: true }}
       />
-      <CreateCustomRoadmapForm />
+      <CreateCustomRoadmapForm
+        mode="create"
+        onSuccess={() => {
+          router.navigate('/roadmap/roadmap-details');
+        }}
+      />
     </AppKeyboardController>
   );
 };

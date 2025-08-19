@@ -1,4 +1,6 @@
+import { api } from '@/store/apis/api';
 import { roadmapApi } from '@/store/apis/roadmapApi';
+import { roadmapDraftSlicePath } from '@/store/slices/roadmapDraftSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import {
@@ -18,7 +20,7 @@ const persistedReducer = persistReducer(
     key: 'root',
     version: 1,
     storage: AsyncStorage,
-    blacklist: ['roadmapDraft'],
+    blacklist: [roadmapDraftSlicePath, api.reducerPath],
   },
   rootReducer,
 );

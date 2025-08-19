@@ -2,6 +2,10 @@ import { Env } from '@/constants/Env';
 import { RootStateType } from '@/store/types/store.types';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+export const TagTypes = Object.freeze({
+  Roadmaps: 'Roadmaps',
+});
+
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: Env.EXPO_PUBLIC_API_URL,
@@ -13,5 +17,6 @@ export const api = createApi({
       return headers;
     },
   }),
+  tagTypes: [...Object.values(TagTypes)],
   endpoints: () => ({}),
 });

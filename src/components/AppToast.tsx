@@ -24,7 +24,7 @@ export const AppToast = () => {
       messageStyle: { color: Colors.black },
     },
     offline: {
-      preset: 'failure',
+      preset: 'offline',
       backgroundColor: Colors.$backgroundDark,
     },
     general: {

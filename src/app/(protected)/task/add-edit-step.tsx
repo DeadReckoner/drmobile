@@ -20,6 +20,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
@@ -65,7 +66,7 @@ const AddEditStep = () => {
       <AppView spread row centerV>
         <HeaderWithBack />
         {canEdit && (
-          <AppView row gap-12 center>
+          <AppView row gap-12 center style={styles.headerOptions}>
             <AppButton onPress={() => setIsEditing((edit) => !edit)}>
               <AppIcon
                 set="Feather"
@@ -156,3 +157,9 @@ const AddEditStep = () => {
 };
 
 export default AddEditStep;
+
+const styles = StyleSheet.create({
+  headerOptions: {
+    minHeight: 24,
+  },
+});
