@@ -15,7 +15,7 @@ import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
 const RoadmapDetailsPage = () => {
@@ -26,41 +26,32 @@ const RoadmapDetailsPage = () => {
 
   const { t } = useLocalization();
   const { showToast } = useToast();
-  const [deleteRoadmap, { data, isLoading, error, reset }] =
-    useDeleteRoadmapMutation();
+  const [deleteRoadmap, { isLoading }] = useDeleteRoadmapMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
   const showDialog = () => setIsDeleteMilestoneDialogOpen(true);
 
-  const onDeleteConfirmation = () => {
-    deleteRoadmap(roadmap.roadmap_id);
+  const onDeleteConfirmation = async () => {
     hideDialog();
+    try {
+      await deleteRoadmap(roadmap.roadmap_id).unwrap();
+      onDeleteSuccess();
+    } catch {
+      showToast({
+        type: 'failure',
+        message: t('common.something_went_wrong'),
+      });
+    }
   };
 
-  const onDeleteSuccess = useCallback(() => {
+  const onDeleteSuccess = () => {
     showToast({
       type: 'success',
       message: t('common.deleted_successfully'),
     });
     router.back();
-  }, [showToast, t]);
-
-  useEffect(() => {
-    if (data || error) {
-      if (error) {
-        showToast({
-          type: 'failure',
-          message: t('common.something_went_wrong'),
-        });
-      }
-
-      if (data) {
-        onDeleteSuccess();
-      }
-      reset();
-    }
-  }, [onDeleteSuccess, data, error, showToast, t, reset]);
+  };
 
   return (
     <>

@@ -3,20 +3,64 @@ import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
-import type { FormRoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { useUpdateRoadmapMutation } from '@/hooks/roadmap';
+import type {
+  FormEditModeType,
+  FormRoadmapType,
+} from '@/hooks/roadmap/types/roadmap.types';
 import { useCreateCustomRoadmapForm } from '@/hooks/roadmap/useCreateCustomRoadmapForm';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setMetaAction } from '@/store/slices/roadmapDraftSlice';
+import { useLocalization } from '@/hooks/useLocalization';
+import { useToast } from '@/hooks/useToast';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
-import { router } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
-export const CreateCustomRoadmapForm = () => {
-  const dispatch = useAppDispatch();
+interface CreateCustomRoadmapFormProps {
+  mode: FormEditModeType;
+  onSuccess?: () => void;
+}
 
-  const onSuccessCreateCustomRooadmap = (roadmap: FormRoadmapType) => {
-    dispatch(setMetaAction(roadmap));
-    router.navigate('/(protected)/roadmap/roadmap-details');
+export const CreateCustomRoadmapForm = ({
+  mode,
+  onSuccess,
+}: CreateCustomRoadmapFormProps) => {
+  const { showToast } = useToast();
+  const { t } = useLocalization();
+  const roadmap = useAppSelector(selectDraftRoadmap);
+  const [updateRoadmap, { isLoading }] = useUpdateRoadmapMutation();
+
+  const onRoadmapUpdate = () => {
+    showToast({
+      type: 'success',
+      message: t(
+        mode === 'create'
+          ? 'common.created_successfully'
+          : 'common.updated_successfully',
+      ),
+    });
+    onSuccess?.();
+  };
+
+  const onValidRoadmapFormSubmit = async (
+    updatedRoadmapProperties: FormRoadmapType,
+  ) => {
+    if (mode === 'edit') {
+      try {
+        await updateRoadmap({
+          roadmap_id: roadmap.roadmap_id,
+          ...updatedRoadmapProperties,
+        }).unwrap();
+        onRoadmapUpdate();
+      } catch {
+        showToast({
+          type: 'failure',
+          message: t('common.something_went_wrong'),
+        });
+      }
+    } else {
+      //TODO: create roadmap
+    }
   };
 
   const {
@@ -26,8 +70,10 @@ export const CreateCustomRoadmapForm = () => {
     handleChange,
     handleSubmit,
     setFieldValue,
+    values,
   } = useCreateCustomRoadmapForm({
-    onSuccess: onSuccessCreateCustomRooadmap,
+    mode,
+    onSuccess: onValidRoadmapFormSubmit,
   });
 
   const onDateChange = (date: Date) => {
@@ -46,13 +92,14 @@ export const CreateCustomRoadmapForm = () => {
   );
 
   return (
-    <AppView marginT-24>
+    <AppView marginT-24 pointerEvents={isLoading ? 'none' : 'auto'}>
       <TranslatedTextInput
         labelKey="tabs.create_tab.goal_name_label"
         placeholderKey="tabs.create_tab.goal_name_placeholder"
         onChangeText={handleChange('goal')}
         onBlur={handleBlur('goal')}
         error={touched.goal && errors.goal}
+        value={values.goal}
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.goal_description_placeholder"
@@ -60,6 +107,7 @@ export const CreateCustomRoadmapForm = () => {
         onChangeText={handleChange('goalDescription')}
         onBlur={handleBlur('goalDescription')}
         error={touched.goalDescription && errors.goalDescription}
+        value={values.goalDescription}
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.why_matters_label"
@@ -67,6 +115,7 @@ export const CreateCustomRoadmapForm = () => {
         onChangeText={handleChange('reason')}
         onBlur={handleBlur('reason')}
         error={touched.reason && errors.reason}
+        value={values.reason}
       />
       <AppDateTimePicker
         style={[StyleSheet.absoluteFillObject]}
@@ -77,7 +126,13 @@ export const CreateCustomRoadmapForm = () => {
       />
       <Divider margin-4 />
       <PrimaryButton
-        label="tabs.create_tab.create_roadmap_button"
+        label={
+          mode === 'edit'
+            ? 'tabs.create_tab.update_roadmap'
+            : 'tabs.create_tab.create_roadmap_button'
+        }
+        shouldShowLoader
+        isLoading={isLoading}
         onPress={handleSubmit}
       />
       <Divider />

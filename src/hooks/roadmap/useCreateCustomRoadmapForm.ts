@@ -4,11 +4,8 @@ import type {
 } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import {
-  selectDraftRoadmap,
-  setMetaAction,
-} from '@/store/slices/roadmapDraftSlice';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
@@ -57,7 +54,6 @@ export const useCreateCustomRoadmapForm = ({
   const { t } = useLocalization();
   const schema = createCustomRoadmapValidationSchema(t);
   const roadmap = useAppSelector(selectDraftRoadmap);
-  const dispatch = useAppDispatch();
   const canEdit = mode === 'edit';
 
   const onCustomRoadmapSubmit = async ({
@@ -72,7 +68,6 @@ export const useCreateCustomRoadmapForm = ({
       reason: reason,
       days: DateUtils.daysBetween(DateUtils.createDate(), targetDate),
     };
-    dispatch(setMetaAction(roadmap));
     onSuccess?.(roadmap);
   };
 
