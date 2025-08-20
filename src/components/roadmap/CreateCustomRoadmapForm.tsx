@@ -3,7 +3,10 @@ import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
-import { useUpdateRoadmapMutation } from '@/hooks/roadmap';
+import {
+  useCreateRoadmapMutation,
+  useUpdateRoadmapMutation,
+} from '@/hooks/roadmap';
 import type {
   FormEditModeType,
   FormRoadmapType,
@@ -28,9 +31,12 @@ export const CreateCustomRoadmapForm = ({
   const { showToast } = useToast();
   const { t } = useLocalization();
   const roadmap = useAppSelector(selectDraftRoadmap);
-  const [updateRoadmap, { isLoading }] = useUpdateRoadmapMutation();
+  const [updateRoadmap, { isLoading: isUpdatingRoadmap }] =
+    useUpdateRoadmapMutation();
+  const [createRoadmap, { isLoading: isCreatingRoadmap }] =
+    useCreateRoadmapMutation();
 
-  const onRoadmapUpdate = () => {
+  const onRoadmapUpdateSuccess = () => {
     showToast({
       type: 'success',
       message: t(
@@ -42,26 +48,44 @@ export const CreateCustomRoadmapForm = ({
     onSuccess?.();
   };
 
+  const onUpdateRoadmap = async (updatedRoadmapProperties: FormRoadmapType) => {
+    try {
+      await updateRoadmap({
+        roadmap_id: roadmap.roadmap_id,
+        ...updatedRoadmapProperties,
+      }).unwrap();
+      onRoadmapUpdateSuccess();
+    } catch {
+      showToast({
+        type: 'failure',
+        message: t('common.something_went_wrong'),
+      });
+    }
+  };
+
+  const onCreateRoadmap = async (updatedRoadmapProperties: FormRoadmapType) => {
+    try {
+      await createRoadmap(updatedRoadmapProperties).unwrap();
+      onRoadmapUpdateSuccess();
+    } catch {
+      showToast({
+        type: 'failure',
+        message: t('common.something_went_wrong'),
+      });
+    }
+  };
+
   const onValidRoadmapFormSubmit = async (
     updatedRoadmapProperties: FormRoadmapType,
   ) => {
     if (mode === 'edit') {
-      try {
-        await updateRoadmap({
-          roadmap_id: roadmap.roadmap_id,
-          ...updatedRoadmapProperties,
-        }).unwrap();
-        onRoadmapUpdate();
-      } catch {
-        showToast({
-          type: 'failure',
-          message: t('common.something_went_wrong'),
-        });
-      }
+      onUpdateRoadmap(updatedRoadmapProperties);
     } else {
-      //TODO: create roadmap
+      onCreateRoadmap(updatedRoadmapProperties);
     }
   };
+
+  const isLoading = isUpdatingRoadmap || isCreatingRoadmap;
 
   const {
     errors,

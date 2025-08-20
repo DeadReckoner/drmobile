@@ -20,7 +20,7 @@ const CreateCustomRoadmap = () => {
       <CreateCustomRoadmapForm
         mode="create"
         onSuccess={() => {
-          router.navigate('/roadmap/roadmap-details');
+          router.replace('/roadmap/roadmap-details');
         }}
       />
     </AppKeyboardController>

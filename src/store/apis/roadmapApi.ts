@@ -1,11 +1,27 @@
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
-import { api, TagTypes } from '@/store/apis/api';
+import { api } from '@/store/apis/api';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   resetDraftAction,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
+
+const onCreateRoadmapQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  RoadmapType,
+  BaseQueryFunctionType
+> = async (_roadmap, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        draft.push(data);
+      }),
+    );
+    dispatch(setDraftRoadmapAction(data));
+  } catch {}
+};
 
 const onUpdateRoadmapQueryStarted: TypedMutationOnQueryStarted<
   RoadmapType,
@@ -60,17 +76,26 @@ export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<RoadmapType[], void>({
       query: () => '/roadmaps',
-      providesTags: [TagTypes.Roadmaps],
+    }),
+    createRoadmap: builder.mutation<RoadmapType, Partial<RoadmapType>>({
+      query: (roadmap) => {
+        return {
+          url: `/roadmap`,
+          method: 'POST',
+          body: roadmap,
+        };
+      },
+      onQueryStarted: onCreateRoadmapQueryStarted,
     }),
     updateRoadmap: builder.mutation<
       RoadmapType,
       Partial<RoadmapType> & { roadmap_id: string }
     >({
-      query: ({ roadmap_id, ...body }) => {
+      query: ({ roadmap_id, ...roadmap }) => {
         return {
           url: `/roadmap/${roadmap_id}`,
           method: 'PATCH',
-          body,
+          body: roadmap,
         };
       },
       onQueryStarted: onUpdateRoadmapQueryStarted,
