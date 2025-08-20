@@ -1,7 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppKeyboardController } from '@/components/AppKeyboardController';
-import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
@@ -16,7 +16,6 @@ import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const RoadmapDetailsPage = () => {
@@ -83,9 +82,7 @@ const RoadmapDetailsPage = () => {
           </AppView>
         </AppView>
         <Divider margin-16 />
-        <AppView
-          reanimated
-          layout={LinearTransition.springify().damping(15).stiffness(150)}>
+        <AppView reanimated layout={Animations.Layout.Springify}>
           {isEditing && (
             <AppView
               reanimated

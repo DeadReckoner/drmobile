@@ -1,7 +1,7 @@
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
-import { RoadmapList } from '@/components/RoadmapList';
+import { RoadmapList } from '@/components/roadmap/RoadmapList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
@@ -11,7 +11,7 @@ import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import { RefreshControl } from 'react-native';
-import Animated, { LinearTransition } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const Progress = () => {
@@ -27,7 +27,7 @@ const Progress = () => {
     <AppScreen>
       {isLoading && <Loader />}
       <Animated.ScrollView
-        layout={LinearTransition.duration(600).springify()}
+        layout={Animations.Layout.Springify}
         entering={Animations.Entry.FadeInDown}
         exiting={Animations.Exit.FadeOutDown}
         contentInsetAdjustmentBehavior="always"

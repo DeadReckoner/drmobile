@@ -2,12 +2,12 @@ import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppKeyboardController } from '@/components/AppKeyboardController';
-import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
 import { CreateTaskForm } from '@/components/roadmap/CreateTaskForm';
-import StepsList from '@/components/roadmap/StepsList';
+import { StepsList } from '@/components/roadmap/StepsList';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AppText, AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
@@ -22,7 +22,6 @@ import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const AddTask = () => {
@@ -75,10 +74,7 @@ const AddTask = () => {
       </AppView>
       <Divider margin-16 />
 
-      <AppView
-        reanimated
-        paddingL-4
-        layout={LinearTransition.springify().damping(15).stiffness(150)}>
+      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify}>
         {!canEdit && (
           <AppView
             reanimated

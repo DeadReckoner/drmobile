@@ -20,7 +20,7 @@ interface ConfirmationDialogProps {
   positiveButtonIcon?: JSX.Element;
 }
 
-const ConfirmationDialog = ({
+export const ConfirmationDialog = ({
   isDialogOpen,
   title,
   subtitle,
@@ -73,5 +73,3 @@ const ConfirmationDialog = ({
     </AppDialog>
   );
 };
-
-export default ConfirmationDialog;
