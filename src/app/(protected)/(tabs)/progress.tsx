@@ -41,12 +41,13 @@ const Progress = () => {
         }>
         <Divider />
         <TranslatedText h2 translationKey="tabs.progress" />
-        {data?.length > 0 && (
+        <Divider />
+
+        {!isLoading && (
           <AppView
             reanimated
             entering={Animations.Entry.FadeInDownWithSpring}
             exiting={Animations.Exit.FadeOutDown}>
-            <Divider />
             <RoadmapList data={data} onItemPress={onItemPress} />
           </AppView>
         )}
