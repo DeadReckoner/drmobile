@@ -14,24 +14,7 @@ interface RoadmapOverviewProps {
 
 export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
   const theme = useAppSelector(selectTheme);
-  const currentMilestone = roadmap.milestones.find((m) => !m.reached);
-
-  const totalMilestoneDays = currentMilestone
-    ? Math.max(...currentMilestone.tasks.map((t) => t.day), 0)
-    : 0;
-  const completedTaskDays =
-    currentMilestone?.tasks.filter((t) => t.completed).map((t) => t.day) || [];
-  const lastCompletedDay = completedTaskDays.length
-    ? Math.max(...completedTaskDays)
-    : 0;
-
-  const daysRemainingInMilestone = Math.max(
-    totalMilestoneDays - lastCompletedDay,
-    0,
-  );
-
-  const progressPecentage = (lastCompletedDay / roadmap.days) * 100;
-  const progress = isNaN(progressPecentage) ? 0 : progressPecentage;
+  const roadmapProgress = roadmap.progress || 0;
 
   return (
     <AppCard>
@@ -43,7 +26,7 @@ export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
         <AppView row gap-2>
           <TranslatedText xsm translationKey="common.next_milestone" />
           <AppText xsm textColor>
-            {`: ${daysRemainingInMilestone}`}
+            {`: ${roadmap.daysRemainingTillNextMilestone ?? 'N/A'}`}
           </AppText>
           <TranslatedText xsm translationKey="common.days" />
         </AppView>
@@ -55,11 +38,11 @@ export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
               { backgroundColor: Colors.outline },
             ]}
             fullWidth={false}
-            progress={isNaN(progress) ? 0 : progress}
+            progress={roadmapProgress}
             progressColor={theme === 'dark' ? Colors.white : Colors.primary}
           />
           <AppText xsm textColor>
-            {isNaN(progress) ? 0 : progress}%
+            {roadmapProgress}%
           </AppText>
         </AppView>
       </AppView>

@@ -45,4 +45,8 @@ export interface RoadmapType {
   start_date: string; // ISO string
   milestones: MilestoneType[];
   reason?: string;
+
+  // frontend calculated properties
+  progress?: number;
+  daysRemainingTillNextMilestone?: number;
 }

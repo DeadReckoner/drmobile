@@ -60,6 +60,28 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
+  const activeMilestone = roadmap.milestones.find((m) => !m.reached);
+
+  if (!activeMilestone) {
+    return {
+      ...roadmap,
+      progress: 100,
+      daysRemainingTillNextMilestone: 0,
+    };
+  }
+  const completedMilestones = roadmap.milestones.filter((m) => m.reached);
+  return {
+    ...roadmap,
+    progress: Math.floor(
+      (completedMilestones.length / roadmap.milestones.length) * 100,
+    ),
+    daysRemainingTillNextMilestone: activeMilestone.tasks.filter(
+      (t) => !t.completed,
+    ).length,
+  };
+};
+
 /**
  * Provides endpoints to:
  *  - Fetch all roadmaps (`getRoadmaps`)
@@ -76,6 +98,13 @@ export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<RoadmapType[], void>({
       query: () => '/roadmaps',
+      transformResponse: (roadmaps: RoadmapType[]) => {
+        try {
+          return roadmaps.map(transformRoadmap);
+        } catch {
+          return roadmaps;
+        }
+      },
     }),
     createRoadmap: builder.mutation<RoadmapType, Partial<RoadmapType>>({
       query: (roadmap) => {
