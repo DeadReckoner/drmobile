@@ -5,6 +5,7 @@ import { PrimaryButtonContainer } from '@/components/PrimaryButtonContainer';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { JSX } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
 interface EmptyListItemPlaceholderProps {
@@ -12,6 +13,7 @@ interface EmptyListItemPlaceholderProps {
   title: TranslationKeysType;
   subtitle?: TranslationKeysType;
   btnText: TranslationKeysType;
+  btnIcon?: JSX.Element;
 }
 
 export const EmptyListItemPlaceholder = ({
@@ -19,6 +21,7 @@ export const EmptyListItemPlaceholder = ({
   subtitle,
   btnText,
   onPress,
+  btnIcon = <AppIcon name="plus" size={18} color={Colors.white} />,
 }: EmptyListItemPlaceholderProps) => {
   return (
     <AppCard paddingV-40>
@@ -33,7 +36,7 @@ export const EmptyListItemPlaceholder = ({
       </AppView>
       <Divider margin-16 />
       <PrimaryButtonContainer row onPress={onPress}>
-        <AppIcon name="plus" size={18} color={Colors.white} />
+        {btnIcon}
         <Divider margin-4 />
         <TranslatedText body2 textOnPrimary translationKey={btnText} />
       </PrimaryButtonContainer>

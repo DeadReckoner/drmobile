@@ -1,14 +1,17 @@
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
-import { RoadmapList } from '@/components/RoadmapList';
+import { RoadmapList } from '@/components/roadmap/RoadmapList';
 import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
+import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
-import { RefreshControl, ScrollView } from 'react-native';
+import { RefreshControl } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const Progress = () => {
@@ -23,7 +26,10 @@ const Progress = () => {
   return (
     <AppScreen>
       {isLoading && <Loader />}
-      <ScrollView
+      <Animated.ScrollView
+        layout={Animations.Layout.Springify}
+        entering={Animations.Entry.FadeInDown}
+        exiting={Animations.Exit.FadeOutDown}
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -36,8 +42,16 @@ const Progress = () => {
         <Divider />
         <TranslatedText h2 translationKey="tabs.progress" />
         <Divider />
-        <RoadmapList data={data} onItemPress={onItemPress} />
-      </ScrollView>
+
+        {!isLoading && (
+          <AppView
+            reanimated
+            entering={Animations.Entry.FadeInDownWithSpring}
+            exiting={Animations.Exit.FadeOutDown}>
+            <RoadmapList data={data} onItemPress={onItemPress} />
+          </AppView>
+        )}
+      </Animated.ScrollView>
     </AppScreen>
   );
 };

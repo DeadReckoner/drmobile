@@ -19,7 +19,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-const StepsList = () => {
+export const StepsList = () => {
   const task = useAppSelector(selectSelectedTask);
   const dispatch = useDispatch();
 
@@ -98,5 +98,3 @@ const StepsList = () => {
     </>
   );
 };
-
-export default StepsList;

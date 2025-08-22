@@ -6,7 +6,6 @@ import type {
 } from '@/hooks/roadmap/types/roadmap.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
-import dayjs from 'dayjs';
 
 type DraftState = {
   roadmap: RoadmapType;
@@ -25,7 +24,7 @@ const initialState: DraftState = {
     description: '',
     days: 0,
     completed: false,
-    start_date: dayjs().toString(),
+    start_date: '',
     milestones: [],
     reason: '',
   },
@@ -217,3 +216,4 @@ export const selectSelectedTask = createAppSelector(
 );
 
 export const draftRoadmapReducer = roadmapDraftSlice.reducer;
+export const roadmapDraftSlicePath = roadmapDraftSlice.reducerPath;

@@ -2,7 +2,7 @@ import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppKeyboardController } from '@/components/AppKeyboardController';
-import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
@@ -20,7 +20,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { LinearTransition } from 'react-native-reanimated';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const AddEditStep = () => {
@@ -65,7 +65,7 @@ const AddEditStep = () => {
       <AppView spread row centerV>
         <HeaderWithBack />
         {canEdit && (
-          <AppView row gap-12 center>
+          <AppView row gap-12 center style={styles.headerOptions}>
             <AppButton onPress={() => setIsEditing((edit) => !edit)}>
               <AppIcon
                 set="Feather"
@@ -81,10 +81,7 @@ const AddEditStep = () => {
       </AppView>
       <Divider margin-16 />
 
-      <AppView
-        reanimated
-        paddingL-4
-        layout={LinearTransition.springify().damping(15).stiffness(150)}>
+      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify}>
         {!canEdit && (
           <AppView
             reanimated
@@ -156,3 +153,9 @@ const AddEditStep = () => {
 };
 
 export default AddEditStep;
+
+const styles = StyleSheet.create({
+  headerOptions: {
+    minHeight: 24,
+  },
+});

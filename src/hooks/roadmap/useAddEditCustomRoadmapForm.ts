@@ -1,6 +1,11 @@
-import type { FormRoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import type {
+  FormEditModeType,
+  FormRoadmapType,
+} from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
@@ -38,14 +43,18 @@ type CustomRoadmapSchemaType = Yup.InferType<
 >;
 
 interface CustomRoadmapFormHookProps {
+  mode: FormEditModeType;
   onSuccess?: (_roadmap: FormRoadmapType) => void;
 }
 
-export const useCreateCustomRoadmapForm = ({
+export const useAddEditCustomRoadmapForm = ({
   onSuccess,
+  mode,
 }: CustomRoadmapFormHookProps) => {
   const { t } = useLocalization();
   const schema = createCustomRoadmapValidationSchema(t);
+  const roadmap = useAppSelector(selectDraftRoadmap);
+  const canEdit = mode === 'edit';
 
   const onCustomRoadmapSubmit = async ({
     goal,
@@ -53,20 +62,21 @@ export const useCreateCustomRoadmapForm = ({
     targetDate,
     reason,
   }: CustomRoadmapSchemaType) => {
-    onSuccess?.({
+    const roadmap = {
       goal: goal,
       description: goalDescription,
       reason: reason,
       days: DateUtils.daysBetween(DateUtils.createDate(), targetDate),
-    });
+    };
+    onSuccess?.(roadmap);
   };
 
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<CustomRoadmapSchemaType>({
       initialValues: {
-        goal: '',
-        goalDescription: '',
-        reason: '',
+        goal: canEdit ? roadmap.goal : '',
+        goalDescription: canEdit ? roadmap.description : '',
+        reason: (canEdit && roadmap.reason) || '',
         targetDate: '',
       },
       validationSchema: schema,

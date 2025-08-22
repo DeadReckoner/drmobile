@@ -27,7 +27,8 @@ export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
             {roadmap.goal}
           </AppText>
           <AppText xsm textColor>
-            {t('common.next_milestone')}: {roadmap.days} {t('common.days')}
+            {t('common.next_milestone')}:{' '}
+            {roadmap.daysRemainingTillNextMilestone} {t('common.days')}
           </AppText>
           <AppView row gap-8 centerV>
             <AppProgressBar
@@ -36,11 +37,11 @@ export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
                 { backgroundColor: Colors.outline },
               ]}
               fullWidth={true}
-              progress={50}
+              progress={roadmap.progress}
               progressColor={theme === 'dark' ? Colors.white : Colors.primary}
             />
             <AppText xsm textColor>
-              {50}%
+              {roadmap.progress}%
             </AppText>
           </AppView>
         </AppView>

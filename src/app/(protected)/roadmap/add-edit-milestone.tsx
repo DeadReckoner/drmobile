@@ -2,7 +2,7 @@ import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppKeyboardController } from '@/components/AppKeyboardController';
-import ConfirmationDialog from '@/components/ConfirmationDialog';
+import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
@@ -20,6 +20,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const AddMilestone = () => {
@@ -56,7 +57,7 @@ const AddMilestone = () => {
       <AppView spread row centerV>
         <AppView>{!isEditing && <HeaderWithBack />}</AppView>
         {canEdit && (
-          <AppView row gap-12 center>
+          <AppView row gap-12 center style={styles.headerOptions}>
             <AppButton onPress={() => setIsEditing((edit) => !edit)}>
               <AppIcon
                 set="Feather"
@@ -138,3 +139,9 @@ const AddMilestone = () => {
 };
 
 export default AddMilestone;
+
+const styles = StyleSheet.create({
+  headerOptions: {
+    minHeight: 24,
+  },
+});
