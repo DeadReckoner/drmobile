@@ -82,7 +82,7 @@ const AddTask = () => {
             exiting={Animations.Exit.FadeOutDown}>
             <ScreenHeader
               title="tabs.create_tab.add_new_task"
-              subtitle="tabs.create_tab.add_new_task_desc"
+              subtitle="tabs.create_tab.add_milestone_task_desc"
               titleProps={{ body1: true }}
               subtileProps={{ xsm: true }}
               marginT-0

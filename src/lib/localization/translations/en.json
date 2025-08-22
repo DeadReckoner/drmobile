@@ -105,7 +105,11 @@
       "task_desc_label": "Task Description",
       "task_desc_placeholder": "Enter task description",
       "step_label": "Step",
-      "step_desc_placeholder": "Enter step description"
+      "step_desc_placeholder": "Enter step description",
+      "repeats_on": "Repeats On",
+      "start_date": "Start date",
+      "end_date": "End date",
+      "select_date": "Select date"
     }
   },
   "common": {

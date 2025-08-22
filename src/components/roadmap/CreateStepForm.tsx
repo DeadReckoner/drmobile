@@ -1,3 +1,4 @@
+import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
@@ -52,6 +53,7 @@ export const CreateStepForm = ({
         error={touched.stepDescription && errors.stepDescription}
         value={values.stepDescription}
       />
+      <Divider margin-4 />
       <PrimaryButton
         label={
           mode === 'edit'

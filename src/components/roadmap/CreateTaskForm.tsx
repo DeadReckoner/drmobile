@@ -1,3 +1,4 @@
+import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
@@ -50,6 +51,7 @@ export const CreateTaskForm = ({ mode, onSuccess }: CreateTaskFormProps) => {
         error={touched.taskDescription && errors.taskDescription}
         value={values.taskDescription}
       />
+      <Divider margin-4 />
       <PrimaryButton
         label={
           mode === 'edit'

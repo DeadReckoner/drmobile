@@ -16,7 +16,7 @@ const Create = () => {
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
   const onAddNewTaskPress = () => {
-    router.navigate('/roadmap/roadmap-details');
+    router.navigate('/task/add-edit-standalone-task');
   };
   return (
     <AppScreen>

@@ -105,7 +105,11 @@
       "task_desc_label": "Description de la Tâche",
       "task_desc_placeholder": "Entrez la description de la tâche",
       "step_label": "Étape",
-      "step_desc_placeholder": "Entrez la description de l’étape"
+      "step_desc_placeholder": "Entrez la description de l’étape",
+      "repeats_on": "Répète le",
+      "start_date": "Date de début",
+      "end_date": "Date de fin",
+      "select_date": "Sélectionner une date"
     }
   },
   "common": {

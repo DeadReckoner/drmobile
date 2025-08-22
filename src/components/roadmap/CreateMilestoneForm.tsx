@@ -1,3 +1,4 @@
+import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
@@ -51,6 +52,7 @@ export const CreateMilestoneForm = ({
         error={touched.milestoneDescription && errors.milestoneDescription}
         value={values.milestoneDescription}
       />
+      <Divider margin-4 />
       <PrimaryButton
         label={
           mode === 'create'
