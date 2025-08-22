@@ -13,7 +13,7 @@ const Create = () => {
     router.navigate('/roadmap/ai-roadmap');
   };
   const onCustomRoadmapPress = () => {
-    router.navigate('/roadmap/create-custom-roadmap');
+    router.navigate('/roadmap/add-edit-custom-roadmap');
   };
   const onAddNewTaskPress = () => {
     router.navigate('/roadmap/roadmap-details');

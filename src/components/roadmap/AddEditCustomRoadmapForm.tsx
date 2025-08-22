@@ -11,7 +11,7 @@ import type {
   FormEditModeType,
   FormRoadmapType,
 } from '@/hooks/roadmap/types/roadmap.types';
-import { useCreateCustomRoadmapForm } from '@/hooks/roadmap/useCreateCustomRoadmapForm';
+import { useAddEditCustomRoadmapForm } from '@/hooks/roadmap/useAddEditCustomRoadmapForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
@@ -19,15 +19,15 @@ import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { StyleSheet } from 'react-native';
 
-interface CreateCustomRoadmapFormProps {
+interface AddEditCustomRoadmapFormProps {
   mode: FormEditModeType;
   onSuccess?: () => void;
 }
 
-export const CreateCustomRoadmapForm = ({
+export const AddEditCustomRoadmapForm = ({
   mode,
   onSuccess,
-}: CreateCustomRoadmapFormProps) => {
+}: AddEditCustomRoadmapFormProps) => {
   const { showToast } = useToast();
   const { t } = useLocalization();
   const roadmap = useAppSelector(selectDraftRoadmap);
@@ -95,7 +95,7 @@ export const CreateCustomRoadmapForm = ({
     handleSubmit,
     setFieldValue,
     values,
-  } = useCreateCustomRoadmapForm({
+  } = useAddEditCustomRoadmapForm({
     mode,
     onSuccess: onValidRoadmapFormSubmit,
   });

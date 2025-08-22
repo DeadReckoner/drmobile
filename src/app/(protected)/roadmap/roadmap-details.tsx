@@ -5,7 +5,7 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
-import { CreateCustomRoadmapForm } from '@/components/roadmap/CreateCustomRoadmapForm';
+import { AddEditCustomRoadmapForm } from '@/components/roadmap/AddEditCustomRoadmapForm';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
 import { AppView } from '@/components/ui';
 import { useDeleteRoadmapMutation } from '@/hooks/roadmap';
@@ -79,7 +79,7 @@ const RoadmapDetailsPage = () => {
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring.delay(200)}
               exiting={Animations.Exit.FadeOutDown}>
-              <CreateCustomRoadmapForm
+              <AddEditCustomRoadmapForm
                 mode="edit"
                 onSuccess={() => setIsEditing(false)}
               />

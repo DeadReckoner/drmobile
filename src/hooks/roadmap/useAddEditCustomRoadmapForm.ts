@@ -47,7 +47,7 @@ interface CustomRoadmapFormHookProps {
   onSuccess?: (_roadmap: FormRoadmapType) => void;
 }
 
-export const useCreateCustomRoadmapForm = ({
+export const useAddEditCustomRoadmapForm = ({
   onSuccess,
   mode,
 }: CustomRoadmapFormHookProps) => {
