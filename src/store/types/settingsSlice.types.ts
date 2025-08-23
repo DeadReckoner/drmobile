@@ -14,6 +14,7 @@ type SettingsStateType = {
   theme: ThemeModeType;
   language: SupportedLanguagesType;
   toast: ToastStateType;
+  roadmapListCache?: string;
 };
 
 export type { SettingsStateType, ThemeModeType, ToastStateType, ToastType };

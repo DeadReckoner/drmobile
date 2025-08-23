@@ -26,9 +26,9 @@ export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
         <AppView row gap-2>
           <TranslatedText xsm translationKey="common.next_milestone" />
           <AppText xsm textColor>
-            {`: ${roadmap.daysRemainingTillNextMilestone ?? 'N/A'}`}
+            {`: ${roadmap.daysRemainingTillNextMilestone || 0}`}{' '}
+            <TranslatedText xsm translationKey="common.days" />
           </AppText>
-          <TranslatedText xsm translationKey="common.days" />
         </AppView>
 
         <AppView row center gap-8>
