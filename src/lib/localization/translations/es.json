@@ -109,7 +109,9 @@
       "repeats_on": "Se repite en",
       "start_date": "Fecha de inicio",
       "end_date": "Fecha de fin",
-      "select_date": "Seleccionar fecha"
+      "select_date": "Seleccionar fecha",
+      "add_milestones": "Añadir hitos",
+      "submit_roadmap": "Enviar hoja de ruta"
     }
   },
   "common": {

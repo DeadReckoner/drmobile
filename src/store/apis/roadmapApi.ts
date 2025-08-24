@@ -5,6 +5,7 @@ import {
   resetDraftAction,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { structureRoadmapApiPayload } from '@/utils/roadmap.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateRoadmapQueryStarted: TypedMutationOnQueryStarted<
@@ -111,7 +112,7 @@ export const roadmapApi = api.injectEndpoints({
         return {
           url: `/roadmap`,
           method: 'POST',
-          body: roadmap,
+          body: structureRoadmapApiPayload(roadmap),
         };
       },
       onQueryStarted: onCreateRoadmapQueryStarted,

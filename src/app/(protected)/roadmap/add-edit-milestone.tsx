@@ -91,8 +91,8 @@ const AddMilestone = () => {
         {selectedMilestone && canEdit && !isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDownWithSpring}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <AppCard>
               <AppText body1 textColor>
                 {selectedMilestone?.sub_goal}
@@ -108,8 +108,8 @@ const AddMilestone = () => {
         {isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDown}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <CreateMilestoneForm
               mode="edit"
               onSuccess={() => setIsEditing(false)}

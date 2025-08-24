@@ -74,12 +74,12 @@ const AddTask = () => {
       </AppView>
       <Divider margin-16 />
 
-      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify}>
+      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify()}>
         {!canEdit && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDown}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <ScreenHeader
               title="tabs.create_tab.add_new_task"
               subtitle="tabs.create_tab.add_milestone_task_desc"
@@ -95,8 +95,8 @@ const AddTask = () => {
         {selectedTask && canEdit && !isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDownWithSpring}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <AppCard>
               <AppText body1 textColor>
                 {selectedTask?.title}
@@ -114,8 +114,8 @@ const AddTask = () => {
         {isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDown}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <CreateTaskForm mode="edit" onSuccess={() => setIsEditing(false)} />
           </AppView>
         )}

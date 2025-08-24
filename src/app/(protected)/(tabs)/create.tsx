@@ -4,15 +4,20 @@ import { Divider } from '@/components/Divider';
 import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { resetDraftAction } from '@/store/slices/roadmapDraftSlice';
 import { router } from 'expo-router';
 import { ScrollView } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Create = () => {
+  const dispatch = useAppDispatch();
+
   const onAIRoadmapPress = () => {
     router.navigate('/roadmap/ai-roadmap');
   };
   const onCustomRoadmapPress = () => {
+    dispatch(resetDraftAction());
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
   const onAddNewTaskPress = () => {

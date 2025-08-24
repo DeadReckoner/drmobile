@@ -5,10 +5,14 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { AddEditCustomRoadmapForm } from '@/components/roadmap/AddEditCustomRoadmapForm';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
 import { AppView } from '@/components/ui';
-import { useDeleteRoadmapMutation } from '@/hooks/roadmap';
+import {
+  useCreateRoadmapMutation,
+  useDeleteRoadmapMutation,
+} from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
@@ -16,6 +20,7 @@ import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const RoadmapDetailsPage = () => {
@@ -27,6 +32,8 @@ const RoadmapDetailsPage = () => {
   const { t } = useLocalization();
   const { showToast } = useToast();
   const [deleteRoadmap, { isLoading }] = useDeleteRoadmapMutation();
+  const [createRoadmap, { isLoading: isCreatingRoadmap }] =
+    useCreateRoadmapMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
@@ -53,32 +60,61 @@ const RoadmapDetailsPage = () => {
     router.back();
   };
 
+  const toggleEditMode = () => setIsEditing((edit) => !edit);
+  const onCreateRoadmap = async () => {
+    try {
+      const { goal, description, days, completed, milestones } = roadmap;
+
+      await createRoadmap({
+        goal,
+        description,
+        days,
+        completed,
+        milestones,
+      }).unwrap();
+      showToast({
+        type: 'success',
+        message: t('common.created_successfully'),
+      });
+      router.dismissTo('/(protected)/(tabs)/progress');
+    } catch {
+      setTimeout(() => {
+        showToast({
+          type: 'failure',
+          message: t('common.something_went_wrong'),
+        });
+      }, 300);
+    }
+  };
+
   return (
-    <>
+    <AppView flex-1 bg-red10 reanimated layout={LinearTransition}>
       {isLoading && <Loader />}
       <AppKeyboardController>
         <AppView spread row gap-16>
           <HeaderWithBack headerText={roadmap.goal} flex-1 />
-          <AppView row gap-12>
-            <AppButton onPress={() => setIsEditing((edit) => !edit)}>
-              <AppIcon
-                set="Feather"
-                name={isEditing ? 'x' : 'edit'}
-                size={20}
-              />
-            </AppButton>
+          <AppView row gap-12 top>
+            {isEditing && (
+              <AppButton onPress={toggleEditMode}>
+                <AppIcon
+                  set="Feather"
+                  name={isEditing ? 'x' : 'edit'}
+                  size={20}
+                />
+              </AppButton>
+            )}
             <AppButton onPress={showDialog}>
               <AppIcon name={'delete'} color={Colors.error} size={20} />
             </AppButton>
           </AppView>
         </AppView>
         <Divider margin-16 />
-        <AppView reanimated layout={Animations.Layout.Springify}>
+        <AppView reanimated layout={Animations.Layout.Springify()}>
           {isEditing && (
             <AppView
               reanimated
-              entering={Animations.Entry.FadeInDownWithSpring.delay(200)}
-              exiting={Animations.Exit.FadeOutDown}>
+              entering={Animations.Entry.FadeInDownWithSpring().delay(200)}
+              exiting={Animations.Exit.FadeOutDown()}>
               <AddEditCustomRoadmapForm
                 mode="edit"
                 onSuccess={() => setIsEditing(false)}
@@ -89,9 +125,22 @@ const RoadmapDetailsPage = () => {
           {!isEditing && (
             <AppView
               reanimated
-              entering={Animations.Entry.FadeInDownWithSpring.delay(200)}
-              exiting={Animations.Exit.FadeOutDown}>
-              <RoadmapDetails roadmap={roadmap} />
+              entering={Animations.Entry.FadeInDownWithSpring().delay(200)}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <RoadmapDetails
+                roadmap={roadmap}
+                toggleEditMode={toggleEditMode}
+              />
+              <Divider margin-8 />
+
+              {roadmap.milestones.length > 0 && !roadmap?.roadmap_id && (
+                <PrimaryButton
+                  label="tabs.create_tab.submit_roadmap"
+                  onPress={onCreateRoadmap}
+                  shouldShowLoader
+                  isLoading={isCreatingRoadmap}
+                />
+              )}
             </AppView>
           )}
         </AppView>
@@ -113,7 +162,7 @@ const RoadmapDetailsPage = () => {
           }
         />
       </AppKeyboardController>
-    </>
+    </AppView>
   );
 };
 

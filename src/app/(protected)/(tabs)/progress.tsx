@@ -27,9 +27,9 @@ const Progress = () => {
     <AppScreen>
       {isLoading && <Loader />}
       <Animated.ScrollView
-        layout={Animations.Layout.Springify}
-        entering={Animations.Entry.FadeInDown}
-        exiting={Animations.Exit.FadeOutDown}
+        layout={Animations.Layout.Springify()}
+        entering={Animations.Entry.FadeInDown()}
+        exiting={Animations.Exit.FadeOutDown()}
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -46,8 +46,8 @@ const Progress = () => {
         {!isLoading && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDownWithSpring}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <RoadmapList data={data} onItemPress={onItemPress} />
           </AppView>
         )}

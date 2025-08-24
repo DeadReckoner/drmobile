@@ -109,7 +109,9 @@
       "repeats_on": "Repeats On",
       "start_date": "Start date",
       "end_date": "End date",
-      "select_date": "Select date"
+      "select_date": "Select date",
+      "add_milestones": "Add Milestones",
+      "submit_roadmap": "Submit Roadmap"
     }
   },
   "common": {

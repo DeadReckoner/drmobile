@@ -81,12 +81,12 @@ const AddEditStep = () => {
       </AppView>
       <Divider margin-16 />
 
-      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify}>
+      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify()}>
         {!canEdit && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDown}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <ScreenHeader
               title="tabs.create_tab.add_new_step"
               subtitle="tabs.create_tab.add_new_step_desc"
@@ -102,8 +102,8 @@ const AddEditStep = () => {
         {selectedTask && canEdit && !isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDownWithSpring}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <AppCard>
               <AppText body1 textColor>
                 {t('tabs.create_tab.step_label')} {stepNumber}
@@ -119,8 +119,8 @@ const AddEditStep = () => {
         {isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDown}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <CreateStepForm
               mode="edit"
               stepDescription={step?.description}

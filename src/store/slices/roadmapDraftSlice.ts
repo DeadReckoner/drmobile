@@ -63,6 +63,8 @@ const roadmapDraftSlice = createSlice({
 
     resetDraftAction: (state) => {
       state.roadmap = { ...initialState.roadmap };
+      state.selectedMilestone = null;
+      state.selectedTask = null;
     },
 
     addMilestoneAction: (

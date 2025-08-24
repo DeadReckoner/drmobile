@@ -109,7 +109,9 @@
       "repeats_on": "Répète le",
       "start_date": "Date de début",
       "end_date": "Date de fin",
-      "select_date": "Sélectionner une date"
+      "select_date": "Sélectionner une date",
+      "add_milestones": "Ajouter des jalons",
+      "submit_roadmap": "Soumettre la feuille de route"
     }
   },
   "common": {

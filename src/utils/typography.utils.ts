@@ -85,6 +85,12 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
     fontSize: 16,
   },
 
+  floatingButtonLable: {
+    fontFamily: UNBOUNDED_SEMIBOLD,
+    fontSize: 14,
+    letterSpacing: 1.2,
+  },
+
   tabLabel: {
     fontFamily: UNBOUNDED_REGULAR,
     fontSize: 10,

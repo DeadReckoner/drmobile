@@ -63,12 +63,12 @@ const AddEditStandaloneTask = () => {
         )}
       </AppView>
       <Divider margin-16 />
-      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify}>
+      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify()}>
         {!canEdit && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDown}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <ScreenHeader
               title="tabs.create_tab.add_new_task"
               subtitle="tabs.create_tab.add_new_task_desc"
@@ -84,8 +84,8 @@ const AddEditStandaloneTask = () => {
         {selectedTask && canEdit && !isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDownWithSpring}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <AppCard>
               <AppText body1 textColor>
                 {selectedTask?.title}
@@ -102,8 +102,8 @@ const AddEditStandaloneTask = () => {
         {isEditing && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDown}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <CreateStandaloneTaskForm
               mode="edit"
               onSuccess={() => setIsEditing(false)}
