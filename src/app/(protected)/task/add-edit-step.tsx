@@ -65,12 +65,12 @@ const AddEditStep = () => {
       <AppView spread row centerV>
         <HeaderWithBack />
         {canEdit && (
-          <AppView row gap-12 center style={styles.headerOptions}>
+          <AppView row gap-16 center style={styles.headerOptions}>
             <AppButton onPress={() => setIsEditing((edit) => !edit)}>
               <AppIcon
                 set="Feather"
                 name={isEditing ? 'x' : 'edit'}
-                size={20}
+                size={isEditing ? 22 : 20}
               />
             </AppButton>
             <AppButton onPress={showDialog}>

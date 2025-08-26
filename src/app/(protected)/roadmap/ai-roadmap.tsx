@@ -1,10 +1,11 @@
-import { Text, View } from 'react-native';
+import { AppScreen } from '@/components/AppScreen';
+import { AiRoadmapList } from '@/components/roadmap/ai-roamap/AiRoadmapList';
 
 const AIRoadmap = () => {
   return (
-    <View>
-      <Text>AIRoadmap</Text>
-    </View>
+    <AppScreen paddingH-0>
+      <AiRoadmapList />
+    </AppScreen>
   );
 };
 

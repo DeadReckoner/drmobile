@@ -104,6 +104,8 @@ export const AddEditCustomRoadmapForm = ({
       onBlur={handleBlur('targetDate')}
       error={touched.targetDate && errors.targetDate}
       value={value}
+      editable={false}
+      reduceOpacityWhenDisabled={false}
     />
   );
 

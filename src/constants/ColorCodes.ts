@@ -24,7 +24,8 @@ export const LightColorCodes = {
   lineDivider: '#98989830',
   checkboxBG: '#989898',
 
-  dialogOverlay: '#5f6d76df',
+  dialogOverlay: '#dededec8',
+  datePickerBG: '#FFFFFF',
 };
 
 export const DarkColorCodes = {
@@ -55,4 +56,5 @@ export const DarkColorCodes = {
   checkboxBG: '#5F6D76',
 
   dialogOverlay: '#22262af4',
+  datePickerBG: '#0f1217',
 };

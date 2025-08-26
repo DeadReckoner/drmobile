@@ -6,17 +6,17 @@ export const ApiCacheTags = Object.freeze({
   Roadmaps: 'Roadmaps',
 });
 
+const baseQueryWithReauth = fetchBaseQuery({
+  baseUrl: Env.EXPO_PUBLIC_API_URL,
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootStateType).auth.user?.access_token;
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    return headers;
+  },
+});
+
 export const api = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: Env.EXPO_PUBLIC_API_URL,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootStateType).auth.user.access_token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: [...Object.values(ApiCacheTags)],
   endpoints: () => ({}),
 });

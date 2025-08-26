@@ -58,6 +58,7 @@ export interface IAuthService {
   signUpEmailWithAuthProvider: (
     _email: string,
     _password: string,
+    _metadata?: Record<string, unknown>,
   ) => Promise<AuthResultType<SessionLessUserType>>;
   sendOTPViaEmailWithAuthProvider: (
     _email: string,

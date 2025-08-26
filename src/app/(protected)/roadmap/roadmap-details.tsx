@@ -93,19 +93,21 @@ const RoadmapDetailsPage = () => {
       <AppKeyboardController>
         <AppView spread row gap-16>
           <HeaderWithBack headerText={roadmap.goal} flex-1 />
-          <AppView row gap-12 top>
+          <AppView row gap-16 top>
             {isEditing && (
               <AppButton onPress={toggleEditMode}>
                 <AppIcon
                   set="Feather"
                   name={isEditing ? 'x' : 'edit'}
-                  size={20}
+                  size={22}
                 />
               </AppButton>
             )}
-            <AppButton onPress={showDialog}>
-              <AppIcon name={'delete'} color={Colors.error} size={20} />
-            </AppButton>
+            {!!roadmap?.roadmap_id && (
+              <AppButton onPress={showDialog}>
+                <AppIcon name={'delete'} color={Colors.error} size={20} />
+              </AppButton>
+            )}
           </AppView>
         </AppView>
         <Divider margin-16 />

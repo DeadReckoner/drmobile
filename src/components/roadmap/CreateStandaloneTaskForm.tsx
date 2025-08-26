@@ -87,6 +87,8 @@ export const CreateStandaloneTaskForm = ({
             onBlur={handleBlur('startDate')}
             error={touched.startDate && errors.startDate}
             value={value}
+            editable={false}
+            reduceOpacityWhenDisabled={false}
           />
         )}
         value={
@@ -108,6 +110,8 @@ export const CreateStandaloneTaskForm = ({
             onBlur={handleBlur('endDate')}
             error={touched.endDate && errors.endDate}
             value={value}
+            editable={false}
+            reduceOpacityWhenDisabled={false}
           />
         )}
         mode={'date'}

@@ -12,6 +12,7 @@ type TranslatedTextProps = TextFieldProps & {
   placeholderKey?: TranslationKeysType;
   error?: string | boolean;
   onInputPress?: Function;
+  reduceOpacityWhenDisabled?: boolean;
 };
 
 export const TranslatedTextInput = ({
@@ -19,6 +20,7 @@ export const TranslatedTextInput = ({
   placeholderKey,
   error,
   editable = true,
+  reduceOpacityWhenDisabled = true,
   ...restProps
 }: TranslatedTextProps) => {
   const { t } = useLocalization();
@@ -31,7 +33,7 @@ export const TranslatedTextInput = ({
           styles.fieldStyle,
           {
             borderColor: Colors.secondary,
-            opacity: editable ? 1 : 0.3,
+            opacity: !reduceOpacityWhenDisabled || editable ? 1 : 0.3,
           },
         ]}
         labelProps={{ 'marginB-8': true }}
