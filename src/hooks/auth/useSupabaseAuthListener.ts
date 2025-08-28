@@ -1,9 +1,8 @@
-import { useLocalization } from '@/hooks/useLocalization';
 import { useCreateUserMutation } from '@/hooks/user';
-import { useToast } from '@/hooks/useToast';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { clearAuthAction, setAuthUserAction } from '@/store/slices/authSlice';
+import { handleSignoutOnAuthError } from '@/utils/apiErrors.utils';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useCallback, useEffect } from 'react';
 import { AppState } from 'react-native';
@@ -17,8 +16,6 @@ const AUTH_EVENTS: AuthChangeEvent[] = [
 export const useSupabaseAutoRefresh = () => {
   const dispatch = useAppDispatch();
   const [createUser] = useCreateUserMutation();
-  const { showToast } = useToast();
-  const { t } = useLocalization();
 
   const handleAppStateChange = (state: string) => {
     if (state === 'active') {
@@ -29,11 +26,11 @@ export const useSupabaseAutoRefresh = () => {
   };
 
   const handleUserCreation = useCallback(
-    async (user: User, access_token: string) => {
-      if (!user) return;
+    async (sessionUser: User, access_token: string) => {
+      if (!sessionUser) return;
 
-      const metadata = user.user_metadata || {};
-      const email = user.email ?? '';
+      const metadata = sessionUser.user_metadata || {};
+      const email = sessionUser.email ?? '';
 
       let first_name = metadata.firstName || '';
       let last_name = metadata.lastName || '';
@@ -44,29 +41,19 @@ export const useSupabaseAutoRefresh = () => {
         last_name = parts.slice(1).join(' ') || '';
       }
 
-      const payload = { first_name, last_name, email };
-
-      try {
-        const user = await createUser(payload).unwrap();
-        dispatch(
-          setAuthUserAction({
-            access_token: access_token || '',
-            email: user?.email || '',
-            id: user?.user_id || '',
-            name: `${user?.first_name || ''} ${user?.last_name || ''}`.trim(),
-            avatar: '',
-          }),
-        );
-      } catch {
-        showToast({
-          type: 'failure',
-          message: t('common.something_went_wrong'),
-        });
-        dispatch(clearAuthAction());
-        await supabaseClient.auth.signOut();
-      }
+      const payload = { first_name, last_name, email, access_token };
+      const createdUser = await createUser(payload).unwrap();
+      dispatch(
+        setAuthUserAction({
+          access_token: access_token,
+          email: createdUser.email,
+          id: createdUser.user_id,
+          name: `${createdUser.first_name} ${createdUser.last_name}`.trim(),
+          avatar: '',
+        }),
+      );
     },
-    [createUser, dispatch, showToast, t],
+    [createUser, dispatch],
   );
 
   const onAuthStateChange = useCallback(
@@ -78,17 +65,20 @@ export const useSupabaseAutoRefresh = () => {
           } else {
             dispatch(
               setAuthUserAction({
-                access_token: session.access_token || '',
-                email: session?.user?.email || '',
-                id: session?.user?.id || '',
-                name: session?.user?.user_metadata?.full_name || '',
-                avatar: session?.user?.user_metadata?.avatar_url || '',
+                access_token: session.access_token,
+                email: session.user.email || '',
+                id: session.user.id,
+                name: session.user.user_metadata?.full_name || '',
+                avatar: session.user.user_metadata?.avatar_url || '',
               }),
             );
           }
         } else {
           dispatch(clearAuthAction());
         }
+      }
+      if (event === 'SIGNED_OUT') {
+        handleSignoutOnAuthError();
       }
     },
     [dispatch, handleUserCreation],

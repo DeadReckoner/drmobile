@@ -1,12 +1,17 @@
+import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
+import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { Animations } from '@/utils/animation.utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import {
   KeyboardAvoidingView,
   KeyboardGestureArea,
 } from 'react-native-keyboard-controller';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
 interface MessageItem {
   id: string;
@@ -21,43 +26,46 @@ interface FormData {
   answer: string;
 }
 
-const SYSTEM_PROMPTS = [
-  {
-    id: 'goal_name',
-    question: "Let's get started! What's your goal name?",
-  },
-  {
-    id: 'goal_description',
-    question: 'Can you describe your goal in a few sentences?',
-  },
-  {
-    id: 'goal_importance',
-    question: 'Why does this goal matter to you?',
-  },
-  {
-    id: 'target_date',
-    question: "What's your target completion date?",
-  },
-  {
-    id: 'weekly_commitment',
-    question: 'How much time can you commit to this goal weekly?',
-  },
-  {
-    id: 'frequency',
-    question:
-      'How frequently would you like to work on this? (e.g. Daily, Weekly)',
-  },
-  {
-    id: 'constraints',
-    question: 'Are there any constraints or blockers we should be aware of?',
-  },
-  {
-    id: 'skill_level',
-    question: "What's your current skill level or starting point?",
-  },
-];
+const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
+  return [
+    {
+      id: 'goal_name',
+      question: t('ai_roadmap.prompts.goal_name'),
+    },
+    {
+      id: 'goal_description',
+      question: t('ai_roadmap.prompts.goal_description'),
+    },
+    {
+      id: 'goal_importance',
+      question: t('ai_roadmap.prompts.goal_importance'),
+    },
+    {
+      id: 'target_date',
+      question: t('ai_roadmap.prompts.target_date'),
+    },
+    {
+      id: 'weekly_commitment',
+      question: t('ai_roadmap.prompts.weekly_commitment'),
+    },
+    {
+      id: 'frequency',
+      question: t('ai_roadmap.prompts.frequency'),
+    },
+    {
+      id: 'constraints',
+      question: t('ai_roadmap.prompts.constraints'),
+    },
+    {
+      id: 'skill_level',
+      question: t('ai_roadmap.prompts.skill_level'),
+    },
+  ];
+};
 
 export const AiRoadmapList = () => {
+  const { t } = useLocalization();
+  const SYSTEM_PROMPTS = getSystemPrompts(t);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [isConversationRunning, setIsConversationRunning] = useState(true);
@@ -68,7 +76,6 @@ export const AiRoadmapList = () => {
 
   useEffect(() => {
     if (currentPromptIndex < SYSTEM_PROMPTS.length) {
-      // Add delay before starting to type the next system message
       setTimeout(() => {
         startTypingSystemMessage();
       }, 300);
@@ -76,7 +83,6 @@ export const AiRoadmapList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPromptIndex]);
 
-  // Handle smooth scrolling when new messages are added
   useEffect(() => {
     if (messages.length > 0) {
       const timeoutId = setTimeout(() => {
@@ -103,6 +109,7 @@ export const AiRoadmapList = () => {
   };
 
   const handleUserSubmit = (message: string) => {
+    setIsTyping(true);
     if (!message.trim() || isTyping) return;
 
     const userMessage: MessageItem = {
@@ -113,10 +120,8 @@ export const AiRoadmapList = () => {
 
     setMessages((prev) => [...prev, userMessage]);
 
-    // Store the input value before clearing
     const inputValue = message.trim();
 
-    // Store form data
     const currentPrompt = SYSTEM_PROMPTS[currentPromptIndex];
     formData.push({
       id: currentPrompt.id,
@@ -124,18 +129,15 @@ export const AiRoadmapList = () => {
       answer: inputValue,
     });
 
-    // Move to next prompt or complete conversation
     if (currentPromptIndex + 1 < SYSTEM_PROMPTS.length) {
       setCurrentPromptIndex((prev) => prev + 1);
     } else {
-      // Add final thank you message
       setIsConversationRunning(false);
-
       setTimeout(() => {
         const thankYouMessage: MessageItem = {
           id: 'thank-you',
           type: 'system',
-          content: "Thanks! I'm building your personalized roadmap now.",
+          content: t('ai_roadmap.prompts.thank_you'),
           isTyping: true,
         };
         setMessages((prev) => [...prev, thankYouMessage]);
@@ -150,31 +152,40 @@ export const AiRoadmapList = () => {
     isTyping: messageIsTyping,
   }: MessageItem) => {
     return (
-      <Message
+      <AppView
         key={id}
-        id={id}
-        type={type}
-        content={content}
-        isTyping={messageIsTyping}
-        onTypingComplete={() => {
-          if (type === 'system') {
-            setMessages((prev) =>
-              prev.map((msg) =>
-                msg.id === id ? { ...msg, isTyping: false } : msg,
-              ),
-            );
-            setIsTyping(false);
-          }
-        }}
-      />
+        reanimated
+        entering={Animations.Entry.FadeInDownWithSpring()}>
+        <Message
+          key={id}
+          id={id}
+          type={type}
+          content={content}
+          isTyping={messageIsTyping}
+          onTypingComplete={() => {
+            if (type === 'system') {
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === id ? { ...msg, isTyping: false } : msg,
+                ),
+              );
+              setIsTyping(false);
+            }
+          }}
+        />
+      </AppView>
     );
   };
 
   return (
     <KeyboardGestureArea style={styles.container} interpolator="ios">
+      <AppView paddingH-32 paddingT-70 paddingB-16>
+        <HeaderWithBack headerKey="tabs.create_tab.ai_roadmap" />
+      </AppView>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         <AppView flex-1>
-          <FlatList
+          <Animated.FlatList
+            layout={LinearTransition}
             ref={flatListRef}
             data={messages}
             renderItem={({ item }) => renderMessage(item)}
@@ -191,7 +202,7 @@ export const AiRoadmapList = () => {
                 flatListRef.current?.scrollToEnd({ animated: false });
               }
             }}
-            ListFooterComponent={() => <AppView height={16} />}
+            ListFooterComponent={() => <AppView height={32} />}
           />
 
           <Composer
@@ -213,7 +224,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 90,
+    paddingTop: 16,
     paddingBottom: 60,
   },
 });

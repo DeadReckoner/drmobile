@@ -20,7 +20,6 @@ const onCreateRoadmapQueryStarted: TypedMutationOnQueryStarted<
         draft.push(data);
       }),
     );
-    dispatch(setDraftRoadmapAction(data));
   } catch {}
 };
 

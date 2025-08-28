@@ -18,6 +18,7 @@ import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { LinearTransition } from 'react-native-reanimated';
@@ -44,10 +45,10 @@ const RoadmapDetailsPage = () => {
     try {
       await deleteRoadmap(roadmap.roadmap_id).unwrap();
       onDeleteSuccess();
-    } catch {
+    } catch (error) {
       showToast({
         type: 'failure',
-        message: t('common.something_went_wrong'),
+        message: getApiErrorMessage(error),
       });
     }
   };
@@ -77,13 +78,11 @@ const RoadmapDetailsPage = () => {
         message: t('common.created_successfully'),
       });
       router.dismissTo('/(protected)/(tabs)/progress');
-    } catch {
-      setTimeout(() => {
-        showToast({
-          type: 'failure',
-          message: t('common.something_went_wrong'),
-        });
-      }, 300);
+    } catch (error) {
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(error),
+      });
     }
   };
 

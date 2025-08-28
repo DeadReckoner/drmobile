@@ -1,6 +1,5 @@
 import { api } from '@/store/apis/api';
 import { roadmapDraftSlicePath } from '@/store/slices/roadmapDraftSlice';
-import { handleAuthError } from '@/store/utils/authErrorHandler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import {
@@ -25,17 +24,6 @@ const persistedReducer = persistReducer(
   rootReducer,
 );
 
-const authErrorMiddleware = () => (next: any) => (action: any) => {
-  const result = next(action);
-  if (
-    action?.type?.startsWith?.(api.reducerPath) &&
-    action?.payload?.status === 401
-  ) {
-    handleAuthError(store, persistedStore);
-  }
-  return result;
-};
-
 const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
@@ -43,9 +31,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    })
-      .concat(api.middleware)
-      .concat(authErrorMiddleware),
+    }).concat(api.middleware),
 });
 
 const persistedStore = persistStore(store);

@@ -16,6 +16,7 @@ import {
   selectDraftRoadmap,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { StyleSheet } from 'react-native';
 
@@ -54,10 +55,10 @@ export const AddEditCustomRoadmapForm = ({
         ...updatedRoadmapProperties,
       }).unwrap();
       onRoadmapUpdateSuccess();
-    } catch {
+    } catch (error) {
       showToast({
         type: 'failure',
-        message: t('common.something_went_wrong'),
+        message: getApiErrorMessage(error),
       });
     }
   };

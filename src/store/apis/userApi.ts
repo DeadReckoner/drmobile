@@ -1,20 +1,20 @@
 import { api } from '@/store/apis/api';
-
-type UserParams = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  user_id?: string;
-};
+import {
+  CreateUserParamsType,
+  CreateUserResponseType,
+} from '@/store/apis/types/userApi.types';
 
 export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createUser: builder.mutation<UserParams, UserParams>({
-      query: (user: UserParams) => {
+    createUser: builder.mutation<CreateUserResponseType, CreateUserParamsType>({
+      query: (user) => {
         return {
           url: `/user`,
           method: 'POST',
           body: user,
+          headers: {
+            Authorization: `Bearer ${user.access_token}`,
+          },
         };
       },
     }),
