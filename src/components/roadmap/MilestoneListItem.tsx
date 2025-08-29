@@ -158,7 +158,7 @@ export const MilestoneListItem = ({
           <AppList
             keyExtractor={(task) => task.task_id}
             scrollEnabled={false}
-            data={milestone.tasks}
+            data={milestone.tasks || []}
             ListFooterComponent={renderFooterComponent}
             ItemSeparatorComponent={renderItemSeparator}
             renderItem={renderTaskItem}

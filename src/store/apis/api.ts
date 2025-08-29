@@ -15,7 +15,7 @@ export const ApiCacheTags = Object.freeze({
 const baseQueryWithReauth = fetchBaseQuery({
   baseUrl: Env.EXPO_PUBLIC_API_URL,
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootStateType).auth.user?.access_token;
+    const token = (getState() as RootStateType).auth.user.access_token;
     if (token) headers.set('Authorization', `Bearer ${token}`);
     return headers;
   },
@@ -24,21 +24,23 @@ const baseQueryWithReauth = fetchBaseQuery({
 export const createBaseQueryWithReauth = () => {
   return async (
     args: FetchArgs | string,
-    api: BaseQueryApi,
+    apiQuery: BaseQueryApi,
     extraOptions: object,
   ) => {
-    const result = await baseQueryWithReauth(args, api, extraOptions);
+    const result = await baseQueryWithReauth(args, apiQuery, extraOptions);
     if (result?.error?.status === 401) {
-      try {
-        await supabaseClient.auth.signOut();
-      } catch {}
+      apiQuery.dispatch(api.util.resetApiState());
+      supabaseClient.auth
+        .signOut()
+        .then(() => {})
+        .catch(() => {});
     }
     return result;
   };
 };
 
 export const api = createApi({
-  baseQuery: baseQueryWithReauth,
+  baseQuery: createBaseQueryWithReauth(),
   tagTypes: [...Object.values(ApiCacheTags)],
   endpoints: () => ({}),
 });

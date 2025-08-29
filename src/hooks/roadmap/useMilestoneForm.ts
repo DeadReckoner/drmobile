@@ -1,3 +1,4 @@
+import { useUpdateMilestoneMutation } from '@/hooks/milestone';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -5,7 +6,6 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addMilestoneAction,
   selectSelectedMilestone,
-  updateMilestoneAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
@@ -34,17 +34,20 @@ type MilestoneSchemaType = Yup.InferType<
 
 interface MilestoneFormHookProps {
   onSuccess?: () => void;
+  onError?: (_error: unknown) => void;
   mode: FormEditModeType;
 }
 
 export const useMilestoneForm = ({
   mode,
   onSuccess,
+  onError,
 }: MilestoneFormHookProps) => {
   const { t } = useLocalization();
   const schema = createMilestoneValidationSchema(t);
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
   const dispatch = useAppDispatch();
+  const [updateMilestone, { isLoading }] = useUpdateMilestoneMutation();
   const canEdit = mode === 'edit';
 
   const onMilestoneSubmit = async ({
@@ -52,12 +55,18 @@ export const useMilestoneForm = ({
     milestoneDescription,
   }: MilestoneSchemaType) => {
     if (canEdit) {
-      dispatch(
-        updateMilestoneAction({
-          description: milestoneDescription,
-          sub_goal: milestoneName,
-        }),
-      );
+      if (selectedMilestone) {
+        try {
+          await updateMilestone({
+            milestoneId: selectedMilestone.milestone_id,
+            sub_goal: milestoneName,
+            description: milestoneDescription,
+          }).unwrap();
+          onSuccess?.();
+        } catch (error) {
+          onError?.(error);
+        }
+      }
     } else {
       dispatch(
         addMilestoneAction({
@@ -67,9 +76,8 @@ export const useMilestoneForm = ({
           sub_goal: milestoneName,
         }),
       );
+      onSuccess?.();
     }
-
-    onSuccess?.();
   };
 
   const { handleChange, handleBlur, ...restFormikOptions } =
@@ -83,6 +91,7 @@ export const useMilestoneForm = ({
     });
 
   return {
+    isLoading,
     handleChange: handleChange<keyof MilestoneSchemaType>,
     handleBlur: handleBlur<keyof MilestoneSchemaType>,
     ...restFormikOptions,

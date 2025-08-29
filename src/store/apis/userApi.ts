@@ -12,9 +12,6 @@ export const userApi = api.injectEndpoints({
           url: `/user`,
           method: 'POST',
           body: user,
-          headers: {
-            Authorization: `Bearer ${user.access_token}`,
-          },
         };
       },
     }),

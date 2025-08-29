@@ -1,7 +1,8 @@
 import { useCreateUserMutation } from '@/hooks/user';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { clearAuthAction, setAuthUserAction } from '@/store/slices/authSlice';
+import { setAuthUserAction } from '@/store/slices/authSlice';
+import { persistedStore } from '@/store/store';
 import { handleSignoutOnAuthError } from '@/utils/apiErrors.utils';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useCallback, useEffect } from 'react';
@@ -11,6 +12,8 @@ const AUTH_EVENTS: AuthChangeEvent[] = [
   'SIGNED_IN',
   'SIGNED_OUT',
   'TOKEN_REFRESHED',
+  'INITIAL_SESSION',
+  'USER_UPDATED',
 ];
 
 export const useSupabaseAutoRefresh = () => {
@@ -41,17 +44,23 @@ export const useSupabaseAutoRefresh = () => {
         last_name = parts.slice(1).join(' ') || '';
       }
 
-      const payload = { first_name, last_name, email, access_token };
-      const createdUser = await createUser(payload).unwrap();
-      dispatch(
-        setAuthUserAction({
-          access_token: access_token,
-          email: createdUser.email,
-          id: createdUser.user_id,
-          name: `${createdUser.first_name} ${createdUser.last_name}`.trim(),
-          avatar: '',
-        }),
-      );
+      const payload = {
+        first_name,
+        last_name,
+        email,
+      };
+      try {
+        const createdUser = await createUser(payload).unwrap();
+        dispatch(
+          setAuthUserAction({
+            access_token: access_token,
+            email: createdUser.email,
+            id: createdUser.user_id,
+            name: `${createdUser.first_name} ${createdUser.last_name}`.trim(),
+            avatar: '',
+          }),
+        );
+      } catch {}
     },
     [createUser, dispatch],
   );
@@ -59,26 +68,24 @@ export const useSupabaseAutoRefresh = () => {
   const onAuthStateChange = useCallback(
     async (event: AuthChangeEvent, session: Session | null) => {
       if (AUTH_EVENTS.includes(event)) {
+        if (event === 'SIGNED_OUT') {
+          await handleSignoutOnAuthError(dispatch, persistedStore);
+          return;
+        }
         if (session?.user && session?.access_token) {
+          dispatch(
+            setAuthUserAction({
+              access_token: session.access_token,
+              email: session.user.email || '',
+              id: session.user.id,
+              name: session.user.user_metadata?.full_name || '',
+              avatar: session.user.user_metadata?.avatar_url || '',
+            }),
+          );
           if (event === 'SIGNED_IN') {
             await handleUserCreation(session.user, session.access_token);
-          } else {
-            dispatch(
-              setAuthUserAction({
-                access_token: session.access_token,
-                email: session.user.email || '',
-                id: session.user.id,
-                name: session.user.user_metadata?.full_name || '',
-                avatar: session.user.user_metadata?.avatar_url || '',
-              }),
-            );
           }
-        } else {
-          dispatch(clearAuthAction());
         }
-      }
-      if (event === 'SIGNED_OUT') {
-        handleSignoutOnAuthError();
       }
     },
     [dispatch, handleUserCreation],

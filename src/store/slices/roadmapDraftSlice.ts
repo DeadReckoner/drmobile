@@ -35,14 +35,14 @@ const initialState: DraftState = {
 const findSelectedMilestone = (state: DraftState) => {
   if (!state.selectedMilestone) return undefined;
   return state.roadmap.milestones.find(
-    (m) => m.milestone_id === state.selectedMilestone!.milestone_id,
+    (m) => m.milestone_id === state.selectedMilestone?.milestone_id,
   );
 };
 
 const findSelectedTask = (state: DraftState) => {
   const milestone = findSelectedMilestone(state);
   if (!milestone || !state.selectedTask) return undefined;
-  return milestone.tasks.find((t) => t.task_id === state.selectedTask!.task_id);
+  return milestone.tasks.find((t) => t.task_id === state.selectedTask?.task_id);
 };
 
 const syncSelectedTask = (state: DraftState) => {
@@ -83,13 +83,20 @@ const roadmapDraftSlice = createSlice({
 
     updateMilestoneAction: (
       state,
-      action: PayloadAction<Pick<MilestoneType, 'sub_goal' | 'description'>>,
+      action: PayloadAction<
+        Pick<MilestoneType, 'sub_goal' | 'description' | 'reached' | 'day'>
+      >,
     ) => {
-      const milestone = findSelectedMilestone(state);
+      let milestone = findSelectedMilestone(state);
       if (!milestone) return;
-      milestone.sub_goal = action.payload.sub_goal;
-      milestone.description = action.payload.description;
+      milestone = { ...milestone, ...action.payload };
       state.selectedMilestone = milestone;
+      const index = state.roadmap.milestones.findIndex(
+        (m) => m.milestone_id === milestone.milestone_id,
+      );
+      if (index !== -1) {
+        state.roadmap.milestones[index] = milestone;
+      }
     },
 
     removeMilestoneAction: (state) => {

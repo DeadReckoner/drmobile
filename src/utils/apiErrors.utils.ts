@@ -1,14 +1,18 @@
 import i18nConfig from '@/lib/localization/i18nConfig';
-import { api } from '@/store/apis/api';
 import { ApiError } from '@/store/apis/types/api.types';
 import { clearAuthAction } from '@/store/slices/authSlice';
 import { showToastAction } from '@/store/slices/settingsSlice';
-import { persistedStore, store } from '@/store/store';
+import { AppDispatchType, RootStateType } from '@/store/types/store.types';
+import { Action, ThunkDispatch } from '@reduxjs/toolkit';
+import { Persistor } from 'redux-persist';
 
-export const handleSignoutOnAuthError = async () => {
+export const handleSignoutOnAuthError = async (
+  dispatch: ThunkDispatch<RootStateType, AppDispatchType, Action>,
+  persistedStore: Persistor,
+) => {
   try {
-    store.dispatch(clearAuthAction());
-    store.dispatch(
+    dispatch(clearAuthAction());
+    dispatch(
       showToastAction({
         toastProps: {
           type: 'failure',
@@ -16,13 +20,14 @@ export const handleSignoutOnAuthError = async () => {
         },
       }),
     );
-    store.dispatch(api.util.resetApiState());
     await persistedStore.purge();
   } catch {}
 };
 
 export const getApiErrorMessage = (error: unknown) => {
   return (
-    (error as ApiError)?.message || i18nConfig.t('common.something_went_wrong')
+    (error as ApiError)?.message ||
+    (error as ApiError)?.data?.error ||
+    i18nConfig.t('common.something_went_wrong')
   );
 };
