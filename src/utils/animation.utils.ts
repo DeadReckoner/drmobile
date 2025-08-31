@@ -1,4 +1,3 @@
-// animations.ts
 import {
   FadeIn,
   FadeInDown,
