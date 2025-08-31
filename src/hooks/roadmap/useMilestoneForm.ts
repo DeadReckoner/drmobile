@@ -1,9 +1,11 @@
+import { useUpdateMilestoneMutation } from '@/hooks/milestone';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addMilestoneAction,
+  selectDraftSlice,
   selectSelectedMilestone,
   updateMilestoneAction,
 } from '@/store/slices/roadmapDraftSlice';
@@ -34,42 +36,70 @@ type MilestoneSchemaType = Yup.InferType<
 
 interface MilestoneFormHookProps {
   onSuccess?: () => void;
+  onError?: (_error: unknown) => void;
   mode: FormEditModeType;
 }
 
 export const useMilestoneForm = ({
   mode,
   onSuccess,
+  onError,
 }: MilestoneFormHookProps) => {
   const { t } = useLocalization();
   const schema = createMilestoneValidationSchema(t);
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
+  const selectedRoadmap = useAppSelector(selectDraftSlice);
   const dispatch = useAppDispatch();
+  const [updateMilestone, { isLoading: isUpdating }] =
+    useUpdateMilestoneMutation();
+  // const [createMilestone, { isLoading: isCreating }] = useCreateMilestoneMutation();
   const canEdit = mode === 'edit';
 
   const onMilestoneSubmit = async ({
     milestoneName,
     milestoneDescription,
   }: MilestoneSchemaType) => {
-    if (canEdit) {
-      dispatch(
-        updateMilestoneAction({
-          description: milestoneDescription,
-          sub_goal: milestoneName,
-        }),
-      );
+    if (selectedRoadmap?.shouldSyncWithServer) {
+      try {
+        if (selectedMilestone?.milestone_id) {
+          if (canEdit) {
+            await updateMilestone({
+              milestoneId: selectedMilestone.milestone_id,
+              sub_goal: milestoneName,
+              description: milestoneDescription,
+            }).unwrap();
+          } else {
+            //TODO: handle milestone creation with API
+            // await createMilestone({
+            //   sub_goal: milestoneName,
+            //   description: milestoneDescription,
+            // }).unwrap();
+          }
+        }
+        onSuccess?.();
+      } catch (error) {
+        onError?.(error);
+      }
     } else {
-      dispatch(
-        addMilestoneAction({
-          day: 0,
-          description: milestoneDescription,
-          reached: false,
-          sub_goal: milestoneName,
-        }),
-      );
+      if (canEdit) {
+        dispatch(
+          updateMilestoneAction({
+            sub_goal: milestoneName,
+            description: milestoneDescription,
+          }),
+        );
+      } else {
+        dispatch(
+          addMilestoneAction({
+            day: 0,
+            description: milestoneDescription,
+            reached: false,
+            sub_goal: milestoneName,
+          }),
+        );
+      }
+      onSuccess?.();
     }
-
-    onSuccess?.();
   };
 
   const { handleChange, handleBlur, ...restFormikOptions } =
@@ -83,6 +113,8 @@ export const useMilestoneForm = ({
     });
 
   return {
+    // isLoading: isCreating || isUpdating,
+    isLoading: isUpdating,
     handleChange: handleChange<keyof MilestoneSchemaType>,
     handleBlur: handleBlur<keyof MilestoneSchemaType>,
     ...restFormikOptions,

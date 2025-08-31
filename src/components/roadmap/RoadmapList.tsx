@@ -9,12 +9,20 @@ import { router } from 'expo-router';
 
 interface RoadmapListProps extends LegendListProps<RoadmapType> {
   data: RoadmapType[];
-  onItemPress: (_roadmap: RoadmapType) => void;
+  onItemPress: (_roadmap: RoadmapType, _index: number) => void;
 }
 
 export const RoadmapList = ({ data = [], onItemPress }: RoadmapListProps) => {
-  const renderItem = ({ item }: LegendListRenderItemProps<RoadmapType>) => {
-    return <RoadmapListItem roadmap={item} onPress={() => onItemPress(item)} />;
+  const renderItem = ({
+    item,
+    index,
+  }: LegendListRenderItemProps<RoadmapType>) => {
+    return (
+      <RoadmapListItem
+        roadmap={item}
+        onPress={() => onItemPress(item, index)}
+      />
+    );
   };
 
   const renderEmptyItem = () => (

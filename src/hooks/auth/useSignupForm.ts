@@ -59,10 +59,18 @@ export const useSignupForm = (pros: SignupFormHookProps) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSignupSubmit = async ({ email, password }: SignupSchemaType) => {
+  const onSignupSubmit = async ({
+    email,
+    password,
+    firstName,
+    lastName,
+  }: SignupSchemaType) => {
     setIsLoading(true);
 
-    const { data, error } = await signUpEmailWithAuthProvider(email, password);
+    const { data, error } = await signUpEmailWithAuthProvider(email, password, {
+      firstName,
+      lastName,
+    });
     setIsLoading(false);
 
     if (error) {

@@ -1,4 +1,18 @@
 {
+  "ai_roadmap": {
+    "prompts": {
+      "goal_name": "Commençons ! Quel est le nom de votre objectif ?",
+      "goal_description": "Pouvez-vous décrire votre objectif en quelques phrases ?",
+      "goal_importance": "Pourquoi cet objectif est-il important pour vous ?",
+      "target_date": "Quelle est votre date d'achèvement prévue ?",
+      "weekly_commitment": "Combien de temps pouvez-vous consacrer à cet objectif chaque semaine ?",
+      "frequency": "À quelle fréquence souhaitez-vous y travailler ? (ex. Quotidien, Hebdomadaire)",
+      "constraints": "Y a-t-il des contraintes ou des obstacles dont nous devrions être conscients ?",
+      "skill_level": "Quel est votre niveau de compétence actuel ou point de départ ?",
+      "thank_you": "Merci ! Je construis votre feuille de route personnalisée.",
+      "composer_placeholder": "Entrez votre réponse"
+    }
+  },
   "authentication": {
     "login": "Connexion",
     "login_subtitle": "Restez concentré et continuez d’avancer.",
@@ -105,7 +119,13 @@
       "task_desc_label": "Description de la Tâche",
       "task_desc_placeholder": "Entrez la description de la tâche",
       "step_label": "Étape",
-      "step_desc_placeholder": "Entrez la description de l’étape"
+      "step_desc_placeholder": "Entrez la description de l’étape",
+      "repeats_on": "Répète le",
+      "start_date": "Date de début",
+      "end_date": "Date de fin",
+      "select_date": "Sélectionner une date",
+      "add_milestones": "Ajouter des jalons",
+      "submit_roadmap": "Soumettre la feuille de route"
     }
   },
   "common": {

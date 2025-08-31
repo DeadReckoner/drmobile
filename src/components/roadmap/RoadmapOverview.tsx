@@ -1,4 +1,6 @@
+import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
+import { AppIcon } from '@/components/AppIcon';
 import { LineDivider } from '@/components/LineDivider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
@@ -10,25 +12,34 @@ import { Colors } from 'react-native-ui-lib';
 
 interface RoadmapOverviewProps {
   roadmap: RoadmapType;
+  toggleEditMode: () => void;
 }
 
-export const RoadmapOverview = ({ roadmap }: RoadmapOverviewProps) => {
+export const RoadmapOverview = ({
+  roadmap,
+  toggleEditMode,
+}: RoadmapOverviewProps) => {
   const theme = useAppSelector(selectTheme);
   const roadmapProgress = roadmap.progress || 0;
 
   return (
     <AppCard>
-      <AppText xsm textColor>
-        {roadmap.description}
-      </AppText>
+      <AppView row>
+        <AppText flex xsm textColor marginR-16>
+          {roadmap.description}
+        </AppText>
+        <AppButton onPress={toggleEditMode}>
+          <AppIcon set="Feather" name={'edit'} size={20} />
+        </AppButton>
+      </AppView>
       <LineDivider bg-secondary />
       <AppView row centerV spread>
         <AppView row gap-2>
           <TranslatedText xsm translationKey="common.next_milestone" />
           <AppText xsm textColor>
-            {`: ${roadmap.daysRemainingTillNextMilestone ?? 'N/A'}`}
+            {`: ${roadmap.daysRemainingTillNextMilestone || 0}`}{' '}
+            <TranslatedText xsm translationKey="common.days" />
           </AppText>
-          <TranslatedText xsm translationKey="common.days" />
         </AppView>
 
         <AppView row center gap-8>

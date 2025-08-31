@@ -1,3 +1,4 @@
+import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
@@ -6,33 +7,43 @@ import { useMilestoneForm } from '@/hooks/roadmap/useMilestoneForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 
-interface CreateMilestoneFormProps {
+interface AddEditMilestoneFormProps {
   mode: FormEditModeType;
   onSuccess?: () => void;
+  onError?: (_error: unknown) => void;
 }
 
-export const CreateMilestoneForm = ({
+export const AddEditMilestoneForm = ({
   mode,
   onSuccess,
-}: CreateMilestoneFormProps) => {
+  onError,
+}: AddEditMilestoneFormProps) => {
   const { showToast } = useToast();
   const { t } = useLocalization();
 
-  const { handleBlur, handleChange, touched, errors, handleSubmit, values } =
-    useMilestoneForm({
-      mode,
-      onSuccess: () => {
-        showToast({
-          type: 'success',
-          message: t(
-            mode === 'create'
-              ? 'common.created_successfully'
-              : 'common.updated_successfully',
-          ),
-        });
-        onSuccess?.();
-      },
-    });
+  const {
+    isLoading,
+    handleBlur,
+    handleChange,
+    touched,
+    errors,
+    handleSubmit,
+    values,
+  } = useMilestoneForm({
+    mode,
+    onSuccess: () => {
+      showToast({
+        type: 'success',
+        message: t(
+          mode === 'create'
+            ? 'common.created_successfully'
+            : 'common.updated_successfully',
+        ),
+      });
+      onSuccess?.();
+    },
+    onError,
+  });
   return (
     <AppView>
       <TranslatedTextInput
@@ -51,6 +62,7 @@ export const CreateMilestoneForm = ({
         error={touched.milestoneDescription && errors.milestoneDescription}
         value={values.milestoneDescription}
       />
+      <Divider margin-4 />
       <PrimaryButton
         label={
           mode === 'create'
@@ -58,6 +70,8 @@ export const CreateMilestoneForm = ({
             : 'tabs.create_tab.update_milestone'
         }
         onPress={handleSubmit}
+        shouldShowLoader
+        isLoading={isLoading}
       />
     </AppView>
   );

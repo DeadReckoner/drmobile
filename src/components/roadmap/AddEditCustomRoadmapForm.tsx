@@ -3,10 +3,7 @@ import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
-import {
-  useCreateRoadmapMutation,
-  useUpdateRoadmapMutation,
-} from '@/hooks/roadmap';
+import { useUpdateRoadmapMutation } from '@/hooks/roadmap';
 import type {
   FormEditModeType,
   FormRoadmapType,
@@ -14,8 +11,13 @@ import type {
 import { useAddEditCustomRoadmapForm } from '@/hooks/roadmap/useAddEditCustomRoadmapForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectDraftRoadmap,
+  selectDraftSlice,
+  setDraftRoadmapAction,
+} from '@/store/slices/roadmapDraftSlice';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { StyleSheet } from 'react-native';
 
@@ -31,10 +33,10 @@ export const AddEditCustomRoadmapForm = ({
   const { showToast } = useToast();
   const { t } = useLocalization();
   const roadmap = useAppSelector(selectDraftRoadmap);
+  const dispatch = useAppDispatch();
   const [updateRoadmap, { isLoading: isUpdatingRoadmap }] =
     useUpdateRoadmapMutation();
-  const [createRoadmap, { isLoading: isCreatingRoadmap }] =
-    useCreateRoadmapMutation();
+  const selectedDraft = useAppSelector(selectDraftSlice);
 
   const onRoadmapUpdateSuccess = () => {
     showToast({
@@ -55,37 +57,30 @@ export const AddEditCustomRoadmapForm = ({
         ...updatedRoadmapProperties,
       }).unwrap();
       onRoadmapUpdateSuccess();
-    } catch {
+    } catch (error) {
       showToast({
         type: 'failure',
-        message: t('common.something_went_wrong'),
+        message: getApiErrorMessage(error),
       });
     }
   };
 
   const onCreateRoadmap = async (updatedRoadmapProperties: FormRoadmapType) => {
-    try {
-      await createRoadmap(updatedRoadmapProperties).unwrap();
-      onRoadmapUpdateSuccess();
-    } catch {
-      showToast({
-        type: 'failure',
-        message: t('common.something_went_wrong'),
-      });
-    }
+    dispatch(
+      setDraftRoadmapAction({ ...roadmap, ...updatedRoadmapProperties }),
+    );
+    onRoadmapUpdateSuccess();
   };
 
   const onValidRoadmapFormSubmit = async (
     updatedRoadmapProperties: FormRoadmapType,
   ) => {
-    if (mode === 'edit') {
-      onUpdateRoadmap(updatedRoadmapProperties);
-    } else {
-      onCreateRoadmap(updatedRoadmapProperties);
+    if (selectedDraft.shouldSyncWithServer && mode === 'edit') {
+      await onUpdateRoadmap(updatedRoadmapProperties);
+      return;
     }
+    onCreateRoadmap(updatedRoadmapProperties);
   };
-
-  const isLoading = isUpdatingRoadmap || isCreatingRoadmap;
 
   const {
     errors,
@@ -112,11 +107,13 @@ export const AddEditCustomRoadmapForm = ({
       onBlur={handleBlur('targetDate')}
       error={touched.targetDate && errors.targetDate}
       value={value}
+      editable={false}
+      reduceOpacityWhenDisabled={false}
     />
   );
 
   return (
-    <AppView marginT-24 pointerEvents={isLoading ? 'none' : 'auto'}>
+    <AppView marginT-24 pointerEvents={isUpdatingRoadmap ? 'none' : 'auto'}>
       <TranslatedTextInput
         labelKey="tabs.create_tab.goal_name_label"
         placeholderKey="tabs.create_tab.goal_name_placeholder"
@@ -153,10 +150,10 @@ export const AddEditCustomRoadmapForm = ({
         label={
           mode === 'edit'
             ? 'tabs.create_tab.update_roadmap'
-            : 'tabs.create_tab.create_roadmap_button'
+            : 'tabs.create_tab.add_milestones'
         }
         shouldShowLoader
-        isLoading={isLoading}
+        isLoading={isUpdatingRoadmap}
         onPress={handleSubmit}
       />
       <Divider />

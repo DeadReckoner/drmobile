@@ -1,7 +1,10 @@
+import { useCreateUserMutation } from '@/hooks/user';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { clearAuthAction, setAuthUserAction } from '@/store/slices/authSlice';
-import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { setAuthUserAction } from '@/store/slices/authSlice';
+import { persistedStore } from '@/store/store';
+import { handleSignoutOnAuthError } from '@/utils/apiErrors.utils';
+import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useCallback, useEffect } from 'react';
 import { AppState } from 'react-native';
 
@@ -9,10 +12,13 @@ const AUTH_EVENTS: AuthChangeEvent[] = [
   'SIGNED_IN',
   'SIGNED_OUT',
   'TOKEN_REFRESHED',
+  'INITIAL_SESSION',
+  'USER_UPDATED',
 ];
 
 export const useSupabaseAutoRefresh = () => {
   const dispatch = useAppDispatch();
+  const [createUser] = useCreateUserMutation();
 
   const handleAppStateChange = (state: string) => {
     if (state === 'active') {
@@ -22,25 +28,67 @@ export const useSupabaseAutoRefresh = () => {
     }
   };
 
+  const handleUserCreation = useCallback(
+    async (sessionUser: User, access_token: string) => {
+      if (!sessionUser) return;
+
+      const metadata = sessionUser.user_metadata || {};
+      const email = sessionUser.email ?? '';
+
+      let first_name = metadata.firstName || '';
+      let last_name = metadata.lastName || '';
+
+      if (!first_name && metadata.full_name) {
+        const parts = String(metadata.full_name).trim().split(/\s+/);
+        first_name = parts[0] ?? '';
+        last_name = parts.slice(1).join(' ') || '';
+      }
+
+      const payload = {
+        first_name,
+        last_name,
+        email,
+      };
+      try {
+        const createdUser = await createUser(payload).unwrap();
+        dispatch(
+          setAuthUserAction({
+            access_token: access_token,
+            email: createdUser.email,
+            id: createdUser.user_id,
+            name: `${createdUser.first_name} ${createdUser.last_name}`.trim(),
+            avatar: '',
+          }),
+        );
+      } catch {}
+    },
+    [createUser, dispatch],
+  );
+
   const onAuthStateChange = useCallback(
-    (event: AuthChangeEvent, session: Session | null) => {
+    async (event: AuthChangeEvent, session: Session | null) => {
       if (AUTH_EVENTS.includes(event)) {
+        if (event === 'SIGNED_OUT') {
+          await handleSignoutOnAuthError(dispatch, persistedStore);
+          return;
+        }
         if (session?.user && session?.access_token) {
           dispatch(
             setAuthUserAction({
-              access_token: session.access_token || '',
-              email: session?.user?.email || '',
-              id: session?.user?.id || '',
-              name: session?.user?.user_metadata?.full_name || '',
-              avatar: session?.user?.user_metadata?.avatar_url || '',
+              access_token: session.access_token,
+              email: session.user.email || '',
+              id: session.user.id,
+              name: session.user.user_metadata?.full_name || '',
+              avatar: session.user.user_metadata?.avatar_url || '',
             }),
           );
-        } else {
-          dispatch(clearAuthAction());
+          if (event === 'SIGNED_IN') {
+            await handleUserCreation(session.user, session.access_token);
+          }
         }
       }
     },
-    [dispatch],
+    [dispatch, handleUserCreation],
   );
 
   useEffect(() => {

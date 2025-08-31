@@ -20,6 +20,7 @@ const initialState: SettingsStateType = {
     isVisible: false,
     toastProps: { type: 'general' },
   },
+  roadmapListCache: '',
 };
 
 const settingsSlice = createSlice({
@@ -48,6 +49,9 @@ const settingsSlice = createSlice({
     hideToastAction(state) {
       state.toast.isVisible = false;
     },
+    setLastRoadmapListCacheDay(state, action) {
+      state.roadmapListCache = action.payload;
+    },
   },
 });
 
@@ -57,6 +61,7 @@ export const {
   setLanguageAction,
   showToastAction,
   hideToastAction,
+  setLastRoadmapListCacheDay,
 } = settingsSlice.actions;
 
 export const selectTheme = createAppSelector((state) => state.settings.theme);

@@ -17,19 +17,27 @@ import { router } from 'expo-router';
 
 interface RoadmapDetailsProps {
   roadmap: RoadmapType;
+  toggleEditMode: () => void;
 }
-export const RoadmapDetails = ({ roadmap }: RoadmapDetailsProps) => {
+export const RoadmapDetails = ({
+  roadmap,
+  toggleEditMode,
+}: RoadmapDetailsProps) => {
   const dispatch = useAppDispatch();
 
-  const handleMilestonePress = (milestone: MilestoneType | null) => {
-    dispatch(setSelectedMilestoneAction(milestone));
+  const handleMilestonePress = (
+    milestone: MilestoneType | null,
+    index: number,
+  ) => {
+    dispatch(setSelectedMilestoneAction({ milestone, index }));
   };
+
   const handleOnAddNewMilestone = () => {
     router.navigate('/(protected)/roadmap/add-edit-milestone');
   };
 
-  const handleOnTaskPress = (task: TaskType) => {
-    dispatch(setSelectedTaskAction(task));
+  const handleOnTaskPress = (task: TaskType, index: number) => {
+    dispatch(setSelectedTaskAction({ task, index }));
     router.navigate({
       pathname: '/task/add-edit-task',
       params: { mode: 'edit' },
@@ -37,7 +45,7 @@ export const RoadmapDetails = ({ roadmap }: RoadmapDetailsProps) => {
   };
   return (
     <AppView flex>
-      <RoadmapOverview roadmap={roadmap} />
+      <RoadmapOverview roadmap={roadmap} toggleEditMode={toggleEditMode} />
       <Divider marginT-16 />
       <TranslatedText body1 marginB-16 translationKey="common.milestones" />
       <Divider marginT-4 />

@@ -11,6 +11,12 @@ type DraftState = {
   roadmap: RoadmapType;
   selectedMilestone?: MilestoneType | null;
   selectedTask?: TaskType | null;
+
+  selectedRoadmapIndex: number;
+  selectedMilestoneIndex: number;
+  selectedTaskIndex: number;
+  selectedStepIndex: number;
+  shouldSyncWithServer: boolean;
 };
 
 const getId = (type: 'roadmap' | 'milestone' | 'task') =>
@@ -30,19 +36,25 @@ const initialState: DraftState = {
   },
   selectedMilestone: null,
   selectedTask: null,
+
+  selectedRoadmapIndex: -1,
+  selectedMilestoneIndex: -1,
+  selectedTaskIndex: -1,
+  selectedStepIndex: -1,
+  shouldSyncWithServer: false,
 };
 
 const findSelectedMilestone = (state: DraftState) => {
   if (!state.selectedMilestone) return undefined;
   return state.roadmap.milestones.find(
-    (m) => m.milestone_id === state.selectedMilestone!.milestone_id,
+    (m) => m.milestone_id === state.selectedMilestone?.milestone_id,
   );
 };
 
 const findSelectedTask = (state: DraftState) => {
   const milestone = findSelectedMilestone(state);
   if (!milestone || !state.selectedTask) return undefined;
-  return milestone.tasks.find((t) => t.task_id === state.selectedTask!.task_id);
+  return milestone.tasks.find((t) => t.task_id === state.selectedTask?.task_id);
 };
 
 const syncSelectedTask = (state: DraftState) => {
@@ -63,17 +75,21 @@ const roadmapDraftSlice = createSlice({
 
     resetDraftAction: (state) => {
       state.roadmap = { ...initialState.roadmap };
+      state.selectedMilestone = null;
+      state.selectedTask = null;
     },
 
     addMilestoneAction: (
       state,
       action: PayloadAction<
-        Omit<MilestoneType, 'milestone_id' | 'roadmap_id' | 'tasks'>
+        Omit<MilestoneType, 'milestone_id' | 'roadmap_id' | 'tasks'> & {
+          milestone_id?: string;
+        }
       >,
     ) => {
       state.roadmap.milestones.push({
         ...action.payload,
-        milestone_id: getId('milestone'),
+        milestone_id: action.payload.milestone_id ?? getId('milestone'),
         roadmap_id: state.roadmap.roadmap_id,
         tasks: [],
       });
@@ -83,28 +99,38 @@ const roadmapDraftSlice = createSlice({
       state,
       action: PayloadAction<Pick<MilestoneType, 'sub_goal' | 'description'>>,
     ) => {
-      const milestone = findSelectedMilestone(state);
+      let milestone = findSelectedMilestone(state);
       if (!milestone) return;
-      milestone.sub_goal = action.payload.sub_goal;
-      milestone.description = action.payload.description;
+      milestone = { ...milestone, ...action.payload };
       state.selectedMilestone = milestone;
+      const index = state.roadmap.milestones.findIndex(
+        (m) => m.milestone_id === milestone.milestone_id,
+      );
+      if (index !== -1) {
+        state.roadmap.milestones[index] = milestone;
+      }
     },
 
     removeMilestoneAction: (state) => {
       state.roadmap.milestones = state.roadmap.milestones.filter(
         (m) => m.milestone_id !== state.selectedMilestone?.milestone_id,
       );
+      state.selectedMilestoneIndex = -1;
+      state.selectedTaskIndex = -1;
+      state.selectedStepIndex = -1;
     },
 
     addTaskAction: (
       state,
-      action: PayloadAction<Pick<TaskType, 'title' | 'description'>>,
+      action: PayloadAction<
+        Pick<TaskType, 'title' | 'description'> & { task_id?: string }
+      >,
     ) => {
       const milestone = findSelectedMilestone(state);
       if (!milestone) return;
       milestone.tasks.push({
         ...action.payload,
-        task_id: getId('task'),
+        task_id: action.payload.task_id ?? getId('task'),
         milestone_id: milestone.milestone_id,
         steps: [],
         completed: false,
@@ -129,6 +155,8 @@ const roadmapDraftSlice = createSlice({
       milestone.tasks = milestone.tasks.filter(
         (t) => t.task_id !== state.selectedTask?.task_id,
       );
+      state.selectedTaskIndex = -1;
+      state.selectedStepIndex = -1;
     },
 
     addStepAction: (
@@ -169,21 +197,60 @@ const roadmapDraftSlice = createSlice({
 
       task.steps = task.steps.filter((s) => s.number !== action.payload.number);
       syncSelectedTask(state);
+      state.selectedStepIndex = -1;
     },
 
     setSelectedMilestoneAction(
       state,
-      action: PayloadAction<MilestoneType | null>,
+      action: PayloadAction<{
+        milestone: MilestoneType | null;
+        index?: number;
+      }>,
     ) {
-      state.selectedMilestone = action.payload;
+      state.selectedMilestone = action.payload.milestone;
+      if (action.payload.index !== undefined) {
+        state.selectedMilestoneIndex = action.payload.milestone
+          ? action.payload.index
+          : -1;
+      }
     },
 
-    setSelectedTaskAction(state, action: PayloadAction<TaskType | null>) {
-      state.selectedTask = action.payload;
+    setSelectedTaskAction(
+      state,
+      action: PayloadAction<{ task: TaskType | null; index?: number }>,
+    ) {
+      state.selectedTask = action.payload.task;
+      if (action.payload.index !== undefined) {
+        state.selectedTaskIndex = action.payload.task
+          ? action.payload.index
+          : -1;
+      }
     },
 
     setDraftRoadmapAction(state, action: PayloadAction<RoadmapType>) {
       state.roadmap = action.payload;
+    },
+
+    setShouldSyncWithServerAction(state, action: PayloadAction<boolean>) {
+      state.shouldSyncWithServer = action.payload;
+    },
+    setSelectedRoadmapIndex(state, action: PayloadAction<number>) {
+      state.selectedRoadmapIndex = action.payload ?? -1;
+      state.selectedMilestoneIndex = -1;
+      state.selectedTaskIndex = -1;
+      state.selectedStepIndex = -1;
+    },
+    setSelectedMilestoneIndex(state, action: PayloadAction<number>) {
+      state.selectedMilestoneIndex = action.payload ?? -1;
+      state.selectedTaskIndex = -1;
+      state.selectedStepIndex = -1;
+    },
+    setSelectedTaskIndex(state, action: PayloadAction<number>) {
+      state.selectedTaskIndex = action.payload ?? -1;
+      state.selectedStepIndex = -1;
+    },
+    setSelectedStepIndex(state, action: PayloadAction<number>) {
+      state.selectedStepIndex = action.payload ?? -1;
     },
   },
 });
@@ -203,7 +270,16 @@ export const {
   setSelectedMilestoneAction,
   setSelectedTaskAction,
   setDraftRoadmapAction,
+  setShouldSyncWithServerAction,
+  setSelectedRoadmapIndex,
+  setSelectedMilestoneIndex,
+  setSelectedTaskIndex,
+  setSelectedStepIndex,
 } = roadmapDraftSlice.actions;
+
+export const selectDraftSlice = createAppSelector(
+  (state) => state.roadmapDraft,
+);
 
 export const selectDraftRoadmap = createAppSelector(
   (state) => state.roadmapDraft.roadmap,

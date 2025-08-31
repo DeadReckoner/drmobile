@@ -7,7 +7,10 @@ import { AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
+import {
+  setDraftRoadmapAction,
+  setSelectedRoadmapIndex,
+} from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import { RefreshControl } from 'react-native';
@@ -18,8 +21,9 @@ const Progress = () => {
   const dispatch = useAppDispatch();
   const { data = [], isLoading, isFetching, refetch } = useGetRoadmapsQuery();
 
-  const onItemPress = (roadmap: RoadmapType) => {
+  const onItemPress = (roadmap: RoadmapType, index: number) => {
     dispatch(setDraftRoadmapAction(roadmap));
+    dispatch(setSelectedRoadmapIndex(index));
     router.navigate('/roadmap/roadmap-details');
   };
 
@@ -27,9 +31,9 @@ const Progress = () => {
     <AppScreen>
       {isLoading && <Loader />}
       <Animated.ScrollView
-        layout={Animations.Layout.Springify}
-        entering={Animations.Entry.FadeInDown}
-        exiting={Animations.Exit.FadeOutDown}
+        layout={Animations.Layout.Springify()}
+        entering={Animations.Entry.FadeInDown()}
+        exiting={Animations.Exit.FadeOutDown()}
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -46,8 +50,8 @@ const Progress = () => {
         {!isLoading && (
           <AppView
             reanimated
-            entering={Animations.Entry.FadeInDownWithSpring}
-            exiting={Animations.Exit.FadeOutDown}>
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
             <RoadmapList data={data} onItemPress={onItemPress} />
           </AppView>
         )}

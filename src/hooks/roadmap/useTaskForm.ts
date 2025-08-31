@@ -1,9 +1,11 @@
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
+import { useCreateTaskMutation, useUpdateTaskMutation } from '@/hooks/task';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addTaskAction,
+  selectDraftSlice,
   selectSelectedMilestone,
   selectSelectedTask,
   updateTaskAction,
@@ -34,36 +36,63 @@ type TaskSchemaType = Yup.InferType<
 interface TaskFormHookProps {
   mode?: FormEditModeType;
   onSuccess?: () => void;
+  onError?: (_error: unknown) => void;
 }
 
 export const useTaskForm = ({
   onSuccess,
   mode = 'create',
+  onError,
 }: TaskFormHookProps) => {
   const { t } = useLocalization();
   const schema = createTaskValidationSchema(t);
   const dispatch = useAppDispatch();
+  const [createTask, { isLoading: isCreating }] = useCreateTaskMutation();
+  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
   const selectedTask = useAppSelector(selectSelectedTask);
+  const selectedDraft = useAppSelector(selectDraftSlice);
   const canEdit = mode === 'edit';
 
   const onTaskSubmit = async ({
     taskName,
     taskDescription,
   }: TaskSchemaType) => {
-    if (selectedMilestone?.milestone_id) {
+    if (selectedDraft?.shouldSyncWithServer) {
+      try {
+        if (selectedMilestone?.milestone_id) {
+          if (canEdit && selectedTask?.task_id) {
+            await updateTask({
+              task_id: selectedTask.task_id,
+              title: taskName,
+              description: taskDescription,
+              milestone_id: selectedMilestone.milestone_id,
+            }).unwrap();
+          } else {
+            await createTask({
+              title: taskName,
+              description: taskDescription,
+              milestone_id: selectedMilestone.milestone_id,
+            }).unwrap();
+          }
+          onSuccess?.();
+        }
+      } catch (error) {
+        onError?.(error);
+      }
+    } else {
       if (canEdit) {
         dispatch(
           updateTaskAction({
-            description: taskDescription,
             title: taskName,
+            description: taskDescription,
           }),
         );
       } else {
         dispatch(
           addTaskAction({
-            description: taskDescription,
             title: taskName,
+            description: taskDescription,
           }),
         );
       }
@@ -82,6 +111,7 @@ export const useTaskForm = ({
     });
 
   return {
+    isLoading: isCreating || isUpdating,
     handleChange: handleChange<keyof TaskSchemaType>,
     handleBlur: handleBlur<keyof TaskSchemaType>,
     ...restFormikOptions,

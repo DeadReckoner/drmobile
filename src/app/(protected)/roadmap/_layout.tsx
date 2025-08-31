@@ -1,8 +1,8 @@
 import { resetStackScreenOptions } from '@/utils/navigation.utils';
 import { Stack } from 'expo-router';
 
-const CreateLayout = () => {
+const Layout = () => {
   return <Stack screenOptions={resetStackScreenOptions} />;
 };
 
-export default CreateLayout;
+export default Layout;

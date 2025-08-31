@@ -9,6 +9,7 @@ import {
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
+import { getAppRedirectUriScheme } from '@/utils/navigation.utils';
 import { AuthError } from '@supabase/supabase-js';
 
 const SUPABASE_AUTH_ERRORS = [
@@ -60,11 +61,15 @@ export const useSupabaseAuth = (): IAuthService => {
     };
 
   const signUpEmailWithAuthProvider: IAuthService['signUpEmailWithAuthProvider'] =
-    async (email: string, password: string) => {
+    async (email, password, metadata) => {
       try {
         const { data, error } = await supabaseClient.auth.signUp({
           email,
           password,
+          options: {
+            data: metadata,
+            emailRedirectTo: getAppRedirectUriScheme('/'),
+          },
         });
 
         if (error) {

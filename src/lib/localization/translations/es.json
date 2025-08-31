@@ -56,6 +56,20 @@
       "otp_required": "OTP es obligatorio"
     }
   },
+  "ai_roadmap": {
+    "prompts": {
+      "goal_name": "¡Empecemos! ¿Cuál es el nombre de tu objetivo?",
+      "goal_description": "¿Puedes describir tu objetivo en algunas frases?",
+      "goal_importance": "¿Por qué es importante este objetivo para ti?",
+      "target_date": "¿Cuál es tu fecha objetivo de finalización?",
+      "weekly_commitment": "¿Cuánto tiempo puedes dedicar a este objetivo semanalmente?",
+      "frequency": "¿Con qué frecuencia te gustaría trabajar en esto? (ej. Diario, Semanal)",
+      "constraints": "¿Hay alguna limitación o obstáculo que debamos tener en cuenta?",
+      "skill_level": "¿Cuál es tu nivel actual de habilidad o punto de partida?",
+      "thank_you": "¡Gracias! Estoy construyendo tu hoja de ruta personalizada.",
+      "composer_placeholder": "Introduce tu respuesta"
+    }
+  },
   "tabs": {
     "today": "Hoy",
     "progress": "Progreso",
@@ -105,7 +119,13 @@
       "task_desc_label": "Descripción de la Tarea",
       "task_desc_placeholder": "Introduce la descripción de la tarea",
       "step_label": "Paso",
-      "step_desc_placeholder": "Introduce la descripción del paso"
+      "step_desc_placeholder": "Introduce la descripción del paso",
+      "repeats_on": "Se repite en",
+      "start_date": "Fecha de inicio",
+      "end_date": "Fecha de fin",
+      "select_date": "Seleccionar fecha",
+      "add_milestones": "Añadir hitos",
+      "submit_roadmap": "Enviar hoja de ruta"
     }
   },
   "common": {

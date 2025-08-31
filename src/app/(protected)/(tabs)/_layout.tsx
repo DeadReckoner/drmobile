@@ -3,7 +3,12 @@ import { AppScreen } from '@/components/AppScreen';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  resetDraftAction,
+  setShouldSyncWithServerAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { selectTheme } from '@/store/slices/settingsSlice';
+import { store } from '@/store/store';
 import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Tabs } from 'expo-router';
 import { useMemo } from 'react';
@@ -56,6 +61,11 @@ export default function TabLayout() {
               <AppIcon name="barschart" size={28} color={color} />
             ),
           }}
+          listeners={{
+            focus: () => {
+              store.dispatch(setShouldSyncWithServerAction(true));
+            },
+          }}
         />
         <Tabs.Screen
           name="create"
@@ -65,6 +75,16 @@ export default function TabLayout() {
               <AppIcon size={28} name="plus" color={color} />
             ),
           }}
+          listeners={({ route }) => ({
+            tabPress: () => {
+              if (route.name === 'create') {
+                store.dispatch(resetDraftAction());
+              }
+            },
+            focus: () => {
+              store.dispatch(setShouldSyncWithServerAction(false));
+            },
+          })}
         />
         <Tabs.Screen
           name="messages"

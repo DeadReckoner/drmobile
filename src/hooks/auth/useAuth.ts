@@ -24,10 +24,11 @@ export const useAuth = (): IAuthService => {
     };
 
   const signUpEmailWithAuthProvider: IAuthService['signUpEmailWithAuthProvider'] =
-    async (email, password) => {
+    async (email, password, metadata) => {
       const response = await authProvider.signUpEmailWithAuthProvider(
         email,
         password,
+        metadata,
       );
       if (response.data?.access_token && isUserWithSession(response.data)) {
         dispatch(setAuthUserAction(response.data));

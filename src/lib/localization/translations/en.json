@@ -105,7 +105,27 @@
       "task_desc_label": "Task Description",
       "task_desc_placeholder": "Enter task description",
       "step_label": "Step",
-      "step_desc_placeholder": "Enter step description"
+      "step_desc_placeholder": "Enter step description",
+      "repeats_on": "Repeats On",
+      "start_date": "Start date",
+      "end_date": "End date",
+      "select_date": "Select date",
+      "add_milestones": "Add Milestones",
+      "submit_roadmap": "Submit Roadmap"
+    }
+  },
+  "ai_roadmap": {
+    "prompts": {
+      "goal_name": "Let's get started! What's your goal name?",
+      "goal_description": "Can you describe your goal in a few sentences?",
+      "goal_importance": "Why does this goal matter to you?",
+      "target_date": "What's your target completion date?",
+      "weekly_commitment": "How much time can you commit to this goal weekly?",
+      "frequency": "How frequently would you like to work on this? (e.g. Daily, Weekly)",
+      "constraints": "Are there any constraints or blockers we should be aware of?",
+      "skill_level": "What's your current skill level or starting point?",
+      "thank_you": "Thanks! I'm building your personalized roadmap now.",
+      "composer_placeholder": "Enter your answer"
     }
   },
   "common": {

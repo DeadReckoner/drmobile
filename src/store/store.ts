@@ -2,6 +2,7 @@ import { api } from '@/store/apis/api';
 import { roadmapDraftSlicePath } from '@/store/slices/roadmapDraftSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
+import reduxDevToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 import {
   FLUSH,
   PAUSE,
@@ -32,6 +33,9 @@ const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(api.middleware),
+  devTools: false,
+  enhancers: (getDefaultEnhancers) =>
+    getDefaultEnhancers().concat(reduxDevToolsEnhancer()),
 });
 
 const persistedStore = persistStore(store);

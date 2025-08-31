@@ -64,8 +64,7 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          // TODO: remove this test account id
-          "iosUrlScheme": "com.googleusercontent.apps.734448856073-6v14fmhdrf4svu697tpol30kmcrtjhqg"
+          "iosUrlScheme": "com.googleusercontent.apps.597678270969-gc4jq97i7ugbg92d5k0k0vbcb9ert0ps"
         }
       ],
       "expo-apple-authentication"
