@@ -14,8 +14,12 @@ import { useDeleteMilestoneMutation } from '@/hooks/milestone';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectSelectedMilestone } from '@/store/slices/roadmapDraftSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  removeMilestoneAction,
+  selectDraftSlice,
+  selectSelectedMilestone,
+} from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -27,11 +31,14 @@ const AddMilestone = () => {
   const { mode } = useLocalSearchParams<{ mode: FormEditModeType }>();
   const [isEditing, setIsEditing] = useState(false);
   const canEdit = mode === 'edit';
+  const dispatch = useAppDispatch();
+  const selectedRoadmap = useAppSelector(selectDraftSlice);
+  const { t } = useLocalization();
+  const [deleteMilestone, { isLoading: isDeleting }] =
+    useDeleteMilestoneMutation();
 
-  const [deleteMilestone, { isLoading }] = useDeleteMilestoneMutation();
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
   const { showToast } = useToast();
-  const { t } = useLocalization();
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
@@ -52,25 +59,36 @@ const AddMilestone = () => {
 
   const onDeleteConfirmation = async () => {
     hideDialog();
-    if (!selectedMilestone?.milestone_id) return;
-    try {
-      await deleteMilestone(selectedMilestone?.milestone_id).unwrap();
+    if (
+      selectedRoadmap?.shouldSyncWithServer &&
+      selectedMilestone?.milestone_id
+    ) {
+      try {
+        await deleteMilestone(selectedMilestone.milestone_id).unwrap();
+        showToast({
+          type: 'success',
+          message: t('common.deleted_successfully'),
+        });
+        router.back();
+      } catch (error) {
+        showToast({
+          type: 'failure',
+          message: getApiErrorMessage(error),
+        });
+      }
+    } else {
       showToast({
         type: 'success',
         message: t('common.deleted_successfully'),
       });
+      dispatch(removeMilestoneAction());
       router.back();
-    } catch (error) {
-      showToast({
-        type: 'failure',
-        message: getApiErrorMessage(error),
-      });
     }
   };
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isDeleting && <Loader />}
       <AppKeyboardController>
         <AppView spread row centerV>
           <AppView>{!isEditing && <HeaderWithBack />}</AppView>

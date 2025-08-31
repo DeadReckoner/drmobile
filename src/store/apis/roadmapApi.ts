@@ -5,6 +5,7 @@ import {
   resetDraftAction,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { RootStateType } from '@/store/types/store.types';
 import { structureRoadmapApiPayload } from '@/utils/roadmap.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
@@ -27,14 +28,23 @@ const onUpdateRoadmapQueryStarted: TypedMutationOnQueryStarted<
   RoadmapType,
   RoadmapType,
   BaseQueryFunctionType
-> = async (roadmap, { dispatch, queryFulfilled }) => {
+> = async (roadmap, { dispatch, queryFulfilled, getState }) => {
   try {
     const { data } = await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
+    const { selectedRoadmapIndex } = state.roadmapDraft;
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
-        const idx = draft.findIndex((r) => r.roadmap_id === roadmap.roadmap_id);
-        if (idx !== -1) {
-          draft[idx] = data;
+        let roadmapIdx = selectedRoadmapIndex;
+        if (roadmapIdx === -1) {
+          roadmapIdx = draft.findIndex(
+            (r) => r.roadmap_id === roadmap.roadmap_id,
+          );
+        }
+
+        if (roadmapIdx !== -1) {
+          draft[roadmapIdx] = data;
         }
       }),
     );
@@ -47,13 +57,20 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
   string,
   string,
   BaseQueryFunctionType
-> = async (roadmap_id, { dispatch, queryFulfilled }) => {
+> = async (roadmap_id, { dispatch, queryFulfilled, getState }) => {
   try {
     await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
+    const { selectedRoadmapIndex } = state.roadmapDraft;
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
-        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
-        if (idx !== -1) draft.splice(idx, 1);
+        if (selectedRoadmapIndex !== -1) {
+          draft.splice(selectedRoadmapIndex, 1);
+        } else {
+          const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+          if (idx !== -1) draft.splice(idx, 1);
+        }
       }),
     );
     dispatch(resetDraftAction());
@@ -82,18 +99,6 @@ const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
   };
 };
 
-/**
- * Provides endpoints to:
- *  - Fetch all roadmaps (`getRoadmaps`)
- *  - Update a roadmap (`updateRoadmap`)
- *  - Delete a roadmap (`deleteRoadmap`)
- *
- * Uses `onQueryStarted` to update the cached list and manage the draft roadmap
- * in Redux, keeping UI state in sync without extra refetches. Above "*QueryStarted" functions
- * needs to be placed before the "injectEndpoints" call to make sure they are defined
- * before it calls the actual opearation
- */
-
 export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<RoadmapType[], void>({
@@ -109,7 +114,7 @@ export const roadmapApi = api.injectEndpoints({
     createRoadmap: builder.mutation<RoadmapType, Partial<RoadmapType>>({
       query: (roadmap) => {
         return {
-          url: `/roadmap`,
+          url: `/roadmaps`,
           method: 'POST',
           body: structureRoadmapApiPayload(roadmap),
         };
@@ -122,7 +127,7 @@ export const roadmapApi = api.injectEndpoints({
     >({
       query: ({ roadmap_id, ...roadmap }) => {
         return {
-          url: `/roadmap/${roadmap_id}`,
+          url: `/roadmaps/${roadmap_id}`,
           method: 'PATCH',
           body: roadmap,
         };
@@ -132,7 +137,7 @@ export const roadmapApi = api.injectEndpoints({
     deleteRoadmap: builder.mutation<string, string>({
       query: (roadmap_id) => {
         return {
-          url: `/roadmap/${roadmap_id}`,
+          url: `/roadmaps/${roadmap_id}`,
           method: 'DELETE',
         };
       },

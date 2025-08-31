@@ -42,14 +42,16 @@ const RoadmapDetailsPage = () => {
 
   const onDeleteConfirmation = async () => {
     hideDialog();
-    try {
-      await deleteRoadmap(roadmap.roadmap_id).unwrap();
-      onDeleteSuccess();
-    } catch (error) {
-      showToast({
-        type: 'failure',
-        message: getApiErrorMessage(error),
-      });
+    if (roadmap.roadmap_id) {
+      try {
+        await deleteRoadmap(roadmap.roadmap_id).unwrap();
+        onDeleteSuccess();
+      } catch (error) {
+        showToast({
+          type: 'failure',
+          message: getApiErrorMessage(error),
+        });
+      }
     }
   };
 

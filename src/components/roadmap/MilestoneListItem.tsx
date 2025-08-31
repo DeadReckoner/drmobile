@@ -10,11 +10,8 @@ import type {
   MilestoneType,
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import {
-  selectSelectedMilestone,
-  setSelectedMilestoneAction,
-} from '@/store/slices/roadmapDraftSlice';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectSelectedMilestone } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import {
   MenuComponentRef,
@@ -36,7 +33,7 @@ import { Colors } from 'react-native-ui-lib';
 interface MilestoneListItemProps {
   milestone: MilestoneType;
   onMilestonePress: (_milestone: MilestoneType | null) => void;
-  onTaskPress: (_task: TaskType) => void;
+  onTaskPress: (_task: TaskType, _index: number) => void;
 }
 
 export const MilestoneListItem = ({
@@ -48,7 +45,6 @@ export const MilestoneListItem = ({
   const sharedHeight = useSharedValue(0);
   const chevronDeg = useSharedValue('0deg');
   const menuRef = useRef<MenuComponentRef>(null);
-  const dispatch = useAppDispatch();
 
   const isExpanded = useMemo(
     () => Number(milestone.milestone_id === selectedMilestone?.milestone_id),
@@ -97,8 +93,11 @@ export const MilestoneListItem = ({
     router.navigate('/(protected)/task/add-edit-task');
   };
 
-  const renderTaskItem = ({ item }: LegendListRenderItemProps<TaskType>) => (
-    <MilestoneTaskItem task={item} onPress={() => onTaskPress(item)} />
+  const renderTaskItem = ({
+    item,
+    index,
+  }: LegendListRenderItemProps<TaskType>) => (
+    <MilestoneTaskItem task={item} onPress={() => onTaskPress(item, index)} />
   );
 
   const renderItemSeparator = () => <LineDivider marginV-0 />;
@@ -117,7 +116,7 @@ export const MilestoneListItem = ({
 
   const onMenuAction = ({ nativeEvent }: NativeActionEvent) => {
     if (nativeEvent.event === 'open') {
-      dispatch(setSelectedMilestoneAction(milestone));
+      onMilestonePress(milestone);
       router.navigate({
         pathname: '/roadmap/add-edit-milestone',
         params: { mode: 'edit' },

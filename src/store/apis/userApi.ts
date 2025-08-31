@@ -9,7 +9,7 @@ export const userApi = api.injectEndpoints({
     createUser: builder.mutation<CreateUserResponseType, CreateUserParamsType>({
       query: (user) => {
         return {
-          url: `/user`,
+          url: `/users`,
           method: 'POST',
           body: user,
         };

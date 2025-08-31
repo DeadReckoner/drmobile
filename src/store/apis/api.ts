@@ -13,7 +13,7 @@ export const ApiCacheTags = Object.freeze({
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
-  baseUrl: Env.EXPO_PUBLIC_API_URL,
+  baseUrl: `${Env.EXPO_PUBLIC_API_URL}/api/v1`,
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootStateType).auth.user.access_token;
     if (token) headers.set('Authorization', `Bearer ${token}`);

@@ -28,11 +28,18 @@ export const CreateTaskForm = ({ mode, onSuccess }: CreateTaskFormProps) => {
     onSuccess?.();
   };
 
-  const { handleBlur, handleChange, touched, errors, handleSubmit, values } =
-    useTaskForm({
-      mode,
-      onSuccess: onFormSuccess,
-    });
+  const {
+    isLoading,
+    handleBlur,
+    handleChange,
+    touched,
+    errors,
+    handleSubmit,
+    values,
+  } = useTaskForm({
+    mode,
+    onSuccess: onFormSuccess,
+  });
   return (
     <AppView>
       <TranslatedTextInput
@@ -58,6 +65,8 @@ export const CreateTaskForm = ({ mode, onSuccess }: CreateTaskFormProps) => {
             ? 'tabs.create_tab.update_task'
             : 'tabs.create_tab.add_new_task'
         }
+        shouldShowLoader
+        isLoading={isLoading}
         onPress={handleSubmit}
       />
     </AppView>

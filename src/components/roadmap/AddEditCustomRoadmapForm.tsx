@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectDraftRoadmap,
+  selectDraftSlice,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
@@ -35,6 +36,7 @@ export const AddEditCustomRoadmapForm = ({
   const dispatch = useAppDispatch();
   const [updateRoadmap, { isLoading: isUpdatingRoadmap }] =
     useUpdateRoadmapMutation();
+  const selectedDraft = useAppSelector(selectDraftSlice);
 
   const onRoadmapUpdateSuccess = () => {
     showToast({
@@ -67,17 +69,17 @@ export const AddEditCustomRoadmapForm = ({
     dispatch(
       setDraftRoadmapAction({ ...roadmap, ...updatedRoadmapProperties }),
     );
-    onSuccess?.();
+    onRoadmapUpdateSuccess();
   };
 
   const onValidRoadmapFormSubmit = async (
     updatedRoadmapProperties: FormRoadmapType,
   ) => {
-    if (mode === 'edit') {
-      onUpdateRoadmap(updatedRoadmapProperties);
-    } else {
-      onCreateRoadmap(updatedRoadmapProperties);
+    if (selectedDraft.shouldSyncWithServer && mode === 'edit') {
+      await onUpdateRoadmap(updatedRoadmapProperties);
+      return;
     }
+    onCreateRoadmap(updatedRoadmapProperties);
   };
 
   const {

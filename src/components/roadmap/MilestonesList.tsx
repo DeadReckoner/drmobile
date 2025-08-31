@@ -16,8 +16,8 @@ import { LegendListRenderItemProps } from '@legendapp/list';
 interface MilestonesListProps {
   milestones: MilestoneType[];
   onAddNewMilestonePress: () => void;
-  onMilestonePress: (_milestone: MilestoneType | null) => void;
-  onTaskPress: (_task: TaskType) => void;
+  onMilestonePress: (_milestone: MilestoneType | null, _index: number) => void;
+  onTaskPress: (_task: TaskType, _index: number) => void;
 }
 
 export const MilestonesList = ({
@@ -28,12 +28,13 @@ export const MilestonesList = ({
 }: MilestonesListProps) => {
   const renderMilestone = ({
     item,
+    index,
   }: LegendListRenderItemProps<MilestoneType>) => {
     return (
       <MilestoneListItem
         key={item.milestone_id}
         milestone={item}
-        onMilestonePress={onMilestonePress}
+        onMilestonePress={(item) => onMilestonePress(item, index)}
         onTaskPress={onTaskPress}
       />
     );

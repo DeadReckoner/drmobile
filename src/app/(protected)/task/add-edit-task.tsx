@@ -6,19 +6,23 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
+import { Loader } from '@/components/Loader';
 import { CreateTaskForm } from '@/components/roadmap/CreateTaskForm';
 import { StepsList } from '@/components/roadmap/StepsList';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AppText, AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
+import { useDeleteTaskMutation } from '@/hooks/task';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   removeTaskAction,
+  selectDraftSlice,
   selectSelectedTask,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -28,9 +32,11 @@ const AddTask = () => {
   const { mode } = useLocalSearchParams<{ mode: FormEditModeType }>();
   const dispatch = useAppDispatch();
   const selectedTask = useAppSelector(selectSelectedTask);
+  const selectedDraft = useAppSelector(selectDraftSlice);
   const { showToast } = useToast();
   const { t } = useLocalization();
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteTask, { isLoading: isDeleting }] = useDeleteTaskMutation();
 
   const canEdit = mode === 'edit';
 
@@ -44,99 +50,121 @@ const AddTask = () => {
     router.back();
   };
 
-  const onDeleteConfirmation = () => {
-    dispatch(removeTaskAction());
-    showToast({
-      type: 'success',
-      message: t('common.deleted_successfully'),
-    });
+  const onDeleteConfirmation = async () => {
+    hideDialog();
+    if (selectedDraft?.shouldSyncWithServer && selectedTask?.task_id) {
+      try {
+        await deleteTask(selectedTask.task_id).unwrap();
+        showToast({
+          type: 'success',
+          message: t('common.deleted_successfully'),
+        });
+      } catch (error) {
+        showToast({
+          type: 'failure',
+          message: getApiErrorMessage(error),
+        });
+      }
+    } else {
+      dispatch(removeTaskAction());
+      showToast({
+        type: 'success',
+        message: t('common.deleted_successfully'),
+      });
+    }
     router.back();
   };
 
   return (
-    <AppKeyboardController containerStyle={styles.scrollContainer}>
-      <AppView spread row centerV>
-        <AppView>{!isEditing && <HeaderWithBack />}</AppView>
-        {canEdit && (
-          <AppView row gap-16 center style={styles.headerOptions}>
-            <AppButton onPress={() => setIsEditing((edit) => !edit)}>
-              <AppIcon
-                set="Feather"
-                name={isEditing ? 'x' : 'edit'}
-                size={isEditing ? 22 : 20}
+    <>
+      {isDeleting && <Loader />}
+      <AppKeyboardController containerStyle={styles.scrollContainer}>
+        <AppView spread row centerV>
+          <AppView>{!isEditing && <HeaderWithBack />}</AppView>
+          {canEdit && (
+            <AppView row gap-16 center style={styles.headerOptions}>
+              <AppButton onPress={() => setIsEditing((edit) => !edit)}>
+                <AppIcon
+                  set="Feather"
+                  name={isEditing ? 'x' : 'edit'}
+                  size={isEditing ? 22 : 20}
+                />
+              </AppButton>
+              <AppButton onPress={showDialog}>
+                <AppIcon name={'delete'} color={Colors.error} size={20} />
+              </AppButton>
+            </AppView>
+          )}
+        </AppView>
+        <Divider margin-16 />
+
+        <AppView reanimated paddingL-4 layout={Animations.Layout.Springify()}>
+          {!canEdit && (
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDown()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <ScreenHeader
+                title="tabs.create_tab.add_new_task"
+                subtitle="tabs.create_tab.add_milestone_task_desc"
+                titleProps={{ body1: true }}
+                subtileProps={{ xsm: true }}
+                marginT-0
               />
-            </AppButton>
-            <AppButton onPress={showDialog}>
-              <AppIcon name={'delete'} color={Colors.error} size={20} />
-            </AppButton>
-          </AppView>
-        )}
-      </AppView>
-      <Divider margin-16 />
+              <Divider margin-16 />
+              <CreateTaskForm mode="create" onSuccess={onTaskAdded} />
+            </AppView>
+          )}
 
-      <AppView reanimated paddingL-4 layout={Animations.Layout.Springify()}>
-        {!canEdit && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDown()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <ScreenHeader
-              title="tabs.create_tab.add_new_task"
-              subtitle="tabs.create_tab.add_milestone_task_desc"
-              titleProps={{ body1: true }}
-              subtileProps={{ xsm: true }}
-              marginT-0
-            />
-            <Divider margin-16 />
-            <CreateTaskForm mode="create" onSuccess={onTaskAdded} />
-          </AppView>
-        )}
+          {selectedTask && canEdit && !isEditing && (
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <AppCard>
+                <AppText body1 textColor>
+                  {selectedTask?.title}
+                </AppText>
+                <LineDivider marginV-12 />
+                <AppText captionLight textColor>
+                  {selectedTask?.description}
+                </AppText>
+              </AppCard>
+              <Divider margin-16 />
+              <StepsList />
+            </AppView>
+          )}
 
-        {selectedTask && canEdit && !isEditing && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <AppCard>
-              <AppText body1 textColor>
-                {selectedTask?.title}
-              </AppText>
-              <LineDivider marginV-12 />
-              <AppText captionLight textColor>
-                {selectedTask?.description}
-              </AppText>
-            </AppCard>
-            <Divider margin-16 />
-            <StepsList />
-          </AppView>
-        )}
-
-        {isEditing && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDown()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <CreateTaskForm mode="edit" onSuccess={() => setIsEditing(false)} />
-          </AppView>
-        )}
-      </AppView>
-      <ConfirmationDialog
-        isDialogOpen={isDeleteMilestoneDialogOpen}
-        onDismiss={hideDialog}
-        title="common.are_you_sure"
-        subtitle="common.delete_task"
-        onNegativePress={hideDialog}
-        onPositivePress={onDeleteConfirmation}
-        negativeText="common.cancel"
-        positiveText="common.remove"
-        negativeButtonIcon={
-          <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
-        }
-        positiveButtonIcon={
-          <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
-        }
-      />
-    </AppKeyboardController>
+          {isEditing && (
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDown()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <CreateTaskForm
+                mode="edit"
+                onSuccess={() => setIsEditing(false)}
+              />
+            </AppView>
+          )}
+        </AppView>
+        <ConfirmationDialog
+          isDialogOpen={isDeleteMilestoneDialogOpen}
+          onDismiss={hideDialog}
+          title="common.are_you_sure"
+          subtitle="common.delete_task"
+          onNegativePress={hideDialog}
+          onPositivePress={onDeleteConfirmation}
+          negativeText="common.cancel"
+          positiveText="common.remove"
+          negativeButtonIcon={
+            <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
+          }
+          positiveButtonIcon={
+            <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
+          }
+        />
+      </AppKeyboardController>
+    </>
   );
 };
 

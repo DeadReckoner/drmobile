@@ -7,7 +7,10 @@ import { AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
+import {
+  setDraftRoadmapAction,
+  setSelectedRoadmapIndex,
+} from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import { RefreshControl } from 'react-native';
@@ -18,8 +21,9 @@ const Progress = () => {
   const dispatch = useAppDispatch();
   const { data = [], isLoading, isFetching, refetch } = useGetRoadmapsQuery();
 
-  const onItemPress = (roadmap: RoadmapType) => {
+  const onItemPress = (roadmap: RoadmapType, index: number) => {
     dispatch(setDraftRoadmapAction(roadmap));
+    dispatch(setSelectedRoadmapIndex(index));
     router.navigate('/roadmap/roadmap-details');
   };
 

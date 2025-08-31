@@ -5,7 +5,9 @@ import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addMilestoneAction,
+  selectDraftSlice,
   selectSelectedMilestone,
+  updateMilestoneAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
@@ -46,36 +48,56 @@ export const useMilestoneForm = ({
   const { t } = useLocalization();
   const schema = createMilestoneValidationSchema(t);
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
+  const selectedRoadmap = useAppSelector(selectDraftSlice);
   const dispatch = useAppDispatch();
-  const [updateMilestone, { isLoading }] = useUpdateMilestoneMutation();
+  const [updateMilestone, { isLoading: isUpdating }] =
+    useUpdateMilestoneMutation();
+  // const [createMilestone, { isLoading: isCreating }] = useCreateMilestoneMutation();
   const canEdit = mode === 'edit';
 
   const onMilestoneSubmit = async ({
     milestoneName,
     milestoneDescription,
   }: MilestoneSchemaType) => {
-    if (canEdit) {
-      if (selectedMilestone) {
-        try {
-          await updateMilestone({
-            milestoneId: selectedMilestone.milestone_id,
-            sub_goal: milestoneName,
-            description: milestoneDescription,
-          }).unwrap();
-          onSuccess?.();
-        } catch (error) {
-          onError?.(error);
+    if (selectedRoadmap?.shouldSyncWithServer) {
+      try {
+        if (selectedMilestone?.milestone_id) {
+          if (canEdit) {
+            await updateMilestone({
+              milestoneId: selectedMilestone.milestone_id,
+              sub_goal: milestoneName,
+              description: milestoneDescription,
+            }).unwrap();
+          } else {
+            //TODO: handle milestone creation with API
+            // await createMilestone({
+            //   sub_goal: milestoneName,
+            //   description: milestoneDescription,
+            // }).unwrap();
+          }
         }
+        onSuccess?.();
+      } catch (error) {
+        onError?.(error);
       }
     } else {
-      dispatch(
-        addMilestoneAction({
-          day: 0,
-          description: milestoneDescription,
-          reached: false,
-          sub_goal: milestoneName,
-        }),
-      );
+      if (canEdit) {
+        dispatch(
+          updateMilestoneAction({
+            sub_goal: milestoneName,
+            description: milestoneDescription,
+          }),
+        );
+      } else {
+        dispatch(
+          addMilestoneAction({
+            day: 0,
+            description: milestoneDescription,
+            reached: false,
+            sub_goal: milestoneName,
+          }),
+        );
+      }
       onSuccess?.();
     }
   };
@@ -91,7 +113,8 @@ export const useMilestoneForm = ({
     });
 
   return {
-    isLoading,
+    // isLoading: isCreating || isUpdating,
+    isLoading: isUpdating,
     handleChange: handleChange<keyof MilestoneSchemaType>,
     handleBlur: handleBlur<keyof MilestoneSchemaType>,
     ...restFormikOptions,

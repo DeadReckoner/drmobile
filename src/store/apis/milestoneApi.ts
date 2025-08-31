@@ -18,25 +18,35 @@ const onUpdateMilestoneQueryStarted: TypedMutationOnQueryStarted<
   try {
     const { data } = await queryFulfilled;
     const state = getState() as unknown as RootStateType;
+    const { selectedRoadmapIndex, selectedMilestoneIndex } = state.roadmapDraft;
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
-        const idx = draft.findIndex(
-          (r) => r.roadmap_id === state.roadmapDraft.roadmap.roadmap_id,
-        );
-        if (idx !== -1) {
-          const roadmap = draft[idx];
-          const milestoneIndex = roadmap.milestones.findIndex(
-            (r) => r.milestone_id === _milestone.milestoneId,
+        let roadmapIdx = selectedRoadmapIndex;
+        if (roadmapIdx === -1) {
+          roadmapIdx = draft.findIndex(
+            (r) => r.roadmap_id === state.roadmapDraft.roadmap.roadmap_id,
           );
-          if (milestoneIndex !== -1) {
+        }
+
+        if (roadmapIdx !== -1) {
+          const roadmap = draft[roadmapIdx];
+          let milestoneIdx = selectedMilestoneIndex;
+          if (milestoneIdx === -1) {
+            milestoneIdx = roadmap.milestones.findIndex(
+              (r) => r.milestone_id === _milestone.milestoneId,
+            );
+          }
+
+          if (milestoneIdx !== -1) {
             const existingMilestone =
-              state.roadmapDraft.roadmap.milestones[milestoneIndex];
+              state.roadmapDraft.roadmap.milestones[milestoneIdx];
             const updatedMilestone = {
               ...existingMilestone,
               ...data,
               tasks: existingMilestone.tasks,
             };
-            draft[idx].milestones[milestoneIndex] = updatedMilestone;
+            draft[roadmapIdx].milestones[milestoneIdx] = updatedMilestone;
             dispatch(updateMilestoneAction(updatedMilestone));
           }
         }
@@ -49,20 +59,21 @@ const onDeleteMilestoneQueryStarted: TypedMutationOnQueryStarted<
   unknown,
   string,
   BaseQueryFunctionType
-> = async (milestoneId, { queryFulfilled, dispatch, getState }) => {
+> = async (_milestoneId, { queryFulfilled, dispatch, getState }) => {
   try {
     await queryFulfilled;
     const state = getState() as unknown as RootStateType;
+    const { selectedRoadmapIndex, selectedMilestoneIndex } = state.roadmapDraft;
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
-        const idx = roadmaps.findIndex(
-          (r) => r.roadmap_id === state.roadmapDraft.roadmap.roadmap_id,
-        );
-        if (idx !== -1) {
-          roadmaps[idx].milestones = roadmaps[idx].milestones.filter(
-            (m) => m.milestone_id !== milestoneId,
-          );
+        if (selectedRoadmapIndex === -1 || selectedMilestoneIndex === -1) {
+          return;
         }
+        roadmaps[selectedRoadmapIndex].milestones.splice(
+          selectedMilestoneIndex,
+          1,
+        );
       }),
     );
     dispatch(removeMilestoneAction());
@@ -74,7 +85,7 @@ export const milestoneApi = api.injectEndpoints({
     updateMilestone: builder.mutation<MilestoneType, UpdateMilestoneParamsType>(
       {
         query: (milestone) => ({
-          url: `/roadmap/milestone/${milestone.milestoneId}`,
+          url: `/milestones/${milestone.milestoneId}`,
           method: 'PATCH',
           body: milestone,
         }),
@@ -83,7 +94,7 @@ export const milestoneApi = api.injectEndpoints({
     ),
     deleteMilestone: builder.mutation<unknown, string>({
       query: (milestoneId) => ({
-        url: `/roadmap/milestone/${milestoneId}`,
+        url: `/milestones/${milestoneId}`,
         method: 'DELETE',
       }),
       onQueryStarted: onDeleteMilestoneQueryStarted,
