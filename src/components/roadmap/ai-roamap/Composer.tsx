@@ -30,8 +30,6 @@ export const Composer = ({ onSend, onFocus, disabled }: ComposerProps) => {
             multiline
             onChangeText={setMessage}
             value={message}
-            returnKeyType="default"
-            autoFocus={true}
             onFocus={onFocus}
           />
         </AppView>

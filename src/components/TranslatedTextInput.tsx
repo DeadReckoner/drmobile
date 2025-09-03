@@ -1,6 +1,13 @@
-import { AppText, AppTextField, AppView } from '@/components/ui';
+import { AppIcon } from '@/components/AppIcon';
+import {
+  AppText,
+  AppTextField,
+  AppTouchableOpacity,
+  AppView,
+} from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors, TextFieldProps } from 'react-native-ui-lib';
 
@@ -21,9 +28,30 @@ export const TranslatedTextInput = ({
   error,
   editable = true,
   reduceOpacityWhenDisabled = true,
+  secureTextEntry,
   ...restProps
 }: TranslatedTextProps) => {
   const { t } = useLocalization();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((show) => !show);
+  };
+
+  const renderTrailingAccessory = () => {
+    if (!secureTextEntry) return undefined;
+
+    return (
+      <AppTouchableOpacity onPress={togglePasswordVisibility}>
+        <AppIcon
+          set="Feather"
+          name={!showPassword ? 'eye-off' : 'eye'}
+          size={20}
+          color={Colors.secondary}
+        />
+      </AppTouchableOpacity>
+    );
+  };
 
   return (
     <AppView marginB-16>
@@ -39,8 +67,9 @@ export const TranslatedTextInput = ({
         labelProps={{ 'marginB-8': true }}
         label={t(labelKey)}
         editable={editable}
-        multiline
         placeholder={placeholderKey && t(placeholderKey)}
+        secureTextEntry={secureTextEntry && !showPassword}
+        trailingAccessory={renderTrailingAccessory()}
         {...restProps}
       />
       {!!error && (

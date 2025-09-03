@@ -39,6 +39,7 @@ export const LoginForm = () => {
         onChangeText={handleChange('password')}
         onBlur={handleBlur('password')}
         error={touched.password && errors.password}
+        secureTextEntry
       />
       <AppView right>
         <AppRouterLink

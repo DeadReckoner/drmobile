@@ -62,6 +62,7 @@ export const SignupForm = () => {
         onChangeText={handleChange('password')}
         onBlur={handleBlur('password')}
         error={touched.password && errors.password}
+        secureTextEntry
       />
       <Divider />
       <PrimaryButton

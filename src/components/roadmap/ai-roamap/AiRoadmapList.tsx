@@ -2,16 +2,14 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { AppView } from '@/components/ui';
+import { useAppKeyboardAnimation } from '@/hooks/useAppKeyboardAnimation';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { Animations } from '@/utils/animation.utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
-import {
-  KeyboardAvoidingView,
-  KeyboardGestureArea,
-} from 'react-native-keyboard-controller';
-import Animated, { LinearTransition } from 'react-native-reanimated';
+import { KeyboardGestureArea } from 'react-native-keyboard-controller';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 interface MessageItem {
   id: string;
@@ -73,6 +71,12 @@ export const AiRoadmapList = () => {
   const flatListRef = useRef<FlatList>(null);
 
   const formData: FormData[] = [];
+  const { height } = useAppKeyboardAnimation();
+  const fakeView = useAnimatedStyle(() => {
+    return {
+      height: Math.abs(height.value),
+    };
+  }, []);
 
   useEffect(() => {
     if (currentPromptIndex < SYSTEM_PROMPTS.length) {
@@ -85,10 +89,7 @@ export const AiRoadmapList = () => {
 
   useEffect(() => {
     if (messages.length > 0) {
-      const timeoutId = setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-      return () => clearTimeout(timeoutId);
+      flatListRef.current?.scrollToEnd({ animated: true });
     }
   }, [messages.length]);
 
@@ -178,14 +179,13 @@ export const AiRoadmapList = () => {
   };
 
   return (
-    <KeyboardGestureArea style={styles.container} interpolator="ios">
-      <AppView paddingH-32 paddingT-70 paddingB-16>
-        <HeaderWithBack headerKey="tabs.create_tab.ai_roadmap" />
-      </AppView>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <AppView flex-1>
-          <Animated.FlatList
-            layout={LinearTransition}
+    <>
+      <KeyboardGestureArea style={styles.container} interpolator="ios">
+        <AppView style={styles.container}>
+          <AppView paddingH-16 paddingB-16>
+            <HeaderWithBack headerKey="tabs.create_tab.ai_roadmap" />
+          </AppView>
+          <FlatList
             ref={flatListRef}
             data={messages}
             renderItem={({ item }) => renderMessage(item)}
@@ -193,6 +193,7 @@ export const AiRoadmapList = () => {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
             maintainVisibleContentPosition={{
               minIndexForVisible: 0,
               autoscrollToTopThreshold: 10,
@@ -209,9 +210,10 @@ export const AiRoadmapList = () => {
             disabled={!isConversationRunning || isTyping}
             onSend={(message) => handleUserSubmit(message)}
           />
+          <Animated.View style={fakeView} />
         </AppView>
-      </KeyboardAvoidingView>
-    </KeyboardGestureArea>
+      </KeyboardGestureArea>
+    </>
   );
 };
 

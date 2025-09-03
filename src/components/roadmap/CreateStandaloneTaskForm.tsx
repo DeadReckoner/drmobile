@@ -68,6 +68,7 @@ export const CreateStandaloneTaskForm = ({
         onBlur={handleBlur('taskName')}
         error={touched.taskName && errors.taskName}
         value={values.taskName}
+        multiline
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.task_desc_label"
@@ -76,6 +77,7 @@ export const CreateStandaloneTaskForm = ({
         onBlur={handleBlur('taskDescription')}
         error={touched.taskDescription && errors.taskDescription}
         value={values.taskDescription}
+        multiline
       />
       <AppDateTimePicker
         style={[StyleSheet.absoluteFillObject]}

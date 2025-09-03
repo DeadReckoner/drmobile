@@ -121,6 +121,7 @@ export const AddEditCustomRoadmapForm = ({
         onBlur={handleBlur('goal')}
         error={touched.goal && errors.goal}
         value={values.goal}
+        multiline
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.goal_description_placeholder"
@@ -129,6 +130,7 @@ export const AddEditCustomRoadmapForm = ({
         onBlur={handleBlur('goalDescription')}
         error={touched.goalDescription && errors.goalDescription}
         value={values.goalDescription}
+        multiline
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.why_matters_label"
@@ -137,6 +139,7 @@ export const AddEditCustomRoadmapForm = ({
         onBlur={handleBlur('reason')}
         error={touched.reason && errors.reason}
         value={values.reason}
+        multiline
       />
       <AppDateTimePicker
         style={[StyleSheet.absoluteFillObject]}

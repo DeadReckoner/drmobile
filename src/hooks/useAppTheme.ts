@@ -50,11 +50,11 @@ export const useAppTheme = () => {
   };
 
   const initializeTheme = () => {
-    loadTypography();
+    Colors.setScheme(theme);
     loadColorSchemes();
+    loadTypography();
     loadComponentThemes();
     loadAssets();
-    Colors.setScheme(theme);
     dispatch(setThemeAction(theme));
   };
 
