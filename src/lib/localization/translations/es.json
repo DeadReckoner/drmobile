@@ -68,7 +68,8 @@
       "skill_level": "¿Cuál es tu nivel actual de habilidad o punto de partida?",
       "thank_you": "¡Gracias! Estoy construyendo tu hoja de ruta personalizada.",
       "composer_placeholder": "Introduce tu respuesta"
-    }
+    },
+    "loading_texts": "Analizando tus objetivos…|Identificando hitos clave…|Dividiéndolo en pasos…|Personalizando tu hoja de ruta…|Trazando tus puntos de referencia…|Alineando tu rumbo…|Preparando tu hoja de ruta…"
   },
   "tabs": {
     "today": "Hoy",

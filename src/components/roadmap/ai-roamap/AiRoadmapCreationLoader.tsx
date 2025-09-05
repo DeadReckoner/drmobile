@@ -1,6 +1,8 @@
 import { AppIcon } from '@/components/AppIcon';
 import { SlideUpTextCarousel } from '@/components/roadmap/ai-roamap/SlideUpTextCarousel';
 import { AppImage, AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
+import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { Animations } from '@/utils/animation.utils';
 import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
@@ -15,16 +17,15 @@ import {
 } from 'react-native-reanimated';
 import { Assets, Colors } from 'react-native-ui-lib';
 
-const loadingTexts = [
-  'Generating your personalized roadmap...',
-  'Analyzing your goals and preferences...',
-  'Curating the best resources for you...',
-  'Finalizing your custom plan...',
-  'Almost there, preparing your roadmap...',
-];
+const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
+  const loadingTexts = t('ai_roadmap.loading_texts');
+  return loadingTexts.split('|');
+};
 
 export const AiRoadmapCreationLoader = () => {
   const loaderTimingValue = useSharedValue(0);
+  const { t } = useLocalization();
+  const loadingTexts = getSystemPrompts(t);
   useEffect(() => {
     loaderTimingValue.value = withRepeat(
       withTiming(1, { duration: 4000 }),

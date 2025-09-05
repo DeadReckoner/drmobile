@@ -8,8 +8,11 @@ import { useAppKeyboardAnimation } from '@/hooks/useAppKeyboardAnimation';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, Keyboard, StyleSheet } from 'react-native';
 import { KeyboardGestureArea } from 'react-native-keyboard-controller';
@@ -75,6 +78,7 @@ export const AiRoadmapList = () => {
   const { t } = useLocalization();
   const { showToast } = useToast();
   const SYSTEM_PROMPTS = getSystemPrompts(t);
+  const dispatch = useAppDispatch();
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [isConversationRunning, setIsConversationRunning] = useState(true);
@@ -133,21 +137,24 @@ export const AiRoadmapList = () => {
     setMessages((prev) => [...prev, systemMessage]);
   };
 
-  const handleAiRoadmapCreation = () => {
+  const handleAiRoadmapCreation = (messages: MessageItem[]) => {
     createAIRoadmapApiTimeout.current = setTimeout(async () => {
       try {
         const formData = getFormSubmissionData(messages);
-        await createAIRoadmap(formData).unwrap();
+        const roadmap = await createAIRoadmap(formData).unwrap();
+        dispatch(setDraftRoadmapAction(roadmap));
+        router.replace('/roadmap/roadmap-details');
       } catch (error) {
         showToast({
           type: 'failure',
           message: getApiErrorMessage(error),
         });
       } finally {
-        if (createAIRoadmapApiTimeout.current)
+        if (createAIRoadmapApiTimeout.current) {
           clearTimeout(createAIRoadmapApiTimeout.current);
+        }
       }
-    }, 1500);
+    }, 1200);
   };
 
   const handleUserSubmit = (message: string) => {
@@ -159,6 +166,7 @@ export const AiRoadmapList = () => {
       type: 'user',
       content: message.trim(),
     };
+    const allMessages = [...messages, userMessage];
     setMessages((prev) => [...prev, userMessage]);
     if (currentPromptIndex + 1 < SYSTEM_PROMPTS.length) {
       setCurrentPromptIndex((prev) => prev + 1);
@@ -173,7 +181,7 @@ export const AiRoadmapList = () => {
         };
         setMessages((prev) => [...prev, thankYouMessage]);
         Keyboard.dismiss();
-        handleAiRoadmapCreation();
+        handleAiRoadmapCreation(allMessages);
       }, 500);
     }
   };

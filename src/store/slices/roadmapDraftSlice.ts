@@ -228,7 +228,31 @@ const roadmapDraftSlice = createSlice({
     },
 
     setDraftRoadmapAction(state, action: PayloadAction<RoadmapType>) {
-      state.roadmap = action.payload;
+      const roadmap: RoadmapType = {
+        ...action.payload,
+        milestones: action.payload.milestones.map((milestone) => {
+          const milestoneId = nanoid();
+          return {
+            ...milestone,
+            milestone_id: milestone.milestone_id || milestoneId,
+            tasks: milestone.tasks.map((task) => {
+              const taskId = nanoid();
+              return {
+                ...task,
+                task_id: task.task_id || taskId,
+                steps: task.steps.map((step) => {
+                  const stepId = nanoid();
+                  return {
+                    ...step,
+                    step_id: step.step_id || stepId,
+                  };
+                }),
+              };
+            }),
+          };
+        }),
+      };
+      state.roadmap = roadmap;
     },
 
     setShouldSyncWithServerAction(state, action: PayloadAction<boolean>) {

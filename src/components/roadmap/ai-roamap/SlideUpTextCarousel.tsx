@@ -35,7 +35,7 @@ export const SlideUpTextCarousel: React.FC<SlideUpTextCarouselProps> = ({
         opacity.value = withTiming(1, TIMING_ANIMATION_CONFIG);
         translateY.value = withTiming(0, TIMING_ANIMATION_CONFIG);
       }, 300);
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [items.length, opacity, translateY]);
@@ -55,7 +55,7 @@ export const SlideUpTextCarousel: React.FC<SlideUpTextCarouselProps> = ({
       entering={Animations.Entry.FadeInDownWithSpring(300)}
       style={styles.container}>
       <AppView reanimated style={animatedStyle}>
-        <AppText body2 textColor style={{ fontSize: 13 }}>
+        <AppText body2 textColor style={styles.text}>
           {items[currentIndex]}
         </AppText>
       </AppView>
@@ -71,5 +71,8 @@ const styles = StyleSheet.create({
     flexGrow: 0,
     zIndex: 500,
     paddingHorizontal: 16,
+  },
+  text: {
+    fontSize: 13,
   },
 });
