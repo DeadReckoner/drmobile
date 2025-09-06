@@ -32,8 +32,14 @@ const onCreateTaskQueryStarted: TypedMutationOnQueryStarted<
         if (roadmapIdx === -1 || milestoneIdx === -1) {
           return;
         }
-        draft[roadmapIdx].milestones[milestoneIdx].tasks.push(data);
+        const currentRoadmap = draft[roadmapIdx];
+        const currentTasks = currentRoadmap.milestones[milestoneIdx].tasks;
+        currentTasks.push(data);
         dispatch(addTaskAction(data));
+
+        currentRoadmap.daysRemainingTillNextMilestone =
+          currentTasks.length || 0;
+        dispatch(setDraftRoadmapAction(currentRoadmap));
       }),
     );
   } catch {}
