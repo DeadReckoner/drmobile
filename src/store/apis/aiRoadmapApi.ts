@@ -3,7 +3,6 @@ import { api } from '@/store/apis/api';
 
 export const aiRoadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    //TODO:  handle cache storage to add created roadmap to list
     createAIRoadmap: builder.mutation<RoadmapType, Partial<RoadmapType>>({
       query: (roadmap) => {
         return {
