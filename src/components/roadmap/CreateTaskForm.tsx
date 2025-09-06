@@ -49,6 +49,7 @@ export const CreateTaskForm = ({ mode, onSuccess }: CreateTaskFormProps) => {
         onBlur={handleBlur('taskName')}
         error={touched.taskName && errors.taskName}
         value={values.taskName}
+        multiline
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.task_desc_label"
@@ -57,6 +58,7 @@ export const CreateTaskForm = ({ mode, onSuccess }: CreateTaskFormProps) => {
         onBlur={handleBlur('taskDescription')}
         error={touched.taskDescription && errors.taskDescription}
         value={values.taskDescription}
+        multiline
       />
       <Divider margin-4 />
       <PrimaryButton

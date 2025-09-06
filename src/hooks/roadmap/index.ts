@@ -1,3 +1,4 @@
+import { aiRoadmapApi } from '@/store/apis/aiRoadmapApi';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 
 export const {
@@ -6,3 +7,5 @@ export const {
   useUpdateRoadmapMutation,
   useDeleteRoadmapMutation,
 } = roadmapApi;
+
+export const { useCreateAIRoadmapMutation } = aiRoadmapApi;

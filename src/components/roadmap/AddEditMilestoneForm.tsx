@@ -53,6 +53,7 @@ export const AddEditMilestoneForm = ({
         onBlur={handleBlur('milestoneName')}
         error={touched.milestoneName && errors.milestoneName}
         value={values.milestoneName}
+        multiline
       />
       <TranslatedTextInput
         labelKey="tabs.create_tab.milestone_desc_label"
@@ -61,6 +62,7 @@ export const AddEditMilestoneForm = ({
         onBlur={handleBlur('milestoneDescription')}
         error={touched.milestoneDescription && errors.milestoneDescription}
         value={values.milestoneDescription}
+        multiline
       />
       <Divider margin-4 />
       <PrimaryButton

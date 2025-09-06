@@ -126,7 +126,8 @@
       "skill_level": "What's your current skill level or starting point?",
       "thank_you": "Thanks! I'm building your personalized roadmap now.",
       "composer_placeholder": "Enter your answer"
-    }
+    },
+    "loading_texts": "Analyzing your goals…|Identifying key milestones…|Breaking it down into steps…|Personalizing your roadmap…|Mapping out your waypoints…|Aligning your course…|Preparing your roadmap…"
   },
   "common": {
     "or": "Or",

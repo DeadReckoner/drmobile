@@ -1,18 +1,4 @@
 {
-  "ai_roadmap": {
-    "prompts": {
-      "goal_name": "Commençons ! Quel est le nom de votre objectif ?",
-      "goal_description": "Pouvez-vous décrire votre objectif en quelques phrases ?",
-      "goal_importance": "Pourquoi cet objectif est-il important pour vous ?",
-      "target_date": "Quelle est votre date d'achèvement prévue ?",
-      "weekly_commitment": "Combien de temps pouvez-vous consacrer à cet objectif chaque semaine ?",
-      "frequency": "À quelle fréquence souhaitez-vous y travailler ? (ex. Quotidien, Hebdomadaire)",
-      "constraints": "Y a-t-il des contraintes ou des obstacles dont nous devrions être conscients ?",
-      "skill_level": "Quel est votre niveau de compétence actuel ou point de départ ?",
-      "thank_you": "Merci ! Je construis votre feuille de route personnalisée.",
-      "composer_placeholder": "Entrez votre réponse"
-    }
-  },
   "authentication": {
     "login": "Connexion",
     "login_subtitle": "Restez concentré et continuez d’avancer.",
@@ -69,6 +55,21 @@
       },
       "otp_required": "OTP est requis"
     }
+  },
+  "ai_roadmap": {
+    "prompts": {
+      "goal_name": "Commençons ! Quel est le nom de votre objectif ?",
+      "goal_description": "Pouvez-vous décrire votre objectif en quelques phrases ?",
+      "goal_importance": "Pourquoi cet objectif est-il important pour vous ?",
+      "target_date": "Quelle est votre date d'achèvement prévue ?",
+      "weekly_commitment": "Combien de temps pouvez-vous consacrer à cet objectif chaque semaine ?",
+      "frequency": "À quelle fréquence souhaitez-vous y travailler ? (ex. Quotidien, Hebdomadaire)",
+      "constraints": "Y a-t-il des contraintes ou des obstacles dont nous devrions être conscients ?",
+      "skill_level": "Quel est votre niveau de compétence actuel ou point de départ ?",
+      "thank_you": "Merci ! Je construis votre feuille de route personnalisée.",
+      "composer_placeholder": "Entrez votre réponse"
+    },
+    "loading_texts": "Analyse de vos objectifs…|Identification des étapes clés…|Découpage en étapes…|Personnalisation de votre feuille de route…|Cartographie de vos points de repère…|Alignement de votre trajectoire…|Préparation de votre feuille de route…"
   },
   "tabs": {
     "today": "Aujourd’hui",

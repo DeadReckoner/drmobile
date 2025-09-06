@@ -11,7 +11,7 @@ export const LightColorCodes = {
   warning: '#e5bb00',
 
   screenBG: '#FFFFFF',
-  cardBG: '#f7f7f7',
+  cardBG: '#f7f7f7ff',
   lightCardBG: '#e7e8e9e5',
 
   inverseBackground: '#000000',
@@ -24,7 +24,7 @@ export const LightColorCodes = {
   lineDivider: '#98989830',
   checkboxBG: '#989898',
 
-  dialogOverlay: '#dededec8',
+  dialogOverlay: '#f1f1f1e1',
   datePickerBG: '#FFFFFF',
 };
 

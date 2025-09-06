@@ -1,17 +1,22 @@
 import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { AiRoadmapCreationLoader } from '@/components/roadmap/ai-roamap/AiRoadmapCreationLoader';
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { AppView } from '@/components/ui';
+import { useCreateAIRoadmapMutation } from '@/hooks/roadmap';
+import { useAppKeyboardAnimation } from '@/hooks/useAppKeyboardAnimation';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useToast } from '@/hooks/useToast';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
-import {
-  KeyboardAvoidingView,
-  KeyboardGestureArea,
-} from 'react-native-keyboard-controller';
-import Animated, { LinearTransition } from 'react-native-reanimated';
+import { FlatList, Keyboard, StyleSheet } from 'react-native';
+import { KeyboardGestureArea } from 'react-native-keyboard-controller';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 
 interface MessageItem {
   id: string;
@@ -20,36 +25,30 @@ interface MessageItem {
   isTyping?: boolean;
 }
 
-interface FormData {
-  id: string;
-  question: string;
-  answer: string;
-}
-
 const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
   return [
     {
-      id: 'goal_name',
+      id: 'goalName',
       question: t('ai_roadmap.prompts.goal_name'),
     },
     {
-      id: 'goal_description',
+      id: 'goalDescription',
       question: t('ai_roadmap.prompts.goal_description'),
     },
     {
-      id: 'goal_importance',
+      id: 'goalImportance',
       question: t('ai_roadmap.prompts.goal_importance'),
     },
     {
-      id: 'target_date',
+      id: 'targetCompletionDate',
       question: t('ai_roadmap.prompts.target_date'),
     },
     {
-      id: 'weekly_commitment',
+      id: 'weeklyTimeCommitment',
       question: t('ai_roadmap.prompts.weekly_commitment'),
     },
     {
-      id: 'frequency',
+      id: 'workFrequency',
       question: t('ai_roadmap.prompts.frequency'),
     },
     {
@@ -57,40 +56,70 @@ const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
       question: t('ai_roadmap.prompts.constraints'),
     },
     {
-      id: 'skill_level',
+      id: 'currentSkillLevel',
       question: t('ai_roadmap.prompts.skill_level'),
     },
   ];
 };
 
+const getFormSubmissionData = (
+  messages: MessageItem[],
+): Record<string, string> => {
+  const formData: Record<string, string> = {};
+  messages.forEach((message) => {
+    if (message.type === 'user') {
+      formData[message.id] = message.content;
+    }
+  });
+  return formData;
+};
+
 export const AiRoadmapList = () => {
   const { t } = useLocalization();
+  const { showToast } = useToast();
   const SYSTEM_PROMPTS = getSystemPrompts(t);
+  const dispatch = useAppDispatch();
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
   const [isConversationRunning, setIsConversationRunning] = useState(true);
+  const [createAIRoadmap, { isLoading: isAiRoadmapCreating }] =
+    useCreateAIRoadmapMutation();
   const [isTyping, setIsTyping] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  const thankYouTimeout = useRef<NodeJS.Timeout | null>(null);
+  const createAIRoadmapApiTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const formData: FormData[] = [];
+  const { height } = useAppKeyboardAnimation();
+  const fakeView = useAnimatedStyle(() => {
+    return {
+      height: Math.abs(height.value),
+    };
+  }, []);
 
   useEffect(() => {
     if (currentPromptIndex < SYSTEM_PROMPTS.length) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         startTypingSystemMessage();
       }, 300);
+
+      return () => clearTimeout(timeout);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPromptIndex]);
 
   useEffect(() => {
     if (messages.length > 0) {
-      const timeoutId = setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-      return () => clearTimeout(timeoutId);
+      flatListRef.current?.scrollToEnd({ animated: true });
     }
   }, [messages.length]);
+
+  useEffect(() => {
+    return () => {
+      if (thankYouTimeout.current) {
+        clearTimeout(thankYouTimeout.current);
+      }
+    };
+  }, []);
 
   const startTypingSystemMessage = () => {
     if (currentPromptIndex >= SYSTEM_PROMPTS.length) return;
@@ -108,32 +137,42 @@ export const AiRoadmapList = () => {
     setMessages((prev) => [...prev, systemMessage]);
   };
 
+  const handleAiRoadmapCreation = (messages: MessageItem[]) => {
+    createAIRoadmapApiTimeout.current = setTimeout(async () => {
+      try {
+        const formData = getFormSubmissionData(messages);
+        const roadmap = await createAIRoadmap(formData).unwrap();
+        dispatch(setDraftRoadmapAction(roadmap));
+        router.replace('/roadmap/roadmap-details');
+      } catch (error) {
+        showToast({
+          type: 'failure',
+          message: getApiErrorMessage(error),
+        });
+      } finally {
+        if (createAIRoadmapApiTimeout.current) {
+          clearTimeout(createAIRoadmapApiTimeout.current);
+        }
+      }
+    }, 1200);
+  };
+
   const handleUserSubmit = (message: string) => {
     setIsTyping(true);
     if (!message.trim() || isTyping) return;
 
     const userMessage: MessageItem = {
-      id: `user-${currentPromptIndex}`,
+      id: SYSTEM_PROMPTS[currentPromptIndex].id,
       type: 'user',
       content: message.trim(),
     };
-
+    const allMessages = [...messages, userMessage];
     setMessages((prev) => [...prev, userMessage]);
-
-    const inputValue = message.trim();
-
-    const currentPrompt = SYSTEM_PROMPTS[currentPromptIndex];
-    formData.push({
-      id: currentPrompt.id,
-      question: currentPrompt.question,
-      answer: inputValue,
-    });
-
     if (currentPromptIndex + 1 < SYSTEM_PROMPTS.length) {
       setCurrentPromptIndex((prev) => prev + 1);
     } else {
       setIsConversationRunning(false);
-      setTimeout(() => {
+      thankYouTimeout.current = setTimeout(async () => {
         const thankYouMessage: MessageItem = {
           id: 'thank-you',
           type: 'system',
@@ -141,6 +180,8 @@ export const AiRoadmapList = () => {
           isTyping: true,
         };
         setMessages((prev) => [...prev, thankYouMessage]);
+        Keyboard.dismiss();
+        handleAiRoadmapCreation(allMessages);
       }, 500);
     }
   };
@@ -178,14 +219,14 @@ export const AiRoadmapList = () => {
   };
 
   return (
-    <KeyboardGestureArea style={styles.container} interpolator="ios">
-      <AppView paddingH-32 paddingT-70 paddingB-16>
-        <HeaderWithBack headerKey="tabs.create_tab.ai_roadmap" />
-      </AppView>
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <AppView flex-1>
-          <Animated.FlatList
-            layout={LinearTransition}
+    <>
+      {isAiRoadmapCreating && <AiRoadmapCreationLoader />}
+      <KeyboardGestureArea style={styles.container} interpolator="ios">
+        <AppView style={styles.container}>
+          <AppView paddingH-16 paddingB-16>
+            <HeaderWithBack headerKey="tabs.create_tab.ai_roadmap" />
+          </AppView>
+          <FlatList
             ref={flatListRef}
             data={messages}
             renderItem={({ item }) => renderMessage(item)}
@@ -193,6 +234,7 @@ export const AiRoadmapList = () => {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
             maintainVisibleContentPosition={{
               minIndexForVisible: 0,
               autoscrollToTopThreshold: 10,
@@ -209,9 +251,10 @@ export const AiRoadmapList = () => {
             disabled={!isConversationRunning || isTyping}
             onSend={(message) => handleUserSubmit(message)}
           />
+          <Animated.View style={fakeView} />
         </AppView>
-      </KeyboardAvoidingView>
-    </KeyboardGestureArea>
+      </KeyboardGestureArea>
+    </>
   );
 };
 

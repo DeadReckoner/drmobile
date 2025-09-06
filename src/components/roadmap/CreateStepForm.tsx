@@ -52,6 +52,7 @@ export const CreateStepForm = ({
         onBlur={handleBlur('stepDescription')}
         error={touched.stepDescription && errors.stepDescription}
         value={values.stepDescription}
+        multiline
       />
       <Divider margin-4 />
       <PrimaryButton
