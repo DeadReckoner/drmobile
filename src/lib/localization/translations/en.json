@@ -129,6 +129,16 @@
     },
     "loading_texts": "Analyzing your goals…|Identifying key milestones…|Breaking it down into steps…|Personalizing your roadmap…|Mapping out your waypoints…|Aligning your course…|Preparing your roadmap…"
   },
+  "profile": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout",
+    "dark_mode": "Dark Mode",
+    "language": "Language",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_service": "Terms of Service",
+    "help_support": "Help & Support"
+  },
   "common": {
     "or": "Or",
     "milestones": "Milestones",

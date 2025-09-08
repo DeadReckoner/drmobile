@@ -129,6 +129,16 @@
       "submit_roadmap": "Soumettre la feuille de route"
     }
   },
+  "profile": {
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "dark_mode": "Mode Sombre",
+    "language": "Langue",
+    "privacy_policy": "Politique de Confidentialité",
+    "terms_of_service": "Conditions d’Utilisation",
+    "help_support": "Aide & Support"
+  },
   "common": {
     "or": "Ou",
     "milestones": "Jalons",

@@ -129,6 +129,16 @@
       "submit_roadmap": "Enviar hoja de ruta"
     }
   },
+  "profile": {
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "logout": "Cerrar sesión",
+    "dark_mode": "Modo oscuro",
+    "language": "Idioma",
+    "privacy_policy": "Política de privacidad",
+    "terms_of_service": "Términos de servicio",
+    "help_support": "Ayuda y soporte"
+  },
   "common": {
     "or": "O",
     "milestones": "Hitos",

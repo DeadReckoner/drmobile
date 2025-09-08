@@ -3,7 +3,7 @@ import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setAuthUserAction } from '@/store/slices/authSlice';
 import { persistedStore } from '@/store/store';
-import { handleSignoutOnAuthError } from '@/utils/apiErrors.utils';
+import { handleSignout } from '@/utils/apiErrors.utils';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useCallback, useEffect } from 'react';
 import { AppState } from 'react-native';
@@ -69,7 +69,7 @@ export const useSupabaseAutoRefresh = () => {
     async (event: AuthChangeEvent, session: Session | null) => {
       if (AUTH_EVENTS.includes(event)) {
         if (event === 'SIGNED_OUT') {
-          await handleSignoutOnAuthError(dispatch, persistedStore);
+          await handleSignout(dispatch, persistedStore);
           return;
         }
         if (session?.user && session?.access_token) {

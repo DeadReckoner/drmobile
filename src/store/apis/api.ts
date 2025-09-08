@@ -30,10 +30,7 @@ export const createBaseQueryWithReauth = () => {
     const result = await baseQueryWithReauth(args, apiQuery, extraOptions);
     if (result?.error?.status === 401) {
       apiQuery.dispatch(api.util.resetApiState());
-      supabaseClient.auth
-        .signOut()
-        .then(() => {})
-        .catch(() => {});
+      await supabaseClient.auth.signOut();
     }
     return result;
   };

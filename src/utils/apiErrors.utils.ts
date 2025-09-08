@@ -6,7 +6,7 @@ import { AppDispatchType, RootStateType } from '@/store/types/store.types';
 import { Action, ThunkDispatch } from '@reduxjs/toolkit';
 import { Persistor } from 'redux-persist';
 
-export const handleSignoutOnAuthError = async (
+export const handleSignout = async (
   dispatch: ThunkDispatch<RootStateType, AppDispatchType, Action>,
   persistedStore: Persistor,
 ) => {
