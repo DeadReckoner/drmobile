@@ -6,6 +6,7 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { JSX } from 'react';
+import { ViewProps } from 'react-native-ui-lib';
 
 interface ConfirmationDialogProps {
   isDialogOpen: boolean;
@@ -18,6 +19,10 @@ interface ConfirmationDialogProps {
   onDismiss: () => void;
   negativeButtonIcon?: JSX.Element;
   positiveButtonIcon?: JSX.Element;
+  styles?: {
+    positive?: ViewProps['style'];
+    negative?: ViewProps['style'];
+  };
 }
 
 export const ConfirmationDialog = ({
@@ -31,6 +36,7 @@ export const ConfirmationDialog = ({
   positiveText,
   negativeButtonIcon,
   positiveButtonIcon,
+  styles,
 }: ConfirmationDialogProps) => {
   return (
     <AppDialog visible={isDialogOpen} onDismiss={onDismiss}>
@@ -47,6 +53,7 @@ export const ConfirmationDialog = ({
             padding-12
             flex
             center
+            style={styles?.negative}
             onPress={onNegativePress}>
             <TranslatedText
               caption
@@ -63,6 +70,7 @@ export const ConfirmationDialog = ({
             padding-12
             flex
             center
+            style={styles?.positive}
             onPress={onPositivePress}>
             {positiveButtonIcon}
             <Divider margin-4 />

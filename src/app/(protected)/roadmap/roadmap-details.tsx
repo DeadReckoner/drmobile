@@ -29,6 +29,7 @@ const RoadmapDetailsPage = () => {
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
+  const [isBackModalOpen, setIsBackModalOpen] = useState(false);
 
   const { t } = useLocalization();
   const { showToast } = useToast();
@@ -93,7 +94,12 @@ const RoadmapDetailsPage = () => {
       {isLoading && <Loader />}
       <AppKeyboardController>
         <AppView spread row gap-16>
-          <HeaderWithBack headerText={roadmap.goal} flex-1 />
+          <HeaderWithBack
+            headerText={roadmap.goal}
+            flex-1
+            goBackOnPress={false}
+            onBackPress={() => setIsBackModalOpen(true)}
+          />
           <AppView row gap-16 top>
             {isEditing && (
               <AppButton onPress={toggleEditMode}>
@@ -165,6 +171,32 @@ const RoadmapDetailsPage = () => {
           }
         />
       </AppKeyboardController>
+      <ConfirmationDialog
+        isDialogOpen={isBackModalOpen}
+        onDismiss={() => setIsBackModalOpen(false)}
+        title="tabs.create_tab.leave_without_saving"
+        subtitle="tabs.create_tab.discard_roadmap_description"
+        onNegativePress={() => setIsBackModalOpen(false)}
+        onPositivePress={() => router.back()}
+        negativeText="common.stay"
+        positiveText="common.leave"
+        negativeButtonIcon={
+          <AppIcon
+            set="Feather"
+            name="map"
+            color={Colors.textOnPrimary}
+            size={14}
+          />
+        }
+        positiveButtonIcon={
+          <AppIcon
+            set="Feather"
+            name="arrow-left"
+            color={Colors.textOnPrimary}
+            size={14}
+          />
+        }
+      />
     </AppView>
   );
 };

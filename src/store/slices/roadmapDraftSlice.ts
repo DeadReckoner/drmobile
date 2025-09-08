@@ -193,21 +193,48 @@ const roadmapDraftSlice = createSlice({
       syncSelectedTask(state);
     },
 
-    updateStepAction: (state, action: PayloadAction<Partial<StepType>>) => {
+    updateStepAction: (
+      state,
+      action: PayloadAction<Partial<StepType> & { index?: number }>,
+    ) => {
       const task = findSelectedTask(state);
-      if (!task || action.payload.number == null) return;
-      const step = task.steps[state.selectedStepIndex];
-      if (!step) {
-        return;
-      }
-      const updatedStep = {
-        ...step,
-        ...action.payload,
-      };
+      if (!task) return;
+      const step = task.steps[action.payload.index ?? state.selectedStepIndex];
 
-      task.steps[state.selectedStepIndex] = updatedStep;
-      state.selectedStep = updatedStep;
+      if (!step) return;
+      step.description = action.payload.description ?? step.description;
+
+      if (action.payload.completed === undefined) {
+        step.completed = false;
+      } else {
+        step.completed = action.payload.completed;
+      }
+      step.number = action.payload.number ?? step.number;
+      if (!task) return;
+      if (task) {
+        if (
+          task.steps.every((s) => s.completed) ||
+          !task.steps ||
+          task.steps?.length === 0
+        ) {
+          task.completed = true;
+        } else {
+          task.completed = false;
+        }
+      }
+      const milestone = findSelectedMilestone(state);
+      if (milestone) {
+        if (milestone?.tasks.every((t) => t.completed)) {
+          milestone.reached = true;
+        } else {
+          milestone.reached = false;
+        }
+      }
+
       syncSelectedTask(state);
+      state.selectedStep = step;
+      state.selectedTask = task;
+      state.selectedMilestone = milestone;
     },
 
     removeStepAction: (state, action: PayloadAction<{ step_id: string }>) => {

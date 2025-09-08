@@ -58,10 +58,12 @@ export const useStepForm = ({
       try {
         if (selectedTask?.task_id && selectedStep?.step_id && canEdit) {
           await updateStep({
+            ...selectedStep,
             description: stepDescription,
-            number: selectedStep.number,
             task_id: selectedTask.task_id,
             step_id: selectedStep.step_id,
+            completed: selectedStep.completed,
+            number: selectedStep.number,
           }).unwrap();
           onSuccess?.();
         } else if (selectedTask?.task_id && !canEdit) {
@@ -69,6 +71,7 @@ export const useStepForm = ({
             description: stepDescription,
             task_id: selectedTask.task_id,
             number: selectedTask.steps.length + 1,
+            completed: false,
           }).unwrap();
           onSuccess?.();
         }

@@ -40,11 +40,11 @@ export const StepsList = () => {
     });
   };
 
-  const onCompleteStep = (value: boolean, step: StepType) => {
+  const onCompleteStep = (value: boolean, index: number) => {
     dispatch(
       updateStepAction({
         completed: value,
-        number: step.number,
+        index,
       }),
     );
   };
@@ -55,7 +55,7 @@ export const StepsList = () => {
   }: LegendListRenderItemProps<StepType>) => (
     <StepItem
       step={step}
-      onCompleteStep={onCompleteStep}
+      onCompleteStep={(value) => onCompleteStep(value, index)}
       onStepPress={(step) => onStepPress(step, index)}
     />
   );

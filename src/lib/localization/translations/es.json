@@ -126,7 +126,9 @@
       "end_date": "Fecha de fin",
       "select_date": "Seleccionar fecha",
       "add_milestones": "Añadir hitos",
-      "submit_roadmap": "Enviar hoja de ruta"
+      "submit_roadmap": "Enviar hoja de ruta",
+      "leave_without_saving": "¿Salir sin guardar?",
+      "discard_roadmap_description": "Si sales ahora, se perderán todos los cambios no guardados. ¿Quieres continuar?"
     }
   },
   "common": {
@@ -147,6 +149,10 @@
     "delete_milestone": "Todas las tareas y pasos asociados también se eliminarán.",
     "delete_task": "Todos los pasos asociados también se eliminarán.",
     "delete_step": "¿Estás seguro de que deseas eliminar este paso?",
-    "something_went_wrong": "Algo salió mal. Inténtalo de nuevo."
+    "something_went_wrong": "Algo salió mal. Inténtalo de nuevo.",
+    "go_back": "Regresar",
+    "close": "Cerrar",
+    "leave": "Salir",
+    "stay": "Quedarse"
   }
 }
