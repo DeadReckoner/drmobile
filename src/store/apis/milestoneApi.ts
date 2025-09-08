@@ -4,11 +4,34 @@ import { roadmapApi } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import { UpdateMilestoneParamsType } from '@/store/apis/types/milestoneApi.types';
 import {
+  addMilestoneAction,
   removeMilestoneAction,
   updateMilestoneAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
+
+const onCreateMilestoneQueryStarted: TypedMutationOnQueryStarted<
+  MilestoneType,
+  UpdateMilestoneParamsType,
+  BaseQueryFunctionType
+> = async (_milestone, { queryFulfilled, dispatch, getState }) => {
+  try {
+    const { data } = await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
+    const { selectedRoadmapIndex } = state.roadmapDraft;
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
+        const roadmap = roadmaps[selectedRoadmapIndex];
+        if (roadmap) {
+          roadmap.milestones.push(data);
+          dispatch(addMilestoneAction(data));
+        }
+      }),
+    );
+  } catch {}
+};
 
 const onUpdateMilestoneQueryStarted: TypedMutationOnQueryStarted<
   MilestoneType,
@@ -82,6 +105,14 @@ const onDeleteMilestoneQueryStarted: TypedMutationOnQueryStarted<
 
 export const milestoneApi = api.injectEndpoints({
   endpoints: (builder) => ({
+    createMilestone: builder.mutation<MilestoneType, Partial<MilestoneType>>({
+      query: (milestone) => ({
+        url: `/roadmaps/${milestone.roadmap_id}/milestones`,
+        method: 'POST',
+        body: milestone,
+      }),
+      onQueryStarted: onCreateMilestoneQueryStarted,
+    }),
     updateMilestone: builder.mutation<MilestoneType, UpdateMilestoneParamsType>(
       {
         query: (milestone) => ({

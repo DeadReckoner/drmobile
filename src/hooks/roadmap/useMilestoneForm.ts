@@ -1,4 +1,7 @@
-import { useUpdateMilestoneMutation } from '@/hooks/milestone';
+import {
+  useCreateMilestoneMutation,
+  useUpdateMilestoneMutation,
+} from '@/hooks/milestone';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -52,7 +55,8 @@ export const useMilestoneForm = ({
   const dispatch = useAppDispatch();
   const [updateMilestone, { isLoading: isUpdating }] =
     useUpdateMilestoneMutation();
-  // const [createMilestone, { isLoading: isCreating }] = useCreateMilestoneMutation();
+  const [createMilestone, { isLoading: isCreating }] =
+    useCreateMilestoneMutation();
   const canEdit = mode === 'edit';
 
   const onMilestoneSubmit = async ({
@@ -61,22 +65,21 @@ export const useMilestoneForm = ({
   }: MilestoneSchemaType) => {
     if (selectedRoadmap?.shouldSyncWithServer) {
       try {
-        if (selectedMilestone?.milestone_id) {
-          if (canEdit) {
-            await updateMilestone({
-              milestoneId: selectedMilestone.milestone_id,
-              sub_goal: milestoneName,
-              description: milestoneDescription,
-            }).unwrap();
-          } else {
-            //TODO: handle milestone creation with API
-            // await createMilestone({
-            //   sub_goal: milestoneName,
-            //   description: milestoneDescription,
-            // }).unwrap();
-          }
+        if (selectedMilestone?.milestone_id && canEdit) {
+          await updateMilestone({
+            milestoneId: selectedMilestone.milestone_id,
+            sub_goal: milestoneName,
+            description: milestoneDescription,
+          }).unwrap();
+          onSuccess?.();
+        } else if (selectedRoadmap?.roadmap.roadmap_id && !canEdit) {
+          await createMilestone({
+            sub_goal: milestoneName,
+            description: milestoneDescription,
+            roadmap_id: selectedRoadmap.roadmap.roadmap_id,
+          }).unwrap();
+          onSuccess?.();
         }
-        onSuccess?.();
       } catch (error) {
         onError?.(error);
       }
@@ -113,8 +116,7 @@ export const useMilestoneForm = ({
     });
 
   return {
-    // isLoading: isCreating || isUpdating,
-    isLoading: isUpdating,
+    isLoading: isCreating || isUpdating,
     handleChange: handleChange<keyof MilestoneSchemaType>,
     handleBlur: handleBlur<keyof MilestoneSchemaType>,
     ...restFormikOptions,
