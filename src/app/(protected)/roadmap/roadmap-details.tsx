@@ -64,6 +64,16 @@ const RoadmapDetailsPage = () => {
     router.back();
   };
 
+  const hideDiscardDialog = () => setIsBackModalOpen(false);
+  const showDiscardDialog = () => setIsBackModalOpen(true);
+
+  const onBackPress = () => {
+    if (roadmap?.roadmap_id) {
+      return router.back();
+    }
+    showDiscardDialog();
+  };
+
   const toggleEditMode = () => setIsEditing((edit) => !edit);
   const onCreateRoadmap = async () => {
     try {
@@ -98,7 +108,7 @@ const RoadmapDetailsPage = () => {
             headerText={roadmap.goal}
             flex-1
             goBackOnPress={false}
-            onBackPress={() => setIsBackModalOpen(true)}
+            onBackPress={onBackPress}
           />
           <AppView row gap-16 top>
             {isEditing && (
@@ -173,11 +183,14 @@ const RoadmapDetailsPage = () => {
       </AppKeyboardController>
       <ConfirmationDialog
         isDialogOpen={isBackModalOpen}
-        onDismiss={() => setIsBackModalOpen(false)}
+        onDismiss={hideDiscardDialog}
         title="tabs.create_tab.leave_without_saving"
         subtitle="tabs.create_tab.discard_roadmap_description"
-        onNegativePress={() => setIsBackModalOpen(false)}
-        onPositivePress={() => router.back()}
+        onNegativePress={hideDiscardDialog}
+        onPositivePress={() => {
+          hideDiscardDialog();
+          router.back();
+        }}
         negativeText="common.stay"
         positiveText="common.leave"
         negativeButtonIcon={
@@ -189,12 +202,7 @@ const RoadmapDetailsPage = () => {
           />
         }
         positiveButtonIcon={
-          <AppIcon
-            set="Feather"
-            name="arrow-left"
-            color={Colors.textOnPrimary}
-            size={14}
-          />
+          <AppIcon name="arrowleft" color={Colors.textOnPrimary} size={14} />
         }
       />
     </AppView>
