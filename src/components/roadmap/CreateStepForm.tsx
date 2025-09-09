@@ -18,31 +18,36 @@ interface CreateStepFormProps {
 export const CreateStepForm = ({
   mode,
   stepDescription = '',
-  stepNumber,
   taskId,
   onSuccess,
 }: CreateStepFormProps) => {
   const { showToast } = useToast();
   const { t } = useLocalization();
 
-  const { handleBlur, handleChange, touched, errors, handleSubmit, values } =
-    useStepForm({
-      mode,
-      stepDescription,
-      stepNumber,
-      taskId,
-      onSuccess: () => {
-        showToast({
-          type: 'success',
-          message: t(
-            mode === 'create'
-              ? 'common.created_successfully'
-              : 'common.updated_successfully',
-          ),
-        });
-        onSuccess?.();
-      },
-    });
+  const {
+    isLoading: isCreatingStep,
+    handleBlur,
+    handleChange,
+    touched,
+    errors,
+    handleSubmit,
+    values,
+  } = useStepForm({
+    mode,
+    stepDescription,
+    taskId,
+    onSuccess: () => {
+      showToast({
+        type: 'success',
+        message: t(
+          mode === 'create'
+            ? 'common.created_successfully'
+            : 'common.updated_successfully',
+        ),
+      });
+      onSuccess?.();
+    },
+  });
   return (
     <AppView>
       <TranslatedTextInput
@@ -62,6 +67,8 @@ export const CreateStepForm = ({
             : 'tabs.create_tab.add_new_step'
         }
         onPress={handleSubmit}
+        shouldShowLoader
+        isLoading={isCreatingStep}
       />
     </AppView>
   );

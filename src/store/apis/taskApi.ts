@@ -33,12 +33,11 @@ const onCreateTaskQueryStarted: TypedMutationOnQueryStarted<
           return;
         }
         const currentRoadmap = draft[roadmapIdx];
-        const currentTasks = currentRoadmap.milestones[milestoneIdx].tasks;
-        currentTasks.push(data);
+        currentRoadmap.milestones[milestoneIdx].tasks.push(data);
         dispatch(addTaskAction(data));
 
         currentRoadmap.daysRemainingTillNextMilestone =
-          currentTasks.length || 0;
+          currentRoadmap.milestones[milestoneIdx].tasks.length || 0;
         dispatch(setDraftRoadmapAction(currentRoadmap));
       }),
     );
@@ -94,18 +93,15 @@ const onDeleteTaskQueryStarted: TypedMutationOnQueryStarted<
           return;
         }
 
-        const currentRoadmap = roadmaps[roadmapIdx];
-        const currentTasks = currentRoadmap.milestones[milestoneIdx].tasks;
+        roadmaps[roadmapIdx].milestones[milestoneIdx].tasks.splice(taskIdx, 1);
+        const updatedTasks =
+          roadmaps[roadmapIdx].milestones[milestoneIdx].tasks || [];
 
-        const updatedTasks = currentTasks.filter(
-          (task) => task.task_id !== task_id,
-        );
-
-        currentRoadmap.daysRemainingTillNextMilestone =
+        roadmaps[roadmapIdx].daysRemainingTillNextMilestone =
           updatedTasks.length || 0;
 
         dispatch(removeTaskAction());
-        dispatch(setDraftRoadmapAction(currentRoadmap));
+        dispatch(setDraftRoadmapAction(roadmaps[roadmapIdx]));
       }),
     );
   } catch {}

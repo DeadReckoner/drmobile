@@ -29,6 +29,7 @@ const RoadmapDetailsPage = () => {
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
+  const [isBackModalOpen, setIsBackModalOpen] = useState(false);
 
   const { t } = useLocalization();
   const { showToast } = useToast();
@@ -63,6 +64,16 @@ const RoadmapDetailsPage = () => {
     router.back();
   };
 
+  const hideDiscardDialog = () => setIsBackModalOpen(false);
+  const showDiscardDialog = () => setIsBackModalOpen(true);
+
+  const onBackPress = () => {
+    if (roadmap?.roadmap_id) {
+      return router.back();
+    }
+    showDiscardDialog();
+  };
+
   const toggleEditMode = () => setIsEditing((edit) => !edit);
   const onCreateRoadmap = async () => {
     try {
@@ -93,7 +104,12 @@ const RoadmapDetailsPage = () => {
       {isLoading && <Loader />}
       <AppKeyboardController>
         <AppView spread row gap-16>
-          <HeaderWithBack headerText={roadmap.goal} flex-1 />
+          <HeaderWithBack
+            headerText={roadmap.goal}
+            flex-1
+            goBackOnPress={false}
+            onBackPress={onBackPress}
+          />
           <AppView row gap-16 top>
             {isEditing && (
               <AppButton onPress={toggleEditMode}>
@@ -165,6 +181,30 @@ const RoadmapDetailsPage = () => {
           }
         />
       </AppKeyboardController>
+      <ConfirmationDialog
+        isDialogOpen={isBackModalOpen}
+        onDismiss={hideDiscardDialog}
+        title="tabs.create_tab.leave_without_saving"
+        subtitle="tabs.create_tab.discard_roadmap_description"
+        onNegativePress={hideDiscardDialog}
+        onPositivePress={() => {
+          hideDiscardDialog();
+          router.back();
+        }}
+        negativeText="common.stay"
+        positiveText="common.leave"
+        negativeButtonIcon={
+          <AppIcon
+            set="Feather"
+            name="map"
+            color={Colors.textOnPrimary}
+            size={14}
+          />
+        }
+        positiveButtonIcon={
+          <AppIcon name="arrowleft" color={Colors.textOnPrimary} size={14} />
+        }
+      />
     </AppView>
   );
 };

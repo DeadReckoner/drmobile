@@ -126,7 +126,9 @@
       "end_date": "Date de fin",
       "select_date": "Sélectionner une date",
       "add_milestones": "Ajouter des jalons",
-      "submit_roadmap": "Soumettre la feuille de route"
+      "submit_roadmap": "Soumettre la feuille de route",
+      "leave_without_saving": "Quitter sans enregistrer ?",
+      "discard_roadmap_description": "Si vous quittez maintenant, toutes les modifications non enregistrées seront perdues. Voulez-vous continuer ?"
     }
   },
   "common": {
@@ -147,6 +149,10 @@
     "delete_milestone": "Toutes les tâches et étapes associées seront également supprimées.",
     "delete_task": "Toutes les étapes associées seront également supprimées.",
     "delete_step": "Êtes-vous sûr de vouloir supprimer cette étape ?",
-    "something_went_wrong": "Une erreur s’est produite. Réessayez."
+    "something_went_wrong": "Une erreur s’est produite. Réessayez.",
+    "go_back": "Retour",
+    "close": "Fermer",
+    "leave": "Quitter",
+    "stay": "Rester"
   }
 }

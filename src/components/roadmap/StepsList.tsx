@@ -12,6 +12,7 @@ import { StepType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectSelectedTask,
+  setSelectedStepAction,
   updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
@@ -29,30 +30,33 @@ export const StepsList = () => {
     });
   };
 
-  const onStepPress = (step: StepType) => {
+  const onStepPress = (step: StepType, index?: number) => {
+    dispatch(setSelectedStepAction({ step, index }));
     router.navigate({
       pathname: '/task/add-edit-step',
       params: {
         mode: 'edit',
-        stepNumber: step.number,
       },
     });
   };
 
-  const onCompleteStep = (value: boolean, step: StepType) => {
+  const onCompleteStep = (value: boolean, index: number) => {
     dispatch(
       updateStepAction({
         completed: value,
-        number: step.number,
+        index,
       }),
     );
   };
 
-  const renderItem = ({ item: step }: LegendListRenderItemProps<StepType>) => (
+  const renderItem = ({
+    item: step,
+    index,
+  }: LegendListRenderItemProps<StepType>) => (
     <StepItem
       step={step}
-      onCompleteStep={onCompleteStep}
-      onStepPress={onStepPress}
+      onCompleteStep={(value) => onCompleteStep(value, index)}
+      onStepPress={(step) => onStepPress(step, index)}
     />
   );
 
@@ -87,7 +91,7 @@ export const StepsList = () => {
       <AppCard padding-0>
         <AppList
           data={task?.steps || []}
-          keyExtractor={(s) => s.number.toString()}
+          keyExtractor={(s) => s.step_id}
           renderItem={renderItem}
           ListEmptyComponent={renderEmptyItem}
           ListFooterComponent={renderFooterComponent}
