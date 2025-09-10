@@ -4,6 +4,7 @@ import type {
   StepType,
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
+import { transformRoadmap } from '@/store/apis/roadmapApi';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 
@@ -197,6 +198,7 @@ const roadmapDraftSlice = createSlice({
       state,
       action: PayloadAction<Partial<StepType> & { index?: number }>,
     ) => {
+      state.selectedStepIndex = action.payload.index ?? state.selectedStepIndex;
       const task = findSelectedTask(state);
       if (!task) return;
       const step = task.steps[action.payload.index ?? state.selectedStepIndex];
@@ -232,6 +234,7 @@ const roadmapDraftSlice = createSlice({
       }
 
       syncSelectedTask(state);
+      state.roadmap = transformRoadmap(state.roadmap);
       state.selectedStep = step;
       state.selectedTask = task;
       state.selectedMilestone = milestone;
