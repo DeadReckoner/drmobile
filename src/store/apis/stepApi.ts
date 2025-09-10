@@ -1,6 +1,6 @@
 import { StepType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
-import { roadmapApi } from '@/store/apis/roadmapApi';
+import { roadmapApi, transformRoadmap } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   addStepAction,
@@ -58,10 +58,24 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
         ) {
           return;
         }
+        dispatch(updateStepAction(data));
         roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx].steps[
           stepIdx
         ] = data;
-        dispatch(updateStepAction(data));
+        const task =
+          roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx];
+        if (task) {
+          if (
+            task.steps?.every((s) => s.completed) ||
+            !task.steps ||
+            task.steps?.length === 0
+          ) {
+            task.completed = true;
+          } else {
+            task.completed = false;
+          }
+        }
+        roadmaps[roadmapIdx] = transformRoadmap(roadmaps[roadmapIdx]);
       }),
     );
   } catch {}

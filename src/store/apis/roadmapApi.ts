@@ -77,7 +77,7 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
-const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
+export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
   const activeMilestone = roadmap.milestones.find((m) => !m.reached);
 
   if (!activeMilestone) {
@@ -87,12 +87,12 @@ const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
       daysRemainingTillNextMilestone: 0,
     };
   }
-  const completedMilestones = roadmap.milestones.filter((m) => m.reached);
+  const allTasks = roadmap.milestones.flatMap((m) => m.tasks);
+  const completedTasks = allTasks.filter((t) => t.completed);
+
   return {
     ...roadmap,
-    progress: Math.floor(
-      (completedMilestones.length / roadmap.milestones.length) * 100,
-    ),
+    progress: Math.floor((completedTasks.length / allTasks.length) * 100),
     daysRemainingTillNextMilestone: activeMilestone.tasks.filter(
       (t) => !t.completed,
     ).length,

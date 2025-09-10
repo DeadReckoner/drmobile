@@ -4,8 +4,11 @@ import { AppCheckbox, AppText, AppView } from '@/components/ui';
 import { StepType } from '@/hooks/roadmap/types/roadmap.types';
 import { useUpdateStepMutation } from '@/hooks/step';
 import { useToast } from '@/hooks/useToast';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectDraftSlice } from '@/store/slices/roadmapDraftSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectDraftSlice,
+  updateStepAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
@@ -18,19 +21,16 @@ import {
 
 interface StepItemProps {
   step: StepType;
-  onCompleteStep: (_value: boolean) => void;
+  index: number;
   onStepPress: (_step: StepType) => void;
 }
 
-export const StepItem = ({
-  step,
-  onCompleteStep,
-  onStepPress,
-}: StepItemProps) => {
+export const StepItem = ({ step, index, onStepPress }: StepItemProps) => {
   const scale = useSharedValue(1);
   const [updateStep, { isLoading: isUpdating }] = useUpdateStepMutation();
   const selectedDraft = useAppSelector(selectDraftSlice);
   const { showToast } = useToast();
+  const dispatch = useAppDispatch();
   const iconStyles = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
@@ -44,6 +44,12 @@ export const StepItem = ({
   const handleCompleteStep = async (value: boolean) => {
     if (selectedDraft.shouldSyncWithServer && step.step_id) {
       try {
+        dispatch(
+          updateStepAction({
+            completed: value,
+            index,
+          }),
+        );
         await updateStep({
           description: step.description,
           number: step.number,
@@ -51,7 +57,6 @@ export const StepItem = ({
           task_id: step.task_id,
           completed: value,
         }).unwrap();
-        onCompleteStep(value);
       } catch (error) {
         showToast({
           type: 'failure',
@@ -59,7 +64,12 @@ export const StepItem = ({
         });
       }
     } else {
-      onCompleteStep(value);
+      dispatch(
+        updateStepAction({
+          completed: value,
+          index,
+        }),
+      );
     }
   };
   return (
