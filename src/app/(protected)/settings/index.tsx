@@ -8,12 +8,13 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { SettingsItem } from '@/components/SettingsItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { clearAuthAction, selectUser } from '@/store/slices/authSlice';
-import { selectSettings, setThemeAction } from '@/store/slices/settingsSlice';
+import { selectSettings } from '@/store/slices/settingsSlice';
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
@@ -29,12 +30,13 @@ const Settings = () => {
   const settings = useAppSelector(selectSettings);
   const dispatch = useAppDispatch();
   const { t, setLanguage } = useLocalization();
+  const { toggleTheme, theme } = useAppTheme();
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const [isLanguageDialogVisible, setIsLanguageDialogVisible] = useState(false);
 
-  const onDarkModeToggle = (value: boolean) => {
-    dispatch(setThemeAction(value ? 'dark' : 'light'));
+  const onDarkModeToggle = () => {
+    toggleTheme();
   };
 
   const hideLogoutDialog = () => setIsLogoutDialogVisible(false);
@@ -52,7 +54,7 @@ const Settings = () => {
   };
 
   return (
-    <AppScreen paddingH-0>
+    <AppScreen paddingH-0 key={theme}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always"

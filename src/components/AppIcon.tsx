@@ -1,5 +1,4 @@
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectTheme } from '@/store/slices/settingsSlice';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { AntDesign, Feather } from '@expo/vector-icons';
 import { StyleProp, TextStyle } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
@@ -30,7 +29,7 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
   color,
   style,
 }) => {
-  const theme = useAppSelector(selectTheme);
+  const { theme } = useAppTheme();
 
   if (set === 'Feather') {
     return (

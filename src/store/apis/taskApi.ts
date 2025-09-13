@@ -80,7 +80,7 @@ const onDeleteTaskQueryStarted: TypedMutationOnQueryStarted<
   unknown,
   string,
   BaseQueryFunctionType
-> = async (_task_id, { dispatch, queryFulfilled, getState }) => {
+> = async (task_id, { dispatch, queryFulfilled, getState }) => {
   try {
     await queryFulfilled;
     const state = getState() as unknown as RootStateType;

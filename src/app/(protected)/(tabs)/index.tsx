@@ -7,6 +7,7 @@ import { TasksList } from '@/components/roadmap/TasksList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { router } from 'expo-router';
@@ -14,6 +15,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 
 const Today = () => {
   const { id } = useAppSelector(selectUser);
+  const { theme } = useAppTheme();
   // TODO: Replace with actual API call
   // const { data, isLoading } = useGetTasksByUserIdQuery(id);
   const data: TaskType[] = Array(5)
@@ -42,7 +44,7 @@ const Today = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <AppScreen>
+      <AppScreen key={theme}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentInsetAdjustmentBehavior="always"

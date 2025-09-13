@@ -7,7 +7,6 @@ import type {
 } from '@/store/types/settingsSlice.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Colors } from 'react-native-ui-lib';
 import { persistReducer } from 'redux-persist';
 
 const initialState: SettingsStateType = {
@@ -29,7 +28,6 @@ const settingsSlice = createSlice({
   reducers: {
     setThemeAction(state, action: PayloadAction<ThemeModeType>) {
       state.theme = action.payload;
-      Colors.setScheme(action.payload);
     },
     toggleThemeAction(state) {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
