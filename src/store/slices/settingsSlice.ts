@@ -71,6 +71,7 @@ export const selectLanguage = createAppSelector(
 export const selectToastSettings = createAppSelector(
   (state) => state.settings.toast,
 );
+export const selectSettings = createAppSelector((state) => state.settings);
 
 export const settingsReducer = persistReducer(
   {

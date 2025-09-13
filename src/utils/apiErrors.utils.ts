@@ -1,8 +1,8 @@
 import i18nConfig from '@/lib/localization/i18nConfig';
 import { ApiError } from '@/store/apis/types/api.types';
 import { clearAuthAction } from '@/store/slices/authSlice';
-import { showToastAction } from '@/store/slices/settingsSlice';
 import { AppDispatchType, RootStateType } from '@/store/types/store.types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Action, ThunkDispatch } from '@reduxjs/toolkit';
 import { Persistor } from 'redux-persist';
 
@@ -12,15 +12,8 @@ export const handleSignout = async (
 ) => {
   try {
     dispatch(clearAuthAction());
-    dispatch(
-      showToastAction({
-        toastProps: {
-          type: 'failure',
-          message: i18nConfig.t('authentication.errors.session_expired'),
-        },
-      }),
-    );
     await persistedStore.purge();
+    await AsyncStorage.clear();
   } catch {}
 };
 

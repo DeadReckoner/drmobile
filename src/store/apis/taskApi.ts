@@ -80,7 +80,7 @@ const onDeleteTaskQueryStarted: TypedMutationOnQueryStarted<
   unknown,
   string,
   BaseQueryFunctionType
-> = async (task_id, { dispatch, queryFulfilled, getState }) => {
+> = async (_task_id, { dispatch, queryFulfilled, getState }) => {
   try {
     await queryFulfilled;
     const state = getState() as unknown as RootStateType;
@@ -141,6 +141,18 @@ export const taskApi = api.injectEndpoints({
         };
       },
       onQueryStarted: onDeleteTaskQueryStarted,
+    }),
+    getTasksByUserId: builder.query<CreateTaskResponseType[], string>({
+      query: (userId) => ({
+        url: `/tasks/user/${userId}`,
+        method: 'GET',
+      }),
+    }),
+    getTasksById: builder.query<CreateTaskResponseType, string>({
+      query: (taskId) => ({
+        url: `/tasks/${taskId}`,
+        method: 'GET',
+      }),
     }),
   }),
   overrideExisting: true,

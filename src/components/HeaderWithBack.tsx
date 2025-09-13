@@ -4,13 +4,14 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { router } from 'expo-router';
+import { ViewProps } from 'react-native-ui-lib';
 
-interface HeaderWithBackProps {
+interface HeaderWithBackProps extends ViewProps {
   headerKey?: TranslationKeysType;
   onBackPress?: () => void;
   onHeaderTitlePress?: () => void;
   headerText?: string; //For dynamic title strings
-  goBackOnPress?: boolean; //go back to previous screen automatically on back press
+  goBackOnPress?: boolean;
 }
 
 export const HeaderWithBack = ({

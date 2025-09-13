@@ -116,28 +116,33 @@
   },
   "ai_roadmap": {
     "prompts": {
-      "goal_name": "Let's get started! What's your goal name?",
-      "goal_description": "Can you describe your goal in a few sentences?",
-      "goal_importance": "Why does this goal matter to you?",
-      "target_date": "What's your target completion date?",
-      "weekly_commitment": "How much time can you commit to this goal weekly?",
-      "frequency": "How frequently would you like to work on this? (e.g. Daily, Weekly)",
-      "constraints": "Are there any constraints or blockers we should be aware of?",
-      "skill_level": "What's your current skill level or starting point?",
+      "goal_name": "What’s the main goal you’d like to work on?",
+      "goal_description": "In a few sentences, tell me a little more about this goal. What would success look like to you?",
+      "goal_importance": "Why is this goal important to you right now, and how will achieving it change your life?",
+      "target_date": "When would you like to reach this goal by?",
+      "weekly_commitment": "On average, how much time can you put toward this each week?",
+      "frequency": "How often would you like to work on this? (daily, a few times a week, weekends, etc.)",
+      "constraints": "What challenges or obstacles might get in your way?",
+      "skill_level": "What have you already done toward this goal, and where do you feel you’re starting from now? (e.g., skills, experience, or progress)",
       "thank_you": "Thanks! I'm building your personalized roadmap now.",
       "composer_placeholder": "Enter your answer"
     },
     "loading_texts": "Analyzing your goals…|Identifying key milestones…|Breaking it down into steps…|Personalizing your roadmap…|Mapping out your waypoints…|Aligning your course…|Preparing your roadmap…"
   },
-  "profile": {
+  "settings": {
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout",
     "dark_mode": "Dark Mode",
     "language": "Language",
     "privacy_policy": "Privacy Policy",
     "terms_of_service": "Terms of Service",
-    "help_support": "Help & Support"
+    "help_support": "Help & Support",
+    "logout": "Log Out",
+    "friends": "Friends",
+    "roadmaps": "Roadmaps",
+    "logout_dialog": "Are you sure you want to log out?",
+    "select_language": "Select Language",
+    "languages": "English|Spanish|French"
   },
   "common": {
     "or": "Or",

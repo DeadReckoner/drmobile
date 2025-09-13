@@ -1,17 +1,24 @@
 import { AppView } from '@/components/ui';
 import React from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import {
+  ActivityIndicator,
+  ActivityIndicatorProps,
+  StyleSheet,
+} from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-export const Loader = () => {
+interface LoaderProps extends ActivityIndicatorProps {
+  transparent?: boolean;
+}
+export const Loader = ({ transparent = false, ...props }: LoaderProps) => {
   return (
     <AppView
       style={[
         StyleSheet.absoluteFillObject,
         styles.loader,
-        { backgroundColor: Colors.dialogOverlay },
+        !transparent && { backgroundColor: Colors.dialogOverlay },
       ]}>
-      <ActivityIndicator color={Colors.white} />
+      <ActivityIndicator color={Colors.inverse} {...props} />
     </AppView>
   );
 };

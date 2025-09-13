@@ -58,16 +58,16 @@
   },
   "ai_roadmap": {
     "prompts": {
-      "goal_name": "¡Empecemos! ¿Cuál es el nombre de tu objetivo?",
-      "goal_description": "¿Puedes describir tu objetivo en algunas frases?",
-      "goal_importance": "¿Por qué es importante este objetivo para ti?",
-      "target_date": "¿Cuál es tu fecha objetivo de finalización?",
-      "weekly_commitment": "¿Cuánto tiempo puedes dedicar a este objetivo semanalmente?",
-      "frequency": "¿Con qué frecuencia te gustaría trabajar en esto? (ej. Diario, Semanal)",
-      "constraints": "¿Hay alguna limitación o obstáculo que debamos tener en cuenta?",
-      "skill_level": "¿Cuál es tu nivel actual de habilidad o punto de partida?",
-      "thank_you": "¡Gracias! Estoy construyendo tu hoja de ruta personalizada.",
-      "composer_placeholder": "Introduce tu respuesta"
+      "goal_name": "¿Cuál es el objetivo principal en el que te gustaría trabajar?",
+      "goal_description": "En unas pocas frases, cuéntame un poco más sobre este objetivo. ¿Cómo se vería el éxito para ti?",
+      "goal_importance": "¿Por qué es importante este objetivo para ti en este momento y cómo cambiará tu vida lograrlo?",
+      "target_date": "¿Para cuándo te gustaría alcanzar este objetivo?",
+      "weekly_commitment": "En promedio, ¿cuánto tiempo puedes dedicar a esto cada semana?",
+      "frequency": "¿Con qué frecuencia te gustaría trabajar en esto? (diariamente, unas pocas veces a la semana, fines de semana, etc.)",
+      "constraints": "¿Qué desafíos u obstáculos podrían interponerse en tu camino?",
+      "skill_level": "¿Qué has hecho ya hacia este objetivo y desde dónde sientes que estás comenzando ahora? (por ejemplo, habilidades, experiencia o progreso)",
+      "thank_you": "¡Gracias! Estoy creando tu plan de acción personalizado ahora.",
+      "composer_placeholder": "Escribe tu respuesta"
     },
     "loading_texts": "Analizando tus objetivos…|Identificando hitos clave…|Dividiéndolo en pasos…|Personalizando tu hoja de ruta…|Trazando tus puntos de referencia…|Alineando tu rumbo…|Preparando tu hoja de ruta…"
   },
@@ -129,15 +129,20 @@
       "submit_roadmap": "Enviar hoja de ruta"
     }
   },
-  "profile": {
+  "settings": {
     "profile": "Perfil",
-    "settings": "Configuración",
-    "logout": "Cerrar sesión",
-    "dark_mode": "Modo oscuro",
+    "settings": "Configuraciones",
+    "dark_mode": "Modo Oscuro",
     "language": "Idioma",
-    "privacy_policy": "Política de privacidad",
-    "terms_of_service": "Términos de servicio",
-    "help_support": "Ayuda y soporte"
+    "privacy_policy": "Política de Privacidad",
+    "terms_of_service": "Términos de Servicio",
+    "help_support": "Ayuda y Soporte",
+    "logout": "Cerrar Sesión",
+    "friends": "Amigos",
+    "roadmaps": "Hojas de Ruta",
+    "logout_dialog": "¿Estás seguro de que deseas cerrar sesión?",
+    "select_language": "Seleccionar Idioma",
+    "languages": "Inglés|Español|Francés"
   },
   "common": {
     "or": "O",
