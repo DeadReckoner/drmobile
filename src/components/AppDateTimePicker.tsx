@@ -23,7 +23,7 @@ export const AppDateTimePicker = (props: DateTimePickerProps) => {
         containerStyle: [
           styles.containerStyle,
           {
-            backgroundColor: Colors.datePickerBG,
+            backgroundColor: Colors.pickerBG,
           },
         ],
       }}

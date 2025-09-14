@@ -4,4 +4,7 @@ export const {
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
+
+  useGetTasksByUserIdQuery,
+  useGetTasksByIdQuery,
 } = taskApi;

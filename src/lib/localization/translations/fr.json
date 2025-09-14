@@ -58,16 +58,16 @@
   },
   "ai_roadmap": {
     "prompts": {
-      "goal_name": "Commençons ! Quel est le nom de votre objectif ?",
-      "goal_description": "Pouvez-vous décrire votre objectif en quelques phrases ?",
-      "goal_importance": "Pourquoi cet objectif est-il important pour vous ?",
-      "target_date": "Quelle est votre date d'achèvement prévue ?",
-      "weekly_commitment": "Combien de temps pouvez-vous consacrer à cet objectif chaque semaine ?",
-      "frequency": "À quelle fréquence souhaitez-vous y travailler ? (ex. Quotidien, Hebdomadaire)",
-      "constraints": "Y a-t-il des contraintes ou des obstacles dont nous devrions être conscients ?",
-      "skill_level": "Quel est votre niveau de compétence actuel ou point de départ ?",
-      "thank_you": "Merci ! Je construis votre feuille de route personnalisée.",
-      "composer_placeholder": "Entrez votre réponse"
+      "goal_name": "Quel est l’objectif principal sur lequel tu aimerais travailler ?",
+      "goal_description": "En quelques phrases, dis-m’en un peu plus sur cet objectif. À quoi ressemblerait la réussite pour toi ?",
+      "goal_importance": "Pourquoi cet objectif est-il important pour toi en ce moment et comment le fait de l’atteindre changera-t-il ta vie ?",
+      "target_date": "Pour quand aimerais-tu atteindre cet objectif ?",
+      "weekly_commitment": "En moyenne, combien de temps peux-tu consacrer à cela chaque semaine ?",
+      "frequency": "À quelle fréquence aimerais-tu travailler dessus ? (tous les jours, quelques fois par semaine, le week-end, etc.)",
+      "constraints": "Quels défis ou obstacles pourraient se mettre en travers de ton chemin ?",
+      "skill_level": "Qu’as-tu déjà accompli en vue de cet objectif et d’où sens-tu que tu pars maintenant ? (par ex. compétences, expérience ou progrès)",
+      "thank_you": "Merci ! Je crée maintenant ton plan personnalisé.",
+      "composer_placeholder": "Entre ta réponse"
     },
     "loading_texts": "Analyse de vos objectifs…|Identification des étapes clés…|Découpage en étapes…|Personnalisation de votre feuille de route…|Cartographie de vos points de repère…|Alignement de votre trajectoire…|Préparation de votre feuille de route…"
   },
@@ -130,6 +130,26 @@
       "leave_without_saving": "Quitter sans enregistrer ?",
       "discard_roadmap_description": "Si vous quittez maintenant, toutes les modifications non enregistrées seront perdues. Voulez-vous continuer ?"
     }
+  },
+  "settings": {
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "dark_mode": "Mode Sombre",
+    "language": "Langue",
+    "privacy_policy": "Politique de Confidentialité",
+    "terms_of_service": "Conditions d'Utilisation",
+    "help_support": "Aide et Support",
+    "logout": "Se Déconnecter",
+    "friends": "Amis",
+    "roadmaps": "Feuilles de Route",
+    "logout_dialog": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "select_language": "Sélectionner la Langue",
+    "languages": "Anglais|Espagnol|Français",
+    "follow_us": "Suivez-nous",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "website": "Site Web"
   },
   "common": {
     "or": "Ou",

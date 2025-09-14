@@ -52,9 +52,9 @@ export const useAppTheme = () => {
   const initializeTheme = () => {
     Colors.setScheme(theme);
     loadColorSchemes();
-    loadTypography();
-    loadComponentThemes();
     loadAssets();
+    loadComponentThemes();
+    loadTypography();
     dispatch(setThemeAction(theme));
   };
 

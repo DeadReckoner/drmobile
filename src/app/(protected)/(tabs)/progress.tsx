@@ -29,7 +29,6 @@ const Progress = () => {
 
   return (
     <AppScreen>
-      {isLoading && <Loader />}
       <Animated.ScrollView
         layout={Animations.Layout.Springify()}
         entering={Animations.Entry.FadeInDown()}
@@ -46,15 +45,21 @@ const Progress = () => {
         <Divider />
         <TranslatedText h2 translationKey="tabs.progress" />
         <Divider />
-
-        {!isLoading && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <RoadmapList data={data} onItemPress={onItemPress} />
-          </AppView>
-        )}
+        <AppView flex-1>
+          {isLoading && (
+            <AppView height={100}>
+              <Loader transparent />
+            </AppView>
+          )}
+          {!isLoading && (
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <RoadmapList data={data} onItemPress={onItemPress} />
+            </AppView>
+          )}
+        </AppView>
       </Animated.ScrollView>
     </AppScreen>
   );

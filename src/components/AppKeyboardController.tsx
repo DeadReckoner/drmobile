@@ -8,6 +8,7 @@ import {
   KeyboardGestureArea,
   KeyboardToolbar,
 } from 'react-native-keyboard-controller';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ViewProps } from 'react-native-ui-lib';
 
 interface AppKeyboardControllerProps extends PropsWithChildren, ViewProps {
@@ -21,6 +22,8 @@ export const AppKeyboardController = ({
   scrollViewProps,
   ...viewProps
 }: AppKeyboardControllerProps) => {
+  const { top } = useSafeAreaInsets();
+
   return (
     <>
       <AppScreen {...viewProps}>
@@ -30,7 +33,11 @@ export const AppKeyboardController = ({
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
             bottomOffset={100}
-            contentContainerStyle={[styles.contentScrollview, containerStyle]}
+            contentContainerStyle={[
+              styles.contentScrollview,
+              { paddingTop: top },
+              containerStyle,
+            ]}
             {...scrollViewProps}>
             <AppView flex>{children}</AppView>
           </KeyboardAwareScrollView>
@@ -47,6 +54,5 @@ const styles = StyleSheet.create({
   },
   contentScrollview: {
     flexGrow: 1,
-    paddingVertical: 60,
   },
 });
