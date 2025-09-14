@@ -15,7 +15,7 @@ export const SettingsItem = ({
 }: SettingsItemProps) => {
   return (
     <>
-      <LineDivider bg-lineDivider marginV-20 />
+      <LineDivider bg-lineDivider marginV-16 />
       <AppView row centerV spread paddingH-16>
         <TranslatedText body2 translationKey={translationKey} />
         <AppView right>{rightElement}</AppView>

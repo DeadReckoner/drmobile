@@ -142,7 +142,12 @@
     "roadmaps": "Roadmaps",
     "logout_dialog": "Are you sure you want to log out?",
     "select_language": "Select Language",
-    "languages": "English|Spanish|French"
+    "languages": "English|Spanish|French",
+    "follow_us": "Follow us",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "website": "Website"
   },
   "common": {
     "or": "Or",

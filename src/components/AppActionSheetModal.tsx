@@ -6,9 +6,7 @@ import { StyleSheet } from 'react-native';
 import { ButtonProps, Colors } from 'react-native-ui-lib';
 
 export const AppActionSheetModal = (
-  props: ComponentProps<typeof AppActionSheet> & {
-    selectedValue?: string;
-  },
+  props: ComponentProps<typeof AppActionSheet>,
 ) => {
   const renderTitle = () => (
     <AppView row centerV spread paddingH-16>
@@ -21,11 +19,10 @@ export const AppActionSheetModal = (
     </AppView>
   );
   const renderOption = (
-    option: ButtonProps,
+    option: ButtonProps & { icon?: React.ReactNode },
     index: number,
     onOptionPress: (_index: number) => void,
   ) => {
-    const isSelected = props.selectedValue === option.label;
     return (
       <AppButton key={option.label} onPress={() => onOptionPress(index)}>
         <AppView
@@ -36,9 +33,7 @@ export const AppActionSheetModal = (
           <AppText body2 textColor flex>
             {option.label}
           </AppText>
-          {isSelected && (
-            <AppIcon name="checkcircle" size={20} color={Colors.success} />
-          )}
+          {option.icon}
         </AppView>
       </AppButton>
     );
