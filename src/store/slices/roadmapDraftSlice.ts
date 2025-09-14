@@ -4,8 +4,8 @@ import type {
   StepType,
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
-import { transformRoadmap } from '@/store/apis/roadmapApi';
 import { createAppSelector } from '@/store/hooks/store.hooks';
+import { transformRoadmap } from '@/utils/roadmap.utils';
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 
 type DraftState = {

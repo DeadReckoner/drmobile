@@ -24,18 +24,18 @@ export const AppActionSheetModal = (
     onOptionPress: (_index: number) => void,
   ) => {
     return (
-      <AppButton key={option.label} onPress={() => onOptionPress(index)}>
-        <AppView
-          row
-          center
-          spread
-          style={[styles.option, { borderTopColor: Colors.lineDivider }]}>
-          <AppText body2 textColor flex>
-            {option.label}
-          </AppText>
-          {option.icon}
-        </AppView>
-      </AppButton>
+      <AppView
+        key={option.label}
+        style={[styles.option, { borderTopColor: Colors.lineDivider }]}>
+        <AppButton paddingV-20 onPress={() => onOptionPress(index)}>
+          <AppView row center spread>
+            <AppText body2 textColor flex>
+              {option.label}
+            </AppText>
+            {option.icon}
+          </AppView>
+        </AppButton>
+      </AppView>
     );
   };
   return (
@@ -57,7 +57,6 @@ export const AppActionSheetModal = (
 const styles = StyleSheet.create({
   option: {
     paddingHorizontal: 16,
-    paddingVertical: 20,
     borderTopWidth: 1,
   },
   title: {

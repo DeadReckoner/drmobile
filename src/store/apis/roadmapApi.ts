@@ -6,7 +6,10 @@ import {
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
-import { structureRoadmapApiPayload } from '@/utils/roadmap.utils';
+import {
+  structureRoadmapApiPayload,
+  transformRoadmap,
+} from '@/utils/roadmap.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateRoadmapQueryStarted: TypedMutationOnQueryStarted<
@@ -75,28 +78,6 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
     );
     dispatch(resetDraftAction());
   } catch {}
-};
-
-export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
-  const activeMilestone = roadmap.milestones.find((m) => !m.reached);
-
-  if (!activeMilestone) {
-    return {
-      ...roadmap,
-      progress: 100,
-      daysRemainingTillNextMilestone: 0,
-    };
-  }
-  const allTasks = roadmap.milestones.flatMap((m) => m.tasks);
-  const completedTasks = allTasks.filter((t) => t.completed);
-
-  return {
-    ...roadmap,
-    progress: Math.floor((completedTasks.length / allTasks.length) * 100),
-    daysRemainingTillNextMilestone: activeMilestone.tasks.filter(
-      (t) => !t.completed,
-    ).length,
-  };
 };
 
 export const roadmapApi = api.injectEndpoints({

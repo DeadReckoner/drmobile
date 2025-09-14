@@ -24,7 +24,7 @@ export const LightColorCodes = {
   lineDivider: '#98989830',
   checkboxBG: '#989898',
 
-  dialogOverlay: '#efefefde',
+  dialogOverlay: '#d9d9d9ee',
   pickerBG: '#FFFFFF',
 };
 

@@ -8,6 +8,7 @@ import {
   selectLanguage,
   setLanguageAction,
 } from '@/store/slices/settingsSlice';
+import { Scope, TranslateOptions } from 'i18n-js';
 import { useDispatch } from 'react-redux';
 
 const LANGUAGE_OPTIONS: SupportedLanguagesType[] = [
@@ -20,8 +21,8 @@ export const useLocalization = () => {
   const dispatch = useDispatch();
   const selectedLanguage = useAppSelector(selectLanguage);
 
-  const t = (key: TranslationKeysType, options?: Record<string, any>) => {
-    return i18nConfig.t(key, options);
+  const t = (key: TranslationKeysType, options?: TranslateOptions) => {
+    return i18nConfig.t(key as Scope, options);
   };
 
   const setLanguage = async (language: SupportedLanguagesType) => {
