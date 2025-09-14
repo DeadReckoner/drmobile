@@ -8,7 +8,10 @@ import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlac
 import { StepItem } from '@/components/roadmap/StepItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import { StepType } from '@/hooks/roadmap/types/roadmap.types';
+import {
+  FormEditModeType,
+  StepType,
+} from '@/hooks/roadmap/types/roadmap.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectSelectedTask,
@@ -19,7 +22,11 @@ import { router } from 'expo-router';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-export const StepsList = () => {
+interface StepsListProps {
+  mode?: FormEditModeType;
+}
+
+export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
   const task = useAppSelector(selectSelectedTask);
   const dispatch = useDispatch();
 
@@ -62,7 +69,7 @@ export const StepsList = () => {
   };
 
   const renderFooterComponent = () => {
-    if (task?.steps?.length === 0) return;
+    if (task?.steps?.length === 0 || mode === 'view') return;
     return (
       <AppButton onPress={onAddNewStepPress}>
         <LineDivider marginV-0 />

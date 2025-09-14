@@ -5,8 +5,7 @@ import { LineDivider } from '@/components/LineDivider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
 import type { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectTheme } from '@/store/slices/settingsSlice';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -19,7 +18,7 @@ export const RoadmapOverview = ({
   roadmap,
   toggleEditMode,
 }: RoadmapOverviewProps) => {
-  const theme = useAppSelector(selectTheme);
+  const { theme } = useAppTheme();
   const roadmapProgress = roadmap.progress || 0;
 
   return (

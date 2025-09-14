@@ -138,6 +138,18 @@ export const taskApi = api.injectEndpoints({
       },
       onQueryStarted: onDeleteTaskQueryStarted,
     }),
+    getTasksByUserId: builder.query<CreateTaskResponseType[], string>({
+      query: (userId) => ({
+        url: `/tasks/user/${userId}`,
+        method: 'GET',
+      }),
+    }),
+    getTasksById: builder.query<CreateTaskResponseType, string>({
+      query: (taskId) => ({
+        url: `/tasks/${taskId}`,
+        method: 'GET',
+      }),
+    }),
   }),
   overrideExisting: true,
 });

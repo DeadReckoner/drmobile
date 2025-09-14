@@ -3,7 +3,7 @@ export type FormRoadmapType = Pick<
   'goal' | 'description' | 'days' | 'reason'
 >;
 
-export type FormEditModeType = 'edit' | 'create';
+export type FormEditModeType = 'edit' | 'create' | 'view';
 
 export interface StepType {
   step_id: string;
