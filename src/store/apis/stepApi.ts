@@ -1,6 +1,6 @@
 import { StepType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
-import { roadmapApi, transformRoadmap } from '@/store/apis/roadmapApi';
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   addStepAction,
@@ -8,6 +8,7 @@ import {
   updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
+import { transformRoadmap } from '@/utils/roadmap.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
