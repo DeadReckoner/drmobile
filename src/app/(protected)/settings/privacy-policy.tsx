@@ -3,6 +3,7 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
 import { useState } from 'react';
 import { Linking, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -13,6 +14,7 @@ import {
 
 const PrivacyPolicy = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const { selectedLanguage } = useLocalization();
 
   const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = (
     request,
@@ -39,6 +41,19 @@ const PrivacyPolicy = () => {
     setIsLoading(false);
   };
 
+  const getPrivacyProfileURL = () => {
+    switch (selectedLanguage.languageCode) {
+      case 'en':
+        return require('@/../assets/html/privacy-policy-en.html');
+      case 'es':
+        return require('@/../assets/html/privacy-policy-es.html');
+      case 'fr':
+        return require('@/../assets/html/privacy-policy-fr.html');
+      default:
+        return require('@/../assets/html/privacy-policy-en.html');
+    }
+  };
+
   return (
     <>
       {isLoading && <Loader transparent />}
@@ -47,7 +62,7 @@ const PrivacyPolicy = () => {
           <HeaderWithBack headerKey="settings.privacy_policy" />
         </AppView>
         <WebView
-          source={require('@/../assets/html/privacy-policy-en.html')}
+          source={getPrivacyProfileURL()}
           style={styles.container}
           showsVerticalScrollIndicator={false}
           originWhitelist={['*']}
