@@ -211,8 +211,8 @@ export default Settings;
 
 const styles = StyleSheet.create({
   image: {
-    width: 140,
-    height: 140,
+    width: 150,
+    height: 150,
     borderRadius: 100,
     alignSelf: 'center',
   },
