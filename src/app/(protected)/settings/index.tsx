@@ -75,7 +75,7 @@ const Settings = () => {
         contentContainerStyle={[styles.scrollContainer, { paddingTop: top }]}>
         <HeaderWithBack headerKey="settings.profile" paddingH-16 />
         <AppView style={styles.content}>
-          <AppView gap-16 center paddingH-16>
+          <AppView gap-16 center paddingH-16 marginV-16>
             <AppImage source={{ uri: user.avatar }} style={styles.image} />
             <AppView gap-6 center key={theme}>
               <AppText body1 textColor>
@@ -129,6 +129,15 @@ const Settings = () => {
                     setIsVisible={setIsSocialMediaDialogVisible}
                   />
                 }
+              />
+            </AppButton>
+            <LineDivider />
+
+            <AppButton
+              onPress={() => router.navigate('/settings/terms-and-services')}>
+              <SettingsItem
+                translationKey="settings.terms_of_service"
+                rightElement={<AppIcon set="Feather" name="file-text" />}
               />
             </AppButton>
             <LineDivider />
@@ -202,8 +211,8 @@ export default Settings;
 
 const styles = StyleSheet.create({
   image: {
-    width: 160,
-    height: 160,
+    width: 140,
+    height: 140,
     borderRadius: 100,
     alignSelf: 'center',
   },

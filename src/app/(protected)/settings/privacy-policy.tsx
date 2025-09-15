@@ -1,5 +1,4 @@
 import { AppScreen } from '@/components/AppScreen';
-import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { AppView } from '@/components/ui';
@@ -71,7 +70,6 @@ const PrivacyPolicy = () => {
           onLoadProgress={onLoadProgress}
           onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
         />
-        <Divider margin-16 />
       </AppScreen>
     </>
   );

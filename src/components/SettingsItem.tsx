@@ -13,7 +13,7 @@ export const SettingsItem = ({
   rightElement,
 }: SettingsItemProps) => {
   return (
-    <AppView row centerV spread paddingH-16 paddingV-4>
+    <AppView row centerV spread paddingH-16>
       <TranslatedText body2 translationKey={translationKey} />
       <AppView right>{rightElement}</AppView>
     </AppView>
