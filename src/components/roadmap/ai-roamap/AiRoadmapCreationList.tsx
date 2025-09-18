@@ -74,7 +74,7 @@ const getFormSubmissionData = (
   return formData;
 };
 
-export const AiRoadmapList = () => {
+export const AiRoadmapCreationList = () => {
   const { t } = useLocalization();
   const { showToast } = useToast();
   const SYSTEM_PROMPTS = getSystemPrompts(t);
