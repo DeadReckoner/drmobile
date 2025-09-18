@@ -6,6 +6,7 @@ import { AppSwitch } from '@/components/AppSwitch';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { FollowOnSocialMedia } from '@/components/FollowOnSocialMedia';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { LineDivider } from '@/components/LineDivider';
 import { SettingsItem } from '@/components/SettingsItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
@@ -17,6 +18,7 @@ import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { clearAuthAction, selectUser } from '@/store/slices/authSlice';
 import { selectSettings } from '@/store/slices/settingsSlice';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Linking, ScrollView, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -73,7 +75,7 @@ const Settings = () => {
         contentContainerStyle={[styles.scrollContainer, { paddingTop: top }]}>
         <HeaderWithBack headerKey="settings.profile" paddingH-16 />
         <AppView style={styles.content}>
-          <AppView gap-16 center paddingH-16>
+          <AppView gap-16 center paddingH-16 marginV-16>
             <AppImage source={{ uri: user.avatar }} style={styles.image} />
             <AppView gap-6 center key={theme}>
               <AppText body1 textColor>
@@ -91,6 +93,7 @@ const Settings = () => {
               subtitle1
               translationKey="settings.settings"
             />
+            <LineDivider />
             <SettingsItem
               translationKey="settings.dark_mode"
               rightElement={
@@ -100,6 +103,7 @@ const Settings = () => {
                 />
               }
             />
+            <LineDivider />
             <AppButton
               paddingV-4
               onPress={() => setIsLanguageDialogVisible(true)}>
@@ -112,6 +116,7 @@ const Settings = () => {
                 }
               />
             </AppButton>
+            <LineDivider />
 
             <AppButton
               gap-8
@@ -126,13 +131,25 @@ const Settings = () => {
                 }
               />
             </AppButton>
+            <LineDivider />
 
-            <AppButton onPress={() => openURL(AppURLs.PRIVACY_POLICY)}>
+            <AppButton
+              onPress={() => router.navigate('/settings/terms-and-services')}>
+              <SettingsItem
+                translationKey="settings.terms_of_service"
+                rightElement={<AppIcon set="Feather" name="file-text" />}
+              />
+            </AppButton>
+            <LineDivider />
+
+            <AppButton
+              onPress={() => router.navigate('/settings/privacy-policy')}>
               <SettingsItem
                 translationKey="settings.privacy_policy"
                 rightElement={<AppIcon set="Feather" name="help-circle" />}
               />
             </AppButton>
+            <LineDivider />
 
             <AppButton onPress={() => openURL(AppURLs.HELP_SUPPORT)}>
               <SettingsItem
@@ -140,6 +157,7 @@ const Settings = () => {
                 rightElement={<AppIcon name="customerservice" />}
               />
             </AppButton>
+            <LineDivider />
 
             <AppButton onPress={showLogoutDialog}>
               <SettingsItem
@@ -193,8 +211,8 @@ export default Settings;
 
 const styles = StyleSheet.create({
   image: {
-    width: 160,
-    height: 160,
+    width: 150,
+    height: 150,
     borderRadius: 100,
     alignSelf: 'center',
   },

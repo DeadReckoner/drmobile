@@ -8,6 +8,7 @@ import {
   updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
+import { transformRoadmap } from '@/utils/roadmap.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
@@ -58,10 +59,24 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
         ) {
           return;
         }
+        dispatch(updateStepAction(data));
         roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx].steps[
           stepIdx
         ] = data;
-        dispatch(updateStepAction(data));
+        const task =
+          roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx];
+        if (task) {
+          if (
+            task.steps?.every((s) => s.completed) ||
+            !task.steps ||
+            task.steps?.length === 0
+          ) {
+            task.completed = true;
+          } else {
+            task.completed = false;
+          }
+        }
+        roadmaps[roadmapIdx] = transformRoadmap(roadmaps[roadmapIdx]);
       }),
     );
   } catch {}

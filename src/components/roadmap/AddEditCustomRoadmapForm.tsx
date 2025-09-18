@@ -141,13 +141,15 @@ export const AddEditCustomRoadmapForm = ({
         value={values.reason}
         multiline
       />
-      <AppDateTimePicker
-        style={[StyleSheet.absoluteFillObject]}
-        renderInput={renderCustomDateInput}
-        mode={'date'}
-        minimumDate={DateUtils.createDate().toDate()}
-        onChange={onDateChange}
-      />
+      {mode !== 'edit' && (
+        <AppDateTimePicker
+          style={[StyleSheet.absoluteFillObject]}
+          renderInput={renderCustomDateInput}
+          mode={'date'}
+          minimumDate={DateUtils.createDate().toDate()}
+          onChange={onDateChange}
+        />
+      )}
       <Divider margin-4 />
       <PrimaryButton
         label={

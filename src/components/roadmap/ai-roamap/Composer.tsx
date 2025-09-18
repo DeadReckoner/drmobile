@@ -43,7 +43,7 @@ export const Composer = ({ onSend, onFocus, disabled }: ComposerProps) => {
           <AppIcon
             name="send"
             set="Feather"
-            color={disabled ? Colors.outline : Colors.textOnPrimary}
+            color={disabled ? Colors.outline : Colors.textColor}
           />
         </AppButton>
       </AppView>

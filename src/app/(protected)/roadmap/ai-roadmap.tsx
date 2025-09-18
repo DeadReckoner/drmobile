@@ -1,10 +1,10 @@
 import { AppScreen } from '@/components/AppScreen';
-import { AiRoadmapList } from '@/components/roadmap/ai-roamap/AiRoadmapList';
+import { AiRoadmapCreationList } from '@/components/roadmap/ai-roamap/AiRoadmapCreationList';
 
 const AIRoadmap = () => {
   return (
     <AppScreen paddingH-0 safeArea>
-      <AiRoadmapList />
+      <AiRoadmapCreationList />
     </AppScreen>
   );
 };

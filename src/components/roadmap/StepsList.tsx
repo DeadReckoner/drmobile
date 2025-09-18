@@ -16,7 +16,6 @@ import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectSelectedTask,
   setSelectedStepAction,
-  updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
@@ -47,22 +46,13 @@ export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
     });
   };
 
-  const onCompleteStep = (value: boolean, index: number) => {
-    dispatch(
-      updateStepAction({
-        completed: value,
-        index,
-      }),
-    );
-  };
-
   const renderItem = ({
     item: step,
     index,
   }: LegendListRenderItemProps<StepType>) => (
     <StepItem
       step={step}
-      onCompleteStep={(value) => onCompleteStep(value, index)}
+      index={index}
       onStepPress={(step) => onStepPress(step, index)}
     />
   );
