@@ -162,6 +162,7 @@
     "deleted_successfully": "Eliminado con éxito",
     "updated_successfully": "Actualizado con éxito",
     "created_successfully": "Creado con éxito",
+    "started_successfully": "Iniciado con éxito",
     "cancel": "Cancelar",
     "remove": "Eliminar",
     "are_you_sure": "¿Estás seguro?",
@@ -173,6 +174,7 @@
     "go_back": "Regresar",
     "close": "Cerrar",
     "leave": "Salir",
-    "stay": "Quedarse"
+    "stay": "Quedarse",
+    "start_roadmap": "Iniciar hoja de ruta"
   }
 }
