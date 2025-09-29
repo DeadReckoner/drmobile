@@ -6,6 +6,8 @@ export const {
   useCreateRoadmapMutation,
   useUpdateRoadmapMutation,
   useDeleteRoadmapMutation,
+
+  useStartRoadmapMutation,
 } = roadmapApi;
 
 export const { useCreateAIRoadmapMutation } = aiRoadmapApi;

@@ -13,21 +13,18 @@ interface TasksListProps {
 
 export const TasksList = ({ tasks }: TasksListProps) => {
   const dispatch = useAppDispatch();
-  const handleTaskClick = (task: TaskType) => {
-    dispatch(setSelectedTaskAction({ task, index: -1 }));
-    router.navigate({
-      pathname: `/task/[task_id]`,
-      params: {
-        task_id: task.task_id,
-        title: task.title,
-        description: task.description,
-        milestone_id: task.milestone_id,
-      },
-    });
+  const handleTaskClick = (task: TaskType, index: number) => {
+    dispatch(setSelectedTaskAction({ task, index }));
+    router.navigate(`/task/today-task-details`);
   };
 
-  const renderItem = ({ item }: LegendListRenderItemProps<TaskType>) => {
-    return <TaskItem task={item} onTaskClick={handleTaskClick} />;
+  const renderItem = ({ item, index }: LegendListRenderItemProps<TaskType>) => {
+    return (
+      <TaskItem
+        task={item}
+        onTaskClick={(task) => handleTaskClick(task, index)}
+      />
+    );
   };
   return (
     <AppList<TaskType>

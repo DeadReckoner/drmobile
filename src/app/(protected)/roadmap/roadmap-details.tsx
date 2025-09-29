@@ -12,6 +12,7 @@ import { AppView } from '@/components/ui';
 import {
   useCreateRoadmapMutation,
   useDeleteRoadmapMutation,
+  useStartRoadmapMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
@@ -36,6 +37,9 @@ const RoadmapDetailsPage = () => {
   const [deleteRoadmap, { isLoading }] = useDeleteRoadmapMutation();
   const [createRoadmap, { isLoading: isCreatingRoadmap }] =
     useCreateRoadmapMutation();
+
+  const [startRoadmap, { isLoading: isStartingRoadmap }] =
+    useStartRoadmapMutation();
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
@@ -99,6 +103,28 @@ const RoadmapDetailsPage = () => {
     }
   };
 
+  const onStartRoadmap = async () => {
+    try {
+      await startRoadmap(roadmap.roadmap_id).unwrap();
+      showToast({
+        type: 'success',
+        message: t('common.started_successfully'),
+      });
+      router.dismissTo('/(protected)/(tabs)/progress');
+    } catch (error) {
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(error),
+      });
+    }
+  };
+
+  const isRoadmapStarted =
+    roadmap.start_date === '0001-01-01T00:00:00Z' ||
+    roadmap.start_date === null;
+
+  const hasMilestones = roadmap.milestones?.length > 0;
+
   return (
     <AppView flex-1 bg-red10 reanimated layout={LinearTransition}>
       {isLoading && <Loader />}
@@ -158,6 +184,15 @@ const RoadmapDetailsPage = () => {
                   onPress={onCreateRoadmap}
                   shouldShowLoader
                   isLoading={isCreatingRoadmap}
+                />
+              )}
+
+              {isRoadmapStarted && hasMilestones && (
+                <PrimaryButton
+                  label="common.start_roadmap"
+                  shouldShowLoader
+                  isLoading={isStartingRoadmap}
+                  onPress={onStartRoadmap}
                 />
               )}
             </AppView>
