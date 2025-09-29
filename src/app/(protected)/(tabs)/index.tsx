@@ -6,32 +6,20 @@ import { Loader } from '@/components/Loader';
 import { TasksList } from '@/components/roadmap/TasksList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
+import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectUser } from '@/store/slices/authSlice';
+import { DateUtils } from '@/utils/date.utils';
+import dayjs from 'dayjs';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
-  const { id } = useAppSelector(selectUser);
   const { theme } = useAppTheme();
-  // TODO: Replace with actual API call
-  // const { data, isLoading } = useGetTasksByUserIdQuery(id);
-  const data: TaskType[] = Array(5)
-    .fill({})
-    .map((_, index) => ({
-      task_id:
-        'f74b2586-7f4c-4f19-8170-8bfe05c9b6ca' + (index === 0 ? '' : index),
-      title: 'Sample Task ' + index,
-      description: 'This is a sample task description.',
-      completed: false,
-      steps: [],
-      user_id: id,
-      day: 0,
-      milestone_id: '9ac4dcaf-5298-41f5-8c84-e911d920cb31',
-    }));
-  const isLoading = false;
+  const { data, isLoading, refetch, isFetching } =
+    useGetUserTasksByStartDateQuery(
+      DateUtils.formatDate(dayjs(), 'YYYY-MM-DD'),
+    );
 
   const onCalendarClick = () => {
     // router.navigate('/calendar');
@@ -43,12 +31,19 @@ const Today = () => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {isLoading && <Loader transparent />}
       <AppScreen key={theme}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentInsetAdjustmentBehavior="always"
-          contentContainerStyle={styles.scrollContainer}>
+          contentContainerStyle={styles.scrollContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={isFetching && !isLoading}
+              onRefresh={refetch}
+              tintColor={Colors.secondary}
+            />
+          }>
           <Divider />
           <AppView row centerV spread>
             <TranslatedText h2 translationKey="tabs.today" />
@@ -62,7 +57,7 @@ const Today = () => {
             </AppView>
           </AppView>
           <Divider />
-          <TasksList tasks={data} />
+          {data && <TasksList tasks={data} />}
         </ScrollView>
       </AppScreen>
     </>

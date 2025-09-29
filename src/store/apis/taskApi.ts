@@ -138,9 +138,9 @@ export const taskApi = api.injectEndpoints({
       },
       onQueryStarted: onDeleteTaskQueryStarted,
     }),
-    getTasksByUserId: builder.query<CreateTaskResponseType[], string>({
-      query: (userId) => ({
-        url: `/tasks/user/${userId}`,
+    getUserTasksByStartDate: builder.query<CreateTaskResponseType[], string>({
+      query: (startDate) => ({
+        url: `tasks/user?start_date=${startDate}`,
         method: 'GET',
       }),
     }),

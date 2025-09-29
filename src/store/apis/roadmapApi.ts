@@ -124,6 +124,14 @@ export const roadmapApi = api.injectEndpoints({
       },
       onQueryStarted: onDeleteRoadmapQueryStarted,
     }),
+    startRoadmap: builder.mutation<RoadmapType, string>({
+      query: (roadmap_id) => {
+        return {
+          url: `/roadmaps/${roadmap_id}/start`,
+          method: 'PUT',
+        };
+      },
+    }),
   }),
   overrideExisting: true,
 });
