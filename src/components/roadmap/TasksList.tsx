@@ -1,9 +1,13 @@
 import { AppList } from '@/components/AppList';
 import { Divider } from '@/components/Divider';
+import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { TaskItem } from '@/components/roadmap/TaskItem';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setSelectedTaskAction } from '@/store/slices/roadmapDraftSlice';
+import {
+  setSelectedTaskAction,
+  setShouldSyncWithServerAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 
@@ -14,6 +18,7 @@ interface TasksListProps {
 export const TasksList = ({ tasks }: TasksListProps) => {
   const dispatch = useAppDispatch();
   const handleTaskClick = (task: TaskType, index: number) => {
+    dispatch(setShouldSyncWithServerAction(true));
     dispatch(setSelectedTaskAction({ task, index }));
     router.navigate(`/task/today-task-details`);
   };
@@ -26,11 +31,21 @@ export const TasksList = ({ tasks }: TasksListProps) => {
       />
     );
   };
+
+  const renderEmptyComponent = () => {
+    return (
+      <EmptyListItemPlaceholder
+        title="tabs.create_tab.no_tasks_yet"
+        subtitle="tabs.create_tab.no_tasks_description"
+      />
+    );
+  };
   return (
     <AppList<TaskType>
       keyExtractor={(i) => i.task_id}
       data={tasks || []}
       renderItem={renderItem}
+      ListEmptyComponent={renderEmptyComponent}
       ItemSeparatorComponent={() => <Divider margin-8 />}
     />
   );

@@ -1,6 +1,7 @@
 import { StepType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
 import { roadmapApi } from '@/store/apis/roadmapApi';
+import { taskApi } from '@/store/apis/taskApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   addStepAction,
@@ -10,6 +11,7 @@ import {
 import { RootStateType } from '@/store/types/store.types';
 import { transformRoadmap } from '@/utils/roadmap.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
+import dayjs from 'dayjs';
 
 const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
   StepType,
@@ -78,6 +80,23 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
         }
         roadmaps[roadmapIdx] = transformRoadmap(roadmaps[roadmapIdx]);
       }),
+    );
+
+    dispatch(
+      taskApi.util.updateQueryData(
+        'getUserTasksByStartDate',
+        dayjs().format('YYYY-MM-DD'),
+        (tasks) => {
+          const taskIdx = tasks.findIndex((t) => t.task_id === data.task_id);
+          if (taskIdx !== -1) {
+            const task = tasks[taskIdx];
+            const stepIdx = task.steps?.findIndex(
+              (s) => s.step_id === data.step_id,
+            );
+            tasks[taskIdx].steps[stepIdx] = data;
+          }
+        },
+      ),
     );
   } catch {}
 };

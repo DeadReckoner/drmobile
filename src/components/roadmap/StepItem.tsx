@@ -7,6 +7,8 @@ import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectDraftSlice,
+  selectSelectedTask,
+  setSelectedTaskAction,
   updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
@@ -28,6 +30,7 @@ interface StepItemProps {
 export const StepItem = ({ step, index, onStepPress }: StepItemProps) => {
   const scale = useSharedValue(1);
   const [updateStep, { isLoading: isUpdating }] = useUpdateStepMutation();
+  const task = useAppSelector(selectSelectedTask);
   const selectedDraft = useAppSelector(selectDraftSlice);
   const { showToast } = useToast();
   const dispatch = useAppDispatch();
@@ -50,6 +53,19 @@ export const StepItem = ({ step, index, onStepPress }: StepItemProps) => {
             index,
           }),
         );
+        if (task) {
+          dispatch(
+            setSelectedTaskAction({
+              task: {
+                ...task,
+                steps:
+                  task.steps.map((s, i) =>
+                    i === index ? { ...s, completed: value } : s,
+                  ) || [],
+              },
+            }),
+          );
+        }
         await updateStep({
           description: step.description,
           number: step.number,
