@@ -119,7 +119,7 @@ const RoadmapDetailsPage = () => {
     }
   };
 
-  const isRoadmapStarted =
+  const isRoadmapNotStarted =
     roadmap.start_date === '0001-01-01T00:00:00Z' ||
     roadmap.start_date === null;
 
@@ -187,7 +187,7 @@ const RoadmapDetailsPage = () => {
                 />
               )}
 
-              {isRoadmapStarted && hasMilestones && (
+              {isRoadmapNotStarted && hasMilestones && (
                 <PrimaryButton
                   label="common.start_roadmap"
                   shouldShowLoader

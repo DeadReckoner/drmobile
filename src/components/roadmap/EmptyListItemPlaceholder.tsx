@@ -9,10 +9,10 @@ import { JSX } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
 interface EmptyListItemPlaceholderProps {
-  onPress: () => void;
+  onPress?: () => void;
   title: TranslationKeysType;
   subtitle?: TranslationKeysType;
-  btnText: TranslationKeysType;
+  btnText?: TranslationKeysType;
   btnIcon?: JSX.Element;
 }
 
@@ -34,12 +34,16 @@ export const EmptyListItemPlaceholder = ({
           </>
         )}
       </AppView>
-      <Divider margin-16 />
-      <PrimaryButtonContainer row onPress={onPress}>
-        {btnIcon}
-        <Divider margin-4 />
-        <TranslatedText body2 textOnPrimary translationKey={btnText} />
-      </PrimaryButtonContainer>
+      {onPress && !!btnText && (
+        <>
+          <Divider margin-16 />
+          <PrimaryButtonContainer row onPress={onPress}>
+            {btnIcon}
+            <Divider margin-4 />
+            <TranslatedText body2 textOnPrimary translationKey={btnText} />
+          </PrimaryButtonContainer>
+        </>
+      )}
     </AppCard>
   );
 };
