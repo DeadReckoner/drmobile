@@ -32,7 +32,9 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
     };
   }
   const allTasks = roadmap.milestones.flatMap((m) => m.tasks);
-  const completedTasks = allTasks.filter((t) => t.completed);
+  const completedTasks = allTasks.filter((t) => {
+    return t.steps?.every((s) => s.completed) || false;
+  });
 
   return {
     ...roadmap,

@@ -10,7 +10,7 @@ interface TaskItemProps {
 export const TaskItem = ({ task, onTaskClick }: TaskItemProps) => {
   return (
     <AppCard row centerV onPress={() => onTaskClick?.(task)}>
-      <AppCheckbox value={task.completed} />
+      <AppCheckbox value={task.steps.every((s) => s.completed)} />
       <AppView marginL-16>
         <AppText body2 textColor>
           {task.title}

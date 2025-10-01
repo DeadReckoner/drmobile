@@ -22,6 +22,7 @@ export interface TaskType {
   day: number;
   completed: boolean;
   steps: StepType[];
+  date?: string;
 }
 
 export interface MilestoneType {

@@ -10,6 +10,7 @@ import type {
   MilestoneType,
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
+import { useAppTheme } from '@/hooks/useAppTheme';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectSelectedMilestone } from '@/store/slices/roadmapDraftSlice';
 import { LegendListRenderItemProps } from '@legendapp/list';
@@ -24,7 +25,6 @@ import { StyleSheet } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -41,15 +41,17 @@ export const MilestoneListItem = ({
   onMilestonePress,
   onTaskPress,
 }: MilestoneListItemProps) => {
+  const theme = useAppTheme();
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
   const sharedHeight = useSharedValue(0);
   const chevronDeg = useSharedValue('0deg');
   const menuRef = useRef<MenuComponentRef>(null);
 
   const isExpanded = useMemo(
-    () => Number(milestone.milestone_id === selectedMilestone?.milestone_id),
+    () => milestone.milestone_id === selectedMilestone?.milestone_id,
     [milestone.milestone_id, selectedMilestone?.milestone_id],
   );
+
   const onPress = () => {
     onMilestonePress(
       milestone.milestone_id === selectedMilestone?.milestone_id
@@ -62,21 +64,16 @@ export const MilestoneListItem = ({
     chevronDeg.value = withTiming(isExpanded ? '180deg' : '0deg', {
       duration: 250,
     });
-  }, [selectedMilestone, chevronDeg, isExpanded]);
-
-  const value = useDerivedValue(() => {
-    return withTiming(sharedHeight.value * isExpanded, {
-      duration: 300,
-      easing: Easing.inOut(Easing.ease),
-    });
-  }, [selectedMilestone]);
+  }, [isExpanded, chevronDeg]);
 
   const bodyStyle = useAnimatedStyle(
     () => ({
-      height: value.value,
-      overflow: 'hidden',
+      height: withTiming(isExpanded ? sharedHeight.value : 0, {
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+      }),
     }),
-    [selectedMilestone],
+    [isExpanded],
   );
   const chevronStyle = useAnimatedStyle(
     () => ({
@@ -129,8 +126,7 @@ export const MilestoneListItem = ({
       <AppButton onPress={onPress}>
         <MenuView
           ref={menuRef}
-          title={milestone.sub_goal}
-          themeVariant="dark"
+          themeVariant={theme.theme}
           onPressAction={onMenuAction}
           actions={MENU_ACTIONS}
           shouldOpenOnLongPress={true}>
@@ -148,12 +144,28 @@ export const MilestoneListItem = ({
         </MenuView>
       </AppButton>
 
-      <Animated.View style={bodyStyle}>
-        <Animated.View
+      <AppView style={{ overflow: 'hidden' }}>
+        <Animated.View style={bodyStyle}>
+          <AppView
+            style={[styles.content, { backgroundColor: Colors.lightCardBG }]}>
+            <AppList
+              keyExtractor={(task) => task.task_id}
+              scrollEnabled={false}
+              data={milestone.tasks || []}
+              ListFooterComponent={renderFooterComponent}
+              ItemSeparatorComponent={renderItemSeparator}
+              renderItem={renderTaskItem}
+            />
+          </AppView>
+        </Animated.View>
+        <AppView
           onLayout={({ nativeEvent }) => {
             sharedHeight.value = nativeEvent.layout.height;
           }}
-          style={[styles.content, { backgroundColor: Colors.lightCardBG }]}>
+          style={[
+            styles.hiddenMeasurer,
+            { backgroundColor: Colors.lightCardBG },
+          ]}>
           <AppList
             keyExtractor={(task) => task.task_id}
             scrollEnabled={false}
@@ -162,8 +174,8 @@ export const MilestoneListItem = ({
             ItemSeparatorComponent={renderItemSeparator}
             renderItem={renderTaskItem}
           />
-        </Animated.View>
-      </Animated.View>
+        </AppView>
+      </AppView>
     </AppView>
   );
 };
@@ -171,8 +183,15 @@ export const MilestoneListItem = ({
 const styles = StyleSheet.create({
   content: {
     width: '100%',
+    position: 'relative',
+  },
+  hiddenMeasurer: {
     position: 'absolute',
+    opacity: 0,
     top: 0,
+    left: 0,
+    right: 0,
+    zIndex: -1,
   },
 });
 
