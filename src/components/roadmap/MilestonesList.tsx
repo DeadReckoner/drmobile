@@ -1,6 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppList } from '@/components/AppList';
+import { Divider } from '@/components/Divider';
 import { LineDivider } from '@/components/LineDivider';
 import { ListAddItemIcon } from '@/components/ListAddItemIcon';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
@@ -68,16 +69,19 @@ export const MilestonesList = ({
   };
 
   return (
-    <AppCard padding-0>
-      <AppList
-        scrollEnabled={false}
-        data={milestones}
-        keyExtractor={(item) => item.milestone_id}
-        renderItem={renderMilestone}
-        ItemSeparatorComponent={renderItemSeparator}
-        ListFooterComponent={renderFooterComponent}
-        ListEmptyComponent={renderEmptyMilestoneComponent}
-      />
-    </AppCard>
+    <>
+      <AppCard padding-0>
+        <AppList
+          scrollEnabled={false}
+          data={milestones}
+          keyExtractor={(item) => item.milestone_id}
+          renderItem={renderMilestone}
+          ItemSeparatorComponent={renderItemSeparator}
+          ListFooterComponent={renderFooterComponent}
+          ListEmptyComponent={renderEmptyMilestoneComponent}
+        />
+      </AppCard>
+      <Divider margin-32 />
+    </>
   );
 };

@@ -46,6 +46,24 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
   try {
     const state = getState() as unknown as RootStateType;
     const { data } = await queryFulfilled;
+
+    dispatch(
+      taskApi.util.updateQueryData(
+        'getUserTasksByStartDate',
+        dayjs().format('YYYY-MM-DD'),
+        (tasks) => {
+          const taskIdx = tasks.findIndex((t) => t.task_id === data.task_id);
+          if (taskIdx !== -1) {
+            const task = tasks[taskIdx];
+            const stepIdx = task.steps?.findIndex(
+              (s) => s.step_id === data.step_id,
+            );
+            task.steps[stepIdx] = data;
+            task.completed = task.steps?.every((s) => s.completed) || false;
+          }
+        },
+      ),
+    );
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
         const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
@@ -62,41 +80,23 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
           return;
         }
         dispatch(updateStepAction(data));
-        roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx].steps[
-          stepIdx
-        ] = data;
-        const task =
-          roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx];
-        if (task) {
-          if (
-            task.steps?.every((s) => s.completed) ||
-            !task.steps ||
-            task.steps?.length === 0
-          ) {
-            task.completed = true;
-          } else {
-            task.completed = false;
-          }
-        }
+
+        const milestone = roadmaps[roadmapIdx].milestones[milestoneIdx];
+        const task = milestone.tasks[taskIdx];
+        task.steps[stepIdx] = data;
+
+        // Update task completion status
+        task.completed = task.steps?.every((s) => s.completed) || false;
+
+        // Update milestone reached status
+        milestone.reached = milestone.tasks.every((t) => t.completed);
+
+        state.roadmapDraft.roadmap.milestones[milestoneIdx].tasks[
+          taskIdx
+        ].completed = task.completed;
+
         roadmaps[roadmapIdx] = transformRoadmap(roadmaps[roadmapIdx]);
       }),
-    );
-
-    dispatch(
-      taskApi.util.updateQueryData(
-        'getUserTasksByStartDate',
-        dayjs().format('YYYY-MM-DD'),
-        (tasks) => {
-          const taskIdx = tasks.findIndex((t) => t.task_id === data.task_id);
-          if (taskIdx !== -1) {
-            const task = tasks[taskIdx];
-            const stepIdx = task.steps?.findIndex(
-              (s) => s.step_id === data.step_id,
-            );
-            tasks[taskIdx].steps[stepIdx] = data;
-          }
-        },
-      ),
     );
   } catch {}
 };

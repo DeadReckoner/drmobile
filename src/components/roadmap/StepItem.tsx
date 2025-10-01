@@ -88,6 +88,7 @@ export const StepItem = ({ step, index, onStepPress }: StepItemProps) => {
       );
     }
   };
+
   return (
     <>
       <AppView row padding-16 gap-16 center br30>
