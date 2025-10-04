@@ -57,7 +57,7 @@ const Today = () => {
             </AppView>
           </AppView>
           <Divider />
-          {data && <TasksList tasks={data} />}
+          <TasksList tasks={data || []} />
         </ScrollView>
       </AppScreen>
     </>

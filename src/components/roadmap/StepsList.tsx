@@ -54,6 +54,7 @@ export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
       step={step}
       index={index}
       onStepPress={(step) => onStepPress(step, index)}
+      mode={mode}
     />
   );
 
