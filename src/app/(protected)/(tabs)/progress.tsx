@@ -13,19 +13,30 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
-import { RefreshControl } from 'react-native';
+import { useCallback, useState } from 'react';
+import { RefreshControl, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const Progress = () => {
   const dispatch = useAppDispatch();
-  const { data = [], isLoading, isFetching, refetch } = useGetRoadmapsQuery();
+  const { data = [], isLoading, refetch, isFetching } = useGetRoadmapsQuery();
+  const [manualRefreshing, setManualRefreshing] = useState(false);
 
   const onItemPress = (roadmap: RoadmapType, index: number) => {
     dispatch(setDraftRoadmapAction(roadmap));
     dispatch(setSelectedRoadmapIndex(index));
     router.navigate('/roadmap/roadmap-details');
   };
+
+  const handleRefresh = useCallback(async () => {
+    setManualRefreshing(true);
+    try {
+      await refetch().unwrap();
+    } finally {
+      setManualRefreshing(false);
+    }
+  }, [refetch]);
 
   return (
     <AppScreen>
@@ -37,13 +48,18 @@ const Progress = () => {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={refetch}
+            refreshing={manualRefreshing}
+            onRefresh={handleRefresh}
             tintColor={Colors.secondary}
           />
         }>
         <Divider />
-        <TranslatedText h2 translationKey="tabs.progress" />
+        <AppView row spread>
+          <TranslatedText h2 translationKey="tabs.progress" />
+          {isFetching && !isLoading && (
+            <Loader transparent containerStyle={style.scrollContainer} />
+          )}
+        </AppView>
         <Divider />
         <AppView flex-1>
           {isLoading && (
@@ -53,6 +69,7 @@ const Progress = () => {
           )}
           {!isLoading && (
             <AppView
+              pointerEvents={isFetching ? 'none' : 'auto'}
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring()}
               exiting={Animations.Exit.FadeOutDown()}>
@@ -66,3 +83,9 @@ const Progress = () => {
 };
 
 export default Progress;
+
+const style = StyleSheet.create({
+  scrollContainer: {
+    position: 'relative',
+  },
+});

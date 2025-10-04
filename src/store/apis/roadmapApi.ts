@@ -84,6 +84,7 @@ export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<RoadmapType[], void>({
       query: () => '/roadmaps',
+      providesTags: ['Roadmaps'],
       transformResponse: (roadmaps: RoadmapType[]) => {
         try {
           return roadmaps.map(transformRoadmap);

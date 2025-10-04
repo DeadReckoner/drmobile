@@ -6,10 +6,8 @@ import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   addStepAction,
   removeStepAction,
-  updateStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
-import { transformRoadmap } from '@/utils/roadmap.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 import dayjs from 'dayjs';
 
@@ -42,9 +40,8 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
   StepType,
   StepType & { task_id: string },
   BaseQueryFunctionType
-> = async (_task, { dispatch, queryFulfilled, getState }) => {
+> = async (_task, { dispatch, queryFulfilled }) => {
   try {
-    const state = getState() as unknown as RootStateType;
     const { data } = await queryFulfilled;
 
     dispatch(
@@ -63,40 +60,6 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
           }
         },
       ),
-    );
-    dispatch(
-      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
-        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
-        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
-        const taskIdx = state.roadmapDraft.selectedTaskIndex;
-        const stepIdx = state.roadmapDraft.selectedStepIndex;
-
-        if (
-          roadmapIdx === -1 ||
-          milestoneIdx === -1 ||
-          taskIdx === -1 ||
-          stepIdx === -1
-        ) {
-          return;
-        }
-        dispatch(updateStepAction(data));
-
-        const milestone = roadmaps[roadmapIdx].milestones[milestoneIdx];
-        const task = milestone.tasks[taskIdx];
-        task.steps[stepIdx] = data;
-
-        // Update task completion status
-        task.completed = task.steps?.every((s) => s.completed) || false;
-
-        // Update milestone reached status
-        milestone.reached = milestone.tasks.every((t) => t.completed);
-
-        state.roadmapDraft.roadmap.milestones[milestoneIdx].tasks[
-          taskIdx
-        ].completed = task.completed;
-
-        roadmaps[roadmapIdx] = transformRoadmap(roadmaps[roadmapIdx]);
-      }),
     );
   } catch {}
 };
