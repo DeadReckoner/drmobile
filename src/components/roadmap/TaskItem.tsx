@@ -15,7 +15,7 @@ export const TaskItem = ({ task, onTaskClick }: TaskItemProps) => {
         <AppText body2 textColor>
           {task.title}
         </AppText>
-        <AppText xsm textColor marginT-8>
+        <AppText xsm textColor marginT-4>
           {task.description}
         </AppText>
       </AppView>

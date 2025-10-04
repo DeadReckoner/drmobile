@@ -11,6 +11,7 @@ import { useAppTheme } from '@/hooks/useAppTheme';
 import { DateUtils } from '@/utils/date.utils';
 import dayjs from 'dayjs';
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -28,6 +29,17 @@ const Today = () => {
   const onUserProfileClick = () => {
     router.navigate('/settings');
   };
+
+  const nonCompletedTasks = useMemo(
+    () => data?.filter((task) => !task.steps?.every((step) => step.completed)),
+    [data],
+  );
+
+  const completedTasks = useMemo(
+    () =>
+      data?.filter((task) => task.steps?.every((step) => step.completed)) || [],
+    [data],
+  );
 
   return (
     <>
@@ -57,7 +69,15 @@ const Today = () => {
             </AppView>
           </AppView>
           <Divider />
-          {data && <TasksList tasks={data} />}
+          <TasksList tasks={nonCompletedTasks || []} />
+          <Divider margin-12 />
+          {completedTasks?.length > 0 && (
+            <>
+              <TranslatedText body2 translationKey="common.completed_tasks" />
+              <Divider margin-4 />
+              <TasksList tasks={completedTasks} />
+            </>
+          )}
         </ScrollView>
       </AppScreen>
     </>
