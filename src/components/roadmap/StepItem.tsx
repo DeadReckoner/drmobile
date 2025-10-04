@@ -7,6 +7,7 @@ import {
 } from '@/hooks/roadmap/types/roadmap.types';
 import { useUpdateStepMutation } from '@/hooks/step';
 import { useToast } from '@/hooks/useToast';
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectDraftSlice,
@@ -57,16 +58,19 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
             index,
           }),
         );
+
+        let updatedTask = null;
         if (task) {
+          updatedTask = {
+            ...task,
+            steps:
+              task.steps.map((s, i) =>
+                i === index ? { ...s, completed: value } : s,
+              ) || [],
+          };
           dispatch(
             setSelectedTaskAction({
-              task: {
-                ...task,
-                steps:
-                  task.steps.map((s, i) =>
-                    i === index ? { ...s, completed: value } : s,
-                  ) || [],
-              },
+              task: updatedTask,
             }),
           );
         }
@@ -77,6 +81,7 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
           task_id: step.task_id,
           completed: value,
         }).unwrap();
+        dispatch(roadmapApi.util.invalidateTags(['Roadmaps']));
       } catch (error) {
         showToast({
           type: 'failure',
