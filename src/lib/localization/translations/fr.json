@@ -178,6 +178,9 @@
     "close": "Fermer",
     "leave": "Quitter",
     "stay": "Rester",
-    "start_roadmap": "Démarrer la feuille de route"
+    "start_roadmap": "Démarrer la feuille de route",
+    "estimated_time": " Temps estimé",
+    "dependencies": "Dépendances",
+    "why_it_is_needed": "Pourquoi est-ce nécessaire ?"
   }
 }

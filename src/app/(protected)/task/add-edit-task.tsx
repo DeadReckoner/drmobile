@@ -9,6 +9,7 @@ import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
 import { CreateTaskForm } from '@/components/roadmap/CreateTaskForm';
 import { StepsList } from '@/components/roadmap/StepsList';
+import { UnorderedList } from '@/components/roadmap/UnorderedList';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AppText, AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
@@ -24,7 +25,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -74,6 +75,15 @@ const AddTask = () => {
     }
     router.back();
   };
+
+  const dependencies = useMemo(() => {
+    try {
+      const parsedDeps = JSON.parse(selectedTask?.dependencies || '[]');
+      if (Array.isArray(parsedDeps)) {
+        return parsedDeps.join(', ');
+      }
+    } catch {}
+  }, [selectedTask?.dependencies]);
 
   return (
     <>
@@ -129,6 +139,25 @@ const AddTask = () => {
                 <AppText captionLight textColor>
                   {selectedTask?.description}
                 </AppText>
+                <>
+                  <Divider margin-4 />
+                  <UnorderedList
+                    data={[
+                      {
+                        title: 'common.why_it_is_needed',
+                        value: selectedTask?.rationale || 'N/A',
+                      },
+                      {
+                        title: 'common.estimated_time',
+                        value: `${selectedTask?.est_minutes || 0} mins`,
+                      },
+                      {
+                        title: 'common.dependencies',
+                        value: dependencies || 'N/A',
+                      },
+                    ]}
+                  />
+                </>
               </AppCard>
               <Divider margin-16 />
               <StepsList />

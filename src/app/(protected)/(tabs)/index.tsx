@@ -8,6 +8,7 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { useAppTheme } from '@/hooks/useAppTheme';
+import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import dayjs from 'dayjs';
 import { router } from 'expo-router';
@@ -43,7 +44,6 @@ const Today = () => {
 
   return (
     <>
-      {isLoading && <Loader transparent />}
       <AppScreen key={theme}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -69,7 +69,20 @@ const Today = () => {
             </AppView>
           </AppView>
           <Divider />
-          <TasksList tasks={nonCompletedTasks || []} />
+
+          {isLoading ? (
+            <AppView height={100}>
+              <Loader transparent />
+            </AppView>
+          ) : (
+            <AppView
+              pointerEvents={isFetching ? 'none' : 'auto'}
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <TasksList tasks={nonCompletedTasks || []} />
+            </AppView>
+          )}
           <Divider margin-12 />
           {completedTasks?.length > 0 && (
             <>

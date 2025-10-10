@@ -56,7 +56,7 @@ const Progress = () => {
         <Divider />
         <AppView row spread>
           <TranslatedText h2 translationKey="tabs.progress" />
-          {isFetching && !isLoading && (
+          {isFetching && !isLoading && !manualRefreshing && (
             <Loader transparent containerStyle={style.scrollContainer} />
           )}
         </AppView>

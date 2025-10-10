@@ -52,6 +52,11 @@ export default function TabLayout() {
               <AppIcon size={28} name="home" color={color} />
             ),
           }}
+          listeners={{
+            tabPress: () => {
+              store.dispatch(resetDraftAction());
+            },
+          }}
         />
         <Tabs.Screen
           name="progress"

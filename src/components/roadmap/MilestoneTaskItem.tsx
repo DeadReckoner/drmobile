@@ -38,7 +38,8 @@ export const MilestoneTaskItem = ({
           {task.title}
         </AppText>
         <AppText textColor xsm>
-          {dayjs(task.date).format('MM/DD/YYYY')}
+          {dayjs(task.date).format('MM/DD/YYYY')}{' '}
+          {task.est_minutes ? `· ${task.est_minutes} mins` : ''}
         </AppText>
       </AppView>
       <AppButton

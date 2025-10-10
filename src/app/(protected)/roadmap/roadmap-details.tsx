@@ -126,7 +126,7 @@ const RoadmapDetailsPage = () => {
   const hasMilestones = roadmap.milestones?.length > 0;
 
   return (
-    <AppView flex-1 bg-red10 reanimated layout={LinearTransition}>
+    <AppView flex-1 reanimated layout={LinearTransition}>
       {isLoading && <Loader />}
       <AppKeyboardController>
         <AppView spread row gap-16>

@@ -23,6 +23,10 @@ export interface TaskType {
   completed: boolean;
   steps: StepType[];
   date?: string;
+  rationale?: string;
+  est_minutes?: number;
+  dependencies?: string; // Parse string to get array
+  confidence?: string;
 }
 
 export interface MilestoneType {

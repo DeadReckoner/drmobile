@@ -176,6 +176,9 @@
     "something_went_wrong": "Something went wrong. Please try again.",
     "leave": "Leave",
     "stay": "Stay",
-    "start_roadmap": "Start Roadmap"
+    "start_roadmap": "Start Roadmap",
+    "estimated_time": "Estimated Time",
+    "dependencies": "Dependencies",
+    "why_it_is_needed": "Why it is needed?"
   }
 }

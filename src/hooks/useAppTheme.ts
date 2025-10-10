@@ -50,12 +50,12 @@ export const useAppTheme = () => {
   };
 
   const initializeTheme = () => {
+    dispatch(setThemeAction(theme));
     Colors.setScheme(theme);
     loadColorSchemes();
     loadAssets();
     loadComponentThemes();
     loadTypography();
-    dispatch(setThemeAction(theme));
   };
 
   const toggleTheme = () => {
