@@ -3,6 +3,7 @@ import i18nConfig from '@/lib/localization/i18nConfig';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { showToastAction } from '@/store/slices/settingsSlice';
 import { RootStateType } from '@/store/types/store.types';
+import { isTokenError, refreshUserSession } from '@/utils/auth.utils';
 import {
   BaseQueryApi,
   createApi,
@@ -30,20 +31,41 @@ export const createBaseQueryWithReauth = () => {
     extraOptions: object,
   ) => {
     const result = await baseQueryWithReauth(args, apiQuery, extraOptions);
-    if (result?.error?.status === 401) {
-      apiQuery.dispatch(api.util.resetApiState());
-      apiQuery.dispatch(
-        showToastAction({
-          toastProps: {
-            type: 'failure',
-            message: i18nConfig.t('authentication.errors.session_expired'),
-          },
-        }),
-      );
-      supabaseClient.auth
-        .signOut()
-        .then(() => {})
-        .catch(() => {});
+
+    const errorData = result?.error?.data as unknown;
+    const status =
+      typeof result?.error?.status === 'number' ? result.error.status : 0;
+    const hasTokenError = isTokenError(status, errorData);
+
+    if (hasTokenError) {
+      try {
+        const newSession = await refreshUserSession();
+
+        if (newSession?.access_token) {
+          const retryResult = await baseQueryWithReauth(
+            args,
+            apiQuery,
+            extraOptions,
+          );
+          return retryResult;
+        } else {
+          throw new Error('Session refresh failed');
+        }
+      } catch {
+        apiQuery.dispatch(api.util.resetApiState());
+        apiQuery.dispatch(
+          showToastAction({
+            toastProps: {
+              type: 'failure',
+              message: i18nConfig.t('authentication.errors.session_expired'),
+            },
+          }),
+        );
+        supabaseClient.auth
+          .signOut()
+          .then(() => {})
+          .catch(() => {});
+      }
     }
     return result;
   };

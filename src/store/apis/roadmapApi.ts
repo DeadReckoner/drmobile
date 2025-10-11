@@ -133,6 +133,20 @@ export const roadmapApi = api.injectEndpoints({
         };
       },
     }),
+
+    getRoadmapById: builder.query<RoadmapType, string>({
+      query: (roadmap_id) => `/roadmaps/${roadmap_id}`,
+      transformResponse: (roadmap: RoadmapType) => {
+        try {
+          return transformRoadmap(roadmap);
+        } catch {
+          return roadmap;
+        }
+      },
+      providesTags: (_result, _error, roadmap_id) => [
+        { type: 'Roadmaps', id: roadmap_id },
+      ],
+    }),
   }),
   overrideExisting: true,
 });

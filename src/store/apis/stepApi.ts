@@ -8,8 +8,8 @@ import {
   removeStepAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
+import { DateUtils } from '@/utils/date.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
-import dayjs from 'dayjs';
 
 const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
   StepType,
@@ -47,7 +47,7 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
     dispatch(
       taskApi.util.updateQueryData(
         'getUserTasksByStartDate',
-        dayjs().format('YYYY-MM-DD'),
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
         (tasks) => {
           const taskIdx = tasks.findIndex((t) => t.task_id === data.task_id);
           if (taskIdx !== -1) {
