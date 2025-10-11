@@ -139,25 +139,27 @@ const AddTask = () => {
                 <AppText captionLight textColor>
                   {selectedTask?.description}
                 </AppText>
-                <>
-                  <Divider margin-4 />
-                  <UnorderedList
-                    data={[
-                      {
-                        title: 'common.why_it_is_needed',
-                        value: selectedTask?.rationale || 'N/A',
-                      },
-                      {
-                        title: 'common.estimated_time',
-                        value: `${selectedTask?.est_minutes || 0} mins`,
-                      },
-                      {
-                        title: 'common.dependencies',
-                        value: dependencies || 'N/A',
-                      },
-                    ]}
-                  />
-                </>
+                {!!selectedTask?.rationale && (
+                  <>
+                    <Divider margin-4 />
+                    <UnorderedList
+                      data={[
+                        {
+                          title: 'common.why_it_is_needed',
+                          value: selectedTask?.rationale || 'N/A',
+                        },
+                        {
+                          title: 'common.estimated_time',
+                          value: `${selectedTask?.est_minutes || 0} mins`,
+                        },
+                        {
+                          title: 'common.dependencies',
+                          value: dependencies || 'N/A',
+                        },
+                      ]}
+                    />
+                  </>
+                )}
               </AppCard>
               <Divider margin-16 />
               <StepsList />
