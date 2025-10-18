@@ -67,7 +67,7 @@ const onUpdateMilestoneQueryStarted: TypedMutationOnQueryStarted<
             const updatedMilestone = {
               ...existingMilestone,
               ...data,
-              tasks: existingMilestone.tasks,
+              tasks: existingMilestone?.tasks || [],
             };
             draft[roadmapIdx].milestones[milestoneIdx] = updatedMilestone;
             dispatch(updateMilestoneAction(updatedMilestone));

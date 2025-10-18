@@ -46,7 +46,8 @@ export const TasksList = ({ tasks }: TasksListProps) => {
       data={tasks || []}
       renderItem={renderItem}
       ListEmptyComponent={renderEmptyComponent}
-      ItemSeparatorComponent={() => <Divider margin-8 />}
+      ListFooterComponent={() => <Divider />}
+      ItemSeparatorComponent={() => <Divider />}
     />
   );
 };

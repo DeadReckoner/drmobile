@@ -1,12 +1,12 @@
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
-import { AppProgressBar, AppText, AppView } from '@/components/ui';
+import { AppImage, AppProgressBar, AppText, AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Colors } from 'react-native-ui-lib';
+import { Assets, Colors } from 'react-native-ui-lib';
 
 interface RoadmapListItemProps {
   onPress: (_roadmap: RoadmapType) => void;
@@ -20,6 +20,12 @@ export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
     <AppCard paddingV-20 onPress={onPress}>
       <AppView row gap-16>
         <AppView bg-primary br30 center style={styles.iconContainer}>
+          {roadmap.type === 'ai_generated' && (
+            <AppImage
+              style={[StyleSheet.absoluteFillObject]}
+              source={Assets.logo.aiRoadmapBG}
+            />
+          )}
           <AppIcon set="Feather" name="map" color={Colors.white} />
         </AppView>
         <AppView flex gap-8>

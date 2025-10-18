@@ -131,6 +131,12 @@
       "thank_you": "Thanks! I'm building your personalized roadmap now.",
       "composer_placeholder": "Enter your answer"
     },
+    "acceptance_test": "Acceptance test",
+    "duration": "Duration",
+    "resources": "Resources",
+    "risks": "Risks",
+    "spikes": "Spikes",
+    "see_all_milestones": "See All Milestones",
     "loading_texts": "Analyzing your goals…|Identifying key milestones…|Breaking it down into steps…|Personalizing your roadmap…|Mapping out your waypoints…|Aligning your course…|Preparing your roadmap…"
   },
   "settings": {
@@ -156,6 +162,11 @@
   "common": {
     "or": "Or",
     "milestones": "Milestones",
+    "upcoming_milestones": "Upcoming Milestones",
+    "roadmap_overview": "Roadmap Overview",
+    "current_milestone": "Current Milestone",
+    "view_map": "View Map",
+    "acceptance_test": "Acceptance test",
     "steps": "Steps",
     "next_milestone": "Next Milestone",
     "days": "Days",

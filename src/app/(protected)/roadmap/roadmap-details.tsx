@@ -7,11 +7,13 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { AddEditCustomRoadmapForm } from '@/components/roadmap/AddEditCustomRoadmapForm';
+import { AIRoadmapDetails } from '@/components/roadmap/AIRoadmapDetails';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
 import { AppView } from '@/components/ui';
 import {
   useCreateRoadmapMutation,
   useDeleteRoadmapMutation,
+  useGetRoadmapByIdQuery,
   useStartRoadmapMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -26,7 +28,12 @@ import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const RoadmapDetailsPage = () => {
-  const roadmap = useAppSelector(selectDraftRoadmap);
+  const selectedRoadmap = useAppSelector(selectDraftRoadmap);
+  const { data: roadmap = selectedRoadmap, isLoading: isRoadmapLoading } =
+    useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
+      skip: !selectedRoadmap?.roadmap_id,
+      refetchOnMountOrArgChange: true,
+    });
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
@@ -123,7 +130,14 @@ const RoadmapDetailsPage = () => {
     roadmap.start_date === '0001-01-01T00:00:00Z' ||
     roadmap.start_date === null;
 
-  const hasMilestones = roadmap.milestones?.length > 0;
+  const hasMilestones =
+    roadmap.type === 'ai_generated'
+      ? (
+          roadmap.macro_map?.phases?.flatMap(
+            (phase) => phase.macro_milestones,
+          ) || []
+        ).length > 0
+      : (roadmap.milestones?.length || 0) > 0;
 
   return (
     <AppView flex-1 reanimated layout={LinearTransition}>
@@ -172,10 +186,18 @@ const RoadmapDetailsPage = () => {
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring().delay(200)}
               exiting={Animations.Exit.FadeOutDown()}>
-              <RoadmapDetails
-                roadmap={roadmap}
-                toggleEditMode={toggleEditMode}
-              />
+              {roadmap?.type === 'ai_generated' ? (
+                <AIRoadmapDetails
+                  roadmap={roadmap}
+                  isRoadmapLoading={isRoadmapLoading}
+                  toggleEditMode={toggleEditMode}
+                />
+              ) : (
+                <RoadmapDetails
+                  roadmap={roadmap}
+                  toggleEditMode={toggleEditMode}
+                />
+              )}
               <Divider margin-8 />
 
               {roadmap.milestones.length > 0 && !roadmap?.roadmap_id && (
