@@ -12,6 +12,7 @@ interface PrimaryButtonProps {
   onPress: TouchableOpacityProps['onPress'];
   isLoading?: boolean;
   shouldShowLoader?: boolean;
+  disabled?: boolean;
 }
 
 export const PrimaryButton = ({
@@ -19,6 +20,7 @@ export const PrimaryButton = ({
   onPress,
   isLoading,
   shouldShowLoader,
+  disabled,
 }: PrimaryButtonProps) => {
   const { animatedStyle: textAnimatedStyle, set: setTextLabelVisibility } =
     useToggleAnimation({ initialValue: 1 });
@@ -43,7 +45,10 @@ export const PrimaryButton = ({
   ]);
 
   return (
-    <PrimaryButtonContainer onPress={onPress} disabled={isLoading}>
+    <PrimaryButtonContainer
+      style={{ opacity: disabled ? 0.5 : 1 }}
+      onPress={onPress}
+      disabled={isLoading || disabled}>
       <Animated.View style={textAnimatedStyle}>
         <TranslatedText textOnPrimary buttonLable translationKey={label} />
       </Animated.View>

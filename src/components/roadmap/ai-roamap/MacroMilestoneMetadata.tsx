@@ -106,7 +106,7 @@ export const MacroMilestoneMetadata = ({
             Risks
           </AppText>
           {risks.map((risk) => (
-            <AppView key={risk.risk_id}>
+            <AppView key={risk.risk_id || risk.description}>
               <AppText xsm textColor flex>
                 • {risk.description}
               </AppText>

@@ -36,7 +36,7 @@ export const MacroMapList = ({ macroMap }: MacroMapListProps) => {
   return (
     <AppList
       data={macroMap.phases.flatMap((phase) => phase.macro_milestones)}
-      keyExtractor={(item) => item.macro_milestone_id}
+      keyExtractor={(item) => item.macro_milestone_id || item.name}
       renderItem={renderMacroMilestone}
       ItemSeparatorComponent={renderItemSeparator}
       ListEmptyComponent={renderEmptyMilestoneComponent}

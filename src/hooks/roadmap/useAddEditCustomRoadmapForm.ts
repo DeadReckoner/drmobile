@@ -13,11 +13,21 @@ import * as Yup from 'yup';
 
 const createCustomRoadmapValidationSchema = (
   t: (_: TranslationKeysType) => string,
+  mode?: FormEditModeType,
 ) => {
   const goal = t('tabs.create_tab.goal_name_label');
   const goalDescription = t('tabs.create_tab.goal_description_label');
-  const reason = t('authentication.your_email');
-  const targetDate = t('authentication.password');
+  const reason = t('tabs.create_tab.why_matters_label');
+  const targetDate = t('tabs.create_tab.target_completion_date_label');
+
+  const targetDateRule = Yup.string()
+    .label(targetDate)
+    .min(2, isInvalidMessage(targetDate, t));
+
+  if (mode !== 'edit') {
+    targetDateRule.required(isRequiredMessage(targetDate, t));
+  }
+
   return Yup.object({
     goal: Yup.string()
       .label(goal)
@@ -31,10 +41,7 @@ const createCustomRoadmapValidationSchema = (
       .label(reason)
       .min(2, isInvalidMessage(reason, t))
       .required(isRequiredMessage(reason, t)),
-    targetDate: Yup.string()
-      .label(targetDate)
-      .min(2, isInvalidMessage(targetDate, t))
-      .required(isRequiredMessage(targetDate, t)),
+    targetDate: targetDateRule,
   });
 };
 
@@ -52,7 +59,7 @@ export const useAddEditCustomRoadmapForm = ({
   mode,
 }: CustomRoadmapFormHookProps) => {
   const { t } = useLocalization();
-  const schema = createCustomRoadmapValidationSchema(t);
+  const schema = createCustomRoadmapValidationSchema(t, mode);
   const roadmap = useAppSelector(selectDraftRoadmap);
   const canEdit = mode === 'edit';
 
@@ -66,7 +73,10 @@ export const useAddEditCustomRoadmapForm = ({
       goal: goal,
       description: goalDescription,
       reason: reason,
-      days: DateUtils.daysBetween(DateUtils.createDate(), targetDate),
+      days: DateUtils.daysBetween(
+        DateUtils.createDate(),
+        targetDate ?? DateUtils.createDate(),
+      ),
     };
     onSuccess?.(roadmap);
   };
@@ -76,7 +86,7 @@ export const useAddEditCustomRoadmapForm = ({
       initialValues: {
         goal: canEdit ? roadmap.goal : '',
         goalDescription: canEdit ? roadmap.description : '',
-        reason: (canEdit && roadmap.reason) || '',
+        reason: (canEdit ? roadmap.reason : '') || '',
         targetDate: '',
       },
       validationSchema: schema,

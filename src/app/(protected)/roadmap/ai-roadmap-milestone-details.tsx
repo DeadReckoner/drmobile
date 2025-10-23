@@ -10,7 +10,7 @@ import {
   setSelectedTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { router } from 'expo-router';
-import React from 'react';
+import { ScrollView } from 'react-native';
 
 const AIRoadmapMilestoneDetails = () => {
   const roadmap = useAppSelector(selectDraftRoadmap);
@@ -34,15 +34,19 @@ const AIRoadmapMilestoneDetails = () => {
   };
 
   return (
-    <AppScreen safeArea>
-      <HeaderWithBack headerKey="common.milestones" />
-      <Divider marginV-8 />
-      <MilestonesList
-        milestones={roadmap?.milestones}
-        onMilestonePress={handleMilestonePress}
-        onTaskPress={handleOnTaskPress}
-        onAddNewMilestonePress={handleOnAddNewMilestone}
-      />
+    <AppScreen>
+      <ScrollView
+        contentInsetAdjustmentBehavior="always"
+        showsVerticalScrollIndicator={false}>
+        <HeaderWithBack headerKey="common.milestones" />
+        <Divider marginV-8 />
+        <MilestonesList
+          milestones={roadmap?.milestones}
+          onMilestonePress={handleMilestonePress}
+          onTaskPress={handleOnTaskPress}
+          onAddNewMilestonePress={handleOnAddNewMilestone}
+        />
+      </ScrollView>
     </AppScreen>
   );
 };

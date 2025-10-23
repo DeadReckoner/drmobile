@@ -93,7 +93,7 @@ export const AIRoadmapDetails = ({
               <AppView
                 row
                 center
-                marginT-12
+                marginT-16
                 gap-8
                 br100
                 padding-8
@@ -107,7 +107,6 @@ export const AIRoadmapDetails = ({
               </AppView>
             </AppView>
           </AppButton>
-          <Divider margin-24 />
         </AppView>
       )}
     </AppView>
