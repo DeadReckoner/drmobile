@@ -162,6 +162,7 @@
   "common": {
     "or": "Or",
     "milestones": "Milestones",
+    "tasks": "Tasks",
     "upcoming_milestones": "Upcoming Milestones",
     "roadmap_overview": "Roadmap Overview",
     "current_milestone": "Current Milestone",

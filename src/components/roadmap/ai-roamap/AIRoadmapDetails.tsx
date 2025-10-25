@@ -46,7 +46,10 @@ export const AIRoadmapDetails = ({
           milestone: roadmap.milestones[0],
         }),
       );
-      router.navigate('/(protected)/roadmap/ai-active-milestone-details');
+      router.navigate({
+        pathname: '/(protected)/roadmap/add-edit-milestone',
+        params: { showTasksList: 'true', mode: 'edit' },
+      });
     }
   };
 
@@ -85,9 +88,7 @@ export const AIRoadmapDetails = ({
           )}
           <AppButton
             onPress={() => {
-              router.navigate(
-                '/(protected)/roadmap/ai-roadmap-milestone-details',
-              );
+              router.navigate('/(protected)/roadmap/ai-roadmap-all-milestones');
             }}>
             <AppView right>
               <AppView
