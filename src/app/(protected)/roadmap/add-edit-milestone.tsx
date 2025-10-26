@@ -148,7 +148,15 @@ const AddMilestone = () => {
                   <Divider margin-16 />
                   <TranslatedText body1 translationKey="common.tasks" />
                   <Divider />
-                  <TasksList tasks={selectedMilestone.tasks} />
+                  <TasksList
+                    tasks={selectedMilestone.tasks}
+                    onTaskClick={() => {
+                      router.navigate({
+                        pathname: '/task/add-edit-task',
+                        params: { mode: 'edit' },
+                      });
+                    }}
+                  />
                 </>
               )}
             </AppView>

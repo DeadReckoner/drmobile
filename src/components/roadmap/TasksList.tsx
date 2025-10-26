@@ -13,14 +13,19 @@ import { router } from 'expo-router';
 
 interface TasksListProps {
   tasks: TaskType[];
+  onTaskClick?: (_task: TaskType) => void;
 }
 
-export const TasksList = ({ tasks }: TasksListProps) => {
+export const TasksList = ({ tasks, onTaskClick }: TasksListProps) => {
   const dispatch = useAppDispatch();
   const handleTaskClick = (task: TaskType, index: number) => {
     dispatch(setShouldSyncWithServerAction(true));
     dispatch(setSelectedTaskAction({ task, index }));
-    router.navigate(`/task/today-task-details`);
+    if (onTaskClick) {
+      onTaskClick(task);
+    } else {
+      router.navigate(`/task/today-task-details`);
+    }
   };
 
   const renderItem = ({ item, index }: LegendListRenderItemProps<TaskType>) => {

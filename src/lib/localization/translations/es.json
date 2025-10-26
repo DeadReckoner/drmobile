@@ -69,6 +69,12 @@
       "thank_you": "¡Gracias! Estoy creando tu plan de acción personalizado ahora.",
       "composer_placeholder": "Escribe tu respuesta"
     },
+    "acceptance_test": "Prueba de aceptación",
+    "duration": "Duración",
+    "resources": "Recursos",
+    "risks": "Riesgos",
+    "spikes": "Picos",
+    "see_all_milestones": "Ver Todos los Hitos",
     "loading_texts": "Analizando tus objetivos…|Identificando hitos clave…|Dividiéndolo en pasos…|Personalizando tu hoja de ruta…|Trazando tus puntos de referencia…|Alineando tu rumbo…|Preparando tu hoja de ruta…"
   },
   "tabs": {
@@ -156,6 +162,12 @@
   "common": {
     "or": "O",
     "milestones": "Hitos",
+    "tasks": "Tareas",
+    "upcoming_milestones": "Próximos Hitos",
+    "roadmap_overview": "Resumen de Hoja de Ruta",
+    "current_milestone": "Hito Actual",
+    "view_map": "Ver Mapa",
+    "acceptance_test": "Prueba de aceptación",
     "steps": "Pasos",
     "next_milestone": "Próximo hito",
     "days": "Días",
@@ -174,13 +186,35 @@
     "delete_task": "Todos los pasos asociados también se eliminarán.",
     "delete_step": "¿Estás seguro de que deseas eliminar este paso?",
     "something_went_wrong": "Algo salió mal. Inténtalo de nuevo.",
-    "go_back": "Regresar",
-    "close": "Cerrar",
     "leave": "Salir",
     "stay": "Quedarse",
     "start_roadmap": "Iniciar hoja de ruta",
     "estimated_time": "Tiempo estimado",
     "dependencies": "Dependencias",
     "why_it_is_needed": "¿Por qué es necesario?"
+  },
+  "feedback": {
+    "title": "Retroalimentación",
+    "subtitle": "¡Ayúdanos a ajustar tu próximo hito!",
+    "description": "Tu retroalimentación es vital para crear un plan que sea desafiante y alcanzable",
+    "rate_experience": "Califica tu experiencia",
+    "effort_felt": "Esfuerzo Sentido",
+    "stress_level": "Nivel de Estrés",
+    "confidence_level": "Nivel de Confianza",
+    "level": "Nivel",
+    "reflections": "Reflexiones",
+    "wins": "Logros",
+    "wins_placeholder": "Ej. Me sentí más fuerte, Corrí más tiempo",
+    "blockers": "Obstáculos",
+    "blockers_placeholder": "Ej. Dolor de rodilla, Demasiado complejo",
+    "surprises": "Sorpresas",
+    "surprises_placeholder": "Ej. Más fácil de lo esperado, Me encantó la mañana...",
+    "reality_check": "Verificación de Realidad",
+    "time_spent_vs_planned": "Tiempo Dedicado vs Planeado",
+    "hours_per_week": "Horas por semana",
+    "budget_hit": "¿Se cumplió el presupuesto?",
+    "change_requests": "Solicitudes de Cambio",
+    "change_requests_placeholder": "Ej. Ajustar intensidad, Cambiar correr por ciclismo",
+    "submit_feedback": "Enviar Retroalimentación"
   }
 }

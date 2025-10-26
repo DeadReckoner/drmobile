@@ -192,5 +192,29 @@
     "estimated_time": "Estimated Time",
     "dependencies": "Dependencies",
     "why_it_is_needed": "Why it is needed?"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "subtitle": "Help us tune your next Milestone!",
+    "description": "Your feedback is vital for creating a plan that's both challenging and achievable",
+    "rate_experience": "Rate your experience",
+    "effort_felt": "Effort Felt",
+    "stress_level": "Stress Level",
+    "confidence_level": "Confidence Level",
+    "level": "Level",
+    "reflections": "Reflections",
+    "wins": "Wins",
+    "wins_placeholder": "Eg. Felt Stronger, Ran longer",
+    "blockers": "Blockers",
+    "blockers_placeholder": "Eg. Knee Pain, Too Complex",
+    "surprises": "Surprises",
+    "surprises_placeholder": "Eg. Easier than expected, Loved morning walks",
+    "reality_check": "Reality Check",
+    "time_spent_vs_planned": "Time Spent vs Planned",
+    "hours_per_week": "Hours per week",
+    "budget_hit": "Budget hit?",
+    "change_requests": "Change Requests",
+    "change_requests_placeholder": "Eg. Adjust intensity, Swap running with Cycling",
+    "submit_feedback": "Submit Feedback"
   }
 }
