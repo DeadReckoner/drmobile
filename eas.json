@@ -26,6 +26,7 @@
   "submit": {
     "production": {
       "ios": {
+        "ascAppId": "6754618529",
         "appleId": "dev@deadreckoner.io"
       }
     }
