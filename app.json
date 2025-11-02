@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mcboll.deadreckoner",
+      "bundleIdentifier": "com.deadreckoner.deadreckoner",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
