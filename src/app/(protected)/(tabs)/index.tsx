@@ -10,7 +10,6 @@ import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
-import dayjs from 'dayjs';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
@@ -20,7 +19,7 @@ const Today = () => {
   const { theme } = useAppTheme();
   const { data, isLoading, refetch, isFetching } =
     useGetUserTasksByStartDateQuery(
-      DateUtils.formatDate(dayjs(), 'YYYY-MM-DD'),
+      DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
     );
 
   const onCalendarClick = () => {
