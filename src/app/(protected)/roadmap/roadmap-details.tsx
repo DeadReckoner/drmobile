@@ -33,11 +33,14 @@ import { useDispatch } from 'react-redux';
 
 const RoadmapDetailsPage = () => {
   const selectedRoadmap = useAppSelector(selectDraftRoadmap);
-  const { data: roadmap = selectedRoadmap, isLoading: isRoadmapLoading } =
-    useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
-      skip: !selectedRoadmap?.roadmap_id,
-      refetchOnMountOrArgChange: true,
-    });
+  const {
+    data: roadmap = selectedRoadmap,
+    isLoading: isRoadmapLoading,
+    refetch,
+  } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
+    skip: !selectedRoadmap?.roadmap_id,
+    refetchOnMountOrArgChange: true,
+  });
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
@@ -140,6 +143,7 @@ const RoadmapDetailsPage = () => {
         type: 'success',
         message: t('common.started_successfully'),
       });
+      await refetch();
     } catch (error) {
       showToast({
         type: 'failure',
