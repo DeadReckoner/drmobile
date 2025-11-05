@@ -2,6 +2,7 @@ import ActionSheet from 'react-native-ui-lib/actionSheet';
 import Checkbox from 'react-native-ui-lib/checkbox';
 import ExpandableSection from 'react-native-ui-lib/expandableSection';
 import { Dialog, Toast } from 'react-native-ui-lib/incubator';
+import Modal from 'react-native-ui-lib/modal';
 import ProgressBar from 'react-native-ui-lib/progressBar';
 import Switch from 'react-native-ui-lib/switch';
 import Text from 'react-native-ui-lib/text';
@@ -16,6 +17,7 @@ export {
   ExpandableSection as AppExpandableSection,
   ProgressBar as AppProgressBar,
   Dialog as AppRNUIDialog,
+  Modal as AppRNUIModal,
   Switch as AppRNUISwitch,
   Toast as AppRNUIToast,
   Text as AppText,

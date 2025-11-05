@@ -148,7 +148,8 @@
     "terms_of_service": "Términos de Servicio",
     "help_support": "Ayuda y Soporte",
     "logout": "Cerrar Sesión",
-    "friends": "Amigos",
+    "my_friends": "Mis Amigos",
+    "search_friend": "Buscar Amigo",
     "roadmaps": "Hojas de Ruta",
     "logout_dialog": "¿Estás seguro de que deseas cerrar sesión?",
     "select_language": "Seleccionar Idioma",
@@ -191,7 +192,8 @@
     "start_roadmap": "Iniciar hoja de ruta",
     "estimated_time": "Tiempo estimado",
     "dependencies": "Dependencias",
-    "why_it_is_needed": "¿Por qué es necesario?"
+    "why_it_is_needed": "¿Por qué es necesario?",
+    "scan_qr_code": "Escanea este código QR para agregarme como tu amigo"
   },
   "feedback": {
     "title": "Retroalimentación",

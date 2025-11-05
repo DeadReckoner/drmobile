@@ -148,7 +148,8 @@
     "terms_of_service": "Conditions d'Utilisation",
     "help_support": "Aide et Support",
     "logout": "Se Déconnecter",
-    "friends": "Amis",
+    "my_friends": "Mes Amis",
+    "search_friend": "Rechercher un Ami",
     "roadmaps": "Feuilles de Route",
     "logout_dialog": "Êtes-vous sûr de vouloir vous déconnecter ?",
     "select_language": "Sélectionner la Langue",
@@ -191,7 +192,8 @@
     "start_roadmap": "Démarrer la feuille de route",
     "estimated_time": "Temps estimé",
     "dependencies": "Dépendances",
-    "why_it_is_needed": "Pourquoi est-ce nécessaire ?"
+    "why_it_is_needed": "Pourquoi est-ce nécessaire ?",
+    "scan_qr_code": "Scannez ce code QR pour m'ajouter comme ami"
   },
   "feedback": {
     "title": "Retour d'expérience",

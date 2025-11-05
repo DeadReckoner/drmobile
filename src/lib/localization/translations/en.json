@@ -148,7 +148,8 @@
     "terms_of_service": "Terms of Service",
     "help_support": "Help & Support",
     "logout": "Log Out",
-    "friends": "Friends",
+    "my_friends": "My Friends",
+    "search_friend": "Search Friend",
     "roadmaps": "Roadmaps",
     "logout_dialog": "Are you sure you want to log out?",
     "select_language": "Select Language",
@@ -191,7 +192,8 @@
     "start_roadmap": "Start Roadmap",
     "estimated_time": "Estimated Time",
     "dependencies": "Dependencies",
-    "why_it_is_needed": "Why it is needed?"
+    "why_it_is_needed": "Why it is needed?",
+    "scan_qr_code": "Scan this QR code to add me as your friend"
   },
   "feedback": {
     "title": "Feedback",
