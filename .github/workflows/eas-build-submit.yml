@@ -1,0 +1,38 @@
+name: EAS Build and Submit
+
+on:
+  push:
+    branches:
+      - 'release/**' # Triggers on any release branch
+
+jobs:
+  build-and-submit:
+    name: EAS Build and Submit iOS
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: 🏗 Checkout repository
+        uses: actions/checkout@v3
+
+      # Setup Node.js
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      # Install dependencies
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # Setup Expo
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # Build and Submit to TestFlight
+      - name: 📱 Build and Submit to TestFlight
+        run: eas build --platform ios --profile production --non-interactive --auto-submit

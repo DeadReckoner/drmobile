@@ -26,7 +26,8 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "michael.c.bollinger@gmail.com"
+        "ascAppId": "6754618529",
+        "appleId": "dev@deadreckoner.io"
       }
     }
   }
