@@ -13,6 +13,7 @@ import {
 
 export const ApiCacheTags = Object.freeze({
   Roadmaps: 'Roadmaps',
+  Friends: 'Friends',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({

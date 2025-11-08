@@ -24,7 +24,6 @@ export const friendsApi = api.injectEndpoints({
         url: '/friends/requests',
         method: 'GET',
       }),
-      providesTags: ['Friends'],
     }),
 
     sendFriendRequest: builder.mutation<ApiResponse<Friendship>, string>({
@@ -32,7 +31,40 @@ export const friendsApi = api.injectEndpoints({
         url: `/friends/request/${userId}`,
         method: 'POST',
       }),
-      invalidatesTags: ['Friends'],
+      async onQueryStarted(userId, { dispatch, queryFulfilled, getState }) {
+        const searchUsersPatchResults: any[] = [];
+        const state = getState() as any;
+        const searchUsersQueries = state.api.queries;
+
+        Object.keys(searchUsersQueries).forEach((key) => {
+          if (key.startsWith('searchUsers(')) {
+            const patchResult = dispatch(
+              friendsApi.util.updateQueryData(
+                'searchUsers',
+                searchUsersQueries[key].originalArgs,
+                (draft) => {
+                  const userIndex = draft.findIndex(
+                    (u) => u.user_id === userId,
+                  );
+
+                  if (userIndex !== -1) {
+                    draft[userIndex].friendship_status = 'pending';
+                  }
+                },
+              ),
+            );
+            searchUsersPatchResults.push(patchResult);
+          }
+        });
+
+        try {
+          await queryFulfilled;
+        } catch {
+          searchUsersPatchResults.forEach((patchResult) => {
+            patchResult.undo();
+          });
+        }
+      },
     }),
 
     updateFriendRequestStatus: builder.mutation<
@@ -44,7 +76,6 @@ export const friendsApi = api.injectEndpoints({
         method: 'PATCH',
         body: { status },
       }),
-      invalidatesTags: ['Friends'],
     }),
 
     acceptFriendRequest: builder.mutation<ApiResponse<Friendship>, string>({
@@ -53,7 +84,6 @@ export const friendsApi = api.injectEndpoints({
         method: 'PATCH',
         body: { status: 'accepted' },
       }),
-      invalidatesTags: ['Friends'],
     }),
 
     rejectFriendRequest: builder.mutation<ApiResponse<Friendship>, string>({
@@ -62,7 +92,6 @@ export const friendsApi = api.injectEndpoints({
         method: 'PATCH',
         body: { status: 'rejected' },
       }),
-      invalidatesTags: ['Friends'],
     }),
 
     removeFriend: builder.mutation<MessageResponse, string>({
@@ -70,10 +99,46 @@ export const friendsApi = api.injectEndpoints({
         url: `/friends/${friendId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['Friends'],
+      invalidatesTags: (_result, _error, friendId) => [
+        'Friends',
+        { type: 'Friends', id: friendId },
+      ],
+      async onQueryStarted(friendId, { dispatch, queryFulfilled, getState }) {
+        const searchUsersPatchResults: any[] = [];
+        try {
+          await queryFulfilled;
+          const state = getState() as any;
+          const searchUsersQueries = state.api.queries;
+
+          Object.keys(searchUsersQueries).forEach((key) => {
+            if (key.startsWith('searchUsers(')) {
+              const patchResult = dispatch(
+                friendsApi.util.updateQueryData(
+                  'searchUsers',
+                  searchUsersQueries[key].originalArgs,
+                  (draft) => {
+                    const userIndex = draft.findIndex(
+                      (u) => u.user_id === friendId,
+                    );
+
+                    if (userIndex !== -1) {
+                      draft[userIndex].friendship_status = 'none';
+                    }
+                  },
+                ),
+              );
+              searchUsersPatchResults.push(patchResult);
+            }
+          });
+        } catch {
+          searchUsersPatchResults.forEach((patchResult) => {
+            patchResult.undo();
+          });
+        }
+      },
     }),
 
-    getFriends: builder.query<ApiResponse<FriendResponse[]>, void>({
+    getFriends: builder.query<FriendResponse[], void>({
       query: () => ({
         url: '/friends',
         method: 'GET',
@@ -81,22 +146,22 @@ export const friendsApi = api.injectEndpoints({
       providesTags: ['Friends'],
     }),
 
-    getFriendProfile: builder.query<ApiResponse<FriendProfileResponse>, string>(
-      {
-        query: (friendId) => ({
-          url: `/friends/${friendId}/profile`,
-          method: 'GET',
-        }),
-        providesTags: (_result, _error, friendId) => [
-          { type: 'Friends', id: friendId },
-        ],
-      },
-    ),
+    getFriendProfile: builder.query<FriendProfileResponse, string>({
+      query: (friendId) => ({
+        url: `/friends/${friendId}/profile`,
+        method: 'GET',
+      }),
+      keepUnusedDataFor: 5,
+      providesTags: (_result, _error, friendId) => [
+        { type: 'Friends', id: friendId },
+      ],
+    }),
   }),
   overrideExisting: true,
 });
 
 export const {
+  useSearchUsersQuery,
   useLazySearchUsersQuery,
   useGetPendingFriendRequestsQuery,
   useSendFriendRequestMutation,

@@ -161,8 +161,25 @@
     "website": "Website",
     "no_friends_found": "No friends found",
     "friends": "Friends",
-    "remove_friend": "Remove",
-    "add_friend": "Add"
+    "remove_friend": "Remove Friend",
+    "add_friend": "Add",
+    "friend_request_sent": "Friend request sent successfully",
+    "remove_friend_confirmation": "Are you sure you want to remove this friend?",
+    "friend_removed": "Friend removed successfully",
+    "user_profile": "User Profile",
+    "not_friends_yet": "Not Friends Yet",
+    "profile_locked": "Profile Locked",
+    "profile_locked_description": "This user's profile is private. Send a friend request to access their roadmaps.",
+    "sending": "Sending...",
+    "send_friend_request": "Send Request",
+    "pending_request": "Pending Request",
+    "roadmaps_locked_message": "This user hasn't shared any roadmaps yet.",
+    "error_loading_friend": "Error loading friend profile",
+    "no_roadmaps_shared": "No roadmaps shared",
+    "search_results": "Search Results",
+    "cancel_request": "Cancel Request",
+    "friend_request_cancelled": "Friend request cancelled",
+    "profile_request_pending_description": "Your friend request is pending. Once accepted, you'll be able to access their roadmaps."
   },
   "common": {
     "or": "Or",
@@ -197,7 +214,8 @@
     "estimated_time": "Estimated Time",
     "dependencies": "Dependencies",
     "why_it_is_needed": "Why it is needed?",
-    "scan_qr_code": "Scan this QR code to add me as your friend"
+    "scan_qr_code": "Scan this QR code to add me as your friend",
+    "error_occurred": "An error occurred"
   },
   "feedback": {
     "title": "Feedback",

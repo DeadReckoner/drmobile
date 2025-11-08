@@ -7,7 +7,14 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppTextField, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
+import {
+  useGetFriendsQuery,
+  useLazySearchUsersQuery,
+} from '@/store/apis/friendsApi';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
+import { router } from 'expo-router';
 import React, {
   useCallback,
   useEffect,
@@ -15,59 +22,60 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
-
-// Mock data for friends list
-const FRIENDS_DATA = [
-  { id: '1', name: 'Lucas Bennet', avatar: 'https://i.pravatar.cc/150?img=1' },
-  { id: '2', name: 'Olivia Reed', avatar: 'https://i.pravatar.cc/150?img=2' },
-  { id: '3', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=3' },
-  { id: '4', name: 'Ethan Hunt', avatar: 'https://i.pravatar.cc/150?img=4' },
-  { id: '5', name: 'Jesse Pinkman', avatar: 'https://i.pravatar.cc/150?img=5' },
-  { id: '6', name: 'Nate Foster', avatar: 'https://i.pravatar.cc/150?img=6' },
-  { id: '7', name: 'Lucas Bennet', avatar: 'https://i.pravatar.cc/150?img=7' },
-  { id: '8', name: 'Olivia Reed', avatar: 'https://i.pravatar.cc/150?img=8' },
-  { id: '9', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '10', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '11', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '12', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '13', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '14', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '15', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '16', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: '17', name: 'Jessica Reed', avatar: 'https://i.pravatar.cc/150?img=9' },
-];
 
 interface Friend {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
+  email?: string;
+  friendship_status?: 'none' | 'pending' | 'accepted';
 }
 
-const DEBOUNCE_DELAY = 2000;
-const API_SEARCH_DELAY = 500;
+const DEBOUNCE_DELAY = 400;
 
 const MyFriends = () => {
   const { t } = useLocalization();
+  const { id } = useAppSelector(selectUser);
   const [searchQuery, setSearchQuery] = useState('');
   const [apiSearchResults, setApiSearchResults] = useState<Friend[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [showApiResults, setShowApiResults] = useState(false);
+  const [isQRCodeModalVisible, setIsQRCodeModalVisible] = useState(false);
+
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Filter local friends
+  const { data: friendsData, isLoading: isLoadingFriends } = useGetFriendsQuery(
+    undefined,
+    { refetchOnFocus: true },
+  );
+
+  const [searchUsers, { data: searchData, isFetching: isSearching }] =
+    useLazySearchUsersQuery();
+
+  const friends = useMemo<Friend[]>(() => {
+    if (!friendsData) return [];
+    return friendsData.map((friendResponse) => ({
+      id: friendResponse.friend.user_id,
+      name: `${friendResponse.friend.first_name} ${friendResponse.friend.last_name}`,
+      avatar: undefined,
+      email: friendResponse.friend.email,
+      friendship_status: 'accepted', // Existing friends are always accepted
+    }));
+  }, [friendsData]);
+
   const filteredFriends = useMemo(() => {
     const trimmedQuery = searchQuery.trim().toLowerCase();
-    if (!trimmedQuery) return FRIENDS_DATA;
+    if (!trimmedQuery) return friends;
 
-    return FRIENDS_DATA.filter((friend) =>
-      friend.name.toLowerCase().includes(trimmedQuery),
+    return friends.filter(
+      (friend) =>
+        friend.name.toLowerCase().includes(trimmedQuery) ||
+        friend.email?.toLowerCase().includes(trimmedQuery),
     );
-  }, [searchQuery]);
+  }, [searchQuery, friends]);
 
-  // Cleanup debounce timer on unmount
   useEffect(() => {
     return () => {
       if (debounceTimerRef.current) {
@@ -76,73 +84,47 @@ const MyFriends = () => {
     };
   }, []);
 
-  // Debounced API search
   useEffect(() => {
-    // Clear previous timer
+    if (searchData) {
+      const existingFriendIds = new Set(friends.map((f) => f.id));
+      const transformedResults: Friend[] = (searchData || [])
+        .filter((user) => !existingFriendIds.has(user.user_id))
+        .map((user) => ({
+          id: user.user_id,
+          name: `${user.first_name} ${user.last_name}`,
+          avatar: undefined,
+          email: user.email,
+          friendship_status: user.friendship_status,
+        }));
+      setApiSearchResults(transformedResults);
+    } else {
+      setApiSearchResults([]);
+    }
+  }, [searchData, friends]);
+
+  useEffect(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
     const trimmedQuery = searchQuery.trim();
 
-    // Reset state if no query
     if (!trimmedQuery) {
-      setShowApiResults(false);
       setApiSearchResults([]);
-      setIsSearching(false);
       return;
     }
 
-    // Only trigger API search if there's a query and no local results
-    if (filteredFriends.length === 0) {
-      setIsSearching(true);
-      setShowApiResults(false);
-
-      debounceTimerRef.current = setTimeout(async () => {
-        try {
-          // TODO: Replace with your actual API endpoint
-          // const response = await fetch(`/api/users/search?q=${encodeURIComponent(trimmedQuery)}`);
-          // const data = await response.json();
-          // setApiSearchResults(data.users || []);
-
-          // Mock API call for demonstration
-          await new Promise((resolve) => setTimeout(resolve, API_SEARCH_DELAY));
-
-          // Mock API results
-          const mockApiResults: Friend[] = [
-            {
-              id: 'api-1',
-              name: `${trimmedQuery} Smith`,
-              avatar: 'https://i.pravatar.cc/150?img=20',
-            },
-            {
-              id: 'api-2',
-              name: `${trimmedQuery} Johnson`,
-              avatar: 'https://i.pravatar.cc/150?img=21',
-            },
-          ];
-
-          setApiSearchResults(mockApiResults);
-          setShowApiResults(true);
-        } catch {
-          // TODO: Implement proper error handling/logging
-          setApiSearchResults([]);
-          setShowApiResults(false);
-        } finally {
-          setIsSearching(false);
-        }
-      }, DEBOUNCE_DELAY);
-    } else {
-      // Has local results, no need to search API
-      setShowApiResults(false);
-      setApiSearchResults([]);
-      setIsSearching(false);
-    }
-  }, [searchQuery, filteredFriends.length]);
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        await searchUsers(trimmedQuery);
+      } catch {
+        setApiSearchResults([]);
+      }
+    }, DEBOUNCE_DELAY);
+  }, [searchQuery, searchUsers]);
 
   const onQrCodePress = useCallback(() => {
-    // TODO: Handle QR code button press
-    setIsVisible(true);
+    setIsQRCodeModalVisible(true);
   }, []);
 
   const onInboxPress = useCallback(() => {
@@ -151,21 +133,48 @@ const MyFriends = () => {
 
   const keyExtractor = useCallback((item: Friend) => item.id, []);
 
-  const renderFriendItem = useCallback(
-    ({ item }: { item: Friend }) => (
-      <AppCard marginB-8 paddingV-12 paddingH-12 style={styles.friendCard}>
+  const renderFriendItem = useCallback(({ item }: { item: Friend }) => {
+    return (
+      <AppCard
+        marginB-8
+        paddingV-16
+        paddingH-16
+        style={styles.friendCard}
+        onPress={() => {
+          router.navigate({
+            pathname: '/settings/friend-details/[friend-id]',
+            params: {
+              'friend-id': item.id,
+              friendName: item.name,
+              friendEmail: item.email,
+              friendshipStatus: item.friendship_status || 'none',
+            },
+          });
+        }}>
         <AppView row centerV spread>
-          <AppView row centerV gap-12>
-            <AppImage source={{ uri: item.avatar }} style={styles.avatar} />
-            <AppText body2 textColor>
-              {item.name}
-            </AppText>
+          <AppView row centerV gap-16>
+            {item.avatar ? (
+              <AppImage source={{ uri: item.avatar }} style={styles.avatar} />
+            ) : (
+              <AppView style={styles.avatarPlaceholder} center>
+                <AppIcon name="user" size={16} color={Colors.secondary} />
+              </AppView>
+            )}
+            <AppView flex gap-4>
+              <AppText body2 textColor>
+                {item.name}
+              </AppText>
+              {item.email && (
+                <AppText caption secondary>
+                  {item.email}
+                </AppText>
+              )}
+            </AppView>
           </AppView>
         </AppView>
       </AppCard>
-    ),
-    [],
-  );
+    );
+  }, []);
 
   const sectionHeader = (title: string) => (
     <AppView
@@ -186,7 +195,135 @@ const MyFriends = () => {
   const handleClearSearch = useCallback(() => {
     setSearchQuery('');
   }, []);
-  const [visible, setIsVisible] = useState(false);
+
+  const getViewState = useCallback(() => {
+    const hasSearchQuery = searchQuery.trim().length > 0;
+
+    if (isLoadingFriends) {
+      return 'LOADING';
+    }
+
+    if (isSearching) {
+      return 'SEARCHING';
+    }
+
+    if (hasSearchQuery) {
+      const hasLocalResults = filteredFriends.length > 0;
+      const hasApiResults = apiSearchResults.length > 0;
+
+      if (hasLocalResults || hasApiResults) {
+        return 'SEARCH_RESULTS';
+      }
+      return 'NO_RESULTS';
+    }
+
+    if (friends.length > 0) {
+      return 'FRIENDS_LIST';
+    }
+
+    return 'EMPTY';
+  }, [
+    isLoadingFriends,
+    isSearching,
+    searchQuery,
+    filteredFriends,
+    apiSearchResults,
+    friends,
+  ]);
+
+  const viewState = getViewState();
+
+  const renderContent = () => {
+    switch (viewState) {
+      case 'LOADING':
+      case 'SEARCHING':
+        return (
+          <AppView
+            key="loading"
+            reanimated
+            entering={Animations.Entry.FadeInDownWithSpring(300)}
+            exiting={Animations.Exit.FadeOutDown()}
+            style={{ alignItems: 'center', paddingVertical: 40 }}>
+            <ActivityIndicator size="small" color={Colors.primary} />
+          </AppView>
+        );
+
+      case 'FRIENDS_LIST':
+        return (
+          <Animated.FlatList
+            key="all-friends"
+            layout={Animations.Layout.Springify()}
+            entering={Animations.Entry.FadeInDownWithSpring(300)}
+            exiting={Animations.Exit.FadeOutDown()}
+            data={friends}
+            contentInsetAdjustmentBehavior="always"
+            renderItem={renderFriendItem}
+            keyExtractor={keyExtractor}
+            showsVerticalScrollIndicator={false}
+          />
+        );
+
+      case 'SEARCH_RESULTS':
+        return (
+          <>
+            {filteredFriends.length > 0 && (
+              <>
+                {sectionHeader(t('settings.my_friends'))}
+                <Animated.FlatList
+                  key="local-friends"
+                  layout={Animations.Layout.Springify()}
+                  entering={Animations.Entry.FadeInDownWithSpring(500)}
+                  exiting={Animations.Exit.FadeOutDown()}
+                  data={filteredFriends}
+                  contentInsetAdjustmentBehavior="always"
+                  renderItem={renderFriendItem}
+                  keyExtractor={keyExtractor}
+                  showsVerticalScrollIndicator={false}
+                />
+              </>
+            )}
+
+            {apiSearchResults.length > 0 && (
+              <Animated.FlatList
+                key="api-results"
+                layout={Animations.Layout.Springify()}
+                entering={Animations.Entry.FadeInDownWithSpring(500)}
+                exiting={Animations.Exit.FadeOutDown()}
+                data={apiSearchResults}
+                contentInsetAdjustmentBehavior="always"
+                renderItem={renderFriendItem}
+                keyExtractor={keyExtractor}
+                ListHeaderComponent={sectionHeader(
+                  t('settings.search_results'),
+                )}
+                showsVerticalScrollIndicator={false}
+              />
+            )}
+          </>
+        );
+
+      case 'NO_RESULTS':
+      case 'EMPTY':
+        return (
+          <AppView
+            reanimated
+            key="no-results"
+            entering={Animations.Entry.FadeInDownWithSpring(500)}
+            exiting={Animations.Exit.FadeOutDown()}
+            style={{ alignItems: 'center', paddingVertical: 40 }}>
+            <AppIcon name="user" size={48} color={Colors.secondary} />
+            <TranslatedText
+              marginT-16
+              secondary
+              translationKey="settings.no_friends_found"
+            />
+          </AppView>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <AppScreen paddingH-0>
@@ -204,11 +341,12 @@ const MyFriends = () => {
             </AppView>
           </AppView>
           <AppView marginV-16>
-            <AppCard paddingV-12 paddingH-12 style={styles.searchCard}>
+            <AppCard style={styles.searchCard} padding-8 paddingH-16>
               <AppView row centerV spread>
-                <AppView row centerV gap-12>
+                <AppView row centerV gap-12 flex>
                   <AppIcon name="search1" size={20} color={Colors.textColor} />
                   <AppTextField
+                    paddingV-8
                     color={Colors.textColor}
                     body2
                     placeholder={t('settings.search_friend')}
@@ -218,6 +356,7 @@ const MyFriends = () => {
                     autoCapitalize="none"
                     autoCorrect={false}
                     returnKeyType="search"
+                    containerStyle={{ flexGrow: 1 }}
                   />
                 </AppView>
                 {searchQuery.length > 0 && (
@@ -243,74 +382,24 @@ const MyFriends = () => {
           paddingH-16
           reanimated
           layout={Animations.Layout.Springify()}>
-          {isSearching && (
-            <AppView
-              key="loading"
-              reanimated
-              entering={Animations.Entry.FadeInDownWithSpring()}
-              exiting={Animations.Exit.FadeOutDown()}
-              style={{ alignItems: 'center', paddingVertical: 40 }}>
-              <ActivityIndicator size="small" color={Colors.primary} />
-            </AppView>
-          )}
-          {!isSearching && filteredFriends.length > 0 && (
-            <>
-              {searchQuery.trim() &&
-                sectionHeader(t('settings.my_friends') || 'My Friends')}
-              <Animated.FlatList
-                key="local-friends"
-                layout={Animations.Layout.Springify()}
-                entering={Animations.Entry.FadeInDownWithSpring(300)}
-                exiting={Animations.Exit.FadeOutDown()}
-                data={filteredFriends}
-                contentInsetAdjustmentBehavior="always"
-                renderItem={renderFriendItem}
-                keyExtractor={keyExtractor}
-                showsVerticalScrollIndicator={false}
-              />
-            </>
-          )}
-          {!isSearching && showApiResults && apiSearchResults.length > 0 && (
-            <Animated.FlatList
-              key="api-results"
-              layout={Animations.Layout.Springify()}
-              entering={Animations.Entry.FadeIn()}
-              exiting={Animations.Exit.FadeOutDown()}
-              data={apiSearchResults}
-              contentInsetAdjustmentBehavior="always"
-              renderItem={renderFriendItem}
-              keyExtractor={keyExtractor}
-              ListHeaderComponent={sectionHeader('Search Results')}
-              showsVerticalScrollIndicator={false}
-            />
-          )}
-          {!isSearching &&
-            searchQuery.trim() &&
-            filteredFriends.length === 0 &&
-            !showApiResults && (
-              <AppView
-                reanimated
-                key="no-results"
-                entering={Animations.Entry.FadeInDownWithSpring()}
-                exiting={Animations.Exit.FadeOutDown()}
-                style={{ alignItems: 'center', paddingVertical: 40 }}>
-                <AppIcon name="user" size={48} color={Colors.secondary} />
-                <AppText marginT-16 secondary>
-                  No friends found
-                </AppText>
-              </AppView>
-            )}
+          {renderContent()}
         </AppView>
       </AppView>
-      <AppModal visible={visible} setIsVisible={setIsVisible}>
-        <AppView padding-32 centerH gap-24>
+      <AppModal
+        visible={isQRCodeModalVisible}
+        setIsVisible={setIsQRCodeModalVisible}>
+        <AppView padding-32 centerH gap-32>
           <TranslatedText
             subtitle1
             center
             translationKey="common.scan_qr_code"
           />
-          {/* TODO: Add proper QR code */}
-          <AppIcon name="qrcode" size={200} color={Colors.white} />
+          <QRCode
+            value={`deadreckoner://settings/friend-details/${id}`}
+            logoSize={40}
+            logoBackgroundColor="transparent"
+            size={Dimensions.get('screen').width / 1.5}
+          />
         </AppView>
       </AppModal>
     </AppScreen>
@@ -334,5 +423,11 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
+  },
+  avatarPlaceholder: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.backgroundSecondary,
   },
 });

@@ -162,7 +162,24 @@
     "no_friends_found": "No se encontraron amigos",
     "friends": "Amigos",
     "remove_friend": "Eliminar",
-    "add_friend": "Agregar"
+    "add_friend": "Agregar",
+    "friend_request_sent": "Solicitud de amistad enviada con éxito",
+    "remove_friend_confirmation": "¿Estás seguro de que deseas eliminar a este amigo?",
+    "friend_removed": "Amigo eliminado con éxito",
+    "user_profile": "Perfil de Usuario",
+    "not_friends_yet": "Aún no son amigos",
+    "profile_locked": "Perfil Bloqueado",
+    "profile_locked_description": "El perfil de este usuario es privado. Envía una solicitud de amistad para acceder a sus hojas de ruta.",
+    "sending": "Enviando...",
+    "send_friend_request": "Enviar Solicitud",
+    "pending_request": "Solicitud Pendiente",
+    "roadmaps_locked_message": "Este usuario aún no ha compartido ninguna hoja de ruta.",
+    "error_loading_friend": "Error al cargar el perfil del amigo",
+    "no_roadmaps_shared": "No hay hojas de ruta compartidas",
+    "search_results": "Resultados de la búsqueda",
+    "cancel_request": "Cancelar Solicitud",
+    "friend_request_cancelled": "Solicitud de amistad cancelada",
+    "profile_request_pending_description": "Tu solicitud de amistad está pendiente. Una vez aceptada, podrás acceder a sus hojas de ruta."
   },
   "common": {
     "or": "O",
@@ -197,7 +214,8 @@
     "estimated_time": "Tiempo estimado",
     "dependencies": "Dependencias",
     "why_it_is_needed": "¿Por qué es necesario?",
-    "scan_qr_code": "Escanea este código QR para agregarme como tu amigo"
+    "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
+    "error_occurred": "Ocurrió un error"
   },
   "feedback": {
     "title": "Retroalimentación",

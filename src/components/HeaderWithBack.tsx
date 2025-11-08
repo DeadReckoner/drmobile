@@ -25,7 +25,11 @@ export const HeaderWithBack = ({
   const onBackArrowPress = () => {
     onBackPress?.();
     if (goBackOnPress) {
-      router.back();
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/(protected)/(tabs)');
+      }
     }
   };
 

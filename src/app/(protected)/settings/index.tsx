@@ -12,6 +12,7 @@ import { SettingsItem } from '@/components/SettingsItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import { AppURLs } from '@/constants/AppURLs.constants';
+import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -45,6 +46,8 @@ const Settings = () => {
   const [isLanguageDialogVisible, setIsLanguageDialogVisible] = useState(false);
   const [isSocialMediaDialogVisible, setIsSocialMediaDialogVisible] =
     useState(false);
+
+  const { data: friendsData } = useGetFriendsQuery();
 
   const onDarkModeToggle = () => {
     toggleTheme();
@@ -101,9 +104,8 @@ const Settings = () => {
                 onPress={() => router.navigate('/settings/my-friends')}>
                 <AppView center paddingH-16 gap-8>
                   <TranslatedText xsm translationKey="settings.my_friends" />
-                  {/* TODO: set actual number of friends */}
                   <AppText textColor body1>
-                    {data?.length}
+                    {friendsData?.length || 0}
                   </AppText>
                 </AppView>
               </AppButton>

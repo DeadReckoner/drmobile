@@ -162,7 +162,24 @@
     "no_friends_found": "Aucun ami trouvé",
     "friends": "Amis",
     "remove_friend": "Supprimer",
-    "add_friend": "Ajouter"
+    "add_friend": "Ajouter",
+    "friend_request_sent": "Demande d'ami envoyée avec succès",
+    "remove_friend_confirmation": "Êtes-vous sûr de vouloir supprimer cet ami ?",
+    "friend_removed": "Ami supprimé avec succès",
+    "user_profile": "Profil d'Utilisateur",
+    "not_friends_yet": "Pas Encore Amis",
+    "profile_locked": "Profil Verrouillé",
+    "profile_locked_description": "Le profil de cet utilisateur est privé. Envoyez une demande d'ami pour accéder à ses feuilles de route.",
+    "sending": "Envoi en cours...",
+    "send_friend_request": "Envoyer une Demande",
+    "pending_request": "Demande en Attente",
+    "roadmaps_locked_message": "Cet utilisateur n'a pas encore partagé de feuilles de route.",
+    "error_loading_friend": "Erreur lors du chargement du profil de l'ami",
+    "no_roadmaps_shared": "Aucune feuille de route partagée",
+    "search_results": "Résultats de la recherche",
+    "cancel_request": "Annuler la Demande",
+    "friend_request_cancelled": "Demande d'ami annulée",
+    "profile_request_pending_description": "Votre demande d'ami est en attente. Une fois acceptée, vous pourrez accéder à ses feuilles de route."
   },
   "common": {
     "or": "Ou",
@@ -197,7 +214,8 @@
     "estimated_time": "Temps estimé",
     "dependencies": "Dépendances",
     "why_it_is_needed": "Pourquoi est-ce nécessaire ?",
-    "scan_qr_code": "Scannez ce code QR pour m'ajouter comme ami"
+    "scan_qr_code": "Scannez ce code QR pour m'ajouter comme ami",
+    "error_occurred": "Une erreur s'est produite"
   },
   "feedback": {
     "title": "Retour d'expérience",
