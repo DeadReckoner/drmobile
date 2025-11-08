@@ -158,7 +158,11 @@
     "facebook": "Facebook",
     "instagram": "Instagram",
     "linkedin": "LinkedIn",
-    "website": "Site Web"
+    "website": "Site Web",
+    "no_friends_found": "Aucun ami trouvé",
+    "friends": "Amis",
+    "remove_friend": "Supprimer",
+    "add_friend": "Ajouter"
   },
   "common": {
     "or": "Ou",

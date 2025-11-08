@@ -3,7 +3,7 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import React, { useCallback, useRef } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ViewStyle } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Colors, ModalProps } from 'react-native-ui-lib';
 
@@ -13,6 +13,8 @@ interface AppModalProps extends Omit<ModalProps, 'visible'> {
   children?: React.ReactNode;
   snapPoints?: string[] | number[];
   enablePanDownToClose?: boolean;
+  backgroundStyle?: ViewStyle;
+  contentContainerStyle?: ViewStyle;
 }
 
 export const AppModal = ({
@@ -20,6 +22,8 @@ export const AppModal = ({
   setIsVisible,
   children,
   enablePanDownToClose = true,
+  backgroundStyle,
+  contentContainerStyle,
   ...props
 }: AppModalProps) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -55,17 +59,18 @@ export const AppModal = ({
       <BottomSheet
         ref={bottomSheetRef}
         index={1}
-        snapPoints={['50%', '70%', '90%']}
+        snapPoints={['60%', '70%', '90%']}
         onChange={handleSheetChanges}
         enablePanDownToClose={enablePanDownToClose}
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: Colors.primary }}
+        backgroundStyle={[{ backgroundColor: Colors.cardBG }, backgroundStyle]}
         handleIndicatorStyle={styles.indicatorStyle}
         {...props}>
         <BottomSheetView
           style={[
             styles.contentContainer,
-            { backgroundColor: Colors.primary },
+            { backgroundColor: Colors.cardBG },
+            contentContainerStyle,
           ]}>
           {children}
         </BottomSheetView>
