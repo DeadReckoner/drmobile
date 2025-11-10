@@ -128,7 +128,7 @@ const MyFriends = () => {
   }, []);
 
   const onInboxPress = useCallback(() => {
-    // TODO: Handle inbox button press
+    router.navigate('/settings/invite-friends');
   }, []);
 
   const keyExtractor = useCallback((item: Friend) => item.id, []);
