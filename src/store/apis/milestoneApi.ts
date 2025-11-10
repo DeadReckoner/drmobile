@@ -30,6 +30,19 @@ const onCreateMilestoneQueryStarted: TypedMutationOnQueryStarted<
         }
       }),
     );
+
+    dispatch(
+      roadmapApi.util.updateQueryData(
+        'getRoadmapById',
+        data.roadmap_id,
+        (roadmap) => {
+          if (roadmap) {
+            roadmap.milestones.push(data);
+            dispatch(addMilestoneAction(data));
+          }
+        },
+      ),
+    );
   } catch {}
 };
 
@@ -75,6 +88,36 @@ const onUpdateMilestoneQueryStarted: TypedMutationOnQueryStarted<
         }
       }),
     );
+    dispatch(
+      roadmapApi.util.updateQueryData(
+        'getRoadmapById',
+        data.roadmap_id,
+        (roadmap) => {
+          if (!roadmap) {
+            return;
+          }
+
+          let milestoneIdx = selectedMilestoneIndex;
+          if (milestoneIdx === -1) {
+            milestoneIdx = roadmap.milestones.findIndex(
+              (r) => r.milestone_id === _milestone.milestoneId,
+            );
+          }
+
+          if (milestoneIdx !== -1) {
+            const existingMilestone =
+              state.roadmapDraft.roadmap.milestones[milestoneIdx];
+            const updatedMilestone = {
+              ...existingMilestone,
+              ...data,
+              tasks: existingMilestone?.tasks || [],
+            };
+            roadmap.milestones[milestoneIdx] = updatedMilestone;
+            dispatch(updateMilestoneAction(updatedMilestone));
+          }
+        },
+      ),
+    );
   } catch {}
 };
 
@@ -100,6 +143,23 @@ const onDeleteMilestoneQueryStarted: TypedMutationOnQueryStarted<
       }),
     );
     dispatch(removeMilestoneAction());
+
+    dispatch(
+      roadmapApi.util.updateQueryData(
+        'getRoadmapById',
+        state.roadmapDraft.roadmap.roadmap_id,
+        (roadmap) => {
+          if (
+            selectedMilestoneIndex === -1 ||
+            !roadmap ||
+            selectedRoadmapIndex === -1
+          ) {
+            return;
+          }
+          roadmap.milestones.splice(selectedMilestoneIndex, 1);
+        },
+      ),
+    );
   } catch {}
 };
 
