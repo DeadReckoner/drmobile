@@ -183,7 +183,30 @@
     "search_results": "Search Results",
     "cancel_request": "Cancel Request",
     "friend_request_cancelled": "Friend request cancelled",
-    "profile_request_pending_description": "Your friend request is pending. Once accepted, you'll be able to access their roadmaps."
+    "profile_request_pending_description": "Your friend request is pending. Once accepted, you'll be able to access their roadmaps.",
+    "invite_via_title": "Invite via",
+    "invite_via_sms": "SMS",
+    "invite_via_whatsapp": "WhatsApp",
+    "invite_via_other": "Other",
+    "invite_message": "Join me on Dead Reckoner - the smart way to track your goals and achieve your dreams. Download now: {{appStoreUrl}}",
+    "sms_not_available": "SMS is not available on this device",
+    "whatsapp_not_available": "WhatsApp is not installed on this device",
+    "share_not_available": "Sharing is not available on this device",
+    "invite_failed": "Failed to send invite. Please try again.",
+    "loading_contacts": "Loading contacts...",
+    "contacts_permission_required": "Contacts permission is required",
+    "grant_permission_description": "Please grant permission to access your contacts",
+    "grant_permission": "Grant Permission",
+    "no_contacts_found": "No contacts found",
+    "no_contacts_available": "No contacts available",
+    "unknown_contact": "Unknown",
+    "failed_to_request_permission": "Failed to request permission",
+    "failed_to_fetch_contacts": "Failed to fetch contacts"
+  },
+  "permissions": {
+    "contacts_denied_title": "Contacts Permission Denied",
+    "contacts_denied_description": "To invite friends from your contacts, we need access to your contacts list. Please enable permissions in your device settings.",
+    "open_settings": "Open Settings"
   },
   "common": {
     "or": "Or",

@@ -82,7 +82,13 @@ const Settings = () => {
         <HeaderWithBack headerKey="settings.profile" paddingH-16 />
         <AppView style={styles.content}>
           <AppView gap-16 center paddingH-16>
-            <AppImage source={{ uri: user.avatar }} style={styles.image} />
+            {user.avatar ? (
+              <AppImage source={{ uri: user.avatar }} style={styles.image} />
+            ) : (
+              <AppView bg-primary br100 padding-20 style={styles.image} center>
+                <AppIcon name="user" size={40} />
+              </AppView>
+            )}
             <AppView gap-6 center key={theme}>
               <AppText body1 textColor>
                 {user.name}

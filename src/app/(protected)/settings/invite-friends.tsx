@@ -2,56 +2,92 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { InviteViaModal } from '@/components/InviteViaModal';
+import { PermissionDeniedModal } from '@/components/PermissionDeniedModal';
 import { AppText, AppTextField, AppView } from '@/components/ui';
+import { useContacts } from '@/hooks/useContacts';
 import { useLocalization } from '@/hooks/useLocalization';
-import React, { useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { Animations } from '@/utils/animation.utils';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 interface Contact {
   id: string;
   name: string;
-  avatar?: string;
+  phoneNumbers?: string[];
+  emails?: string[];
   invited: boolean;
 }
-
-const MOCK_CONTACTS: Contact[] = [
-  { id: '1', name: 'Lucas Bennet', invited: false },
-  { id: '2', name: 'Olivia Reed', invited: false },
-  { id: '3', name: 'Jessica Reed', invited: false },
-  { id: '4', name: 'Ethan Hunt', invited: false },
-  { id: '5', name: 'Jesse Pinkman', invited: false },
-  { id: '6', name: 'Nate Foster', invited: false },
-  { id: '7', name: 'Lucas Bennet', invited: false },
-  { id: '8', name: 'Olivia Reed', invited: false },
-  { id: '9', name: 'Jessica Reed', invited: false },
-];
 
 const InviteFriends = () => {
   const { t } = useLocalization();
   const [searchQuery, setSearchQuery] = useState('');
-  const [contacts, setContacts] = useState<Contact[]>(MOCK_CONTACTS);
+  const [invitedContacts] = useState<Set<string>>(new Set());
+  const [isPermissionModalVisible, setIsPermissionModalVisible] =
+    useState(false);
+  const [isInviteViaModalVisible, setIsInviteViaModalVisible] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<{
+    phoneNumber?: string;
+    name?: string;
+  } | null>(null);
 
-  const handleInvite = (contactId: string) => {
-    setContacts((prev) =>
-      prev.map((contact) =>
-        contact.id === contactId
-          ? { ...contact, invited: !contact.invited }
-          : contact,
-      ),
-    );
+  const {
+    contacts: phoneContacts,
+    isLoading,
+    permissionStatus,
+    requestPermission,
+    openSettings,
+    isPermissionDenied,
+  } = useContacts();
+
+  useEffect(() => {
+    if (permissionStatus === 'undetermined') {
+      requestPermission();
+    }
+  }, [permissionStatus, requestPermission]);
+
+  useEffect(() => {
+    if (isPermissionDenied) {
+      setIsPermissionModalVisible(true);
+    }
+  }, [isPermissionDenied]);
+
+  const handleInvite = (contact: Contact) => {
+    const phoneNumber = contact.phoneNumbers?.[0];
+    setSelectedContact({
+      phoneNumber,
+      name: contact.name,
+    });
+    setIsInviteViaModalVisible(true);
   };
 
-  const filteredContacts = contacts.filter((contact) =>
+  const contactsWithInviteStatus: Contact[] = phoneContacts.map((contact) => ({
+    ...contact,
+    invited: invitedContacts.has(contact.id),
+  }));
+
+  const filteredContacts = contactsWithInviteStatus.filter((contact) =>
     contact.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const handleOpenSettings = async () => {
+    setIsPermissionModalVisible(false);
+    await openSettings();
+  };
+
+  const handleRetryPermission = async () => {
+    setIsPermissionModalVisible(false);
+    await requestPermission();
+  };
 
   const renderContactItem = ({ item }: { item: Contact }) => (
     <AppView
       bg-cardBG
       marginB-8
       paddingH-12
-      paddingV-14
+      paddingV-16
       row
       centerV
       spread
@@ -66,10 +102,10 @@ const InviteFriends = () => {
         </AppText>
       </AppView>
 
-      <AppButton onPress={() => handleInvite(item.id)}>
+      <AppButton onPress={() => handleInvite(item)}>
         <AppView
-          paddingH-14
-          paddingV-5
+          paddingH-20
+          paddingV-8
           center
           style={styles.inviteButton}
           backgroundColor={item.invited ? Colors.success : Colors.primary}>
@@ -85,7 +121,19 @@ const InviteFriends = () => {
 
   return (
     <AppScreen safeArea>
-      <HeaderWithBack headerKey="settings.invite_friends" marginB-16 />
+      <AppView row spread centerV marginB-16>
+        <AppView flex centerV>
+          <HeaderWithBack headerKey="settings.invite_friends" />
+        </AppView>
+        <AppButton onPress={handleOpenSettings} marginR-2>
+          <AppIcon
+            set="Feather"
+            name="refresh-ccw"
+            size={18}
+            color={Colors.white}
+          />
+        </AppButton>
+      </AppView>
       <AppView
         bg-cardBG
         paddingH-12
@@ -103,15 +151,91 @@ const InviteFriends = () => {
           containerStyle={styles.searchFieldContainer}
         />
       </AppView>
-      <AppView flex marginT-16>
-        <FlatList
-          data={filteredContacts}
-          renderItem={renderContactItem}
-          keyExtractor={keyExtractor}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-        />
+      <AppView flex marginT-16 layout={Animations.Layout.Springify()}>
+        {isLoading ? (
+          <AppView
+            flex
+            center
+            paddingT-40
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
+            <ActivityIndicator size="large" color={Colors.primary} />
+            <AppText textColor marginT-16 caption>
+              {t('settings.loading_contacts')}
+            </AppText>
+          </AppView>
+        ) : permissionStatus === 'denied' ? (
+          <AppView
+            flex
+            center
+            paddingT-40
+            paddingH-32
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
+            <AppIcon
+              set="Feather"
+              name="alert-circle"
+              size={48}
+              color={Colors.error}
+            />
+            <AppText textColor marginT-16 center body2>
+              {t('settings.contacts_permission_required')}
+            </AppText>
+            <AppText textColor marginT-8 center caption>
+              {t('settings.grant_permission_description')}
+            </AppText>
+            <AppButton
+              marginT-24
+              bg-primary
+              padding-12
+              paddingH-24
+              br20
+              onPress={handleRetryPermission}>
+              <AppText white caption>
+                {t('settings.grant_permission')}
+              </AppText>
+            </AppButton>
+          </AppView>
+        ) : filteredContacts.length === 0 ? (
+          <AppView
+            flex
+            center
+            paddingT-40
+            paddingH-32
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}>
+            <AppIcon name="user" size={48} color={Colors.secondary} />
+            <AppText textColor marginT-16 center body2>
+              {searchQuery
+                ? t('settings.no_contacts_found')
+                : t('settings.no_contacts_available')}
+            </AppText>
+          </AppView>
+        ) : (
+          <Animated.FlatList
+            entering={Animations.Entry.FadeInDownWithSpring()}
+            exiting={Animations.Exit.FadeOutDown()}
+            data={filteredContacts}
+            renderItem={renderContactItem}
+            keyExtractor={keyExtractor}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
       </AppView>
+
+      <PermissionDeniedModal
+        visible={isPermissionModalVisible}
+        onDismiss={() => setIsPermissionModalVisible(false)}
+        onOpenSettings={handleOpenSettings}
+      />
+
+      <InviteViaModal
+        visible={isInviteViaModalVisible}
+        setIsVisible={setIsInviteViaModalVisible}
+        phoneNumber={selectedContact?.phoneNumber}
+        contactName={selectedContact?.name}
+      />
     </AppScreen>
   );
 };
@@ -156,7 +280,7 @@ const styles = StyleSheet.create({
   inviteButton: {
     borderRadius: 51,
     minWidth: 58,
-    height: 21,
+    minHeight: 21,
   },
   inviteButtonText: {
     fontSize: 10,

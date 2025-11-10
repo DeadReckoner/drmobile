@@ -183,7 +183,30 @@
     "search_results": "Résultats de la recherche",
     "cancel_request": "Annuler la Demande",
     "friend_request_cancelled": "Demande d'ami annulée",
-    "profile_request_pending_description": "Votre demande d'ami est en attente. Une fois acceptée, vous pourrez accéder à ses feuilles de route."
+    "profile_request_pending_description": "Votre demande d'ami est en attente. Une fois acceptée, vous pourrez accéder à ses feuilles de route.",
+    "invite_via_title": "Inviter via",
+    "invite_via_sms": "SMS",
+    "invite_via_whatsapp": "WhatsApp",
+    "invite_via_other": "Autre",
+    "invite_message": "Rejoignez-moi sur Dead Reckoner - le moyen intelligent de suivre vos objectifs et de réaliser vos rêves. Téléchargez maintenant: {{appStoreUrl}}",
+    "sms_not_available": "SMS n'est pas disponible sur cet appareil",
+    "whatsapp_not_available": "WhatsApp n'est pas installé sur cet appareil",
+    "share_not_available": "Le partage n'est pas disponible sur cet appareil",
+    "invite_failed": "Échec de l'envoi de l'invitation. Veuillez réessayer.",
+    "loading_contacts": "Chargement des contacts...",
+    "contacts_permission_required": "L'autorisation d'accès aux contacts est requise",
+    "grant_permission_description": "Veuillez accorder l'autorisation d'accéder à vos contacts",
+    "grant_permission": "Accorder l'autorisation",
+    "no_contacts_found": "Aucun contact trouvé",
+    "no_contacts_available": "Aucun contact disponible",
+    "unknown_contact": "Inconnu",
+    "failed_to_request_permission": "Échec de la demande d'autorisation",
+    "failed_to_fetch_contacts": "Échec de la récupération des contacts"
+  },
+  "permissions": {
+    "contacts_denied_title": "Permission de Contacts Refusée",
+    "contacts_denied_description": "Pour inviter des amis depuis vos contacts, nous avons besoin d'accéder à votre liste de contacts. Veuillez activer les permissions dans les paramètres de votre appareil.",
+    "open_settings": "Ouvrir les Paramètres"
   },
   "common": {
     "or": "Ou",

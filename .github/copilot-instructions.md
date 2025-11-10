@@ -16,6 +16,8 @@
 - Use `TranslatedText` for user-facing strings
 - Handle errors with `AppToast`
 - Format with Prettier before committing
+- Add static text to en.json, es.json, fr.json and use them via TranslatedText or useLocalization hook
+- Use Loader instead of ActivityIndicator
 
 **NEVER:**
 

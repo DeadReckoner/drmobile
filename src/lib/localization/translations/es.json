@@ -183,7 +183,30 @@
     "search_results": "Resultados de la búsqueda",
     "cancel_request": "Cancelar Solicitud",
     "friend_request_cancelled": "Solicitud de amistad cancelada",
-    "profile_request_pending_description": "Tu solicitud de amistad está pendiente. Una vez aceptada, podrás acceder a sus hojas de ruta."
+    "profile_request_pending_description": "Tu solicitud de amistad está pendiente. Una vez aceptada, podrás acceder a sus hojas de ruta.",
+    "invite_via_title": "Invitar a través de",
+    "invite_via_sms": "SMS",
+    "invite_via_whatsapp": "WhatsApp",
+    "invite_via_other": "Otro",
+    "invite_message": "Únete a mí en Dead Reckoner - la forma inteligente de rastrear tus objetivos y alcanzar tus sueños. Descarga ahora: {{appStoreUrl}}",
+    "sms_not_available": "SMS no está disponible en este dispositivo",
+    "whatsapp_not_available": "WhatsApp no está instalado en este dispositivo",
+    "share_not_available": "Compartir no está disponible en este dispositivo",
+    "invite_failed": "No se pudo enviar la invitación. Por favor, inténtalo de nuevo.",
+    "loading_contacts": "Cargando contactos...",
+    "contacts_permission_required": "Se requiere permiso de contactos",
+    "grant_permission_description": "Por favor, concede permiso para acceder a tus contactos",
+    "grant_permission": "Conceder Permiso",
+    "no_contacts_found": "No se encontraron contactos",
+    "no_contacts_available": "No hay contactos disponibles",
+    "unknown_contact": "Desconocido",
+    "failed_to_request_permission": "Error al solicitar permiso",
+    "failed_to_fetch_contacts": "Error al obtener contactos"
+  },
+  "permissions": {
+    "contacts_denied_title": "Permiso de Contactos Denegado",
+    "contacts_denied_description": "Para invitar amigos desde tus contactos, necesitamos acceso a tu lista de contactos. Por favor, habilita los permisos en la configuración de tu dispositivo.",
+    "open_settings": "Abrir Configuración"
   },
   "common": {
     "or": "O",
