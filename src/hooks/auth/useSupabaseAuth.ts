@@ -220,7 +220,11 @@ export const useSupabaseAuth = (): IAuthService => {
       data: {
         id: user.id,
         email: user.email || '',
-        name: user.user_metadata?.name,
+        name:
+          user.user_metadata?.name ||
+          `${user.user_metadata?.firstName || ''} ${
+            user.user_metadata?.lastName || ''
+          }`.trim(),
         avatar: user.user_metadata?.avatar_url,
         access_token: session.access_token,
       },
@@ -234,7 +238,11 @@ export const useSupabaseAuth = (): IAuthService => {
       data: {
         id: user.id,
         email: user.email || user.user_metadata?.email || '',
-        name: user.user_metadata?.name,
+        name:
+          user.user_metadata?.name ||
+          `${user.user_metadata?.firstName || ''} ${
+            user.user_metadata?.lastName || ''
+          }`.trim(),
         avatar: user.user_metadata?.avatar_url,
       },
     };
