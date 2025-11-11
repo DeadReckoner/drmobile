@@ -65,6 +65,15 @@ export const useSupabaseAutoRefresh = () => {
     [createUser, dispatch],
   );
 
+  const getUserName = (session: Session | null) => {
+    if (!session) return 'N/A';
+    const userMetadata = session.user.user_metadata;
+    return (
+      session.user.user_metadata?.full_name ||
+      `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
+    );
+  };
+
   const onAuthStateChange = useCallback(
     async (event: AuthChangeEvent, session: Session | null) => {
       if (AUTH_EVENTS.includes(event)) {
@@ -78,7 +87,7 @@ export const useSupabaseAutoRefresh = () => {
               access_token: session.access_token,
               email: session.user.email || '',
               id: session.user.id,
-              name: session.user.user_metadata?.full_name || '',
+              name: getUserName(session),
               avatar: session.user.user_metadata?.avatar_url || '',
             }),
           );

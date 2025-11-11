@@ -10,6 +10,7 @@ import {
   setAuthLoadingAction,
   setAuthResolvedAction,
 } from '@/store/slices/authSlice';
+import { saveAppleUserName } from '@/utils/storage.utils';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 export const useAppleAuthentication = () => {
@@ -28,6 +29,11 @@ export const useAppleAuthentication = () => {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
+
+      await saveAppleUserName(
+        credential.fullName?.givenName,
+        credential.fullName?.familyName,
+      );
       if (credential.identityToken) {
         const response = await linkAppleWithAuthProvider(
           credential.identityToken,
