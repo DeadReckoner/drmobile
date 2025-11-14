@@ -41,7 +41,7 @@ export const NotificationItem = ({
         </AppView>
 
         <AppView gap-10>
-          <AppText body2 textColor>
+          <AppText body2 textColor style={styles.textContainer}>
             {requesterName}{' '}
             <AppText body2 textColor light>
               {t('notifications.friend_request')}.
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flexWrap: 'wrap',
+    maxWidth: '90%',
   },
   acceptButton: {
     backgroundColor: '#4A90E2',

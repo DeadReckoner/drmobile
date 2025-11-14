@@ -86,26 +86,24 @@ export const friendsApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Friends'],
       async onQueryStarted(friendshipId, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          friendsApi.util.updateQueryData(
-            'getPendingFriendRequests',
-            undefined,
-            (draft) => {
-              if (draft) {
-                draft = draft.filter(
-                  (friendship) => friendship.id !== friendshipId,
-                );
-              }
-            },
-          ),
-        );
-
         try {
           await queryFulfilled;
+          dispatch(
+            friendsApi.util.updateQueryData(
+              'getPendingFriendRequests',
+              undefined,
+              (draft) => {
+                const index = draft.findIndex(
+                  (friendship) => friendship.id === friendshipId,
+                );
+                if (index !== -1) {
+                  draft.splice(index, 1);
+                }
+              },
+            ),
+          );
           dispatch(friendsApi.util.invalidateTags(['Friends']));
-        } catch {
-          patchResult.undo();
-        }
+        } catch {}
       },
     }),
 
@@ -116,25 +114,23 @@ export const friendsApi = api.injectEndpoints({
         body: { status: 'rejected' },
       }),
       async onQueryStarted(friendshipId, { dispatch, queryFulfilled }) {
-        const patchResult = dispatch(
-          friendsApi.util.updateQueryData(
-            'getPendingFriendRequests',
-            undefined,
-            (draft) => {
-              if (draft) {
-                draft = draft.filter(
-                  (friendship) => friendship.id !== friendshipId,
-                );
-              }
-            },
-          ),
-        );
-
         try {
           await queryFulfilled;
-        } catch {
-          patchResult.undo();
-        }
+          dispatch(
+            friendsApi.util.updateQueryData(
+              'getPendingFriendRequests',
+              undefined,
+              (draft) => {
+                const index = draft.findIndex(
+                  (friendship) => friendship.id === friendshipId,
+                );
+                if (index !== -1) {
+                  draft.splice(index, 1);
+                }
+              },
+            ),
+          );
+        } catch {}
       },
     }),
 
