@@ -69,6 +69,7 @@ export const useSupabaseAutoRefresh = () => {
     if (!session) return 'N/A';
     const userMetadata = session.user.user_metadata;
     return (
+      session.user.user_metadata?.name ||
       session.user.user_metadata?.full_name ||
       `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
     );

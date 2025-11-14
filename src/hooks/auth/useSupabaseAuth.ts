@@ -112,12 +112,20 @@ export const useSupabaseAuth = (): IAuthService => {
           token: idToken,
         });
 
-        if (error) {
-          return getSupabaseAuthError(error);
+        const updatedUser = await supabaseClient.auth.updateUser({
+          data: {
+            name: await getAppleUserName(),
+          },
+        });
+
+        if (error || !updatedUser.data.user) {
+          return getSupabaseAuthError(error || undefined);
         }
 
-        data.user.user_metadata.name = await getAppleUserName();
-        return getAppUserFromSupabase(data);
+        return getAppUserFromSupabase({
+          user: updatedUser.data.user,
+          session: data.session,
+        });
       } catch {
         return getSupabaseAuthError();
       }
