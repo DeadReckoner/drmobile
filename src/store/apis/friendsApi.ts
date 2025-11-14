@@ -19,7 +19,7 @@ export const friendsApi = api.injectEndpoints({
       providesTags: ['Friends'],
     }),
 
-    getPendingFriendRequests: builder.query<ApiResponse<Friendship[]>, void>({
+    getPendingFriendRequests: builder.query<Friendship[], void>({
       query: () => ({
         url: '/friends/requests',
         method: 'GET',
@@ -84,6 +84,29 @@ export const friendsApi = api.injectEndpoints({
         method: 'PATCH',
         body: { status: 'accepted' },
       }),
+      invalidatesTags: ['Friends'],
+      async onQueryStarted(friendshipId, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          friendsApi.util.updateQueryData(
+            'getPendingFriendRequests',
+            undefined,
+            (draft) => {
+              if (draft) {
+                draft = draft.filter(
+                  (friendship) => friendship.id !== friendshipId,
+                );
+              }
+            },
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+          dispatch(friendsApi.util.invalidateTags(['Friends']));
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
 
     rejectFriendRequest: builder.mutation<ApiResponse<Friendship>, string>({
@@ -92,6 +115,27 @@ export const friendsApi = api.injectEndpoints({
         method: 'PATCH',
         body: { status: 'rejected' },
       }),
+      async onQueryStarted(friendshipId, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          friendsApi.util.updateQueryData(
+            'getPendingFriendRequests',
+            undefined,
+            (draft) => {
+              if (draft) {
+                draft = draft.filter(
+                  (friendship) => friendship.id !== friendshipId,
+                );
+              }
+            },
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
 
     removeFriend: builder.mutation<MessageResponse, string>({

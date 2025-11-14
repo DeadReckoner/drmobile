@@ -203,6 +203,18 @@
     "failed_to_request_permission": "Failed to request permission",
     "failed_to_fetch_contacts": "Failed to fetch contacts"
   },
+  "notifications": {
+    "title": "Notifications",
+    "no_notifications": "No notifications",
+    "no_notifications_description": "You're all caught up! New notifications will appear here.",
+    "friend_request": "sent you a friend request",
+    "accept": "Accept",
+    "cancel": "Cancel",
+    "friend_request_accepted": "Friend request accepted",
+    "friend_request_rejected": "Friend request rejected",
+    "loading": "Loading notifications...",
+    "error_loading": "Failed to load notifications"
+  },
   "permissions": {
     "contacts_denied_title": "Contacts Permission Denied",
     "contacts_denied_description": "To invite friends from your contacts, we need access to your contacts list. Please enable permissions in your device settings.",

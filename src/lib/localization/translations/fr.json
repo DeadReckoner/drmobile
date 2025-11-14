@@ -203,6 +203,18 @@
     "failed_to_request_permission": "Échec de la demande d'autorisation",
     "failed_to_fetch_contacts": "Échec de la récupération des contacts"
   },
+  "notifications": {
+    "title": "Notifications",
+    "no_notifications": "Aucune notification",
+    "no_notifications_description": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici.",
+    "friend_request": "vous a envoyé une demande d'ami",
+    "accept": "Accepter",
+    "cancel": "Annuler",
+    "friend_request_accepted": "Demande d'ami acceptée",
+    "friend_request_rejected": "Demande d'ami rejetée",
+    "loading": "Chargement des notifications...",
+    "error_loading": "Échec du chargement des notifications"
+  },
   "permissions": {
     "contacts_denied_title": "Permission de Contacts Refusée",
     "contacts_denied_description": "Pour inviter des amis depuis vos contacts, nous avons besoin d'accéder à votre liste de contacts. Veuillez activer les permissions dans les paramètres de votre appareil.",

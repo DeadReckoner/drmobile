@@ -40,7 +40,7 @@ export const useAppleAuthentication = () => {
         );
         return response;
       } else {
-        throw new Error();
+        throw new Error(t('authentication.errors.default'));
       }
     } catch (error) {
       const authError = error as AuthErrorType;

@@ -21,6 +21,7 @@ interface UseContactsReturn {
   refreshContacts: () => Promise<void>;
   openSettings: () => Promise<void>;
   isPermissionDenied: boolean;
+  presentAccessPickerAsync: () => Promise<void>;
 }
 
 export const useContacts = (): UseContactsReturn => {
@@ -133,6 +134,12 @@ export const useContacts = (): UseContactsReturn => {
     } catch {}
   };
 
+  const presentAccessPickerAsync = async () => {
+    try {
+      await Contacts.presentAccessPickerAsync();
+    } catch {}
+  };
+
   return {
     contacts,
     isLoading,
@@ -141,6 +148,7 @@ export const useContacts = (): UseContactsReturn => {
     requestPermission,
     refreshContacts,
     openSettings,
+    presentAccessPickerAsync,
     isPermissionDenied: permissionStatus === 'denied',
   };
 };

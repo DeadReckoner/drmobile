@@ -156,7 +156,7 @@ const MyFriends = () => {
             {item.avatar ? (
               <AppImage source={{ uri: item.avatar }} style={styles.avatar} />
             ) : (
-              <AppView style={styles.avatarPlaceholder} center>
+              <AppView style={styles.avatarPlaceholder} center bg-primary>
                 <AppIcon name="user" size={16} color={Colors.secondary} />
               </AppView>
             )}
@@ -165,7 +165,7 @@ const MyFriends = () => {
                 {item.name}
               </AppText>
               {item.email && (
-                <AppText caption secondary>
+                <AppText xsm secondary>
                   {item.email}
                 </AppText>
               )}
@@ -428,6 +428,5 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.backgroundSecondary,
   },
 });

@@ -6,7 +6,6 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { JSX } from 'react';
-import { Colors } from 'react-native-ui-lib';
 
 interface EmptyListItemPlaceholderProps {
   onPress?: () => void;
@@ -21,7 +20,7 @@ export const EmptyListItemPlaceholder = ({
   subtitle,
   btnText,
   onPress,
-  btnIcon = <AppIcon name="plus" size={18} color={Colors.white} />,
+  btnIcon = <AppIcon name="plus" size={18} />,
 }: EmptyListItemPlaceholderProps) => {
   return (
     <AppCard paddingV-40>

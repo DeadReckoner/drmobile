@@ -31,30 +31,21 @@ export const PermissionDeniedModal = ({
   return (
     <AppDialog visible={visible} onDismiss={onDismiss}>
       <AppCard padding-24 bg-cardBG>
-        {/* Icon */}
         <AppView centerH marginB-16>
           <AppView
             bg-error
             center
             style={{ width: 64, height: 64, borderRadius: 32 }}>
-            <AppIcon
-              set="Feather"
-              name="alert-circle"
-              size={32}
-              color={Colors.white}
-            />
+            <AppIcon set="Feather" name="alert-circle" size={32} />
           </AppView>
         </AppView>
 
-        {/* Title */}
         <TranslatedText subtitle2 textColor center translationKey={title} />
         <Divider margin-8 />
 
-        {/* Description */}
         <TranslatedText xsm textColor center translationKey={description} />
         <Divider margin-4 />
 
-        {/* Instructions */}
         <AppView bg-lightCardBG padding-12 br10 marginV-12>
           <AppText xsm textColor>
             <AppText xsm textColor style={{ fontWeight: '600' }}>
@@ -68,7 +59,6 @@ export const PermissionDeniedModal = ({
 
         <Divider margin-12 />
 
-        {/* Action Buttons */}
         <AppView row centerV gap-8>
           <AppButton
             row

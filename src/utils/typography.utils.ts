@@ -67,6 +67,8 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
     fontSize: 14,
   },
 
+  light: { fontFamily: UNBOUNDED_LIGHT },
+
   sm: {
     fontFamily: UNBOUNDED_LIGHT,
     fontSize: 10,

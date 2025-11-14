@@ -40,6 +40,7 @@ const InviteFriends = () => {
     requestPermission,
     openSettings,
     isPermissionDenied,
+    presentAccessPickerAsync,
   } = useContacts();
 
   useEffect(() => {
@@ -77,6 +78,10 @@ const InviteFriends = () => {
     await openSettings();
   };
 
+  const handleContactSelection = async () => {
+    await presentAccessPickerAsync();
+  };
+
   const handleRetryPermission = async () => {
     setIsPermissionModalVisible(false);
     await requestPermission();
@@ -97,7 +102,7 @@ const InviteFriends = () => {
       </AppView>
 
       <AppView flex marginL-16>
-        <AppText white body2 style={styles.contactName}>
+        <AppText textColor body2 style={styles.contactName}>
           {item.name}
         </AppText>
       </AppView>
@@ -121,16 +126,22 @@ const InviteFriends = () => {
 
   return (
     <AppScreen safeArea>
-      <AppView row spread centerV marginB-16>
+      <AppView row spread centerV marginB-8>
         <AppView flex centerV>
           <HeaderWithBack headerKey="settings.invite_friends" />
         </AppView>
-        <AppButton onPress={handleOpenSettings} marginR-2>
+        <AppButton
+          onPress={handleContactSelection}
+          paddingL-24
+          paddingR-8
+          paddingT-16
+          paddingB-16
+          center>
           <AppIcon
             set="Feather"
             name="refresh-ccw"
-            size={18}
-            color={Colors.white}
+            size={20}
+            color={Colors.textColor}
           />
         </AppButton>
       </AppView>
@@ -141,7 +152,12 @@ const InviteFriends = () => {
         row
         centerV
         style={styles.searchContainer}>
-        <AppIcon set="Feather" name="search" size={20} color={Colors.white} />
+        <AppIcon
+          set="Feather"
+          name="search"
+          size={20}
+          color={Colors.textColor}
+        />
         <AppTextField
           placeholder={t('settings.search_contacts')}
           placeholderTextColor={Colors.secondary}

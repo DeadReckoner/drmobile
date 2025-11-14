@@ -130,23 +130,17 @@ export const InviteViaModal: React.FC<InviteViaModalProps> = ({
     {
       label: t('settings.invite_via_sms'),
       onPress: handleSMS,
-      icon: (
-        <AppIcon set="AntDesign" name="message1" size={20} color="#B2B8B6" />
-      ),
+      icon: <AppIcon set="AntDesign" name="message1" size={20} />,
     },
     {
       label: t('settings.invite_via_whatsapp'),
       onPress: handleWhatsApp,
-      icon: (
-        <AppIcon set="AntDesign" name="mobile1" size={20} color="#25D366" />
-      ),
+      icon: <AppIcon set="Ionicons" name="logo-whatsapp" size={20} />,
     },
     {
       label: t('settings.invite_via_other'),
       onPress: handleOther,
-      icon: (
-        <AppIcon set="AntDesign" name="sharealt" size={20} color="#B2B8B6" />
-      ),
+      icon: <AppIcon set="AntDesign" name="sharealt" size={20} />,
     },
   ];
 

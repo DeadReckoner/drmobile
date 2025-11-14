@@ -64,7 +64,10 @@ export const AppModal = ({
         enablePanDownToClose={enablePanDownToClose}
         backdropComponent={renderBackdrop}
         backgroundStyle={[{ backgroundColor: Colors.cardBG }, backgroundStyle]}
-        handleIndicatorStyle={styles.indicatorStyle}
+        handleIndicatorStyle={[
+          styles.indicatorStyle,
+          { backgroundColor: Colors.textColor },
+        ]}
         {...props}>
         <BottomSheetView
           style={[
@@ -92,7 +95,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   indicatorStyle: {
-    backgroundColor: 'white',
     width: 80,
   },
 });

@@ -150,9 +150,9 @@ const FriendDetails = () => {
 
   const renderEmptyRoadmaps = useCallback(() => {
     return (
-      <AppCard marginH-16 paddingV-48 center>
+      <AppCard paddingV-48 center>
         <AppView center gap-16>
-          <AppIcon set="Feather" name="map" size={48} color={Colors.white} />
+          <AppIcon set="Feather" name="map" size={48} />
           <TranslatedText
             body2
             textColor
@@ -173,26 +173,21 @@ const FriendDetails = () => {
               <AppIcon set="Feather" name="map" color={Colors.white} />
             </AppView>
             <AppView flex gap-8>
-              <AppText body1 textColor>
+              <AppText body2 textColor numberOfLines={2}>
                 {roadmap.goal}
               </AppText>
-              <AppText xsm textColor>
+              <AppText xsm textColor numberOfLines={2}>
                 {roadmap.description || ''}
               </AppText>
-              {roadmap.days && (
-                <AppText xsm secondary>
-                  {roadmap.days} {t('common.days')}
-                </AppText>
-              )}
             </AppView>
           </AppView>
         </AppCard>
       );
     },
-    [t],
+    [],
   );
   const renderHeader = () => (
-    <AppView marginH-16 marginT-36 row gap-8>
+    <AppView marginT-24 row gap-8>
       <TranslatedText
         subtitle2
         textColor
@@ -308,12 +303,7 @@ const FriendDetails = () => {
 
           <AppCard marginH-16 marginT-24 paddingH-24 paddingV-48 center>
             <AppView center marginB-24>
-              <AppIcon
-                set="Feather"
-                name="lock"
-                size={40}
-                color={Colors.white}
-              />
+              <AppIcon set="Feather" name="lock" size={40} />
             </AppView>
             <TranslatedText
               body1
@@ -445,13 +435,15 @@ const FriendDetails = () => {
           </AppView>
         </AppCard>
 
-        <FlatList
-          scrollEnabled={false}
-          data={roadmaps || []}
-          ListHeaderComponent={renderHeader}
-          ListEmptyComponent={renderEmptyRoadmaps}
-          renderItem={renderRoadmapItem}
-        />
+        <AppView paddingH-16>
+          <FlatList
+            scrollEnabled={false}
+            data={roadmaps || []}
+            ListHeaderComponent={renderHeader}
+            ListEmptyComponent={renderEmptyRoadmaps}
+            renderItem={renderRoadmapItem}
+          />
+        </AppView>
       </ScrollView>
     </AppScreen>
   );

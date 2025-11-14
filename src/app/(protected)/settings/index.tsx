@@ -80,16 +80,16 @@ const Settings = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.scrollContainer, { paddingTop: top }]}>
         <HeaderWithBack headerKey="settings.profile" paddingH-16 />
-        <AppView style={styles.content}>
+        <AppView style={styles.content} key={theme}>
           <AppView gap-16 center paddingH-16>
             {user.avatar ? (
               <AppImage source={{ uri: user.avatar }} style={styles.image} />
             ) : (
               <AppView bg-primary br100 padding-20 style={styles.image} center>
-                <AppIcon name="user" size={40} />
+                <AppIcon name="user" size={40} color={Colors.white} />
               </AppView>
             )}
-            <AppView gap-6 center key={theme}>
+            <AppView gap-6 center>
               <AppText body1 textColor>
                 {user.name}
               </AppText>
