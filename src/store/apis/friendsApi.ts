@@ -17,6 +17,7 @@ export const friendsApi = api.injectEndpoints({
         params: { email },
       }),
       providesTags: ['Friends'],
+      keepUnusedDataFor: 900,
     }),
 
     getPendingFriendRequests: builder.query<Friendship[], void>({
@@ -24,6 +25,7 @@ export const friendsApi = api.injectEndpoints({
         url: '/friends/requests',
         method: 'GET',
       }),
+      keepUnusedDataFor: 900,
     }),
 
     sendFriendRequest: builder.mutation<ApiResponse<Friendship>, string>({
@@ -191,7 +193,7 @@ export const friendsApi = api.injectEndpoints({
         url: `/friends/${friendId}/profile`,
         method: 'GET',
       }),
-      keepUnusedDataFor: 5,
+      keepUnusedDataFor: 86400,
       providesTags: (_result, _error, friendId) => [
         { type: 'Friends', id: friendId },
       ],

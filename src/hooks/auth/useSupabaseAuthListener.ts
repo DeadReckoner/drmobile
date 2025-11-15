@@ -111,6 +111,17 @@ export const useSupabaseAutoRefresh = () => {
       supabaseClient.auth.startAutoRefresh();
     }
 
+    const restoreSession = async () => {
+      try {
+        const { data } = await supabaseClient.auth.getSession();
+        if (data?.session) {
+          await onAuthStateChange('INITIAL_SESSION', data.session);
+        }
+      } catch {}
+    };
+
+    restoreSession();
+
     const authChangeSubscription =
       supabaseClient.auth.onAuthStateChange(onAuthStateChange);
 

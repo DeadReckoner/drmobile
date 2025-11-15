@@ -33,6 +33,21 @@ const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
         dispatch(addStepAction(data));
       }),
     );
+
+    dispatch(
+      taskApi.util.updateQueryData(
+        'getUserTasksByStartDate',
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+        (tasks) => {
+          const taskIdx = tasks.findIndex((t) => t.task_id === data.task_id);
+          if (taskIdx !== -1) {
+            const task = tasks[taskIdx];
+            task.steps.push(data);
+            task.completed = task.steps?.every((s) => s.completed) || false;
+          }
+        },
+      ),
+    );
   } catch {}
 };
 
@@ -40,9 +55,10 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
   StepType,
   StepType & { task_id: string },
   BaseQueryFunctionType
-> = async (_task, { dispatch, queryFulfilled }) => {
+> = async (_task, { dispatch, queryFulfilled, getState }) => {
   try {
     const { data } = await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
 
     dispatch(
       taskApi.util.updateQueryData(
@@ -55,11 +71,36 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
             const stepIdx = task.steps?.findIndex(
               (s) => s.step_id === data.step_id,
             );
-            task.steps[stepIdx] = data;
-            task.completed = task.steps?.every((s) => s.completed) || false;
+            if (stepIdx !== -1) {
+              task.steps[stepIdx] = data;
+              task.completed = task.steps?.every((s) => s.completed) || false;
+            }
           }
         },
       ),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
+        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
+        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
+        const taskIdx = state.roadmapDraft.selectedTaskIndex;
+
+        if (roadmapIdx !== -1 && milestoneIdx !== -1 && taskIdx !== -1) {
+          const steps =
+            roadmaps[roadmapIdx]?.milestones[milestoneIdx]?.tasks[taskIdx]
+              ?.steps;
+          if (steps) {
+            const stepIdx = steps.findIndex((s) => s.step_id === data.step_id);
+            if (stepIdx !== -1) {
+              steps[stepIdx] = data;
+              const task =
+                roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx];
+              task.completed = task.steps?.every((s) => s.completed) || false;
+            }
+          }
+        }
+      }),
     );
   } catch {}
 };
@@ -96,6 +137,25 @@ const onDeleteStepQueryStarted: TypedMutationOnQueryStarted<
           }),
         );
       }),
+    );
+    dispatch(
+      taskApi.util.updateQueryData(
+        'getUserTasksByStartDate',
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+        (tasks) => {
+          const taskIdx = tasks.findIndex((t) => t.task_id === step.task_id);
+          if (taskIdx !== -1) {
+            const task = tasks[taskIdx];
+            const stepIdx = task.steps?.findIndex(
+              (s) => s.step_id === step.step_id,
+            );
+            if (stepIdx !== -1) {
+              task.steps.splice(stepIdx, 1);
+              task.completed = task.steps?.every((s) => s.completed) || false;
+            }
+          }
+        },
+      ),
     );
   } catch {}
 };

@@ -15,6 +15,7 @@ import {
   updateTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
+import { DateUtils } from '@/utils/date.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateTaskQueryStarted: TypedMutationOnQueryStarted<
@@ -143,12 +144,26 @@ export const taskApi = api.injectEndpoints({
         url: `tasks/user?start_date=${startDate}`,
         method: 'GET',
       }),
+
+      keepUnusedDataFor: 84200,
+      serializeQueryArgs: ({ queryArgs }) => {
+        return queryArgs;
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        if (!currentArg) return false;
+        const today = DateUtils.formatDate(
+          DateUtils.createDate(),
+          'YYYY-MM-DD',
+        );
+        return currentArg !== previousArg || currentArg < today;
+      },
     }),
     getTasksById: builder.query<CreateTaskResponseType, string>({
       query: (taskId) => ({
         url: `/tasks/${taskId}`,
         method: 'GET',
       }),
+      keepUnusedDataFor: 86400,
     }),
   }),
   overrideExisting: true,
