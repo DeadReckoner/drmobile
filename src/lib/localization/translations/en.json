@@ -262,6 +262,7 @@
     "no_messages_in_thread": "Tap to send a message",
     "type_message_placeholder": "Type here...",
     "send_message": "Send",
+    "send_message_error": "Failed to send message. Please try again.",
     "conversation_with": "Conversation with"
   },
   "feedback": {

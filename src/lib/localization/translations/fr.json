@@ -262,6 +262,7 @@
     "no_messages_in_thread": "Appuyez pour envoyer un message",
     "type_message_placeholder": "Tapez ici...",
     "send_message": "Envoyer",
+    "send_message_error": "Échec de l'envoi du message. Veuillez réessayer.",
     "conversation_with": "Conversation avec"
   },
   "feedback": {

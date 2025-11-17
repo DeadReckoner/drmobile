@@ -26,38 +26,35 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
         styles.messageContainer,
         isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
       ]}
-      marginB-12>
+      marginB-12
+      marginH-16>
       <AppView
         style={[
           styles.messageBubble,
           isCurrentUser
-            ? { backgroundColor: Colors.primary }
-            : {
-                backgroundColor: Colors.cardBG,
-                borderColor: Colors.outline,
-                borderWidth: 1,
-              },
+            ? { backgroundColor: Colors.cardBG }
+            : { backgroundColor: Colors.lightCardBG },
         ]}
-        padding-16
-        paddingB-8>
+        padding-8
+        paddingH-16>
         <AppText
-          body2
-          style={[
-            styles.messageText,
+          xsm
+          style={
             isCurrentUser
               ? { color: Colors.textOnPrimary }
-              : { color: Colors.textColor },
-          ]}>
+              : { color: Colors.textColor }
+          }>
           {message.content}
         </AppText>
-        <AppView marginT-4>
+        <AppView marginT-4 style={{ alignSelf: 'flex-end' }}>
           <AppText
-            xsm
-            style={
+            sm
+            style={[
+              styles.timeText,
               isCurrentUser
                 ? { color: Colors.textOnPrimary, opacity: 0.7 }
-                : { color: Colors.secondary }
-            }>
+                : { color: Colors.secondary },
+            ]}>
             {formattedTime}
           </AppText>
         </AppView>
@@ -78,10 +75,9 @@ const styles = StyleSheet.create({
   },
   messageBubble: {
     maxWidth: '85%',
-    borderRadius: 12,
+    borderRadius: 8,
   },
-  messageText: {
-    fontWeight: '300',
-    lineHeight: 24,
+  timeText: {
+    fontSize: 8,
   },
 });

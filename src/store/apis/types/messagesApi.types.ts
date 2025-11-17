@@ -28,3 +28,15 @@ export type MessageType = {
 export type GetThreadsResponseType = ThreadType[];
 
 export type GetMessagesResponseType = MessageType[];
+
+export type SendMessageInputType = {
+  content: string;
+};
+
+export type WebSocketMessageType = {
+  message_id: string;
+  thread_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+};
