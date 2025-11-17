@@ -86,7 +86,7 @@ export const friendsApi = api.injectEndpoints({
         method: 'PATCH',
         body: { status: 'accepted' },
       }),
-      invalidatesTags: ['Friends'],
+      invalidatesTags: ['Friends', 'Threads'],
       async onQueryStarted(friendshipId, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
@@ -104,7 +104,6 @@ export const friendsApi = api.injectEndpoints({
               },
             ),
           );
-          dispatch(friendsApi.util.invalidateTags(['Friends']));
         } catch {}
       },
     }),

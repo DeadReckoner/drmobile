@@ -12,6 +12,7 @@ export const messagesApi = api.injectEndpoints({
         method: 'GET',
       }),
       keepUnusedDataFor: 300,
+      providesTags: ['Threads'],
     }),
     getThreadMessages: builder.query<GetMessagesResponseType, string>({
       query: (threadId) => ({

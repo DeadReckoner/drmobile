@@ -39,7 +39,9 @@ const FriendDetails = () => {
     data: friendProfileData,
     isLoading,
     error,
-  } = useGetFriendProfileQuery(friendId);
+  } = useGetFriendProfileQuery(friendId, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const friendNameParam =
     (params['friendName'] as string | undefined) ||
@@ -74,21 +76,20 @@ const FriendDetails = () => {
     if (is403Error) {
       return (params['friendshipStatus'] as string) || 'none';
     }
-    if (friendProfileData) {
+    if (friendProfileData && !error) {
       return 'accepted';
     }
     return 'none';
-  }, [localFriendshipStatus, is403Error, friendProfileData, params]);
+  }, [localFriendshipStatus, is403Error, friendProfileData, params, error]);
 
   useEffect(() => {
-    if (friendProfileData) {
+    if (friendProfileData && !is403Error) {
       setLocalFriendshipStatus('accepted');
     } else if (is403Error) {
-      if (localFriendshipStatus !== 'pending') {
-        setLocalFriendshipStatus(null);
-      }
+      setLocalFriendshipStatus((prev) =>
+        prev === 'pending' ? 'pending' : null,
+      );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [friendProfileData, is403Error]);
 
   const handleSendFriendRequest = useCallback(async () => {
@@ -151,12 +152,10 @@ const FriendDetails = () => {
   const renderEmptyRoadmaps = useCallback(() => {
     return (
       <AppCard paddingV-48 center>
-        <AppView center gap-16>
+        <AppView center gap-20>
           <AppIcon set="Feather" name="map" size={48} />
           <TranslatedText
-            body2
-            textColor
-            center
+            subtitle2
             translationKey="settings.no_roadmaps_shared"
           />
         </AppView>

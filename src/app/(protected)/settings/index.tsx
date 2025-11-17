@@ -47,7 +47,9 @@ const Settings = () => {
   const [isSocialMediaDialogVisible, setIsSocialMediaDialogVisible] =
     useState(false);
 
-  const { data: friendsData } = useGetFriendsQuery();
+  const { data: friendsData } = useGetFriendsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const onDarkModeToggle = () => {
     toggleTheme();

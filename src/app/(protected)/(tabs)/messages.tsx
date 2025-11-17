@@ -1,26 +1,41 @@
-import { AppButton } from '@/components/AppButton';
-import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
 import { ThreadsList } from '@/components/messages/ThreadsList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
 import { useGetThreadsQuery } from '@/store/apis/messagesApi';
 import { ThreadType } from '@/store/apis/types/messagesApi.types';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
+import { router } from 'expo-router';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Messages = () => {
   const { data, isLoading, refetch, isFetching } = useGetThreadsQuery();
+  const { email: currentUserEmail } = useAppSelector(selectUser);
+  const { t } = useLocalization();
 
-  const onNewMessageClick = () => {
-    // TODO: Implement new message creation
-  };
+  const onThreadClick = (thread: ThreadType) => {
+    const otherParticipant = thread.participants?.find(
+      (participant) => participant.email !== currentUserEmail,
+    );
 
-  const onThreadClick = (_thread: ThreadType) => {
-    // TODO: Navigate to thread details
+    const displayName = otherParticipant
+      ? `${otherParticipant.first_name} ${otherParticipant.last_name}`.trim() ||
+        t('settings.unknown_contact')
+      : thread.name || t('settings.unknown_contact');
+
+    router.push({
+      pathname: '/messages/[threadId]',
+      params: {
+        threadId: thread.thread_id,
+        threadName: displayName,
+      },
+    });
   };
 
   return (
@@ -37,16 +52,8 @@ const Messages = () => {
           />
         }>
         <Divider />
-        <AppView row centerV spread>
-          <TranslatedText h2 translationKey="tabs.messages" />
-          <AppView center row gap-18>
-            <AppButton onPress={onNewMessageClick}>
-              <AppIcon set="Feather" name="plus" size={26} />
-            </AppButton>
-          </AppView>
-        </AppView>
+        <TranslatedText h2 translationKey="tabs.messages" />
         <Divider />
-
         {isLoading ? (
           <AppView height={100}>
             <Loader transparent />

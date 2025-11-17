@@ -1,7 +1,7 @@
 import { useCreateUserMutation } from '@/hooks/user';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import { selectUser, setAuthUserAction } from '@/store/slices/authSlice';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setAuthUserAction } from '@/store/slices/authSlice';
 import { persistedStore } from '@/store/store';
 import { handleSignout } from '@/utils/apiErrors.utils';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
@@ -19,7 +19,6 @@ const AUTH_EVENTS: AuthChangeEvent[] = [
 export const useSupabaseAutoRefresh = () => {
   const dispatch = useAppDispatch();
   const [createUser] = useCreateUserMutation();
-  const user = useAppSelector(selectUser);
 
   const handleAppStateChange = (state: string) => {
     if (state === 'active') {
@@ -68,18 +67,15 @@ export const useSupabaseAutoRefresh = () => {
     [createUser, dispatch],
   );
 
-  const getUserName = useCallback(
-    (session: Session | null) => {
-      if (!session) return 'N/A';
-      const userMetadata = session.user.user_metadata;
-      return (
-        user.name ||
-        userMetadata?.full_name ||
-        `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
-      );
-    },
-    [user.name],
-  );
+  const getUserName = useCallback((session: Session | null) => {
+    if (!session) return 'N/A';
+    const userMetadata = session.user.user_metadata;
+    return (
+      userMetadata?.name ||
+      userMetadata?.full_name ||
+      `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
+    );
+  }, []);
 
   const onAuthStateChange = useCallback(
     async (event: AuthChangeEvent, session: Session | null) => {

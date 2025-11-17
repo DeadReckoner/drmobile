@@ -13,7 +13,12 @@ export const handleSignout = async (
   try {
     dispatch(clearAuthAction());
     await persistedStore.purge();
+
+    const appleUserName = await AsyncStorage.getItem('@apple_user_name');
     await AsyncStorage.clear();
+    if (appleUserName) {
+      await AsyncStorage.setItem('@apple_user_name', appleUserName);
+    }
   } catch {}
 };
 

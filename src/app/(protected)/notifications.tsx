@@ -14,6 +14,8 @@ import {
   useGetPendingFriendRequestsQuery,
   useRejectFriendRequestMutation,
 } from '@/store/apis/friendsApi';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -23,6 +25,7 @@ import { Colors } from 'react-native-ui-lib';
 const Notifications = () => {
   const { t } = useLocalization();
   const { showToast } = useToast();
+  const currentUser = useAppSelector(selectUser);
   const [processingIds, setProcessingIds] = useState<{
     [key: string]: 'accept' | 'cancel';
   }>({});
@@ -42,11 +45,13 @@ const Notifications = () => {
   const [rejectFriendRequest] = useRejectFriendRequestMutation();
 
   const notifications = useMemo<Friendship[]>(() => {
-    if (!pendingRequestsData) return [];
-    return pendingRequestsData?.filter(
-      (friendship) => friendship.status === 'pending',
+    if (!pendingRequestsData || !currentUser) return [];
+    return pendingRequestsData.filter(
+      (friendship) =>
+        friendship.status === 'pending' &&
+        friendship.requester_id !== currentUser.id,
     );
-  }, [pendingRequestsData]);
+  }, [pendingRequestsData, currentUser]);
 
   const handleAccept = useCallback(
     async (friendshipId: string) => {
@@ -189,7 +194,6 @@ const Notifications = () => {
           </AppView>
         )}
         contentInsetAdjustmentBehavior={'always'}
-        contentContainerStyle={styles.container}
         data={notifications}
         renderItem={renderNotificationItem}
         keyExtractor={keyExtractor}
@@ -208,9 +212,6 @@ const Notifications = () => {
 export default Notifications;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   emptyContainer: {
     alignItems: 'center',
     paddingVertical: 60,

@@ -2,6 +2,7 @@ import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
 import { ThreadType } from '@/store/apis/types/messagesApi.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
@@ -22,6 +23,7 @@ export const ThreadListItem = ({
   onThreadClick,
 }: ThreadListItemProps) => {
   const { email: currentUserEmail } = useAppSelector(selectUser);
+  const { t } = useLocalization();
 
   const getOtherParticipantName = () => {
     const otherParticipant = thread.participants?.find(
@@ -31,10 +33,10 @@ export const ThreadListItem = ({
     if (otherParticipant) {
       const fullName =
         `${otherParticipant.first_name} ${otherParticipant.last_name}`.trim();
-      return fullName || 'Unknown User';
+      return fullName || t('settings.unknown_contact');
     }
 
-    return thread.name || 'Unknown';
+    return thread.name || t('settings.unknown_contact');
   };
 
   const displayName = getOtherParticipantName();

@@ -14,6 +14,7 @@ import {
 export const ApiCacheTags = Object.freeze({
   Roadmaps: 'Roadmaps',
   Friends: 'Friends',
+  Threads: 'Threads',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({

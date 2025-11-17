@@ -19,9 +19,7 @@ export const saveAppleUserName = async (
         await AsyncStorage.setItem(STORAGE_KEYS.APPLE_USER_NAME, fullName);
       }
     }
-  } catch {
-    // Silently fail - storage errors shouldn't block authentication
-  }
+  } catch {}
 };
 
 /**
