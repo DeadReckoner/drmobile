@@ -1,7 +1,7 @@
 import { useCreateUserMutation } from '@/hooks/user';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setAuthUserAction } from '@/store/slices/authSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser, setAuthUserAction } from '@/store/slices/authSlice';
 import { persistedStore } from '@/store/store';
 import { handleSignout } from '@/utils/apiErrors.utils';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
@@ -19,6 +19,7 @@ const AUTH_EVENTS: AuthChangeEvent[] = [
 export const useSupabaseAutoRefresh = () => {
   const dispatch = useAppDispatch();
   const [createUser] = useCreateUserMutation();
+  const user = useAppSelector(selectUser);
 
   const handleAppStateChange = (state: string) => {
     if (state === 'active') {
@@ -56,7 +57,9 @@ export const useSupabaseAutoRefresh = () => {
             access_token: access_token,
             email: createdUser.email,
             id: createdUser.user_id,
-            name: `${createdUser.first_name} ${createdUser.last_name}`.trim(),
+            name:
+              `${createdUser.first_name || ''} ${createdUser.last_name || ''}`.trim() ||
+              `${first_name || ''} ${last_name || ''}`,
             avatar: '',
           }),
         );
@@ -65,15 +68,18 @@ export const useSupabaseAutoRefresh = () => {
     [createUser, dispatch],
   );
 
-  const getUserName = (session: Session | null) => {
-    if (!session) return 'N/A';
-    const userMetadata = session.user.user_metadata;
-    return (
-      session.user.user_metadata?.name ||
-      session.user.user_metadata?.full_name ||
-      `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
-    );
-  };
+  const getUserName = useCallback(
+    (session: Session | null) => {
+      if (!session) return 'N/A';
+      const userMetadata = session.user.user_metadata;
+      return (
+        user.name ||
+        userMetadata?.full_name ||
+        `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
+      );
+    },
+    [user.name],
+  );
 
   const onAuthStateChange = useCallback(
     async (event: AuthChangeEvent, session: Session | null) => {
@@ -98,7 +104,7 @@ export const useSupabaseAutoRefresh = () => {
         }
       }
     },
-    [dispatch, handleUserCreation],
+    [dispatch, getUserName, handleUserCreation],
   );
 
   useEffect(() => {

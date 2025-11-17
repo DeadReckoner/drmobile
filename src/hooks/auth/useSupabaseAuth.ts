@@ -114,7 +114,7 @@ export const useSupabaseAuth = (): IAuthService => {
 
         const updatedUser = await supabaseClient.auth.updateUser({
           data: {
-            name: await getAppleUserName(),
+            full_name: await getAppleUserName(),
           },
         });
 

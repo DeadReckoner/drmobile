@@ -256,6 +256,14 @@
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
     "error_occurred": "Ocurrió un error"
   },
+  "messages": {
+    "no_messages_yet": "¡Aún no hay mensajes!",
+    "no_messages_description": "Inicia una conversación para conectarte con tus amigos.",
+    "no_messages_in_thread": "Toca para enviar un mensaje",
+    "type_message_placeholder": "Escribe aquí...",
+    "send_message": "Enviar",
+    "conversation_with": "Conversación con"
+  },
   "feedback": {
     "title": "Retroalimentación",
     "subtitle": "¡Ayúdanos a ajustar tu próximo hito!",

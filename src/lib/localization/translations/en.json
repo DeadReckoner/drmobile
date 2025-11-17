@@ -256,6 +256,14 @@
     "scan_qr_code": "Scan this QR code to add me as your friend",
     "error_occurred": "An error occurred"
   },
+  "messages": {
+    "no_messages_yet": "No messages yet!",
+    "no_messages_description": "Start a conversation to connect with your friends.",
+    "no_messages_in_thread": "Tap to send a message",
+    "type_message_placeholder": "Type here...",
+    "send_message": "Send",
+    "conversation_with": "Conversation with"
+  },
   "feedback": {
     "title": "Feedback",
     "subtitle": "Help us tune your next Milestone!",

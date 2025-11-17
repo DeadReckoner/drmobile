@@ -256,6 +256,14 @@
     "scan_qr_code": "Scannez ce code QR pour m'ajouter comme ami",
     "error_occurred": "Une erreur s'est produite"
   },
+  "messages": {
+    "no_messages_yet": "Pas encore de messages !",
+    "no_messages_description": "Démarrez une conversation pour vous connecter avec vos amis.",
+    "no_messages_in_thread": "Appuyez pour envoyer un message",
+    "type_message_placeholder": "Tapez ici...",
+    "send_message": "Envoyer",
+    "conversation_with": "Conversation avec"
+  },
   "feedback": {
     "title": "Retour d'expérience",
     "subtitle": "Aidez-nous à ajuster votre prochain jalon !",
