@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.deadreckoner.deadreckoner",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSContactsUsageDescription": "Dead Reckoner needs access to your contacts to help you invite friends to use the app."
       },
       "usesAppleSignIn": true
     },
@@ -22,7 +23,12 @@
         "backgroundColor": "#5F6D76"
       },
       "package": "com.mcboll.deadreckoner",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "READ_CONTACTS",
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +37,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow Dead Reckoner to access your contacts to invite friends."
+        }
+      ],
       [
         "expo-splash-screen",
         {

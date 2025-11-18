@@ -56,7 +56,9 @@ export const useSupabaseAutoRefresh = () => {
             access_token: access_token,
             email: createdUser.email,
             id: createdUser.user_id,
-            name: `${createdUser.first_name} ${createdUser.last_name}`.trim(),
+            name:
+              `${createdUser.first_name || ''} ${createdUser.last_name || ''}`.trim() ||
+              `${first_name || ''} ${last_name || ''}`,
             avatar: '',
           }),
         );
@@ -64,6 +66,16 @@ export const useSupabaseAutoRefresh = () => {
     },
     [createUser, dispatch],
   );
+
+  const getUserName = useCallback((session: Session | null) => {
+    if (!session) return 'N/A';
+    const userMetadata = session.user.user_metadata;
+    return (
+      userMetadata?.name ||
+      userMetadata?.full_name ||
+      `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
+    );
+  }, []);
 
   const onAuthStateChange = useCallback(
     async (event: AuthChangeEvent, session: Session | null) => {
@@ -78,7 +90,7 @@ export const useSupabaseAutoRefresh = () => {
               access_token: session.access_token,
               email: session.user.email || '',
               id: session.user.id,
-              name: session.user.user_metadata?.full_name || '',
+              name: getUserName(session),
               avatar: session.user.user_metadata?.avatar_url || '',
             }),
           );
@@ -88,7 +100,7 @@ export const useSupabaseAutoRefresh = () => {
         }
       }
     },
-    [dispatch, handleUserCreation],
+    [dispatch, getUserName, handleUserCreation],
   );
 
   useEffect(() => {
@@ -100,6 +112,17 @@ export const useSupabaseAutoRefresh = () => {
     if (AppState.currentState === 'active') {
       supabaseClient.auth.startAutoRefresh();
     }
+
+    const restoreSession = async () => {
+      try {
+        const { data } = await supabaseClient.auth.getSession();
+        if (data?.session) {
+          await onAuthStateChange('INITIAL_SESSION', data.session);
+        }
+      } catch {}
+    };
+
+    restoreSession();
 
     const authChangeSubscription =
       supabaseClient.auth.onAuthStateChange(onAuthStateChange);

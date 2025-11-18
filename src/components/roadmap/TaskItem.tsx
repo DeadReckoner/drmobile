@@ -1,4 +1,5 @@
 import { AppCard } from '@/components/AppCard';
+import { Divider } from '@/components/Divider';
 import { AppCheckbox, AppText, AppView } from '@/components/ui';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 
@@ -11,7 +12,8 @@ export const TaskItem = ({ task, onTaskClick }: TaskItemProps) => {
   return (
     <AppCard row centerV onPress={() => onTaskClick?.(task)}>
       <AppCheckbox value={task.steps.every((s) => s.completed)} />
-      <AppView marginL-16>
+      <Divider />
+      <AppView flex-1>
         <AppText body2 textColor>
           {task.title}
         </AppText>

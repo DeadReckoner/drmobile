@@ -24,7 +24,7 @@ export const Loader = ({
         !transparent && { backgroundColor: Colors.dialogOverlay },
         containerStyle,
       ]}>
-      <ActivityIndicator color={Colors.inverse} {...props} />
+      <ActivityIndicator color={Colors.textColor} {...props} />
     </AppView>
   );
 };

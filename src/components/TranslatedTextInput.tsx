@@ -29,6 +29,8 @@ export const TranslatedTextInput = ({
   editable = true,
   reduceOpacityWhenDisabled = true,
   secureTextEntry,
+  labelProps,
+  fieldStyle,
   ...restProps
 }: TranslatedTextProps) => {
   const { t } = useLocalization();
@@ -63,8 +65,9 @@ export const TranslatedTextInput = ({
             borderColor: Colors.secondary,
             opacity: !reduceOpacityWhenDisabled || editable ? 1 : 0.3,
           },
+          fieldStyle,
         ]}
-        labelProps={{ 'marginB-8': true }}
+        labelProps={{ 'marginB-8': true, ...labelProps }}
         label={t(labelKey)}
         editable={editable}
         placeholder={placeholderKey && t(placeholderKey)}

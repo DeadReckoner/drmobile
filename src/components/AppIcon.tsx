@@ -1,10 +1,11 @@
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { AntDesign, Feather } from '@expo/vector-icons';
+import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
 import { StyleProp, TextStyle } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 type AntDesignGlyphsType = keyof typeof AntDesign.glyphMap;
 type FeatherGlyphsType = keyof typeof Feather.glyphMap;
+type IoniconsGlyphsType = keyof typeof Ionicons.glyphMap;
 
 type UnifiedIconProps =
   | {
@@ -17,6 +18,13 @@ type UnifiedIconProps =
   | {
       set: 'Feather';
       name: FeatherGlyphsType;
+      size?: number;
+      color?: string;
+      style?: StyleProp<TextStyle>;
+    }
+  | {
+      set: 'Ionicons';
+      name: IoniconsGlyphsType;
       size?: number;
       color?: string;
       style?: StyleProp<TextStyle>;
@@ -35,6 +43,16 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
     return (
       <Feather
         name={name as FeatherGlyphsType}
+        size={size}
+        color={color || (theme === 'dark' ? Colors.white : Colors.primary)}
+        style={style}
+      />
+    );
+  }
+  if (set === 'Ionicons') {
+    return (
+      <Ionicons
+        name={name as IoniconsGlyphsType}
         size={size}
         color={color || (theme === 'dark' ? Colors.white : Colors.primary)}
         style={style}

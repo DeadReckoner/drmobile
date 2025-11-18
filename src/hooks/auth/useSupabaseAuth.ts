@@ -10,6 +10,7 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { getAppRedirectUriScheme } from '@/utils/navigation.utils';
+import { getAppleUserName } from '@/utils/storage.utils';
 import { AuthError } from '@supabase/supabase-js';
 
 const SUPABASE_AUTH_ERRORS = [
@@ -111,11 +112,24 @@ export const useSupabaseAuth = (): IAuthService => {
           token: idToken,
         });
 
-        if (error) {
-          return getSupabaseAuthError(error);
+        const appleFullName = await getAppleUserName();
+        let updatedUser;
+        if (appleFullName) {
+          updatedUser = await supabaseClient.auth.updateUser({
+            data: {
+              full_name: await getAppleUserName(),
+            },
+          });
         }
 
-        return getAppUserFromSupabase(data);
+        if (error || !updatedUser?.data?.user) {
+          return getSupabaseAuthError(error || undefined);
+        }
+
+        return getAppUserFromSupabase({
+          user: updatedUser.data.user || data.user,
+          session: data.session,
+        });
       } catch {
         return getSupabaseAuthError();
       }
@@ -218,7 +232,11 @@ export const useSupabaseAuth = (): IAuthService => {
       data: {
         id: user.id,
         email: user.email || '',
-        name: user.user_metadata?.name,
+        name:
+          user.user_metadata?.full_name ||
+          `${user.user_metadata?.firstName || ''} ${
+            user.user_metadata?.lastName || ''
+          }`.trim(),
         avatar: user.user_metadata?.avatar_url,
         access_token: session.access_token,
       },
@@ -232,7 +250,11 @@ export const useSupabaseAuth = (): IAuthService => {
       data: {
         id: user.id,
         email: user.email || user.user_metadata?.email || '',
-        name: user.user_metadata?.name,
+        name:
+          user.user_metadata?.name ||
+          `${user.user_metadata?.firstName || ''} ${
+            user.user_metadata?.lastName || ''
+          }`.trim(),
         avatar: user.user_metadata?.avatar_url,
       },
     };

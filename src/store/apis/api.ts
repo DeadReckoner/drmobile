@@ -13,6 +13,8 @@ import {
 
 export const ApiCacheTags = Object.freeze({
   Roadmaps: 'Roadmaps',
+  Friends: 'Friends',
+  Threads: 'Threads',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
@@ -75,4 +77,5 @@ export const api = createApi({
   baseQuery: createBaseQueryWithReauth(),
   tagTypes: [...Object.values(ApiCacheTags)],
   endpoints: () => ({}),
+  keepUnusedDataFor: 86400,
 });

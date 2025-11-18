@@ -54,4 +54,51 @@ export interface RoadmapType {
   // frontend calculated properties
   progress?: number;
   daysRemainingTillNextMilestone?: number;
+
+  type?: 'custom_made' | 'ai_generated';
+  macro_map?: MacroMap;
+}
+
+export interface MacroMap {
+  macro_map_id: string;
+  roadmap_id: string;
+  phases: Phase[];
+}
+
+export interface Phase {
+  phase_id: string;
+  macro_map_id: string;
+  name: string;
+  description: string;
+  order_index: number;
+  duration_weeks: string;
+  macro_milestones: MacroMilestone[];
+}
+
+export interface MacroMilestone {
+  macro_milestone_id: string;
+  phase_id: string;
+  name: string;
+  acceptance_test: string;
+  duration_days_min: number;
+  duration_days_max: number;
+  order_index: number;
+  resources_forecast: string; // JSON stringified object
+  // resources_forecast: ResourcesForecast | string;
+  spikes: Spike[];
+  risks: Risk[];
+}
+
+export interface Spike {
+  spike_id: string;
+  macro_milestone_id: string;
+  description: string;
+  timebox_days: number;
+}
+
+export interface Risk {
+  risk_id: string;
+  macro_milestone_id: string;
+  description: string;
+  severity: 'low' | 'medium' | 'high';
 }

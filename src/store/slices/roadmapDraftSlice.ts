@@ -140,7 +140,7 @@ const roadmapDraftSlice = createSlice({
     ) => {
       const milestone = findSelectedMilestone(state);
       if (!milestone) return;
-      milestone.tasks.push({
+      milestone.tasks?.push({
         ...action.payload,
         task_id: action.payload.task_id ?? getId('task'),
         milestone_id: milestone.milestone_id,
@@ -164,9 +164,10 @@ const roadmapDraftSlice = createSlice({
     removeTaskAction: (state) => {
       const milestone = findSelectedMilestone(state);
       if (!milestone) return;
-      milestone.tasks = milestone.tasks.filter(
-        (t) => t.task_id !== state.selectedTask?.task_id,
-      );
+      milestone.tasks =
+        milestone.tasks?.filter(
+          (t) => t.task_id !== state.selectedTask?.task_id,
+        ) || [];
       state.selectedTaskIndex = -1;
       state.selectedStepIndex = -1;
       state.selectedTask = null;
@@ -297,20 +298,21 @@ const roadmapDraftSlice = createSlice({
           return {
             ...milestone,
             milestone_id: milestone.milestone_id || milestoneId,
-            tasks: milestone.tasks.map((task) => {
-              const taskId = nanoid();
-              return {
-                ...task,
-                task_id: task.task_id || taskId,
-                steps: task.steps.map((step) => {
-                  const stepId = nanoid();
-                  return {
-                    ...step,
-                    step_id: step.step_id || stepId,
-                  };
-                }),
-              };
-            }),
+            tasks:
+              milestone.tasks?.map((task) => {
+                const taskId = nanoid();
+                return {
+                  ...task,
+                  task_id: task.task_id || taskId,
+                  steps: task.steps.map((step) => {
+                    const stepId = nanoid();
+                    return {
+                      ...step,
+                      step_id: step.step_id || stepId,
+                    };
+                  }),
+                };
+              }) || [],
           };
         }),
       };

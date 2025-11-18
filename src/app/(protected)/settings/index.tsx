@@ -1,5 +1,6 @@
 import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppButton } from '@/components/AppButton';
+import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { AppSwitch } from '@/components/AppSwitch';
@@ -11,6 +12,8 @@ import { SettingsItem } from '@/components/SettingsItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import { AppURLs } from '@/constants/AppURLs.constants';
+import { useGetFriendsQuery } from '@/hooks/friends';
+import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
@@ -37,11 +40,16 @@ const Settings = () => {
   const { t, setLanguage } = useLocalization();
   const { toggleTheme, theme } = useAppTheme();
   const { top } = useSafeAreaInsets();
+  const { data = [] } = useGetRoadmapsQuery();
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const [isLanguageDialogVisible, setIsLanguageDialogVisible] = useState(false);
   const [isSocialMediaDialogVisible, setIsSocialMediaDialogVisible] =
     useState(false);
+
+  const { data: friendsData } = useGetFriendsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const onDarkModeToggle = () => {
     toggleTheme();
@@ -74,17 +82,42 @@ const Settings = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.scrollContainer, { paddingTop: top }]}>
         <HeaderWithBack headerKey="settings.profile" paddingH-16 />
-        <AppView style={styles.content}>
-          <AppView gap-16 center paddingH-16 marginV-16>
-            <AppImage source={{ uri: user.avatar }} style={styles.image} />
-            <AppView gap-6 center key={theme}>
+        <AppView style={styles.content} key={theme}>
+          <AppView gap-16 center paddingH-16>
+            {user.avatar ? (
+              <AppImage source={{ uri: user.avatar }} style={styles.image} />
+            ) : (
+              <AppView bg-primary br100 padding-20 style={styles.image} center>
+                <AppIcon name="user" size={40} color={Colors.white} />
+              </AppView>
+            )}
+            <AppView gap-6 center>
               <AppText body1 textColor>
                 {user.name}
               </AppText>
-              <AppText xsm textColor>
+              <AppText captionLight textColor>
                 {user.email}
               </AppText>
             </AppView>
+          </AppView>
+          <AppView center>
+            <AppCard row center style={{ maxWidth: '80%' }}>
+              <AppView center paddingH-16 gap-8>
+                <TranslatedText xsm translationKey="settings.roadmaps" />
+                <AppText textColor body1>
+                  {data?.length}
+                </AppText>
+              </AppView>
+              <AppButton
+                onPress={() => router.navigate('/settings/my-friends')}>
+                <AppView center paddingH-16 gap-8>
+                  <TranslatedText xsm translationKey="settings.my_friends" />
+                  <AppText textColor body1>
+                    {friendsData?.length || 0}
+                  </AppText>
+                </AppView>
+              </AppButton>
+            </AppCard>
           </AppView>
 
           <AppView>
@@ -211,8 +244,8 @@ export default Settings;
 
 const styles = StyleSheet.create({
   image: {
-    width: 150,
-    height: 150,
+    width: 96,
+    height: 96,
     borderRadius: 100,
     alignSelf: 'center',
   },

@@ -39,8 +39,7 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
   return {
     ...roadmap,
     progress: Math.floor((completedTasks.length / allTasks.length) * 100),
-    daysRemainingTillNextMilestone: activeMilestone.tasks.filter(
-      (t) => !t.completed,
-    ).length,
+    daysRemainingTillNextMilestone:
+      activeMilestone?.tasks.filter((t) => !t.completed).length || 0,
   };
 };

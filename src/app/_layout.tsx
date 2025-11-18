@@ -17,7 +17,7 @@ SplashScreen.setOptions({
 });
 
 GoogleSignin.configure({
-  webClientId: Env.EXPO_PUBLIC_GOOGLE_AUTH_WEB_CIENT_ID,
+  webClientId: Env.EXPO_PUBLIC_GOOGLE_AUTH_WEB_CLIENT_ID,
   iosClientId: Env.EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID,
 });
 

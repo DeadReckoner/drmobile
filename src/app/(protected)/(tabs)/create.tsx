@@ -14,7 +14,7 @@ const Create = () => {
   const dispatch = useAppDispatch();
 
   const onAIRoadmapPress = () => {
-    router.navigate('/roadmap/ai-roadmap');
+    router.navigate('/roadmap/create-ai-roadmap');
   };
   const onCustomRoadmapPress = () => {
     dispatch(resetDraftAction());

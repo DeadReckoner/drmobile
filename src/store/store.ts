@@ -2,6 +2,7 @@ import { api } from '@/store/apis/api';
 import { roadmapDraftSlicePath } from '@/store/slices/roadmapDraftSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
 import reduxDevToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 import {
   FLUSH,
@@ -20,7 +21,7 @@ const persistedReducer = persistReducer(
     key: 'root',
     version: 1,
     storage: AsyncStorage,
-    blacklist: [roadmapDraftSlicePath, api.reducerPath],
+    blacklist: [roadmapDraftSlicePath],
   },
   rootReducer,
 );
@@ -39,5 +40,7 @@ const store = configureStore({
 });
 
 const persistedStore = persistStore(store);
+
+setupListeners(store.dispatch);
 
 export { persistedStore, store };

@@ -8,7 +8,9 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
 import { AddEditMilestoneForm } from '@/components/roadmap/AddEditMilestoneForm';
+import { TasksList } from '@/components/roadmap/TasksList';
 import { ScreenHeader } from '@/components/ScreenHeader';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useDeleteMilestoneMutation } from '@/hooks/milestone';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
@@ -28,7 +30,10 @@ import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const AddMilestone = () => {
-  const { mode } = useLocalSearchParams<{ mode: FormEditModeType }>();
+  const { mode, showTasksList } = useLocalSearchParams<{
+    mode: FormEditModeType;
+    showTasksList: string;
+  }>();
   const [isEditing, setIsEditing] = useState(false);
   const canEdit = mode === 'edit';
   const dispatch = useAppDispatch();
@@ -138,6 +143,22 @@ const AddMilestone = () => {
                   {selectedMilestone?.description}
                 </AppText>
               </AppCard>
+              {!!showTasksList && (
+                <>
+                  <Divider margin-16 />
+                  <TranslatedText body1 translationKey="common.tasks" />
+                  <Divider />
+                  <TasksList
+                    tasks={selectedMilestone.tasks}
+                    onTaskClick={() => {
+                      router.navigate({
+                        pathname: '/task/add-edit-task',
+                        params: { mode: 'edit' },
+                      });
+                    }}
+                  />
+                </>
+              )}
             </AppView>
           )}
 

@@ -1,4 +1,5 @@
 import i18nConfig from '@/lib/localization/i18nConfig';
+import { api } from '@/store/apis/api';
 import { ApiError } from '@/store/apis/types/api.types';
 import { clearAuthAction } from '@/store/slices/authSlice';
 import { AppDispatchType, RootStateType } from '@/store/types/store.types';
@@ -13,7 +14,13 @@ export const handleSignout = async (
   try {
     dispatch(clearAuthAction());
     await persistedStore.purge();
+
+    const appleUserName = await AsyncStorage.getItem('@apple_user_name');
     await AsyncStorage.clear();
+    if (appleUserName) {
+      await AsyncStorage.setItem('@apple_user_name', appleUserName);
+    }
+    api.util.resetApiState();
   } catch {}
 };
 

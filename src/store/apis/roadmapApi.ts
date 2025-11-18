@@ -132,6 +132,7 @@ export const roadmapApi = api.injectEndpoints({
           method: 'PUT',
         };
       },
+      invalidatesTags: ['Roadmaps'],
     }),
 
     getRoadmapById: builder.query<RoadmapType, string>({

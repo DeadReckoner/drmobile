@@ -1,6 +1,7 @@
 import {
   FadeIn,
   FadeInDown,
+  FadeOut,
   FadeOutDown,
   LinearTransition,
 } from 'react-native-reanimated';
@@ -24,5 +25,6 @@ export const Animations = {
   },
   Exit: {
     FadeOutDown: () => FadeOutDown.duration(DURATION),
+    FadeOut: () => FadeOut.duration(DURATION),
   },
 };
