@@ -7,5 +7,4 @@ export const Env = {
     process.env.EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID,
   EXPO_OS: process.env.EXPO_OS,
   EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
-  EXPO_PUBLIC_WS_URL: process.env.EXPO_PUBLIC_WS_URL,
 };
