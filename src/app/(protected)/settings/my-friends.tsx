@@ -22,7 +22,12 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
@@ -260,6 +265,7 @@ const MyFriends = () => {
             renderItem={renderFriendItem}
             keyExtractor={keyExtractor}
             showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
           />
         );
 
@@ -279,6 +285,7 @@ const MyFriends = () => {
                   renderItem={renderFriendItem}
                   keyExtractor={keyExtractor}
                   showsVerticalScrollIndicator={false}
+                  scrollEnabled={false}
                 />
               </>
             )}
@@ -297,6 +304,7 @@ const MyFriends = () => {
                   t('settings.search_results'),
                 )}
                 showsVerticalScrollIndicator={false}
+                scrollEnabled={false}
               />
             )}
           </>
@@ -377,13 +385,14 @@ const MyFriends = () => {
             </AppCard>
           </AppView>
         </AppView>
-        <AppView
-          flex
-          paddingH-16
-          reanimated
-          layout={Animations.Layout.Springify()}>
-          {renderContent()}
-        </AppView>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <AppView
+            paddingH-16
+            reanimated
+            layout={Animations.Layout.Springify()}>
+            {renderContent()}
+          </AppView>
+        </ScrollView>
       </AppView>
       <AppModal
         visible={isQRCodeModalVisible}

@@ -43,7 +43,7 @@ export const ThreadListItem = ({
 
   return (
     <AppCard paddingV-16 paddingH-16 onPress={() => onThreadClick?.(thread)}>
-      <AppView row centerV spread>
+      <AppView centerV row spread>
         <AppView row centerV gap-12 flex-1>
           <AppView bg-primary center style={styles.avatar}>
             <AppIcon

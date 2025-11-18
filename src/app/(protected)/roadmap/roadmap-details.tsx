@@ -140,7 +140,6 @@ const RoadmapDetailsPage = () => {
         type: 'success',
         message: t('common.started_successfully'),
       });
-      // await refetch();
     } catch (error) {
       showToast({
         type: 'failure',
