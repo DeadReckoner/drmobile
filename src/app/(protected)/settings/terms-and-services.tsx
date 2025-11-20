@@ -3,8 +3,11 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useState } from 'react';
-import { Linking, StyleSheet } from 'react-native';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
+import { useCallback, useEffect, useState } from 'react';
+import { Linking } from 'react-native';
+import { Colors } from 'react-native-ui-lib';
 import { WebView } from 'react-native-webview';
 import {
   OnShouldStartLoadWithRequest,
@@ -14,6 +17,42 @@ import {
 const TermsAndServices = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { selectedLanguage } = useLocalization();
+  const [htmlContent, setHtmlContent] = useState<string | null>(null);
+
+  const loadHtml = useCallback(async () => {
+    const assetMap = {
+      en: require('@/../assets/html/terms-and-services-en.html'),
+      es: require('@/../assets/html/terms-and-services-es.html'),
+      fr: require('@/../assets/html/terms-and-services-fr.html'),
+    };
+
+    const asset = Asset.fromModule(
+      assetMap[selectedLanguage.languageCode] || assetMap.en,
+    );
+    await asset.downloadAsync();
+    const rawHtml = await FileSystem.readAsStringAsync(asset.localUri!);
+    const themedHtml = `
+      <style>
+        body {
+          background-color: ${Colors.screenBG} !important;
+          color: ${Colors.textColor} !important;
+        }
+        h1, h2, h3, p, ul, li, .meta, .muted {
+          color: ${Colors.textColor} !important;
+        }
+        .meta {
+          border-bottom: 1px solid ${Colors.textColor} !important;
+        }
+      </style>
+      ${rawHtml}
+    `;
+
+    setHtmlContent(themedHtml);
+  }, [selectedLanguage]);
+
+  useEffect(() => {
+    loadHtml();
+  }, [selectedLanguage, loadHtml]);
 
   const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = (
     request,
@@ -40,35 +79,22 @@ const TermsAndServices = () => {
     setIsLoading(false);
   };
 
-  const getTermsAndServicesURL = () => {
-    switch (selectedLanguage.languageCode) {
-      case 'en':
-        return require('@/../assets/html/terms-and-services-en.html');
-      case 'es':
-        return require('@/../assets/html/terms-and-services-es.html');
-      case 'fr':
-        return require('@/../assets/html/terms-and-services-fr.html');
-      default:
-        return require('@/../assets/html/terms-and-services-en.html');
-    }
-  };
-
   return (
     <>
       {isLoading && <Loader transparent />}
-      <AppScreen safeArea style={styles.container}>
+      <AppScreen safeArea>
         <AppView paddingB-16>
           <HeaderWithBack headerKey="settings.terms_of_service" />
         </AppView>
         <WebView
-          source={getTermsAndServicesURL()}
-          style={styles.container}
+          source={htmlContent ? { html: htmlContent } : undefined}
           showsVerticalScrollIndicator={false}
           originWhitelist={['*']}
           onLoadEnd={onLoadEnd}
           onError={onLoadEnd}
           onLoadProgress={onLoadProgress}
           onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+          style={{ backgroundColor: Colors.screenBG }}
         />
       </AppScreen>
     </>
@@ -76,9 +102,3 @@ const TermsAndServices = () => {
 };
 
 export default TermsAndServices;
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#333f48',
-  },
-});

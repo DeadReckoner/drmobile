@@ -25,6 +25,7 @@ import React, {
 import {
   ActivityIndicator,
   Dimensions,
+  RefreshControl,
   ScrollView,
   StyleSheet,
 } from 'react-native';
@@ -58,6 +59,8 @@ const MyFriends = () => {
 
   const [searchUsers, { data: searchData, isFetching: isSearching }] =
     useLazySearchUsersQuery();
+
+  const { refetch, isFetching } = useGetFriendsQuery();
 
   const friends = useMemo<Friend[]>(() => {
     if (!friendsData) return [];
@@ -334,7 +337,7 @@ const MyFriends = () => {
   };
 
   return (
-    <AppScreen paddingH-0>
+    <AppScreen paddingH-0 safeArea>
       <AppView style={styles.container}>
         <AppView paddingH-16>
           <AppView spread row>
@@ -385,7 +388,12 @@ const MyFriends = () => {
             </AppCard>
           </AppView>
         </AppView>
-        <ScrollView showsVerticalScrollIndicator={false}>
+
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+          }
+          showsVerticalScrollIndicator={false}>
           <AppView
             paddingH-16
             reanimated
@@ -420,7 +428,6 @@ export default MyFriends;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 64,
   },
   searchCard: {
     borderRadius: 10,
