@@ -3,13 +3,14 @@ import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { InviteViaModal } from '@/components/InviteViaModal';
+import { Loader } from '@/components/Loader';
 import { PermissionDeniedModal } from '@/components/PermissionDeniedModal';
 import { AppText, AppTextField, AppView } from '@/components/ui';
 import { useContacts } from '@/hooks/useContacts';
 import { useLocalization } from '@/hooks/useLocalization';
 import { Animations } from '@/utils/animation.utils';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
@@ -126,7 +127,7 @@ const InviteFriends = () => {
 
   return (
     <AppScreen safeArea>
-      <AppView row spread centerV marginB-8>
+      <AppView row spread centerV marginB-16>
         <AppView flex centerV>
           <HeaderWithBack headerKey="settings.invite_friends" />
         </AppView>
@@ -134,8 +135,6 @@ const InviteFriends = () => {
           onPress={handleContactSelection}
           paddingL-24
           paddingR-8
-          paddingT-16
-          paddingB-16
           center>
           <AppIcon
             set="Feather"
@@ -170,15 +169,11 @@ const InviteFriends = () => {
       <AppView flex marginT-16 layout={Animations.Layout.Springify()}>
         {isLoading ? (
           <AppView
-            flex
             center
-            paddingT-40
+            paddingT-64
             entering={Animations.Entry.FadeInDownWithSpring()}
             exiting={Animations.Exit.FadeOutDown()}>
-            <ActivityIndicator size="large" color={Colors.primary} />
-            <AppText textColor marginT-16 caption>
-              {t('settings.loading_contacts')}
-            </AppText>
+            <Loader transparent />
           </AppView>
         ) : permissionStatus === 'denied' ? (
           <AppView

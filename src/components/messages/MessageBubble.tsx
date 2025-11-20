@@ -36,7 +36,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
             : { backgroundColor: Colors.lightCardBG },
         ]}
         padding-8
-        paddingH-16>
+        paddingH-12>
         <AppText
           xsm
           style={
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   },
   messageBubble: {
     maxWidth: '85%',
+    minWidth: 60,
     borderRadius: 8,
   },
   timeText: {
