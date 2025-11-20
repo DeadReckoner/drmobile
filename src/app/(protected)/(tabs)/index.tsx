@@ -6,6 +6,7 @@ import { Loader } from '@/components/Loader';
 import { TasksList } from '@/components/roadmap/TasksList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
@@ -19,6 +20,8 @@ const Today = () => {
     useGetUserTasksByStartDateQuery(
       DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
     );
+
+  useGetFriendsQuery();
 
   const onCalendarClick = () => {
     // router.navigate('/calendar');

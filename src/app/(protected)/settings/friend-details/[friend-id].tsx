@@ -39,16 +39,14 @@ const FriendDetails = () => {
     data: friendProfileData,
     isLoading,
     error,
-  } = useGetFriendProfileQuery(friendId, {
-    refetchOnMountOrArgChange: true,
-  });
+  } = useGetFriendProfileQuery(friendId);
 
   const friendNameParam =
-    (params['friendName'] as string | undefined) ||
-    `${friendProfileData?.user.first_name || ''} ${friendProfileData?.user.last_name || ''}`;
+    `${friendProfileData?.user.first_name || ''} ${friendProfileData?.user.last_name || ''}`?.trim() ||
+    (params['friendName'] as string | undefined);
   const friendEmailParam =
-    (params['friendEmail'] as string | undefined) ||
-    friendProfileData?.user.email;
+    friendProfileData?.user.email?.trim() ||
+    (params['friendEmail'] as string | undefined);
 
   const [localFriendshipStatus, setLocalFriendshipStatus] = useState<
     'none' | 'pending' | 'accepted' | null
@@ -154,10 +152,7 @@ const FriendDetails = () => {
       <AppCard paddingV-48 center>
         <AppView center gap-20>
           <AppIcon set="Feather" name="map" size={48} />
-          <TranslatedText
-            subtitle2
-            translationKey="settings.no_roadmaps_shared"
-          />
+          <TranslatedText body2 translationKey="settings.no_roadmaps_shared" />
         </AppView>
       </AppCard>
     );
@@ -188,7 +183,7 @@ const FriendDetails = () => {
   const renderHeader = () => (
     <AppView marginT-24 row gap-8>
       <TranslatedText
-        subtitle2
+        body1
         textColor
         translationKey="settings.roadmaps"
         marginB-16
