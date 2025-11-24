@@ -69,6 +69,15 @@
       "thank_you": "Merci ! Je crée maintenant ton plan personnalisé.",
       "composer_placeholder": "Entre ta réponse"
     },
+    "in_progress_banner": {
+      "title": "Création de ta feuille de route",
+      "description": "Votre feuille de route personnalisée est en cours de création. Appuyez pour voir la progression."
+    },
+    "resuming_creation": "Reprise de la création de ta feuille de route...",
+    "creation_in_progress": "Ta feuille de route est en cours de création. Cela peut prendre quelques minutes.",
+    "creation_failed": "Échec de la création de la feuille de route. Veuillez réessayer.",
+    "retry_creation": "Réessayer",
+    "start_new": "Commencer Nouveau",
     "acceptance_test": "Test d'acceptation",
     "duration": "Durée",
     "resources": "Ressources",

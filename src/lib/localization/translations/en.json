@@ -120,17 +120,26 @@
   },
   "ai_roadmap": {
     "prompts": {
-      "goal_name": "What’s the main goal you’d like to work on?",
+      "goal_name": "What's the main goal you'd like to work on?",
       "goal_description": "In a few sentences, tell me a little more about this goal. What would success look like to you?",
       "goal_importance": "Why is this goal important to you right now, and how will achieving it change your life?",
       "target_date": "When would you like to reach this goal by?",
       "weekly_commitment": "On average, how much time can you put toward this each week?",
       "frequency": "How often would you like to work on this? (daily, a few times a week, weekends, etc.)",
       "constraints": "What challenges or obstacles might get in your way?",
-      "skill_level": "What have you already done toward this goal, and where do you feel you’re starting from now? (e.g., skills, experience, or progress)",
+      "skill_level": "What have you already done toward this goal, and where do you feel you're starting from now? (e.g., skills, experience, or progress)",
       "thank_you": "Thanks! I'm building your personalized roadmap now.",
       "composer_placeholder": "Enter your answer"
     },
+    "in_progress_banner": {
+      "title": "Creating your roadmap",
+      "description": "Your personalized roadmap is being created. Tap to view progress."
+    },
+    "resuming_creation": "Resuming your roadmap creation...",
+    "creation_in_progress": "Your roadmap is being created. This may take a few minutes.",
+    "creation_failed": "Failed to create roadmap. Please try again.",
+    "retry_creation": "Retry",
+    "start_new": "Start New",
     "acceptance_test": "Acceptance test",
     "duration": "Duration",
     "resources": "Resources",

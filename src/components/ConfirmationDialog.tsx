@@ -40,17 +40,18 @@ export const ConfirmationDialog = ({
 }: ConfirmationDialogProps) => {
   return (
     <AppDialog visible={isDialogOpen} onDismiss={onDismiss}>
-      <AppCard padding-24 bg-cardBG>
+      <AppCard padding-20 bg-cardBG>
         <TranslatedText subtitle2 textColor translationKey={title} />
         <Divider margin-4 />
         <TranslatedText xsm textColor translationKey={subtitle} />
         <Divider margin-12 />
-        <AppView row centerV gap-8>
+        <AppView row centerV gap-8 spread>
           <AppButton
             row
             bg-primary
             br20
             padding-12
+            paddingH-10
             flex
             center
             style={styles?.negative}
@@ -68,6 +69,7 @@ export const ConfirmationDialog = ({
             bg-error
             br20
             padding-12
+            paddingH-10
             flex
             center
             style={styles?.positive}

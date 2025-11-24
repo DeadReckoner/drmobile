@@ -69,6 +69,15 @@
       "thank_you": "¡Gracias! Estoy creando tu plan de acción personalizado ahora.",
       "composer_placeholder": "Escribe tu respuesta"
     },
+    "in_progress_banner": {
+      "title": "Creando tu hoja de ruta",
+      "description": "Tu hoja de ruta personalizada se está creando. Toca para ver el progreso."
+    },
+    "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
+    "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
+    "creation_failed": "Error al crear la hoja de ruta. Por favor, inténtalo de nuevo.",
+    "retry_creation": "Reintentar",
+    "start_new": "Comenzar Nueva",
     "acceptance_test": "Prueba de aceptación",
     "duration": "Duración",
     "resources": "Recursos",

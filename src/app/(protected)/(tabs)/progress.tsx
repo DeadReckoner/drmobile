@@ -1,12 +1,14 @@
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
+import { InProgressAIRoadmapBanner } from '@/components/roadmap/ai-roamap/InProgressAIRoadmapBanner';
 import { RoadmapList } from '@/components/roadmap/RoadmapList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { selectIsAIRoadmapInProgress } from '@/store/slices/aiRoadmapCreationSlice';
 import {
   setDraftRoadmapAction,
   setSelectedRoadmapIndex,
@@ -22,6 +24,7 @@ const Progress = () => {
   const dispatch = useAppDispatch();
   const { data = [], isLoading, refetch, isFetching } = useGetRoadmapsQuery();
   const [manualRefreshing, setManualRefreshing] = useState(false);
+  const isAIRoadmapInProgress = useAppSelector(selectIsAIRoadmapInProgress);
 
   const onItemPress = (roadmap: RoadmapType, index: number) => {
     dispatch(setDraftRoadmapAction(roadmap));
@@ -61,6 +64,12 @@ const Progress = () => {
           )}
         </AppView>
         <Divider />
+        {isAIRoadmapInProgress && (
+          <>
+            <InProgressAIRoadmapBanner />
+            <Divider />
+          </>
+        )}
         <AppView flex-1>
           {isLoading && (
             <AppView height={100}>
