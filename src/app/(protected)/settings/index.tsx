@@ -76,6 +76,8 @@ const Settings = () => {
     }
   };
 
+  const SettingsItemDivider = () => <LineDivider marginV-0 />;
+
   return (
     <AppScreen paddingH-0>
       <ScrollView
@@ -123,10 +125,11 @@ const Settings = () => {
           <AppView>
             <TranslatedText
               marginH-16
+              marginB-16
               subtitle1
               translationKey="settings.settings"
             />
-            <LineDivider />
+            <LineDivider marginT-0 marginV-0 />
             <SettingsItem
               translationKey="settings.dark_mode"
               rightElement={
@@ -136,10 +139,8 @@ const Settings = () => {
                 />
               }
             />
-            <LineDivider />
-            <AppButton
-              paddingV-4
-              onPress={() => setIsLanguageDialogVisible(true)}>
+            <SettingsItemDivider />
+            <AppButton onPress={() => setIsLanguageDialogVisible(true)}>
               <SettingsItem
                 translationKey="settings.language"
                 rightElement={
@@ -149,7 +150,7 @@ const Settings = () => {
                 }
               />
             </AppButton>
-            <LineDivider />
+            <SettingsItemDivider />
 
             <AppButton
               gap-8
@@ -164,7 +165,7 @@ const Settings = () => {
                 }
               />
             </AppButton>
-            <LineDivider />
+            <SettingsItemDivider />
 
             <AppButton
               onPress={() => router.navigate('/settings/terms-and-services')}>
@@ -173,7 +174,7 @@ const Settings = () => {
                 rightElement={<AppIcon set="Feather" name="file-text" />}
               />
             </AppButton>
-            <LineDivider />
+            <SettingsItemDivider />
 
             <AppButton
               onPress={() => router.navigate('/settings/privacy-policy')}>
@@ -182,7 +183,7 @@ const Settings = () => {
                 rightElement={<AppIcon set="Feather" name="help-circle" />}
               />
             </AppButton>
-            <LineDivider />
+            <SettingsItemDivider />
 
             <AppButton onPress={() => openURL(AppURLs.HELP_SUPPORT)}>
               <SettingsItem
@@ -190,7 +191,7 @@ const Settings = () => {
                 rightElement={<AppIcon name="customerservice" />}
               />
             </AppButton>
-            <LineDivider />
+            <SettingsItemDivider />
 
             <AppButton onPress={showLogoutDialog}>
               <SettingsItem

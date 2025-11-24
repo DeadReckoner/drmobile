@@ -2,6 +2,7 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import React from 'react';
+import { StyleSheet } from 'react-native';
 
 interface SettingsItemProps {
   translationKey: TranslationKeysType;
@@ -13,9 +14,21 @@ export const SettingsItem = ({
   rightElement,
 }: SettingsItemProps) => {
   return (
-    <AppView row centerV spread paddingH-16>
+    <AppView
+      row
+      centerV
+      spread
+      paddingH-16
+      paddingV-16
+      style={styles.container}>
       <TranslatedText body2 translationKey={translationKey} />
       <AppView right>{rightElement}</AppView>
     </AppView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    minHeight: 56,
+  },
+});

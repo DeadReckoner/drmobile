@@ -4,7 +4,6 @@ import { Composer } from '@/components/roadmap/ai-roamap/Composer';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { AppView } from '@/components/ui';
 import { useCreateAIRoadmapMutation } from '@/hooks/roadmap';
-import { useAppKeyboardAnimation } from '@/hooks/useAppKeyboardAnimation';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -15,8 +14,10 @@ import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, Keyboard, StyleSheet } from 'react-native';
-import { KeyboardGestureArea } from 'react-native-keyboard-controller';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import {
+  KeyboardAvoidingView,
+  KeyboardGestureArea,
+} from 'react-native-keyboard-controller';
 
 interface MessageItem {
   id: string;
@@ -88,13 +89,6 @@ export const AiRoadmapCreationList = () => {
   const flatListRef = useRef<FlatList>(null);
   const thankYouTimeout = useRef<NodeJS.Timeout | null>(null);
   const createAIRoadmapApiTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  const { height } = useAppKeyboardAnimation();
-  const fakeView = useAnimatedStyle(() => {
-    return {
-      height: Math.abs(height.value),
-    };
-  }, []);
 
   useEffect(() => {
     if (currentPromptIndex < SYSTEM_PROMPTS.length) {
@@ -246,14 +240,14 @@ export const AiRoadmapCreationList = () => {
             }}
             ListFooterComponent={() => <AppView height={32} />}
           />
-
-          <Composer
-            disabled={!isConversationRunning || isTyping}
-            onSend={(message) => handleUserSubmit(message)}
-          />
-          <Animated.View style={fakeView} />
         </AppView>
       </KeyboardGestureArea>
+      <KeyboardAvoidingView behavior="padding">
+        <Composer
+          disabled={!isConversationRunning || isTyping}
+          onSend={(message) => handleUserSubmit(message)}
+        />
+      </KeyboardAvoidingView>
     </>
   );
 };

@@ -53,6 +53,16 @@ const ThreadDetailsScreen = () => {
     // TODO: Implement menu functionality
   };
 
+  const renderEmptyComponent = () => (
+    <AppView flex-1 center paddingT-40>
+      <TranslatedText
+        body2
+        secondary
+        translationKey="messages.no_messages_yet"
+      />
+    </AppView>
+  );
+
   return (
     <KeyboardGestureArea style={styles.container} interpolator="ios">
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -74,7 +84,7 @@ const ThreadDetailsScreen = () => {
               </AppButton>
             </AppView>
           </AppView>
-          {isLoading ? (
+          {isLoading && messages?.length === 0 ? (
             <AppView flex-1 center>
               <Loader transparent />
             </AppView>
@@ -93,15 +103,7 @@ const ThreadDetailsScreen = () => {
               }
               maintainScrollAtEnd
               maintainScrollAtEndThreshold={0.1}
-              ListEmptyComponent={() => (
-                <AppView flex-1 center paddingT-40>
-                  <TranslatedText
-                    body2
-                    secondary
-                    translationKey="messages.no_messages_yet"
-                  />
-                </AppView>
-              )}
+              ListEmptyComponent={renderEmptyComponent}
             />
           )}
           <MessageComposer onSend={handleSendMessage} disabled={!isConnected} />

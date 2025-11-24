@@ -80,6 +80,24 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+const onStartRoadmapQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  string,
+  BaseQueryFunctionType
+> = async (roadmap_id, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = data;
+        }
+      }),
+    );
+  } catch {}
+};
+
 export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<RoadmapType[], void>({
@@ -132,7 +150,7 @@ export const roadmapApi = api.injectEndpoints({
           method: 'PUT',
         };
       },
-      invalidatesTags: ['Roadmaps'],
+      onQueryStarted: onStartRoadmapQueryStarted,
     }),
 
     getRoadmapById: builder.query<RoadmapType, string>({
