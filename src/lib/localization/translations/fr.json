@@ -73,11 +73,29 @@
       "title": "Création de ta feuille de route",
       "description": "Votre feuille de route personnalisée est en cours de création. Appuyez pour voir la progression."
     },
+    "draft_banner": {
+      "title": "Brouillon de feuille de route",
+      "description": "Vous avez une feuille de route dans votre brouillon. Complétez-la pour générer votre feuille de route avec l'IA."
+    },
+    "success_banner": {
+      "title": "Feuille de route créée avec succès!",
+      "description": "Votre feuille de route personnalisée est prête. Appuyez pour la voir."
+    },
+    "draft_dialog": {
+      "in_progress_title": "Feuille de Route IA en Cours",
+      "in_progress_subtitle": "Vous avez une feuille de route IA en cours de création. Voulez-vous continuer ou recommencer?",
+      "completed_title": "Feuille de Route IA Prête",
+      "completed_subtitle": "Vous avez une feuille de route IA complétée. Voulez-vous la voir ou en créer une nouvelle?",
+      "reset_button": "Réinitialiser",
+      "continue_button": "Continuer",
+      "view_button": "Voir la Feuille de Route"
+    },
     "resuming_creation": "Reprise de la création de ta feuille de route...",
     "creation_in_progress": "Ta feuille de route est en cours de création. Cela peut prendre quelques minutes.",
     "creation_failed": "Échec de la création de la feuille de route. Veuillez réessayer.",
     "retry_creation": "Réessayer",
     "start_new": "Commencer Nouveau",
+    "view_roadmap": "Voir Votre Feuille de Route",
     "acceptance_test": "Test d'acceptation",
     "duration": "Durée",
     "resources": "Ressources",

@@ -73,11 +73,29 @@
       "title": "Creando tu hoja de ruta",
       "description": "Tu hoja de ruta personalizada se está creando. Toca para ver el progreso."
     },
+    "draft_banner": {
+      "title": "Borrador de hoja de ruta",
+      "description": "Tienes una hoja de ruta en tu borrador. Complétala para generar tu hoja de ruta con IA."
+    },
+    "success_banner": {
+      "title": "¡Hoja de ruta creada con éxito!",
+      "description": "Tu hoja de ruta personalizada está lista. Toca para verla."
+    },
+    "draft_dialog": {
+      "in_progress_title": "Hoja de Ruta IA en Progreso",
+      "in_progress_subtitle": "Tienes una hoja de ruta IA siendo creada. ¿Quieres continuar o empezar de nuevo?",
+      "completed_title": "Hoja de Ruta IA Lista",
+      "completed_subtitle": "Tienes una hoja de ruta IA completada. ¿Quieres verla o crear una nueva?",
+      "reset_button": "Reiniciar",
+      "continue_button": "Continuar",
+      "view_button": "Ver Hoja de Ruta"
+    },
     "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
     "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
     "creation_failed": "Error al crear la hoja de ruta. Por favor, inténtalo de nuevo.",
     "retry_creation": "Reintentar",
     "start_new": "Comenzar Nueva",
+    "view_roadmap": "Ver Tu Hoja de Ruta",
     "acceptance_test": "Prueba de aceptación",
     "duration": "Duración",
     "resources": "Recursos",

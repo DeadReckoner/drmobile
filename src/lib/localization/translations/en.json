@@ -135,11 +135,29 @@
       "title": "Creating your roadmap",
       "description": "Your personalized roadmap is being created. Tap to view progress."
     },
+    "draft_banner": {
+      "title": "Draft roadmap",
+      "description": "You have a roadmap in your draft. Complete it to generate your roadmap with AI."
+    },
+    "success_banner": {
+      "title": "Roadmap created successfully!",
+      "description": "Your personalized roadmap is ready. Tap to view it."
+    },
+    "draft_dialog": {
+      "in_progress_title": "AI Roadmap in Progress",
+      "in_progress_subtitle": "You have an AI roadmap being created. Do you want to continue or start fresh?",
+      "completed_title": "AI Roadmap Ready",
+      "completed_subtitle": "You have a completed AI roadmap. Do you want to view it or create a new one?",
+      "reset_button": "Reset",
+      "continue_button": "Continue",
+      "view_button": "View Roadmap"
+    },
     "resuming_creation": "Resuming your roadmap creation...",
     "creation_in_progress": "Your roadmap is being created. This may take a few minutes.",
     "creation_failed": "Failed to create roadmap. Please try again.",
     "retry_creation": "Retry",
     "start_new": "Start New",
+    "view_roadmap": "View Your Roadmap",
     "acceptance_test": "Acceptance test",
     "duration": "Duration",
     "resources": "Resources",

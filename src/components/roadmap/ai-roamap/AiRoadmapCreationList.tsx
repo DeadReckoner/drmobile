@@ -4,14 +4,15 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { AiRoadmapCreationLoader } from '@/components/roadmap/ai-roamap/AiRoadmapCreationLoader';
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useCreateAIRoadmapMutation } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useToast } from '@/hooks/useToast';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addMessageAction,
+  completeRoadmapCreationAction,
   incrementPromptIndexAction,
   MessageItem,
   resetCreationStateAction,
@@ -38,6 +39,7 @@ import {
   KeyboardAvoidingView,
   KeyboardGestureArea,
 } from 'react-native-keyboard-controller';
+import { Colors } from 'react-native-ui-lib';
 
 const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
   return [
@@ -78,11 +80,9 @@ const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
 
 export const AiRoadmapCreationList = () => {
   const { t } = useLocalization();
-  const { showToast } = useToast();
   const SYSTEM_PROMPTS = getSystemPrompts(t);
   const dispatch = useAppDispatch();
 
-  // Get state from Redux
   const status = useAppSelector(selectAIRoadmapCreationStatus);
   const messages = useAppSelector((state) => state.aiRoadmapCreation.messages);
   const currentPromptIndex = useAppSelector(selectCurrentPromptIndex);
@@ -90,22 +90,18 @@ export const AiRoadmapCreationList = () => {
   const isTyping = useAppSelector(selectIsTyping);
   const formData = useAppSelector(selectAIRoadmapFormData);
 
-  const [createAIRoadmap, { isLoading: isAiRoadmapCreating }] =
-    useCreateAIRoadmapMutation();
+  const [createAIRoadmap] = useCreateAIRoadmapMutation();
 
   const flatListRef = useRef<FlatList>(null);
   const thankYouTimeout = useRef<NodeJS.Timeout | null>(null);
   const createAIRoadmapApiTimeout = useRef<NodeJS.Timeout | null>(null);
   const hasStartedPrompt = useRef<Set<number>>(new Set());
 
-  // Initialize or resume session
   useEffect(() => {
     if (status === 'idle') {
-      // Start new session - clear everything
       hasStartedPrompt.current.clear();
       dispatch(startCreationSessionAction());
     } else if (status === 'collecting') {
-      // If we're already collecting and have messages, mark those prompts as started
       messages.forEach((msg) => {
         if (msg.id.startsWith('system-')) {
           const index = parseInt(msg.id.split('-')[1], 10);
@@ -119,7 +115,6 @@ export const AiRoadmapCreationList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
-  // Handle prompt progression
   useEffect(() => {
     if (
       status === 'collecting' &&
@@ -137,14 +132,12 @@ export const AiRoadmapCreationList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPromptIndex, status, isTyping]);
 
-  // Auto-scroll on new messages
   useEffect(() => {
     if (messages.length > 0) {
       flatListRef.current?.scrollToEnd({ animated: true });
     }
   }, [messages.length]);
 
-  // Cleanup timeouts
   useEffect(() => {
     return () => {
       if (thankYouTimeout.current) {
@@ -178,22 +171,24 @@ export const AiRoadmapCreationList = () => {
         dispatch(startRoadmapCreationAction());
         const roadmap = await createAIRoadmap(formData).unwrap();
         dispatch(setDraftRoadmapAction(roadmap));
-        dispatch(resetCreationStateAction());
-        router.dismissAll();
-        router.push('/roadmap/roadmap-details');
+        dispatch(completeRoadmapCreationAction(roadmap));
       } catch (error) {
         const errorMessage = getApiErrorMessage(error) || 'Unknown error';
         dispatch(setCreationErrorAction(errorMessage));
-        showToast({
-          type: 'failure',
-          message: errorMessage,
-        });
       } finally {
         if (createAIRoadmapApiTimeout.current) {
           clearTimeout(createAIRoadmapApiTimeout.current);
         }
       }
     }, 1200);
+  };
+
+  const handleNavigateToRoadmap = () => {
+    router.push('/roadmap/roadmap-details');
+  };
+
+  const handleRetry = () => {
+    handleAiRoadmapCreation(formData);
   };
 
   const handleUserSubmit = (message: string) => {
@@ -223,7 +218,6 @@ export const AiRoadmapCreationList = () => {
         dispatch(addMessageAction(thankYouMessage));
         Keyboard.dismiss();
 
-        // Get all form data including the last response
         const allFormData = {
           ...formData,
           [prompt.id]: message.trim(),
@@ -266,11 +260,43 @@ export const AiRoadmapCreationList = () => {
     );
   };
 
+  const renderFooter = () => (
+    <>
+      {status === 'error' && (
+        <AppView
+          marginT-16
+          reanimated
+          entering={Animations.Entry.FadeInDownWithSpring()}
+          exiting={Animations.Exit.FadeOutDown()}>
+          <AppButton
+            onPress={handleRetry}
+            backgroundColor={Colors.error}
+            paddingH-20
+            paddingV-12
+            br40
+            row
+            centerV
+            gap-8>
+            <AppIcon
+              set="Feather"
+              name="refresh-cw"
+              size={16}
+              color={Colors.white}
+            />
+            <TranslatedText
+              translationKey="ai_roadmap.retry_creation"
+              color={Colors.white}
+            />
+          </AppButton>
+        </AppView>
+      )}
+      <AppView height={32} />
+    </>
+  );
+
   return (
     <>
-      {(isAiRoadmapCreating || status === 'creating') && (
-        <AiRoadmapCreationLoader />
-      )}
+      {status === 'creating' && <AiRoadmapCreationLoader />}
       <KeyboardGestureArea style={styles.container} interpolator="ios">
         <AppView style={styles.container}>
           <AppView paddingH-16 paddingB-16>
@@ -313,16 +339,47 @@ export const AiRoadmapCreationList = () => {
                 flatListRef.current?.scrollToEnd({ animated: false });
               }
             }}
-            ListFooterComponent={() => <AppView height={32} />}
+            ListFooterComponent={renderFooter}
           />
         </AppView>
       </KeyboardGestureArea>
-      <KeyboardAvoidingView behavior="padding">
-        <Composer
-          disabled={!isConversationRunning || isTyping}
-          onSend={(message) => handleUserSubmit(message)}
-        />
-      </KeyboardAvoidingView>
+
+      {status === 'completed' ? (
+        <AppButton
+          style={{ position: 'absolute', bottom: 40, left: 0, right: 0 }}
+          center
+          onPress={handleNavigateToRoadmap}>
+          <AppView
+            row
+            gap-8
+            center
+            bg-success
+            br100
+            padding-10
+            paddingH-16
+            style={{
+              borderColor: Colors.success,
+            }}>
+            <TranslatedText
+              caption
+              translationKey="ai_roadmap.draft_dialog.view_button"
+            />
+            <AppIcon
+              set="Ionicons"
+              name="arrow-forward-circle-outline"
+              size={20}
+              color={Colors.white}
+            />
+          </AppView>
+        </AppButton>
+      ) : (
+        <KeyboardAvoidingView behavior="padding">
+          <Composer
+            disabled={!isConversationRunning || isTyping}
+            onSend={(message) => handleUserSubmit(message)}
+          />
+        </KeyboardAvoidingView>
+      )}
     </>
   );
 };

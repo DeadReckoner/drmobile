@@ -1,3 +1,4 @@
+import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -24,6 +25,7 @@ interface AIRoadmapCreationState {
   error: string | null;
   formData: Record<string, string>;
   createdAt: number | null;
+  createdRoadmap: RoadmapType | null;
 }
 
 const initialState: AIRoadmapCreationState = {
@@ -35,6 +37,7 @@ const initialState: AIRoadmapCreationState = {
   error: null,
   formData: {},
   createdAt: null,
+  createdRoadmap: null,
 };
 
 const aiRoadmapCreationSlice = createSlice({
@@ -103,8 +106,12 @@ const aiRoadmapCreationSlice = createSlice({
     },
 
     // Set status to completed when API call succeeds
-    completeRoadmapCreationAction: (state) => {
+    completeRoadmapCreationAction: (
+      state,
+      action: PayloadAction<RoadmapType>,
+    ) => {
       state.status = 'completed';
+      state.createdRoadmap = action.payload;
     },
 
     // Set error when API call fails
@@ -168,6 +175,37 @@ export const selectIsConversationRunning = createAppSelector(
 export const selectIsAIRoadmapInProgress = createAppSelector(
   (state) => state.aiRoadmapCreation.status === 'creating',
 );
+
+export const selectCreatedRoadmapId = createAppSelector(
+  (state) => state.aiRoadmapCreation.createdRoadmap?.roadmap_id || null,
+);
+
+export const selectCreatedRoadmap = createAppSelector(
+  (state) => state.aiRoadmapCreation.createdRoadmap,
+);
+
+export const selectShouldShowAIRoadmapBanner = createAppSelector((state) => {
+  const { status, messages, createdRoadmap } = state.aiRoadmapCreation;
+  const hasUserMessage = messages.some((msg) => msg.type === 'user');
+
+  // Only show banner if:
+  // 1. Status is 'completed' AND createdRoadmap exists, OR
+  // 2. Status is 'creating', OR
+  // 3. Status is 'collecting' AND at least one user message exists
+  return (
+    (status === 'completed' && createdRoadmap !== null) ||
+    status === 'creating' ||
+    (status === 'collecting' && hasUserMessage)
+  );
+});
+
+export const selectIsAIRoadmapInDraft = createAppSelector((state) => {
+  const { status, messages } = state.aiRoadmapCreation;
+  const hasUserMessage = messages.some((msg) => msg.type === 'user');
+
+  // Draft state: user has started answering but hasn't completed the form
+  return status === 'collecting' && hasUserMessage;
+});
 
 export const aiRoadmapCreationReducer = aiRoadmapCreationSlice.reducer;
 export const aiRoadmapCreationSlicePath = aiRoadmapCreationSlice.reducerPath;

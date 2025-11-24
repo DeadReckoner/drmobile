@@ -19,7 +19,9 @@ import {
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
+import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import {
+  resetDraftAction,
   selectDraftRoadmap,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
@@ -115,6 +117,7 @@ const RoadmapDetailsPage = () => {
         type,
       }).unwrap();
       dispatch(setDraftRoadmapAction(createdRoadmap));
+      dispatch(resetCreationStateAction());
       showToast({
         type: 'success',
         message: t('common.created_successfully'),
@@ -274,6 +277,8 @@ const RoadmapDetailsPage = () => {
         onNegativePress={hideDiscardDialog}
         onPositivePress={() => {
           hideDiscardDialog();
+          dispatch(resetDraftAction());
+          dispatch(resetCreationStateAction());
           router.back();
         }}
         negativeText="common.stay"
