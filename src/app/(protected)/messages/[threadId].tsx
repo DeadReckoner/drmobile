@@ -15,10 +15,7 @@ import { MessageType } from '@/store/apis/types/messagesApi.types';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import {
-  KeyboardAvoidingView,
-  KeyboardGestureArea,
-} from 'react-native-keyboard-controller';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Colors } from 'react-native-ui-lib';
 
 const ThreadDetailsScreen = () => {
@@ -53,63 +50,59 @@ const ThreadDetailsScreen = () => {
     // TODO: Implement menu functionality
   };
 
-  const renderEmptyComponent = () => (
-    <AppView flex-1 center paddingT-40>
-      <TranslatedText
-        body2
-        secondary
-        translationKey="messages.no_messages_yet"
-      />
-    </AppView>
-  );
+  const renderEmptyComponent = () =>
+    !isLoading && (
+      <AppView flex-1 center paddingT-40>
+        <TranslatedText
+          body2
+          secondary
+          translationKey="messages.no_messages_yet"
+        />
+      </AppView>
+    );
 
   return (
-    <KeyboardGestureArea style={styles.container} interpolator="ios">
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <AppScreen paddingH-0 safeArea>
-          <AppView paddingH-16 bg-screenBG marginB-16>
-            <AppView row centerV spread>
-              <AppView flex-1>
-                <HeaderWithBack
-                  headerText={threadName || t('settings.unknown_contact')}
-                />
-              </AppView>
-              <AppButton onPress={handleMenuPress}>
-                <AppIcon
-                  set="Feather"
-                  name="more-vertical"
-                  size={24}
-                  color={Colors.textColor}
-                />
-              </AppButton>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <AppScreen paddingH-0 safeArea>
+        <AppView paddingH-16 bg-screenBG marginB-16>
+          <AppView row centerV spread>
+            <AppView flex-1>
+              <HeaderWithBack
+                headerText={threadName || t('settings.unknown_contact')}
+              />
             </AppView>
+            <AppButton onPress={handleMenuPress}>
+              <AppIcon
+                set="Feather"
+                name="more-vertical"
+                size={24}
+                color={Colors.textColor}
+              />
+            </AppButton>
           </AppView>
-          {isLoading && messages?.length === 0 ? (
-            <AppView flex-1 center>
-              <Loader transparent />
-            </AppView>
-          ) : (
-            <AppList<MessageType>
-              data={messages || []}
-              renderItem={renderMessage}
-              keyExtractor={(item) => item.message_id}
-              contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-              keyboardDismissMode="interactive"
-              alignItemsAtEnd
-              initialScrollIndex={
-                messages?.length > 0 ? messages.length - 1 : 0
-              }
-              maintainScrollAtEnd
-              maintainScrollAtEndThreshold={0.1}
-              ListEmptyComponent={renderEmptyComponent}
-            />
-          )}
-          <MessageComposer onSend={handleSendMessage} disabled={!isConnected} />
-        </AppScreen>
-      </KeyboardAvoidingView>
-    </KeyboardGestureArea>
+        </AppView>
+        {isLoading && (
+          <AppView height={150}>
+            <Loader transparent size={'large'} />
+          </AppView>
+        )}
+        <AppList<MessageType>
+          data={messages || []}
+          renderItem={renderMessage}
+          keyExtractor={(item) => item.message_id}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+          alignItemsAtEnd
+          initialScrollIndex={messages?.length > 0 ? messages.length - 1 : 0}
+          maintainScrollAtEnd
+          maintainScrollAtEndThreshold={0.1}
+          ListEmptyComponent={renderEmptyComponent}
+        />
+        <MessageComposer onSend={handleSendMessage} disabled={!isConnected} />
+      </AppScreen>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -121,5 +114,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 16,
+    paddingHorizontal: 16,
   },
 });

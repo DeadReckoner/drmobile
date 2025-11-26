@@ -67,8 +67,6 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
     fontSize: 14,
   },
 
-  light: { fontFamily: UNBOUNDED_LIGHT },
-
   sm: {
     fontFamily: UNBOUNDED_LIGHT,
     fontSize: 10,
@@ -96,5 +94,21 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   tabLabel: {
     fontFamily: UNBOUNDED_REGULAR,
     fontSize: 10,
+  },
+
+  bold: {
+    fontFamily: UNBOUNDED_BOLD,
+  },
+  semibold: {
+    fontFamily: UNBOUNDED_SEMIBOLD,
+  },
+  regular: {
+    fontFamily: UNBOUNDED_REGULAR,
+  },
+  light: {
+    fontFamily: UNBOUNDED_LIGHT,
+  },
+  extraLight: {
+    fontFamily: UNBOUNDED_EXTRA_LIGHT,
   },
 };

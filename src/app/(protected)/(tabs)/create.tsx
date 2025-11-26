@@ -119,15 +119,15 @@ const Create = () => {
             ? 'ai_roadmap.draft_dialog.completed_subtitle'
             : 'ai_roadmap.draft_dialog.in_progress_subtitle'
         }
-        onNegativePress={handleResetAndStart}
-        onPositivePress={handleGoToRoadmap}
-        negativeText="ai_roadmap.draft_dialog.reset_button"
-        positiveText={
+        onPositivePress={handleResetAndStart}
+        onNegativePress={handleGoToRoadmap}
+        positiveText="ai_roadmap.draft_dialog.reset_button"
+        negativeText={
           aiRoadmapStatus === 'completed'
             ? 'ai_roadmap.draft_dialog.view_button'
             : 'ai_roadmap.draft_dialog.continue_button'
         }
-        negativeButtonIcon={
+        positiveButtonIcon={
           <AppIcon
             set="Feather"
             name="refresh-cw"
@@ -135,7 +135,7 @@ const Create = () => {
             size={14}
           />
         }
-        positiveButtonIcon={
+        negativeButtonIcon={
           <AppIcon
             set="Feather"
             name="arrow-right"

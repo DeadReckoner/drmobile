@@ -78,8 +78,8 @@
       "description": "Vous avez une feuille de route dans votre brouillon. Complétez-la pour générer votre feuille de route avec l'IA."
     },
     "success_banner": {
-      "title": "Feuille de route créée avec succès!",
-      "description": "Votre feuille de route personnalisée est prête. Appuyez pour la voir."
+      "title": "Voir le brouillon de la feuille de route !",
+      "description": "Votre feuille de route personnalisée est prête. Passez en revue le brouillon et soumettez-le pour commencer votre voyage."
     },
     "draft_dialog": {
       "in_progress_title": "Feuille de Route IA en Cours",

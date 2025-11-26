@@ -1,5 +1,6 @@
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
+import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { AiRoadmapCreationLoader } from '@/components/roadmap/ai-roamap/AiRoadmapCreationLoader';
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
@@ -165,7 +166,10 @@ export const AiRoadmapCreationList = () => {
     dispatch(addMessageAction(systemMessage));
   };
 
-  const handleAiRoadmapCreation = (formData: Record<string, string>) => {
+  const handleAiRoadmapCreation = (
+    formData: Record<string, string>,
+    timeout: number = 1200,
+  ) => {
     createAIRoadmapApiTimeout.current = setTimeout(async () => {
       try {
         dispatch(startRoadmapCreationAction());
@@ -175,12 +179,13 @@ export const AiRoadmapCreationList = () => {
       } catch (error) {
         const errorMessage = getApiErrorMessage(error) || 'Unknown error';
         dispatch(setCreationErrorAction(errorMessage));
+        flatListRef.current?.scrollToEnd({ animated: true });
       } finally {
         if (createAIRoadmapApiTimeout.current) {
           clearTimeout(createAIRoadmapApiTimeout.current);
         }
       }
-    }, 1200);
+    }, timeout);
   };
 
   const handleNavigateToRoadmap = () => {
@@ -188,7 +193,7 @@ export const AiRoadmapCreationList = () => {
   };
 
   const handleRetry = () => {
-    handleAiRoadmapCreation(formData);
+    handleAiRoadmapCreation(formData, 0);
   };
 
   const handleUserSubmit = (message: string) => {
@@ -272,7 +277,7 @@ export const AiRoadmapCreationList = () => {
             onPress={handleRetry}
             backgroundColor={Colors.error}
             paddingH-20
-            paddingV-12
+            paddingV-16
             br40
             row
             centerV
@@ -283,6 +288,7 @@ export const AiRoadmapCreationList = () => {
               size={16}
               color={Colors.white}
             />
+            <Divider margin-4 />
             <TranslatedText
               translationKey="ai_roadmap.retry_creation"
               color={Colors.white}

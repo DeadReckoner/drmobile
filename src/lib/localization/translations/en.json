@@ -140,8 +140,8 @@
       "description": "You have a roadmap in your draft. Complete it to generate your roadmap with AI."
     },
     "success_banner": {
-      "title": "Roadmap created successfully!",
-      "description": "Your personalized roadmap is ready. Tap to view it."
+      "title": "View Draft Roadmap!",
+      "description": "Your personalized roadmap is ready. Review & submit the draft to begin your journey."
     },
     "draft_dialog": {
       "in_progress_title": "AI Roadmap in Progress",

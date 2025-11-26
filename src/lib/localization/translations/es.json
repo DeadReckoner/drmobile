@@ -78,8 +78,8 @@
       "description": "Tienes una hoja de ruta en tu borrador. Complétala para generar tu hoja de ruta con IA."
     },
     "success_banner": {
-      "title": "¡Hoja de ruta creada con éxito!",
-      "description": "Tu hoja de ruta personalizada está lista. Toca para verla."
+      "title": "¡Ver borrador de hoja de ruta!",
+      "description": "Tu hoja de ruta personalizada está lista. Revisa el borrador y envíalo para comenzar tu viaje."
     },
     "draft_dialog": {
       "in_progress_title": "Hoja de Ruta IA en Progreso",

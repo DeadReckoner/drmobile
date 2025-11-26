@@ -41,12 +41,7 @@ export const ConfirmationDialog = ({
 }: ConfirmationDialogProps) => {
   return (
     <AppDialog visible={isDialogOpen} onDismiss={onDismiss}>
-      <AppCard
-        padding-20
-        bg-cardBG
-        style={{
-          padding: 20,
-        }}>
+      <AppCard padding-20 bg-cardBG>
         <TranslatedText subtitle2 textColor translationKey={title} />
         <Divider margin-4 />
         <TranslatedText xsm textColor translationKey={subtitle} />
@@ -56,14 +51,7 @@ export const ConfirmationDialog = ({
             bg-primary
             br20
             center
-            style={[
-              {
-                flexShrink: 1,
-                flexGrow: 1,
-                flexBasis: 'auto',
-              },
-              propStyles?.negative,
-            ]}
+            style={[styles.buttonContainer, propStyles?.negative]}
             padding-12
             paddingH-10
             onPress={onNegativePress}>

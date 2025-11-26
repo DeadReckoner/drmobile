@@ -209,13 +209,10 @@ const Settings = () => {
         onDismiss={hideLogoutDialog}
         title="common.are_you_sure"
         subtitle="settings.logout_dialog"
-        onNegativePress={hideLogoutDialog}
         onPositivePress={onLogoutConfirmation}
-        negativeText="common.cancel"
+        onNegativePress={hideLogoutDialog}
         positiveText="settings.logout"
-        negativeButtonIcon={
-          <AppIcon name="close" color={Colors.textOnPrimary} size={16} />
-        }
+        negativeText="common.cancel"
         positiveButtonIcon={
           <AppIcon
             set="Feather"
@@ -223,6 +220,9 @@ const Settings = () => {
             color={Colors.textOnPrimary}
             size={16}
           />
+        }
+        negativeButtonIcon={
+          <AppIcon name="close" color={Colors.textOnPrimary} size={16} />
         }
       />
       <AppActionSheetModal
