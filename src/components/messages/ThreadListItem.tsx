@@ -33,13 +33,12 @@ export const ThreadListItem = ({
     if (otherParticipant) {
       const fullName =
         `${otherParticipant.first_name} ${otherParticipant.last_name}`.trim();
-      return fullName || t('settings.unknown_contact');
+      return fullName;
     }
-
-    return thread.name || t('settings.unknown_contact');
   };
 
-  const displayName = getOtherParticipantName();
+  const displayName =
+    thread.name || getOtherParticipantName() || t('settings.unknown_contact');
 
   return (
     <AppCard paddingV-16 paddingH-16 onPress={() => onThreadClick?.(thread)}>

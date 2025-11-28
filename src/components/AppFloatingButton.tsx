@@ -18,6 +18,8 @@ interface AppFloatingButtonProps {
   translationKey: TranslationKeysType;
   onPress: () => void;
   containerProps?: ViewProps;
+  backgroundColor?: string;
+  shadowColor?: string;
 }
 
 const ANIMATION_DURATION = 300;
@@ -27,6 +29,9 @@ const AppFloatingButton = ({
   translationKey,
   onPress,
   isLoading = false,
+  backgroundColor = Colors.primary,
+  shadowColor,
+  containerProps,
 }: AppFloatingButtonProps) => {
   const [buttonDimensions, setButtonDimensions] = useState({
     width: 0,
@@ -92,10 +97,11 @@ const AppFloatingButton = ({
           style={[
             styles.floatingButton,
             {
-              backgroundColor: Colors.primary,
-              shadowColor: Colors.primary,
+              backgroundColor: backgroundColor,
+              shadowColor: shadowColor || backgroundColor,
               borderColor: Colors.outline,
             },
+            containerProps?.style,
           ]}>
           {!isLoading && (
             <AppView height={18}>
@@ -126,6 +132,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     borderWidth: 0.5,
     padding: 16,
+    paddingHorizontal: 24,
     borderRadius: 100,
   },
 });

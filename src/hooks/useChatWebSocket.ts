@@ -34,8 +34,6 @@ export const useChatWebSocket = ({
           'getThreadMessages',
           threadId,
           (draft) => {
-            if (!draft) return;
-
             const optimisticIndex = draft.findIndex(
               (msg) =>
                 msg.message_id.startsWith('temp-') &&
@@ -44,10 +42,11 @@ export const useChatWebSocket = ({
             );
 
             if (optimisticIndex !== -1) {
-              const optimisticMsg = draft[optimisticIndex];
-              optimisticMsg.message_id = message.message_id;
-              optimisticMsg.created_at = message.created_at;
-              optimisticMsg.updated_at = message.created_at;
+              draft[optimisticIndex] = {
+                ...message,
+                updated_at: message.created_at,
+                deleted_at: null,
+              };
             } else {
               const isDuplicate = draft.some(
                 (msg) => msg.message_id === message.message_id,
@@ -76,7 +75,7 @@ export const useChatWebSocket = ({
 
   const sendMessage = useCallback(
     (content: string) => {
-      if (!content.trim()) return;
+      if (!content.trim() || !isConnected) return;
 
       const optimisticMessage: MessageType = {
         message_id: `temp-${Date.now()}`,
@@ -93,9 +92,6 @@ export const useChatWebSocket = ({
           'getThreadMessages',
           threadId,
           (draft) => {
-            if (!draft) {
-              draft = [];
-            }
             draft.push(optimisticMessage);
           },
         ),
@@ -103,7 +99,7 @@ export const useChatWebSocket = ({
 
       wsSendMessage(content.trim());
     },
-    [dispatch, threadId, user.id, wsSendMessage],
+    [dispatch, threadId, user.id, wsSendMessage, isConnected],
   );
 
   return {

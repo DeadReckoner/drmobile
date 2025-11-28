@@ -1,5 +1,5 @@
 import { AppText, AppView } from '@/components/ui';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -24,9 +24,11 @@ export const Message = ({
   const [displayContent, setDisplayContent] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const isSystem = type === 'system';
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (isTyping && isSystem) {
+    if (isTyping && isSystem && !hasAnimated.current) {
+      hasAnimated.current = true;
       const tokens = tokenizeText(content);
       setIsAnimating(true);
 
@@ -43,10 +45,11 @@ export const Message = ({
       }, 120);
 
       return () => clearInterval(typingInterval);
-    } else {
+    } else if (!isTyping || !isSystem) {
       setDisplayContent(content);
     }
-  }, [content, isTyping, isSystem, onTypingComplete]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content, isTyping, isSystem]);
 
   return (
     <AppView

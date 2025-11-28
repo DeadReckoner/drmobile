@@ -19,7 +19,9 @@ import {
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
+import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import {
+  resetDraftAction,
   selectDraftRoadmap,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
@@ -115,6 +117,7 @@ const RoadmapDetailsPage = () => {
         type,
       }).unwrap();
       dispatch(setDraftRoadmapAction(createdRoadmap));
+      dispatch(resetCreationStateAction());
       showToast({
         type: 'success',
         message: t('common.created_successfully'),
@@ -254,15 +257,15 @@ const RoadmapDetailsPage = () => {
           onDismiss={hideDialog}
           title="common.are_you_sure"
           subtitle="common.delete_roadmap"
-          onNegativePress={hideDialog}
           onPositivePress={onDeleteConfirmation}
-          negativeText="common.cancel"
+          onNegativePress={hideDialog}
           positiveText="common.remove"
-          negativeButtonIcon={
-            <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
-          }
+          negativeText="common.cancel"
           positiveButtonIcon={
             <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
+          }
+          negativeButtonIcon={
+            <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
           }
         />
       </AppKeyboardController>
@@ -271,13 +274,18 @@ const RoadmapDetailsPage = () => {
         onDismiss={hideDiscardDialog}
         title="tabs.create_tab.leave_without_saving"
         subtitle="tabs.create_tab.discard_roadmap_description"
-        onNegativePress={hideDiscardDialog}
         onPositivePress={() => {
           hideDiscardDialog();
+          dispatch(resetDraftAction());
+          dispatch(resetCreationStateAction());
           router.back();
         }}
-        negativeText="common.stay"
+        onNegativePress={hideDiscardDialog}
         positiveText="common.leave"
+        negativeText="common.stay"
+        positiveButtonIcon={
+          <AppIcon name="arrowleft" color={Colors.textOnPrimary} size={14} />
+        }
         negativeButtonIcon={
           <AppIcon
             set="Feather"
@@ -285,9 +293,6 @@ const RoadmapDetailsPage = () => {
             color={Colors.textOnPrimary}
             size={14}
           />
-        }
-        positiveButtonIcon={
-          <AppIcon name="arrowleft" color={Colors.textOnPrimary} size={14} />
         }
       />
     </AppView>

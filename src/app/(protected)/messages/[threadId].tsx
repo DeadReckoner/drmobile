@@ -12,19 +12,17 @@ import { useChatWebSocket } from '@/hooks/useChatWebSocket';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useGetThreadMessagesQuery } from '@/store/apis/messagesApi';
 import { MessageType } from '@/store/apis/types/messagesApi.types';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import {
-  KeyboardAvoidingView,
-  KeyboardGestureArea,
-} from 'react-native-keyboard-controller';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Colors } from 'react-native-ui-lib';
 
 const ThreadDetailsScreen = () => {
-  const { threadId, threadName } = useLocalSearchParams<{
+  const { threadId, threadName, threadUserId } = useLocalSearchParams<{
     threadId: string;
     threadName: string;
+    threadUserId: string;
   }>();
   const { t } = useLocalization();
 
@@ -49,65 +47,70 @@ const ThreadDetailsScreen = () => {
     return <MessageBubble message={item} />;
   };
 
-  const handleMenuPress = () => {
-    // TODO: Implement menu functionality
+  const handleRoadmapClick = () => {
+    router.navigate({
+      pathname: '/messages/allowed-roadmaps/[threadUserId]',
+      params: { threadUserId: threadUserId },
+    });
   };
 
+  const renderEmptyComponent = () =>
+    !isLoading && (
+      <AppView flex-1 center paddingT-40>
+        <TranslatedText
+          body2
+          secondary
+          translationKey="messages.no_messages_yet"
+        />
+      </AppView>
+    );
+
   return (
-    <KeyboardGestureArea style={styles.container} interpolator="ios">
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <AppScreen paddingH-0 safeArea>
-          <AppView paddingH-16 bg-screenBG marginB-16>
-            <AppView row centerV spread>
-              <AppView flex-1>
-                <HeaderWithBack
-                  headerText={threadName || t('settings.unknown_contact')}
-                />
-              </AppView>
-              <AppButton onPress={handleMenuPress}>
-                <AppIcon
-                  set="Feather"
-                  name="more-vertical"
-                  size={24}
-                  color={Colors.textColor}
-                />
-              </AppButton>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <AppScreen paddingH-0 safeArea>
+        <AppView bg-screenBG>
+          <AppView row centerV spread paddingB-4>
+            <AppView flex-1 paddingL-16>
+              <HeaderWithBack
+                headerText={threadName || t('settings.unknown_contact')}
+              />
             </AppView>
+            <AppButton
+              paddingV-8
+              paddingH-16
+              marginR-4
+              onPress={handleRoadmapClick}>
+              <AppIcon
+                set="Feather"
+                name="map"
+                size={20}
+                color={Colors.textColor}
+              />
+            </AppButton>
           </AppView>
-          {isLoading ? (
-            <AppView flex-1 center>
-              <Loader transparent />
-            </AppView>
-          ) : (
-            <AppList<MessageType>
-              data={messages || []}
-              renderItem={renderMessage}
-              keyExtractor={(item) => item.message_id}
-              contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-              keyboardDismissMode="interactive"
-              alignItemsAtEnd
-              initialScrollIndex={
-                messages?.length > 0 ? messages.length - 1 : 0
-              }
-              maintainScrollAtEnd
-              maintainScrollAtEndThreshold={0.1}
-              ListEmptyComponent={() => (
-                <AppView flex-1 center paddingT-40>
-                  <TranslatedText
-                    body2
-                    secondary
-                    translationKey="messages.no_messages_yet"
-                  />
-                </AppView>
-              )}
-            />
-          )}
-          <MessageComposer onSend={handleSendMessage} disabled={!isConnected} />
-        </AppScreen>
-      </KeyboardAvoidingView>
-    </KeyboardGestureArea>
+        </AppView>
+        {isLoading && (
+          <AppView height={150}>
+            <Loader transparent />
+          </AppView>
+        )}
+        <AppList<MessageType>
+          data={messages || []}
+          renderItem={renderMessage}
+          keyExtractor={(item) => item.message_id}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+          alignItemsAtEnd
+          initialScrollIndex={messages?.length > 0 ? messages.length - 1 : 0}
+          maintainScrollAtEnd
+          maintainScrollAtEndThreshold={0.1}
+          ListEmptyComponent={renderEmptyComponent}
+        />
+        <MessageComposer onSend={handleSendMessage} disabled={!isConnected} />
+      </AppScreen>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -119,5 +122,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 16,
+    paddingHorizontal: 16,
   },
 });

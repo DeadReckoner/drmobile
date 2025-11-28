@@ -69,6 +69,33 @@
       "thank_you": "Merci ! Je crée maintenant ton plan personnalisé.",
       "composer_placeholder": "Entre ta réponse"
     },
+    "in_progress_banner": {
+      "title": "Création de ta feuille de route",
+      "description": "Votre feuille de route personnalisée est en cours de création. Appuyez pour voir la progression."
+    },
+    "draft_banner": {
+      "title": "Brouillon de feuille de route",
+      "description": "Vous avez une feuille de route dans votre brouillon. Complétez-la pour générer votre feuille de route avec l'IA."
+    },
+    "success_banner": {
+      "title": "Voir le brouillon de la feuille de route !",
+      "description": "Votre feuille de route personnalisée est prête. Passez en revue le brouillon et soumettez-le pour commencer votre voyage."
+    },
+    "draft_dialog": {
+      "in_progress_title": "Feuille de Route IA en Cours",
+      "in_progress_subtitle": "Vous avez une feuille de route IA en cours de création. Voulez-vous continuer ou recommencer?",
+      "completed_title": "Feuille de Route IA Prête",
+      "completed_subtitle": "Vous avez une feuille de route IA complétée. Voulez-vous la voir ou en créer une nouvelle?",
+      "reset_button": "Réinitialiser",
+      "continue_button": "Continuer",
+      "view_button": "Voir la Feuille de Route"
+    },
+    "resuming_creation": "Reprise de la création de ta feuille de route...",
+    "creation_in_progress": "Ta feuille de route est en cours de création. Cela peut prendre quelques minutes.",
+    "creation_failed": "Échec de la création de la feuille de route. Veuillez réessayer.",
+    "retry_creation": "Réessayer",
+    "start_new": "Commencer Nouveau",
+    "view_roadmap": "Voir Votre Feuille de Route",
     "acceptance_test": "Test d'acceptation",
     "duration": "Durée",
     "resources": "Ressources",
@@ -180,6 +207,7 @@
     "roadmaps_locked_message": "Cet utilisateur n'a pas encore partagé de feuilles de route.",
     "error_loading_friend": "Erreur lors du chargement du profil de l'ami",
     "no_roadmaps_shared": "Aucune feuille de route partagée",
+    "no_roadmaps_shared_description": "Cet utilisateur n'a pas encore partagé de feuille de route. Les feuilles de route partagées apparaîtront ici.",
     "search_results": "Résultats de la recherche",
     "cancel_request": "Annuler la Demande",
     "friend_request_cancelled": "Demande d'ami annulée",
@@ -263,7 +291,9 @@
     "type_message_placeholder": "Tapez ici...",
     "send_message": "Envoyer",
     "send_message_error": "Échec de l'envoi du message. Veuillez réessayer.",
-    "conversation_with": "Conversation avec"
+    "conversation_with": "Conversation avec",
+    "no_shared_roadmaps": "Aucune Feuille de Route Partagée",
+    "no_shared_roadmaps_description": "Cet utilisateur n'a pas encore partagé de feuille de route avec vous."
   },
   "feedback": {
     "title": "Retour d'expérience",

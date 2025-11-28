@@ -69,6 +69,33 @@
       "thank_you": "¡Gracias! Estoy creando tu plan de acción personalizado ahora.",
       "composer_placeholder": "Escribe tu respuesta"
     },
+    "in_progress_banner": {
+      "title": "Creando tu hoja de ruta",
+      "description": "Tu hoja de ruta personalizada se está creando. Toca para ver el progreso."
+    },
+    "draft_banner": {
+      "title": "Borrador de hoja de ruta",
+      "description": "Tienes una hoja de ruta en tu borrador. Complétala para generar tu hoja de ruta con IA."
+    },
+    "success_banner": {
+      "title": "¡Ver borrador de hoja de ruta!",
+      "description": "Tu hoja de ruta personalizada está lista. Revisa el borrador y envíalo para comenzar tu viaje."
+    },
+    "draft_dialog": {
+      "in_progress_title": "Hoja de Ruta IA en Progreso",
+      "in_progress_subtitle": "Tienes una hoja de ruta IA siendo creada. ¿Quieres continuar o empezar de nuevo?",
+      "completed_title": "Hoja de Ruta IA Lista",
+      "completed_subtitle": "Tienes una hoja de ruta IA completada. ¿Quieres verla o crear una nueva?",
+      "reset_button": "Reiniciar",
+      "continue_button": "Continuar",
+      "view_button": "Ver Hoja de Ruta"
+    },
+    "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
+    "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
+    "creation_failed": "Error al crear la hoja de ruta. Por favor, inténtalo de nuevo.",
+    "retry_creation": "Reintentar",
+    "start_new": "Comenzar Nueva",
+    "view_roadmap": "Ver Tu Hoja de Ruta",
     "acceptance_test": "Prueba de aceptación",
     "duration": "Duración",
     "resources": "Recursos",
@@ -180,6 +207,7 @@
     "roadmaps_locked_message": "Este usuario aún no ha compartido ninguna hoja de ruta.",
     "error_loading_friend": "Error al cargar el perfil del amigo",
     "no_roadmaps_shared": "No hay hojas de ruta compartidas",
+    "no_roadmaps_shared_description": "Este usuario aún no ha compartido ninguna hoja de ruta. Las hojas de ruta compartidas aparecerán aquí.",
     "search_results": "Resultados de la búsqueda",
     "cancel_request": "Cancelar Solicitud",
     "friend_request_cancelled": "Solicitud de amistad cancelada",
@@ -263,7 +291,9 @@
     "type_message_placeholder": "Escribe aquí...",
     "send_message": "Enviar",
     "send_message_error": "Error al enviar mensaje. Por favor, inténtalo de nuevo.",
-    "conversation_with": "Conversación con"
+    "conversation_with": "Conversación con",
+    "no_shared_roadmaps": "Sin Hojas de Ruta Compartidas",
+    "no_shared_roadmaps_description": "Este usuario aún no ha compartido ninguna hoja de ruta contigo."
   },
   "feedback": {
     "title": "Retroalimentación",

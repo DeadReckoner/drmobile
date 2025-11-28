@@ -150,9 +150,9 @@ const MyFriends = () => {
         style={styles.friendCard}
         onPress={() => {
           router.navigate({
-            pathname: '/settings/friend-details/[friend-id]',
+            pathname: '/settings/friend-details/[friendId]',
             params: {
-              'friend-id': item.id,
+              friendId: item.id,
               friendName: item.name,
               friendEmail: item.email,
               friendshipStatus: item.friendship_status || 'none',

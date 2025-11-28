@@ -1,7 +1,10 @@
 import i18nConfig from '@/lib/localization/i18nConfig';
 import { api } from '@/store/apis/api';
 import { ApiError } from '@/store/apis/types/api.types';
+import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import { clearAuthAction } from '@/store/slices/authSlice';
+import { resetDraftAction } from '@/store/slices/roadmapDraftSlice';
+import { resetSettingsSlice } from '@/store/slices/settingsSlice';
 import { AppDispatchType, RootStateType } from '@/store/types/store.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Action, ThunkDispatch } from '@reduxjs/toolkit';
@@ -13,14 +16,17 @@ export const handleSignout = async (
 ) => {
   try {
     dispatch(clearAuthAction());
-    await persistedStore.purge();
+    dispatch(resetCreationStateAction());
+    dispatch(resetDraftAction());
+    dispatch(resetSettingsSlice());
+    dispatch(api.util.resetApiState());
 
     const appleUserName = await AsyncStorage.getItem('@apple_user_name');
     await AsyncStorage.clear();
     if (appleUserName) {
       await AsyncStorage.setItem('@apple_user_name', appleUserName);
     }
-    api.util.resetApiState();
+    await persistedStore.purge();
   } catch {}
 };
 

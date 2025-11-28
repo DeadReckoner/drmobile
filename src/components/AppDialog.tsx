@@ -22,6 +22,6 @@ export const AppDialog = ({
 const styles = StyleSheet.create({
   dialogContainer: {
     backgroundColor: 'transparent',
-    width: '80%',
+    width: '85%',
   },
 });

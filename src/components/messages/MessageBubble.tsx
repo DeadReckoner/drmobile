@@ -26,8 +26,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
         styles.messageContainer,
         isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
       ]}
-      marginB-12
-      marginH-16>
+      marginB-4>
       <AppView
         style={[
           styles.messageBubble,
@@ -35,10 +34,10 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
             ? { backgroundColor: Colors.cardBG }
             : { backgroundColor: Colors.lightCardBG },
         ]}
-        padding-8
-        paddingH-12>
+        padding-8>
         <AppText
-          xsm
+          subtitle2
+          regular
           style={
             isCurrentUser
               ? { color: Colors.textOnPrimary }
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
   },
   messageBubble: {
     maxWidth: '85%',
-    minWidth: 60,
+    minWidth: 80,
     borderRadius: 8,
   },
   timeText: {

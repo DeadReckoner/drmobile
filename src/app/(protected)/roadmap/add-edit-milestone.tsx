@@ -181,15 +181,15 @@ const AddMilestone = () => {
           onDismiss={hideDialog}
           title="common.are_you_sure"
           subtitle="common.delete_milestone"
-          onNegativePress={hideDialog}
           onPositivePress={onDeleteConfirmation}
-          negativeText="common.cancel"
+          onNegativePress={hideDialog}
           positiveText="common.remove"
-          negativeButtonIcon={
-            <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
-          }
+          negativeText="common.cancel"
           positiveButtonIcon={
             <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
+          }
+          negativeButtonIcon={
+            <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
           }
         />
       </AppKeyboardController>
