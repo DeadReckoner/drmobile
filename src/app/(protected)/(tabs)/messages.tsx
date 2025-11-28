@@ -34,6 +34,9 @@ const Messages = () => {
       params: {
         threadId: thread.thread_id,
         threadName: displayName,
+        threadUserId: thread.participants.find(
+          (user) => currentUserEmail !== user.email,
+        )?.user_id,
       },
     });
   };

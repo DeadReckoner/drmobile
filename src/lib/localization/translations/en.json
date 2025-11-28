@@ -207,6 +207,7 @@
     "roadmaps_locked_message": "This user hasn't shared any roadmaps yet.",
     "error_loading_friend": "Error loading friend profile",
     "no_roadmaps_shared": "No roadmaps shared",
+    "no_roadmaps_shared_description": "This user has not shared any roadmaps yet. Shared roadmaps will appear here.",
     "search_results": "Search Results",
     "cancel_request": "Cancel Request",
     "friend_request_cancelled": "Friend request cancelled",
@@ -290,7 +291,9 @@
     "type_message_placeholder": "Type here...",
     "send_message": "Send",
     "send_message_error": "Failed to send message. Please try again.",
-    "conversation_with": "Conversation with"
+    "conversation_with": "Conversation with",
+    "no_shared_roadmaps": "No Shared Roadmaps",
+    "no_shared_roadmaps_description": "This user hasn't shared any roadmaps with you yet."
   },
   "feedback": {
     "title": "Feedback",

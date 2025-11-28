@@ -1,3 +1,5 @@
+import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+
 export interface User {
   user_id: string;
   first_name: string;
@@ -41,7 +43,7 @@ export interface FriendResponse {
 
 export interface FriendProfileResponse {
   user: User;
-  allowed_roadmaps: any[];
+  allowed_roadmaps: RoadmapType[];
 }
 
 export interface ApiResponse<T> {

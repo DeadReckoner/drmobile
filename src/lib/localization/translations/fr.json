@@ -207,6 +207,7 @@
     "roadmaps_locked_message": "Cet utilisateur n'a pas encore partagé de feuilles de route.",
     "error_loading_friend": "Erreur lors du chargement du profil de l'ami",
     "no_roadmaps_shared": "Aucune feuille de route partagée",
+    "no_roadmaps_shared_description": "Cet utilisateur n'a pas encore partagé de feuille de route. Les feuilles de route partagées apparaîtront ici.",
     "search_results": "Résultats de la recherche",
     "cancel_request": "Annuler la Demande",
     "friend_request_cancelled": "Demande d'ami annulée",
@@ -290,7 +291,9 @@
     "type_message_placeholder": "Tapez ici...",
     "send_message": "Envoyer",
     "send_message_error": "Échec de l'envoi du message. Veuillez réessayer.",
-    "conversation_with": "Conversation avec"
+    "conversation_with": "Conversation avec",
+    "no_shared_roadmaps": "Aucune Feuille de Route Partagée",
+    "no_shared_roadmaps_description": "Cet utilisateur n'a pas encore partagé de feuille de route avec vous."
   },
   "feedback": {
     "title": "Retour d'expérience",

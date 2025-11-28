@@ -12,16 +12,17 @@ import { useChatWebSocket } from '@/hooks/useChatWebSocket';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useGetThreadMessagesQuery } from '@/store/apis/messagesApi';
 import { MessageType } from '@/store/apis/types/messagesApi.types';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Colors } from 'react-native-ui-lib';
 
 const ThreadDetailsScreen = () => {
-  const { threadId, threadName } = useLocalSearchParams<{
+  const { threadId, threadName, threadUserId } = useLocalSearchParams<{
     threadId: string;
     threadName: string;
+    threadUserId: string;
   }>();
   const { t } = useLocalization();
 
@@ -46,8 +47,11 @@ const ThreadDetailsScreen = () => {
     return <MessageBubble message={item} />;
   };
 
-  const handleMenuPress = () => {
-    // TODO: Implement menu functionality
+  const handleRoadmapClick = () => {
+    router.navigate({
+      pathname: '/messages/allowed-roadmaps/[threadUserId]',
+      params: { threadUserId: threadUserId },
+    });
   };
 
   const renderEmptyComponent = () =>
@@ -64,18 +68,22 @@ const ThreadDetailsScreen = () => {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <AppScreen paddingH-0 safeArea>
-        <AppView paddingH-16 bg-screenBG marginB-16>
-          <AppView row centerV spread>
-            <AppView flex-1>
+        <AppView bg-screenBG>
+          <AppView row centerV spread paddingB-4>
+            <AppView flex-1 paddingL-16>
               <HeaderWithBack
                 headerText={threadName || t('settings.unknown_contact')}
               />
             </AppView>
-            <AppButton onPress={handleMenuPress}>
+            <AppButton
+              paddingV-8
+              paddingH-16
+              marginR-4
+              onPress={handleRoadmapClick}>
               <AppIcon
                 set="Feather"
-                name="more-vertical"
-                size={24}
+                name="map"
+                size={20}
                 color={Colors.textColor}
               />
             </AppButton>
@@ -83,7 +91,7 @@ const ThreadDetailsScreen = () => {
         </AppView>
         {isLoading && (
           <AppView height={150}>
-            <Loader transparent size={'large'} />
+            <Loader transparent />
           </AppView>
         )}
         <AppList<MessageType>

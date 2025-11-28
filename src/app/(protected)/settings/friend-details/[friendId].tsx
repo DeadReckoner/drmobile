@@ -29,12 +29,12 @@ const FriendDetails = () => {
   const { t } = useLocalization();
   const { showToast } = useToast();
   const params = useLocalSearchParams<{
-    'friend-id': string;
+    friendId: string;
     friendName: string;
     friendEmail: string;
     friendshipStatus?: string;
   }>();
-  const friendId = params['friend-id'];
+  const friendId = params['friendId'];
   const {
     data: friendProfileData,
     isLoading,
@@ -147,6 +147,18 @@ const FriendDetails = () => {
     }
   }, [friendshipStatus, handleRemoveFriend, handleSendFriendRequest]);
 
+  const onChatPress = () => {
+    //TODO: get theards info from user details and navigate to messages
+    // router.navigate({
+    //   pathname: '/messages/[threadId]',
+    //   params: {
+    //     threadId: friendDetails?.thread_id,
+    //     threadName: friendDetails.,
+    //     threadUserId: friendId,
+    //   },
+    // });
+  };
+
   const renderEmptyRoadmaps = useCallback(() => {
     return (
       <AppCard paddingV-48 center>
@@ -244,6 +256,11 @@ const FriendDetails = () => {
                   {roadmaps.length}
                 </AppText>
               </AppView>
+              {friendshipStatus === '' && (
+                <AppView>
+                  <AppIcon name="message1" />
+                </AppView>
+              )}
               <AppView centerH flex centerV>
                 <AppButton
                   onPress={handleFriendshipRequest}
@@ -364,8 +381,8 @@ const FriendDetails = () => {
           </AppText>
         </AppView>
         <AppCard marginH-16 marginT-24 centerH style={styles.detailsCard}>
-          <AppView row spread>
-            <AppView centerH flex>
+          <AppView row spread gap-20>
+            <AppView centerH>
               <TranslatedText
                 xsm
                 textColor
@@ -376,7 +393,22 @@ const FriendDetails = () => {
                 {roadmaps.length}
               </AppText>
             </AppView>
-            <AppView centerH flex>
+            {friendshipStatus === 'accepted' && (
+              <AppButton onPress={onChatPress}>
+                <AppView centerH>
+                  <TranslatedText
+                    xsm
+                    textColor
+                    translationKey="settings.roadmaps"
+                    style={styles.statLabel}
+                    marginB-8
+                  />
+
+                  <AppIcon name="message1" size={20} />
+                </AppView>
+              </AppButton>
+            )}
+            <AppView centerH>
               <AppButton
                 center
                 paddingB-4
@@ -418,7 +450,7 @@ const FriendDetails = () => {
                               ? 'user'
                               : 'user-plus'
                         }
-                        size={22}
+                        size={20}
                         color={Colors.textColor}
                       />
                     </AppView>

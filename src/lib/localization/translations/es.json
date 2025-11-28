@@ -207,6 +207,7 @@
     "roadmaps_locked_message": "Este usuario aún no ha compartido ninguna hoja de ruta.",
     "error_loading_friend": "Error al cargar el perfil del amigo",
     "no_roadmaps_shared": "No hay hojas de ruta compartidas",
+    "no_roadmaps_shared_description": "Este usuario aún no ha compartido ninguna hoja de ruta. Las hojas de ruta compartidas aparecerán aquí.",
     "search_results": "Resultados de la búsqueda",
     "cancel_request": "Cancelar Solicitud",
     "friend_request_cancelled": "Solicitud de amistad cancelada",
@@ -290,7 +291,9 @@
     "type_message_placeholder": "Escribe aquí...",
     "send_message": "Enviar",
     "send_message_error": "Error al enviar mensaje. Por favor, inténtalo de nuevo.",
-    "conversation_with": "Conversación con"
+    "conversation_with": "Conversación con",
+    "no_shared_roadmaps": "Sin Hojas de Ruta Compartidas",
+    "no_shared_roadmaps_description": "Este usuario aún no ha compartido ninguna hoja de ruta contigo."
   },
   "feedback": {
     "title": "Retroalimentación",
