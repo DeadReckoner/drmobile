@@ -27,7 +27,6 @@ export const messagesApi = api.injectEndpoints({
         url: `/threads/${threadId}/messages`,
         method: 'GET',
       }),
-      keepUnusedDataFor: 300,
       providesTags: (_result, _error, threadId) => [
         { type: 'Threads', id: `MESSAGES-${threadId}` },
       ],
