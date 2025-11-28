@@ -1,15 +1,24 @@
 import { AppButton } from '@/components/AppButton';
+import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
-import { TasksList } from '@/components/roadmap/TasksList';
+import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
+import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
+import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import {
+  setSelectedTaskAction,
+  setShouldSyncWithServerAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
+import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
@@ -20,6 +29,14 @@ const Today = () => {
     useGetUserTasksByStartDateQuery(
       DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
     );
+
+  const dispatch = useAppDispatch();
+
+  const handleTaskClick = (task: TaskType, index: number) => {
+    dispatch(setShouldSyncWithServerAction(true));
+    dispatch(setSelectedTaskAction({ task, index }));
+    router.navigate(`/task/today-task-details`);
+  };
 
   useGetFriendsQuery();
 
@@ -45,6 +62,44 @@ const Today = () => {
       data?.filter((task) => task.steps?.every((step) => step.completed)) || [],
     [data],
   );
+
+  const renderEmptyComponent = () => {
+    return (
+      <EmptyListItemPlaceholder
+        title="tabs.create_tab.no_tasks_yet"
+        subtitle="tabs.create_tab.no_tasks_description"
+      />
+    );
+  };
+
+  const renderItem = ({ item, index }: LegendListRenderItemProps<TaskType>) => {
+    return (
+      <AppCard
+        style={styles.taskCard}
+        row
+        centerV
+        onPress={() => handleTaskClick(item, index)}
+        padding-0>
+        <AppView
+          br40
+          style={[
+            styles.indicator,
+            {
+              backgroundColor: item.completed ? Colors.success : Colors.primary,
+            },
+          ]}
+        />
+        <AppView flex-1 padding-16>
+          <AppText body2 textColor>
+            {item.title}
+          </AppText>
+          <AppText xsm textColor marginT-4>
+            {item.description}
+          </AppText>
+        </AppView>
+      </AppCard>
+    );
+  };
 
   return (
     <AppScreen>
@@ -86,15 +141,29 @@ const Today = () => {
             reanimated
             entering={Animations.Entry.FadeInDownWithSpring()}
             exiting={Animations.Exit.FadeOutDown()}>
-            <TasksList tasks={nonCompletedTasks || []} />
+            <AppList<TaskType>
+              keyExtractor={(i) => i.task_id}
+              data={nonCompletedTasks || []}
+              renderItem={renderItem}
+              ListEmptyComponent={renderEmptyComponent}
+              ListFooterComponent={() => <Divider />}
+              ItemSeparatorComponent={() => <Divider />}
+            />
           </AppView>
         )}
-        <Divider margin-12 />
+        <Divider margin-4 />
         {completedTasks?.length > 0 && (
           <>
-            <TranslatedText body2 translationKey="common.completed_tasks" />
+            <TranslatedText body1 translationKey="common.completed_tasks" />
             <Divider margin-4 />
-            <TasksList tasks={completedTasks} />
+            <AppList<TaskType>
+              keyExtractor={(i) => i.task_id}
+              data={completedTasks || []}
+              renderItem={renderItem}
+              ListEmptyComponent={renderEmptyComponent}
+              ListFooterComponent={() => <Divider />}
+              ItemSeparatorComponent={() => <Divider />}
+            />
           </>
         )}
       </ScrollView>
@@ -103,9 +172,10 @@ const Today = () => {
 };
 
 export default Today;
-
 const styles = StyleSheet.create({
   scrollContainer: {
     paddingBottom: 24,
   },
+  indicator: { height: '100%', width: 6 },
+  taskCard: { overflow: 'hidden' },
 });

@@ -50,6 +50,7 @@ const settingsSlice = createSlice({
     setLastRoadmapListCacheDay(state, action) {
       state.roadmapListCache = action.payload;
     },
+    resetSettingsSlice: () => initialState,
   },
 });
 
@@ -60,6 +61,7 @@ export const {
   showToastAction,
   hideToastAction,
   setLastRoadmapListCacheDay,
+  resetSettingsSlice,
 } = settingsSlice.actions;
 
 export const selectTheme = createAppSelector((state) => state.settings.theme);

@@ -39,7 +39,9 @@ const FriendDetails = () => {
     data: friendProfileData,
     isLoading,
     error,
-  } = useGetFriendProfileQuery(friendId);
+  } = useGetFriendProfileQuery(friendId, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const friendNameParam =
     `${friendProfileData?.user.first_name || ''} ${friendProfileData?.user.last_name || ''}`?.trim() ||
