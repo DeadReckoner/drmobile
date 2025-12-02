@@ -8,6 +8,10 @@
     "scheme": "deadreckoner",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "notification": {
+      "icon": "./assets/images/icon.png",
+      "iosDisplayInForeground": true
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.deadreckoner.deadreckoner",
@@ -79,7 +83,8 @@
           "iosUrlScheme": "com.googleusercontent.apps.597678270969-gc4jq97i7ugbg92d5k0k0vbcb9ert0ps"
         }
       ],
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
