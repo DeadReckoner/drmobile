@@ -67,6 +67,7 @@ const AllowedRoadmaps = () => {
     <AppScreen>
       <AppView flex>
         <AppList<RoadmapType>
+          keyExtractor={(i) => i.roadmap_id}
           contentContainerStyle={styles.container}
           contentInsetAdjustmentBehavior="always"
           data={data?.allowed_roadmaps || []}

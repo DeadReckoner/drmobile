@@ -35,6 +35,7 @@ export const UnorderedList = ({ data }: UnorderedListProps) => {
       data={data}
       renderItem={renderItem}
       ItemSeparatorComponent={() => <Divider margin-4 />}
+      keyExtractor={(i) => i.title}
     />
   );
 };

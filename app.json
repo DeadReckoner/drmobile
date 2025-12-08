@@ -8,10 +8,6 @@
     "scheme": "deadreckoner",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "notification": {
-      "icon": "./assets/images/icon.png",
-      "iosDisplayInForeground": true
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.deadreckoner.deadreckoner",
@@ -26,7 +22,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#5F6D76"
       },
-      "package": "com.mcboll.deadreckoner",
+      "package": "com.deadreckoner.deadreckoner",
       "edgeToEdgeEnabled": true,
       "permissions": [
         "READ_CONTACTS",
@@ -84,7 +80,21 @@
         }
       ],
       "expo-apple-authentication",
-      "expo-notifications"
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/ic_notification.png",
+          "color": "#5F6D76",
+          "iosDisplayInForeground": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Dead Reckoner needs access to your photos to upload images.",
+          "cameraPermission": "Dead Reckoner needs access to your camera to take photos."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

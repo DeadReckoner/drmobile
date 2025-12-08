@@ -31,7 +31,7 @@ export default function TabLayout() {
       tabBarButton: BottomTabBarButton,
       headerShown: false,
       tabBarHideOnKeyboard: true,
-      animation: 'shift',
+      animation: 'none',
     }),
 
     // LintRuleDisabledReason
