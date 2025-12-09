@@ -2,6 +2,7 @@ import { Loader } from '@/components/Loader';
 import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { Env } from '@/constants/Env';
+import { useNotificationListener } from '@/hooks/useNotificationListener';
 import { persistedStore, store } from '@/store/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as SplashScreen from 'expo-splash-screen';
@@ -22,6 +23,8 @@ GoogleSignin.configure({
 });
 
 export default function RootLayout() {
+  useNotificationListener();
+
   return (
     <Provider store={store}>
       <PersistGate loading={<Loader />} persistor={persistedStore}>

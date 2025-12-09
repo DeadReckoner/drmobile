@@ -241,7 +241,9 @@
     "friend_request_accepted": "Solicitud de amistad aceptada",
     "friend_request_rejected": "Solicitud de amistad rechazada",
     "loading": "Cargando notificaciones...",
-    "error_loading": "Error al cargar notificaciones"
+    "error_loading": "Error al cargar notificaciones",
+    "enable_notifications": "Habilitar Notificaciones",
+    "notifications_disabled": "Activa las notificaciones en la configuración para mantenerte actualizado."
   },
   "permissions": {
     "contacts_denied_title": "Permiso de Contactos Denegado",

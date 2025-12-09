@@ -241,7 +241,9 @@
     "friend_request_accepted": "Friend request accepted",
     "friend_request_rejected": "Friend request rejected",
     "loading": "Loading notifications...",
-    "error_loading": "Failed to load notifications"
+    "error_loading": "Failed to load notifications",
+    "enable_notifications": "Enable Notifications",
+    "notifications_disabled": "Enable notifications in the settings to stay updated."
   },
   "permissions": {
     "contacts_denied_title": "Contacts Permission Denied",

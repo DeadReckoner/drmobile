@@ -5,7 +5,7 @@ import {
   showToastAction,
 } from '@/store/slices/settingsSlice';
 import { ToastStateType } from '@/store/types/settingsSlice.types';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 const HIDE_SHOW_DELAY = 150;
@@ -16,23 +16,26 @@ export const useToast = () => {
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const showToast = (toastProps?: ToastStateType['toastProps']) => {
-    if (!toastProps?.message) {
-      return;
-    }
-    if (!isVisible) {
-      dispatch(showToastAction({ toastProps }));
-    } else {
-      dispatch(hideToastAction());
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+  const showToast = useCallback(
+    (toastProps?: ToastStateType['toastProps']) => {
+      if (!toastProps?.message) {
+        return;
       }
-
-      timeoutRef.current = setTimeout(() => {
+      if (!isVisible) {
         dispatch(showToastAction({ toastProps }));
-      }, HIDE_SHOW_DELAY);
-    }
-  };
+      } else {
+        dispatch(hideToastAction());
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = setTimeout(() => {
+          dispatch(showToastAction({ toastProps }));
+        }, HIDE_SHOW_DELAY);
+      }
+    },
+    [dispatch, isVisible],
+  );
 
   useEffect(() => {
     return () => {

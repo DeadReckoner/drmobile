@@ -241,7 +241,9 @@
     "friend_request_accepted": "Demande d'ami acceptée",
     "friend_request_rejected": "Demande d'ami rejetée",
     "loading": "Chargement des notifications...",
-    "error_loading": "Échec du chargement des notifications"
+    "error_loading": "Échec du chargement des notifications",
+    "enable_notifications": "Activer les Notifications",
+    "notifications_disabled": "Activez les notifications dans les paramètres pour rester informé."
   },
   "permissions": {
     "contacts_denied_title": "Permission de Contacts Refusée",

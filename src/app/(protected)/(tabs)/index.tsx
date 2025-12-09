@@ -11,6 +11,7 @@ import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import {
   setSelectedTaskAction,
@@ -20,7 +21,7 @@ import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -31,6 +32,13 @@ const Today = () => {
     );
 
   const dispatch = useAppDispatch();
+  const { requestPermissions } = usePushNotifications();
+
+  useEffect(() => {
+    (async () => {
+      await requestPermissions();
+    })();
+  }, [requestPermissions]);
 
   const handleTaskClick = (task: TaskType, index: number) => {
     dispatch(setShouldSyncWithServerAction(true));
