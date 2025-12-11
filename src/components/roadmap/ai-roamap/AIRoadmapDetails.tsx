@@ -59,7 +59,7 @@ export const AIRoadmapDetails = ({
       <Divider marginT-16 />
       {isRoadmapLoading ? (
         <Loader transparent containerStyle={styles.loader} />
-      ) : (
+      ) : roadmap.macro_map?.phases[0].macro_milestones[0] ? (
         <AppView
           layout={FadingTransition}
           entering={FadeInDown}
@@ -109,7 +109,7 @@ export const AIRoadmapDetails = ({
             </AppView>
           </AppButton>
         </AppView>
-      )}
+      ) : null}
     </AppView>
   );
 };

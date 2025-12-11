@@ -226,7 +226,7 @@ const RoadmapDetailsPage = () => {
               )}
               <Divider margin-8 />
 
-              {roadmap.milestones.length > 0 && !roadmap?.roadmap_id && (
+              {roadmap.milestones?.length > 0 && !roadmap?.roadmap_id && (
                 <PrimaryButton
                   label="tabs.create_tab.submit_roadmap"
                   onPress={onCreateRoadmap}
