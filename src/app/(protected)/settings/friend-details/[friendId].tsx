@@ -14,7 +14,6 @@ import {
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
 } from '@/store/apis/friendsApi';
-import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -385,8 +384,8 @@ const FriendDetails = () => {
           </AppText>
         </AppView>
         <AppCard marginH-16 marginT-24 centerH style={styles.detailsCard}>
-          <AppView row spread gap-20>
-            <AppView centerH>
+          <AppView row spread gap-20 style={styles.detailsCardContent}>
+            <AppView centerH style={styles.statBox}>
               <TranslatedText
                 xsm
                 textColor
@@ -398,16 +397,16 @@ const FriendDetails = () => {
               </AppText>
             </AppView>
             {friendshipStatus === 'accepted' && (
-              <AppButton onPress={onChatPress}>
-                <AppView
-                  centerH
-                  reanimated
-                  entering={Animations.Entry.FadeInDownWithSpring()}
-                  exiting={Animations.Exit.FadeOutDown()}>
+              <AppButton
+                centerH
+                style={styles.statBox}
+                disabled={!friendProfileData?.thread_id}
+                onPress={onChatPress}>
+                <AppView center>
                   <TranslatedText
                     xsm
                     textColor
-                    translationKey="settings.roadmaps"
+                    translationKey="settings.friends"
                     style={styles.statLabel}
                     marginB-8
                   />
@@ -416,7 +415,7 @@ const FriendDetails = () => {
                 </AppView>
               </AppButton>
             )}
-            <AppView centerH>
+            <AppView centerH style={styles.statBox}>
               <AppButton
                 center
                 paddingB-4
@@ -494,6 +493,12 @@ const styles = StyleSheet.create({
   statLabel: {
     textAlign: 'center',
   },
+  statBox: {
+    minWidth: 90,
+    maxWidth: 120,
+    flex: 1,
+    alignItems: 'center',
+  },
   roadmapIcon: {
     width: 48,
     height: 48,
@@ -503,6 +508,9 @@ const styles = StyleSheet.create({
     width: '60%',
   },
   detailsCard: { minHeight: 85 },
+  detailsCardContent: {
+    alignSelf: 'stretch',
+  },
   lockedCard: {},
   lockedTextPlaceholder: {
     height: 16,

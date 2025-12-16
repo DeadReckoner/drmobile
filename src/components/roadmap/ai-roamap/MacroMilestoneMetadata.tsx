@@ -43,20 +43,16 @@ export const MacroMilestoneMetadata = ({
       <AppView gap-4>
         <TranslatedText
           textColor
-          caption
+          body2
           translationKey="ai_roadmap.acceptance_test"
         />
-        <AppText xsm textColor>
+        <AppText body2 light textColor>
           {acceptance_test}
         </AppText>
       </AppView>
       <AppView gap-4>
-        <TranslatedText
-          textColor
-          caption
-          translationKey="ai_roadmap.duration"
-        />
-        <AppText xsm textColor>
+        <TranslatedText textColor body2 translationKey="ai_roadmap.duration" />
+        <AppText body2 light textColor>
           {duration_days_min === duration_days_max
             ? `${duration_days_min} days`
             : `${duration_days_min} - ${duration_days_max} days`}
@@ -67,13 +63,17 @@ export const MacroMilestoneMetadata = ({
         <AppView gap-4>
           <TranslatedText
             textColor
-            caption
+            body2
             translationKey="ai_roadmap.resources"
           />
           {Object.entries(resourcesData).map(([key, value]) => (
             <AppView key={key}>
-              <AppText xsm textColor>
-                <AppText xsm textColor style={{ textTransform: 'capitalize' }}>
+              <AppText body2 light textColor>
+                <AppText
+                  body2
+                  light
+                  textColor
+                  style={{ textTransform: 'capitalize' }}>
                   {key}:{' '}
                 </AppText>
                 {formatResourceValue(value)}

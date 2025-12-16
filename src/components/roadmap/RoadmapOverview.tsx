@@ -24,7 +24,7 @@ export const RoadmapOverview = ({
   return (
     <AppCard>
       <AppView row>
-        <AppText flex xsm textColor marginR-16>
+        <AppText flex body2 light textColor marginR-16>
           {roadmap.description}
         </AppText>
         <AppButton onPress={toggleEditMode}>
@@ -34,10 +34,10 @@ export const RoadmapOverview = ({
       <LineDivider bg-secondary />
       <AppView row centerV spread>
         <AppView row gap-2>
-          <TranslatedText xsm translationKey="common.next_milestone" />
-          <AppText xsm textColor>
+          <TranslatedText light translationKey="common.next_milestone" />
+          <AppText body2 light textColor>
             {`: ${roadmap.daysRemainingTillNextMilestone || 0}`}{' '}
-            <TranslatedText xsm translationKey="common.days" />
+            <TranslatedText light translationKey="common.days" />
           </AppText>
         </AppView>
 
@@ -51,7 +51,7 @@ export const RoadmapOverview = ({
             progress={roadmapProgress}
             progressColor={theme === 'dark' ? Colors.white : Colors.primary}
           />
-          <AppText xsm textColor>
+          <AppText body2 light textColor>
             {roadmapProgress}%
           </AppText>
         </AppView>

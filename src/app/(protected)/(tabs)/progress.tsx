@@ -49,7 +49,7 @@ const Progress = () => {
   }, [refetch]);
 
   const visibleRoadmaps = data.filter(
-    (roadmap) => roadmap.generation_status === 'failed',
+    (roadmap) => roadmap.generation_status !== 'failed',
   );
 
   return (

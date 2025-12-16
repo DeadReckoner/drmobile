@@ -72,7 +72,7 @@ export const AIRoadmapDetails = ({
               padding-6
               paddingH-12
               onPress={onViewMacroMap}>
-              <TranslatedText tabLabel translationKey="common.view_map" />
+              <TranslatedText caption light translationKey="common.view_map" />
             </AppCard>
           </AppView>
           {/* TODO: show the current running milestone */}
@@ -101,7 +101,7 @@ export const AIRoadmapDetails = ({
                 paddingH-12
                 bg-lightCardBG>
                 <TranslatedText
-                  tabLabel
+                  xsm
                   translationKey="ai_roadmap.see_all_milestones"
                 />
                 <AppIcon set="Feather" name="arrow-right-circle" size={16} />

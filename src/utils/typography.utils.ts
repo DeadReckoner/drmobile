@@ -65,6 +65,7 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   body2: {
     fontFamily: UNBOUNDED_REGULAR,
     fontSize: 14,
+    lineHeight: 22,
   },
 
   sm: {
