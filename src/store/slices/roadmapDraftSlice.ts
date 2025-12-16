@@ -304,13 +304,14 @@ const roadmapDraftSlice = createSlice({
                 return {
                   ...task,
                   task_id: task.task_id || taskId,
-                  steps: task.steps.map((step) => {
-                    const stepId = nanoid();
-                    return {
-                      ...step,
-                      step_id: step.step_id || stepId,
-                    };
-                  }),
+                  steps:
+                    task.steps?.map((step) => {
+                      const stepId = nanoid();
+                      return {
+                        ...step,
+                        step_id: step.step_id || stepId,
+                      };
+                    }) || [],
                 };
               }) || [],
           };

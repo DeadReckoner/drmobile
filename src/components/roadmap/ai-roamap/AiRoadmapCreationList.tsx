@@ -249,7 +249,7 @@ export const AiRoadmapCreationList = () => {
   };
 
   const handleNavigateToRoadmap = () => {
-    router.push('/roadmap/roadmap-details');
+    router.replace('/roadmap/roadmap-details');
   };
 
   const handleRetry = () => {

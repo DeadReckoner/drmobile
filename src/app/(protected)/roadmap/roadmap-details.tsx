@@ -21,7 +21,6 @@ import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import {
-  resetDraftAction,
   selectDraftRoadmap,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
@@ -43,7 +42,6 @@ const RoadmapDetailsPage = () => {
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
-  const [isBackModalOpen, setIsBackModalOpen] = useState(false);
 
   const { t } = useLocalization();
   const { showToast } = useToast();
@@ -61,7 +59,6 @@ const RoadmapDetailsPage = () => {
 
   const onDeleteConfirmation = async () => {
     hideDialog();
-    hideDiscardDialog();
     if (roadmap.roadmap_id) {
       try {
         await deleteRoadmap(roadmap.roadmap_id).unwrap();
@@ -80,28 +77,11 @@ const RoadmapDetailsPage = () => {
       type: 'success',
       message: t('common.deleted_successfully'),
     });
-    hideDiscardDialog();
-    dispatch(resetDraftAction());
-    dispatch(resetCreationStateAction());
-    router.navigate('/create');
+    router.dismissTo('/progress');
   };
-
-  const hideDiscardDialog = () => setIsBackModalOpen(false);
-  const showDiscardDialog = () => setIsBackModalOpen(true);
 
   const onBackPress = () => {
-    if (roadmap?.roadmap_id && roadmap.generation_status === 'completed') {
-      dispatch(resetDraftAction());
-      dispatch(resetCreationStateAction());
-      return router.navigate('/create');
-    }
-    showDiscardDialog();
-  };
-
-  const onBackPressConfirmed = async () => {
-    if (roadmap?.roadmap_id) {
-      await onDeleteConfirmation();
-    }
+    router.back();
   };
 
   const toggleEditMode = () => setIsEditing((edit) => !edit);
@@ -197,12 +177,11 @@ const RoadmapDetailsPage = () => {
                 />
               </AppButton>
             )}
-            {!!roadmap?.roadmap_id &&
-              roadmap?.generation_status !== 'processing' && (
-                <AppButton onPress={showDialog}>
-                  <AppIcon name={'delete'} color={Colors.error} size={20} />
-                </AppButton>
-              )}
+            {!!roadmap?.roadmap_id && (
+              <AppButton onPress={showDialog}>
+                <AppIcon name={'delete'} color={Colors.error} size={20} />
+              </AppButton>
+            )}
           </AppView>
         </AppView>
         <Divider margin-16 />
@@ -284,27 +263,6 @@ const RoadmapDetailsPage = () => {
           }
         />
       </AppKeyboardController>
-      <ConfirmationDialog
-        isDialogOpen={isBackModalOpen}
-        onDismiss={hideDiscardDialog}
-        title="tabs.create_tab.leave_without_saving"
-        subtitle="tabs.create_tab.discard_roadmap_description"
-        onPositivePress={onBackPressConfirmed}
-        onNegativePress={hideDiscardDialog}
-        positiveText="common.leave"
-        negativeText="common.stay"
-        positiveButtonIcon={
-          <AppIcon name="arrowleft" color={Colors.textOnPrimary} size={14} />
-        }
-        negativeButtonIcon={
-          <AppIcon
-            set="Feather"
-            name="map"
-            color={Colors.textOnPrimary}
-            size={14}
-          />
-        }
-      />
     </AppView>
   );
 };

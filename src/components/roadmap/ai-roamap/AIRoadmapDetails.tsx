@@ -1,5 +1,4 @@
 import { AppButton } from '@/components/AppButton';
-import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
@@ -66,14 +65,20 @@ export const AIRoadmapDetails = ({
           exiting={FadeOutUp}>
           <AppView row centerV spread marginB-16>
             <TranslatedText body2 translationKey="common.current_milestone" />
-            <AppCard
-              bg-lightCardBG
-              br-100
-              padding-6
-              paddingH-12
-              onPress={onViewMacroMap}>
-              <TranslatedText caption light translationKey="common.view_map" />
-            </AppCard>
+            <AppButton onPress={onViewMacroMap}>
+              <AppView right>
+                <AppView
+                  row
+                  center
+                  gap-8
+                  br100
+                  padding-4
+                  paddingH-12
+                  bg-lightCardBG>
+                  <TranslatedText xsm translationKey="common.view_map" />
+                </AppView>
+              </AppView>
+            </AppButton>
           </AppView>
           {/* TODO: show the current running milestone */}
           {roadmap.macro_map?.phases[0].macro_milestones[0] && (
@@ -86,28 +91,32 @@ export const AIRoadmapDetails = ({
               }
             />
           )}
-          <AppButton
-            onPress={() => {
-              router.navigate('/(protected)/roadmap/ai-roadmap-all-milestones');
-            }}>
-            <AppView right>
-              <AppView
-                row
-                center
-                marginT-16
-                gap-8
-                br100
-                padding-8
-                paddingH-12
-                bg-lightCardBG>
-                <TranslatedText
-                  xsm
-                  translationKey="ai_roadmap.see_all_milestones"
-                />
-                <AppIcon set="Feather" name="arrow-right-circle" size={16} />
+          {roadmap?.milestones?.length > 0 && (
+            <AppButton
+              onPress={() => {
+                router.navigate(
+                  '/(protected)/roadmap/ai-roadmap-all-milestones',
+                );
+              }}>
+              <AppView right>
+                <AppView
+                  row
+                  center
+                  marginT-16
+                  gap-8
+                  br100
+                  padding-8
+                  paddingH-12
+                  bg-lightCardBG>
+                  <TranslatedText
+                    xsm
+                    translationKey="ai_roadmap.see_all_milestones"
+                  />
+                  <AppIcon set="Feather" name="arrow-right-circle" size={16} />
+                </AppView>
               </AppView>
-            </AppView>
-          </AppButton>
+            </AppButton>
+          )}
         </AppView>
       ) : null}
     </AppView>
