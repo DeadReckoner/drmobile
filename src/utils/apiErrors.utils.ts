@@ -34,6 +34,7 @@ export const getApiErrorMessage = (error: unknown) => {
   return (
     (error as ApiError)?.message ||
     (error as ApiError)?.data?.error ||
-    i18nConfig.t('common.something_went_wrong')
+    i18nConfig.t('common.something_went_wrong') ||
+    'Something went wrong.'
   );
 };
