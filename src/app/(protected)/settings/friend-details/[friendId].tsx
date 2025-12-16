@@ -14,7 +14,8 @@ import {
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
 } from '@/store/apis/friendsApi';
-import { useLocalSearchParams } from 'expo-router';
+import { Animations } from '@/utils/animation.utils';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -150,15 +151,16 @@ const FriendDetails = () => {
   }, [friendshipStatus, handleRemoveFriend, handleSendFriendRequest]);
 
   const onChatPress = () => {
-    //TODO: get theards info from user details and navigate to messages
-    // router.navigate({
-    //   pathname: '/messages/[threadId]',
-    //   params: {
-    //     threadId: friendDetails?.thread_id,
-    //     threadName: friendDetails.,
-    //     threadUserId: friendId,
-    //   },
-    // });
+    if (friendProfileData?.thread_id) {
+      router.navigate({
+        pathname: '/messages/[threadId]',
+        params: {
+          threadId: friendProfileData.thread_id,
+          threadName: friendProfileData.user.first_name,
+          threadUserId: friendId,
+        },
+      });
+    }
   };
 
   const renderEmptyRoadmaps = useCallback(() => {
@@ -397,7 +399,11 @@ const FriendDetails = () => {
             </AppView>
             {friendshipStatus === 'accepted' && (
               <AppButton onPress={onChatPress}>
-                <AppView centerH>
+                <AppView
+                  centerH
+                  reanimated
+                  entering={Animations.Entry.FadeInDownWithSpring()}
+                  exiting={Animations.Exit.FadeOutDown()}>
                   <TranslatedText
                     xsm
                     textColor

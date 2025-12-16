@@ -1,4 +1,7 @@
-import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import {
+  RoadmapCreationJobResponse,
+  RoadmapType,
+} from '@/hooks/roadmap/types/roadmap.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -26,6 +29,7 @@ interface AIRoadmapCreationState {
   formData: Record<string, string>;
   createdAt: number | null;
   createdRoadmap: RoadmapType | null;
+  aiRoadmapCreationJobResponse: RoadmapCreationJobResponse | null;
 }
 
 const initialState: AIRoadmapCreationState = {
@@ -38,6 +42,7 @@ const initialState: AIRoadmapCreationState = {
   formData: {},
   createdAt: null,
   createdRoadmap: null,
+  aiRoadmapCreationJobResponse: null,
 };
 
 const aiRoadmapCreationSlice = createSlice({
@@ -103,6 +108,7 @@ const aiRoadmapCreationSlice = createSlice({
     // Set status to creating when API call starts
     startRoadmapCreationAction: (state) => {
       state.status = 'creating';
+      state.error = null;
     },
 
     // Set status to completed when API call succeeds
@@ -112,12 +118,21 @@ const aiRoadmapCreationSlice = createSlice({
     ) => {
       state.status = 'completed';
       state.createdRoadmap = action.payload;
+      state.error = null;
     },
 
     // Set error when API call fails
     setCreationErrorAction: (state, action: PayloadAction<string>) => {
       state.status = 'error';
+      state.createdRoadmap = null;
       state.error = action.payload;
+    },
+
+    setAIRoadmapJobCreationResponseAction: (
+      state,
+      action: PayloadAction<RoadmapCreationJobResponse>,
+    ) => {
+      state.aiRoadmapCreationJobResponse = action.payload;
     },
 
     // Reset the entire state
@@ -137,6 +152,7 @@ export const {
   completeRoadmapCreationAction,
   setCreationErrorAction,
   resetCreationStateAction,
+  setAIRoadmapJobCreationResponseAction,
 } = aiRoadmapCreationSlice.actions;
 
 // Selectors

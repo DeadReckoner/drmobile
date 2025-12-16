@@ -15,7 +15,6 @@ import {
   updateTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
-import { DateUtils } from '@/utils/date.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateTaskQueryStarted: TypedMutationOnQueryStarted<
@@ -80,7 +79,7 @@ const onDeleteTaskQueryStarted: TypedMutationOnQueryStarted<
   unknown,
   string,
   BaseQueryFunctionType
-> = async (task_id, { dispatch, queryFulfilled, getState }) => {
+> = async (_task_id, { dispatch, queryFulfilled, getState }) => {
   try {
     await queryFulfilled;
     const state = getState() as unknown as RootStateType;
@@ -144,19 +143,7 @@ export const taskApi = api.injectEndpoints({
         url: `tasks/user?start_date=${startDate}`,
         method: 'GET',
       }),
-
-      keepUnusedDataFor: 84200,
-      serializeQueryArgs: ({ queryArgs }) => {
-        return queryArgs;
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        if (!currentArg) return false;
-        const today = DateUtils.formatDate(
-          DateUtils.createDate(),
-          'YYYY-MM-DD',
-        );
-        return currentArg !== previousArg || currentArg < today;
-      },
+      keepUnusedDataFor: 600,
     }),
     getTasksById: builder.query<CreateTaskResponseType, string>({
       query: (taskId) => ({

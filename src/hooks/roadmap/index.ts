@@ -12,4 +12,5 @@ export const {
   useStartRoadmapMutation,
 } = roadmapApi;
 
-export const { useCreateAIRoadmapMutation } = aiRoadmapApi;
+export const { useCreateAIRoadmapMutation, useGetJobStatusQuery } =
+  aiRoadmapApi;

@@ -44,6 +44,7 @@ export interface FriendResponse {
 export interface FriendProfileResponse {
   user: User;
   allowed_roadmaps: RoadmapType[];
+  thread_id: string;
 }
 
 export interface ApiResponse<T> {

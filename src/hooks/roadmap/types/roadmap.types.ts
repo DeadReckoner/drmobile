@@ -40,6 +40,12 @@ export interface MilestoneType {
   tasks: TaskType[];
 }
 
+type RoadmapGenerationStatusType =
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed';
+
 export interface RoadmapType {
   roadmap_id: string;
   user_id?: string;
@@ -57,6 +63,9 @@ export interface RoadmapType {
 
   type?: 'custom_made' | 'ai_generated';
   macro_map?: MacroMap;
+
+  job_id?: string;
+  generation_status?: RoadmapGenerationStatusType;
 }
 
 export interface MacroMap {
@@ -101,4 +110,24 @@ export interface Risk {
   macro_milestone_id: string;
   description: string;
   severity: 'low' | 'medium' | 'high';
+}
+
+export interface RoadmapCreationJobResponse {
+  job_id: string;
+  message: string;
+  roadmap_id: string;
+  status: RoadmapGenerationStatusType;
+  ws_url: string;
+}
+
+export interface RoadmapCreationJobStatusResponse {
+  error: string;
+  job_id: string;
+  progress: number;
+  status: RoadmapGenerationStatusType;
+
+  result?: {
+    macromap_id: string;
+    roadmap_id: string;
+  };
 }

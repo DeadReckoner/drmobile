@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { useAddNotificationTokenMutation } from '@/hooks/notifications';
 import { notificationsUtils } from '@/utils/notifications.utils';
-import { AppState } from 'react-native';
+import {
+  isTokenSubmitted,
+  markTokenAsSubmitted,
+  saveExpoPushToken,
+} from '@/utils/storage.utils';
+import * as Device from 'expo-device';
+import { AppState, Platform } from 'react-native';
 
 interface NotificationData {
   [key: string]: any;
@@ -13,11 +20,36 @@ export const usePushNotifications = () => {
     'granted' | 'denied' | 'undetermined' | null
   >(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [addNotificationToken] = useAddNotificationTokenMutation();
+
+  const submitTokenToBackend = useCallback(
+    async (token: string) => {
+      try {
+        const alreadySubmitted = await isTokenSubmitted(token);
+        if (alreadySubmitted) {
+          return;
+        }
+
+        const platform = Platform.OS === 'ios' ? 'ios' : 'android';
+        const deviceId = Device.osBuildId || Device.modelId || 'unknown';
+
+        await addNotificationToken({
+          expo_token: token,
+          platform,
+          device_id: deviceId,
+        }).unwrap();
+
+        await markTokenAsSubmitted(token);
+      } catch {}
+    },
+    [addNotificationToken],
+  );
 
   const checkPermissions = useCallback(async () => {
     try {
       const status = await notificationsUtils.checkPermissions();
       setPermissionStatus(status);
+      return status;
     } catch {
       setPermissionStatus('denied');
     }
@@ -42,11 +74,19 @@ export const usePushNotifications = () => {
   const requestPermissions = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
     try {
+      const checkResult = await checkPermissions();
+      if (checkResult === 'granted') {
+        setIsLoading(false);
+        return true;
+      }
       const { granted } = await notificationsUtils.requestPermissions();
       setPermissionStatus(granted ? 'granted' : 'denied');
       if (granted) {
         const token = await notificationsUtils.getExpoPushToken();
+        if (!token) return granted;
         setExpoPushToken(token);
+        await saveExpoPushToken(token);
+        await submitTokenToBackend(token);
       }
       return granted;
     } catch {
@@ -55,7 +95,7 @@ export const usePushNotifications = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [submitTokenToBackend, checkPermissions]);
 
   const scheduleNotification = useCallback(
     async (

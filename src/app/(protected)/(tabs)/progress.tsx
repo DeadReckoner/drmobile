@@ -29,7 +29,12 @@ const Progress = () => {
   );
 
   const onItemPress = (roadmap: RoadmapType, index: number) => {
-    dispatch(setDraftRoadmapAction(roadmap));
+    dispatch(
+      setDraftRoadmapAction({
+        ...roadmap,
+        milestones: roadmap.milestones || [],
+      }),
+    );
     dispatch(setSelectedRoadmapIndex(index));
     router.navigate('/roadmap/roadmap-details');
   };
@@ -42,6 +47,10 @@ const Progress = () => {
       setManualRefreshing(false);
     }
   }, [refetch]);
+
+  const visibleRoadmaps = data.filter(
+    (roadmap) => roadmap.generation_status === 'failed',
+  );
 
   return (
     <AppScreen>
@@ -84,7 +93,7 @@ const Progress = () => {
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring()}
               exiting={Animations.Exit.FadeOutDown()}>
-              <RoadmapList data={data} onItemPress={onItemPress} />
+              <RoadmapList data={visibleRoadmaps} onItemPress={onItemPress} />
             </AppView>
           )}
         </AppView>

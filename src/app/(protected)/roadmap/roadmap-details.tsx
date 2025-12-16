@@ -61,6 +61,7 @@ const RoadmapDetailsPage = () => {
 
   const onDeleteConfirmation = async () => {
     hideDialog();
+    hideDiscardDialog();
     if (roadmap.roadmap_id) {
       try {
         await deleteRoadmap(roadmap.roadmap_id).unwrap();
@@ -79,17 +80,28 @@ const RoadmapDetailsPage = () => {
       type: 'success',
       message: t('common.deleted_successfully'),
     });
-    router.back();
+    hideDiscardDialog();
+    dispatch(resetDraftAction());
+    dispatch(resetCreationStateAction());
+    router.navigate('/create');
   };
 
   const hideDiscardDialog = () => setIsBackModalOpen(false);
   const showDiscardDialog = () => setIsBackModalOpen(true);
 
   const onBackPress = () => {
-    if (roadmap?.roadmap_id) {
-      return router.back();
+    if (roadmap?.roadmap_id && roadmap.generation_status === 'completed') {
+      dispatch(resetDraftAction());
+      dispatch(resetCreationStateAction());
+      return router.navigate('/create');
     }
     showDiscardDialog();
+  };
+
+  const onBackPressConfirmed = async () => {
+    if (roadmap?.roadmap_id) {
+      await onDeleteConfirmation();
+    }
   };
 
   const toggleEditMode = () => setIsEditing((edit) => !edit);
@@ -166,7 +178,7 @@ const RoadmapDetailsPage = () => {
 
   return (
     <AppView flex-1 reanimated layout={LinearTransition}>
-      {isLoading && <Loader />}
+      {(isLoading || (isRoadmapLoading && !roadmap?.goal)) && <Loader />}
       <AppKeyboardController>
         <AppView spread row gap-16>
           <HeaderWithBack
@@ -185,11 +197,12 @@ const RoadmapDetailsPage = () => {
                 />
               </AppButton>
             )}
-            {!!roadmap?.roadmap_id && (
-              <AppButton onPress={showDialog}>
-                <AppIcon name={'delete'} color={Colors.error} size={20} />
-              </AppButton>
-            )}
+            {!!roadmap?.roadmap_id &&
+              roadmap?.generation_status !== 'processing' && (
+                <AppButton onPress={showDialog}>
+                  <AppIcon name={'delete'} color={Colors.error} size={20} />
+                </AppButton>
+              )}
           </AppView>
         </AppView>
         <Divider margin-16 />
@@ -226,27 +239,29 @@ const RoadmapDetailsPage = () => {
               )}
               <Divider margin-8 />
 
-              {roadmap.milestones?.length > 0 && !roadmap?.roadmap_id && (
-                <PrimaryButton
-                  label="tabs.create_tab.submit_roadmap"
-                  onPress={onCreateRoadmap}
-                  shouldShowLoader
-                  isLoading={isCreatingRoadmap}
-                />
-              )}
+              {!isRoadmapLoading && (
+                <>
+                  {roadmap.milestones?.length > 0 &&
+                    roadmap?.generation_status === 'processing' && (
+                      <PrimaryButton
+                        label="tabs.create_tab.submit_roadmap"
+                        onPress={onCreateRoadmap}
+                        shouldShowLoader
+                        isLoading={isCreatingRoadmap}
+                      />
+                    )}
 
-              {!isRoadmapLoading && isRoadmapNotStarted && hasMilestones && (
-                <AppView
-                  reanimated
-                  entering={Animations.Entry.FadeInDownWithSpring().delay(200)}
-                  exiting={Animations.Exit.FadeOutDown()}>
-                  <PrimaryButton
-                    label="common.start_roadmap"
-                    shouldShowLoader
-                    isLoading={isStartingRoadmap}
-                    onPress={onStartRoadmap}
-                  />
-                </AppView>
+                  {!isRoadmapLoading &&
+                    isRoadmapNotStarted &&
+                    hasMilestones && (
+                      <PrimaryButton
+                        label="common.start_roadmap"
+                        shouldShowLoader
+                        isLoading={isStartingRoadmap}
+                        onPress={onStartRoadmap}
+                      />
+                    )}
+                </>
               )}
             </AppView>
           )}
@@ -274,12 +289,7 @@ const RoadmapDetailsPage = () => {
         onDismiss={hideDiscardDialog}
         title="tabs.create_tab.leave_without_saving"
         subtitle="tabs.create_tab.discard_roadmap_description"
-        onPositivePress={() => {
-          hideDiscardDialog();
-          dispatch(resetDraftAction());
-          dispatch(resetCreationStateAction());
-          router.back();
-        }}
+        onPositivePress={onBackPressConfirmed}
         onNegativePress={hideDiscardDialog}
         positiveText="common.leave"
         negativeText="common.stay"

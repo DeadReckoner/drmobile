@@ -58,16 +58,18 @@
   },
   "ai_roadmap": {
     "prompts": {
-      "goal_name": "Quel est l'objectif principal sur lequel tu aimerais travailler ?",
-      "goal_description": "En quelques phrases, dis-m'en un peu plus sur cet objectif. À quoi ressemblerait la réussite pour toi ?",
-      "goal_importance": "Pourquoi cet objectif est-il important pour toi en ce moment et comment le fait de l'atteindre changera-t-il ta vie ?",
-      "target_date": "Pour quand aimerais-tu atteindre cet objectif ?",
-      "weekly_commitment": "En moyenne, combien de temps peux-tu consacrer à cela chaque semaine ?",
-      "frequency": "À quelle fréquence aimerais-tu travailler dessus ? (tous les jours, quelques fois par semaine, le week-end, etc.)",
-      "constraints": "Quels défis ou obstacles pourraient se mettre en travers de ton chemin ?",
-      "skill_level": "Qu'as-tu déjà accompli en vue de cet objectif et d'où sens-tu que tu pars maintenant ? (par ex. compétences, expérience ou progrès)",
-      "thank_you": "Merci ! Je crée maintenant ton plan personnalisé.",
-      "composer_placeholder": "Entre ta réponse"
+      "welcome": "Bienvenue, je suis là pour t’aider à transformer ton objectif en une feuille de route claire et concrète.\nAvant de commencer, une petite précision : plus tu partages de détails, plus ton plan sera solide et précis.\nDonne-moi une vue d’ensemble, je m’occupe du reste.\nOn s’y met",
+      "goal_name": "Très bien, commençons par l’essentiel. Quel est l’objectif précis vers lequel tu souhaites avancer ? Dis-moi exactement ce que tu cherches à atteindre.",
+      "goal_description": "Quand tout se passe bien, à quoi ressemble l’objectif une fois atteint pour toi ? Décris le résultat aussi clairement que possible.",
+      "goal_importance": "Pourquoi cet objectif est-il important pour toi en ce moment ? Et qu’est-ce qui change pour toi une fois que tu l’as atteint ?",
+      "target_date": "À quelle date aimerais-tu atteindre cet objectif ? Est-ce une échéance ferme ou plutôt une cible idéale ?",
+      "weekly_commitment": "Combien de temps peux-tu raisonnablement y consacrer chaque semaine, et quel rythme te convient le mieux ? De petites étapes quotidiennes, quelques sessions concentrées ou quelque chose de plus flexible ?",
+      "frequency": "Où en es-tu aujourd’hui ? Partage ce que tu as déjà fait, ce que tu sais ou tout élément de contexte qui m’aide à comprendre ton point de départ.",
+      "constraints": "Quels obstacles potentiels pourraient se dresser sur ton chemin ? Et lesquels te semblent être les plus bloquants ? Ils peuvent être internes ou externes (ex. Internes : trouver la motivation pour se lever tôt ; Externes : travail ou obligations familiales).",
+      "skill_level": "Y a-t-il des limites, des conditions ou des préférences personnelles dont je devrais tenir compte ? Cela peut inclure des contraintes d’emploi du temps, de budget, des facteurs physiques, des outils que tu peux ou ne peux pas utiliser, ou tout ce que tu souhaites inclure ou éviter.",
+      "anything_else": "Y a-t-il autre chose que je devrais savoir avant de construire ta feuille de route ? Ajoute tout détail ou contexte utile pour façonner le plan.",
+      "thank_you": "Merci ! Je construis maintenant ta feuille de route personnalisée.",
+      "composer_placeholder": "Saisis ta réponse"
     },
     "in_progress_banner": {
       "title": "Création de ta feuille de route",

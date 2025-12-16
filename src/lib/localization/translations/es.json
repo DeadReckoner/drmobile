@@ -58,15 +58,17 @@
   },
   "ai_roadmap": {
     "prompts": {
-      "goal_name": "¿Cuál es el objetivo principal en el que te gustaría trabajar?",
-      "goal_description": "En unas pocas frases, cuéntame un poco más sobre este objetivo. ¿Cómo se vería el éxito para ti?",
-      "goal_importance": "¿Por qué es importante este objetivo para ti en este momento y cómo cambiará tu vida lograrlo?",
-      "target_date": "¿Para cuándo te gustaría alcanzar este objetivo?",
-      "weekly_commitment": "En promedio, ¿cuánto tiempo puedes dedicar a esto cada semana?",
-      "frequency": "¿Con qué frecuencia te gustaría trabajar en esto? (diariamente, unas pocas veces a la semana, fines de semana, etc.)",
-      "constraints": "¿Qué desafíos u obstáculos podrían interponerse en tu camino?",
-      "skill_level": "¿Qué has hecho ya hacia este objetivo y desde dónde sientes que estás comenzando ahora? (por ejemplo, habilidades, experiencia o progreso)",
-      "thank_you": "¡Gracias! Estoy creando tu plan de acción personalizado ahora.",
+      "welcome": "Bienvenido, estoy aquí para ayudarte a convertir tu objetivo en una hoja de ruta clara y práctica.\nAntes de empezar, una cosa rápida: cuanto más detalle compartas, más sólido y preciso será tu plan.\nDame el panorama completo y yo me encargo del resto.\n¿Empezamos",
+      "goal_name": "Muy bien, lo primero es lo primero. ¿Cuál es el objetivo específico hacia el que quieres trabajar? Dime exactamente qué estás tratando de lograr.",
+      "goal_description": "Cuando todo sale bien, ¿cómo se ve el objetivo \"completado\" para ti? Describe el resultado con la mayor claridad posible.",
+      "goal_importance": "¿Por qué este objetivo es importante para ti en este momento? ¿Y qué cambia para ti cuando lo alcanzas?",
+      "target_date": "¿Cuándo te gustaría alcanzar este objetivo? ¿Es una fecha límite firme o más bien un objetivo ideal?",
+      "weekly_commitment": "¿Cuánto tiempo puedes dedicar de manera realista cada semana y qué tipo de ritmo te funciona mejor? ¿Pequeños pasos diarios, algunas sesiones enfocadas o algo más flexible?",
+      "frequency": "¿Desde dónde partes hoy? Comparte cualquier cosa que ya hayas hecho, lo que sabes o cualquier antecedente que ayude a entender tu punto de partida.",
+      "constraints": "¿Qué posibles obstáculos podrían interponerse en tu camino? ¿Y cuáles sientes que son los mayores bloqueos? Pueden ser internos o externos (por ejemplo, Internos: encontrar la fuerza de voluntad para despertarte temprano; Externos: trabajo o compromisos familiares).",
+      "skill_level": "¿Hay límites, condiciones o preferencias personales que deba tener en cuenta? Esto puede incluir restricciones de horario, presupuesto, factores físicos, herramientas que puedes o no usar, o cualquier cosa que quieras incluir o evitar.",
+      "anything_else": "¿Hay algo más que deba saber antes de crear tu plan? Agrega cualquier detalle o contexto que ayude a darle forma.",
+      "thank_you": "¡Gracias! Estoy creando tu hoja de ruta personalizada ahora.",
       "composer_placeholder": "Escribe tu respuesta"
     },
     "in_progress_banner": {
