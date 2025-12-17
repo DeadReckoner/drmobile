@@ -34,11 +34,12 @@ import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
-import { FlatList, Keyboard, StyleSheet } from 'react-native';
+import { Dimensions, FlatList, Keyboard, StyleSheet } from 'react-native';
 import {
   KeyboardAvoidingView,
   KeyboardGestureArea,
 } from 'react-native-keyboard-controller';
+import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { Colors } from 'react-native-ui-lib';
 
 const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
@@ -137,12 +138,22 @@ export const AiRoadmapCreationList = () => {
   }, [currentPromptIndex, status, isTyping]);
 
   useEffect(() => {
-    if (messages.length > 0) {
-      flatListRef.current?.scrollToEnd({ animated: true });
+    if (messages.length === 0) return;
+    flatListRef.current?.scrollToEnd({ animated: true });
+
+    if (isTyping) {
+      const scrollInterval = setInterval(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 400);
+
+      return () => clearInterval(scrollInterval);
     }
-  }, [messages.length]);
+  }, [isTyping, messages.length]);
 
   useEffect(() => {
+    const keyboardDidShow = Keyboard.addListener('keyboardDidShow', () => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    });
     return () => {
       if (thankYouTimeout.current) {
         clearTimeout(thankYouTimeout.current);
@@ -150,6 +161,7 @@ export const AiRoadmapCreationList = () => {
       if (createAIRoadmapApiTimeout.current) {
         clearTimeout(createAIRoadmapApiTimeout.current);
       }
+      keyboardDidShow.remove();
     };
   }, []);
 
@@ -248,6 +260,7 @@ export const AiRoadmapCreationList = () => {
       <AppView
         key={id}
         reanimated
+        marginB-8
         entering={Animations.Entry.FadeInDownWithSpring()}>
         <Message
           key={id}
@@ -266,9 +279,7 @@ export const AiRoadmapCreationList = () => {
               dispatch(setIsTypingAction(false));
 
               if (id === 'system-0') {
-                setTimeout(() => {
-                  dispatch(incrementPromptIndexAction());
-                }, 800);
+                dispatch(incrementPromptIndexAction());
               }
             }
           }}
@@ -308,8 +319,26 @@ export const AiRoadmapCreationList = () => {
           </AppButton>
         </AppView>
       )}
-      <AppView height={32} />
+      <AppView width={10} height={24} />
     </>
+  );
+  const GradientBackdrop = () => (
+    <Svg
+      height="250"
+      width={Dimensions.get('window').width}
+      style={{
+        position: 'absolute',
+        bottom: 0,
+      }}
+      pointerEvents="none">
+      <Defs>
+        <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+          <Stop offset="0" stopColor={Colors.black} stopOpacity="0" />
+          <Stop offset="1" stopColor={Colors.black} stopOpacity="1" />
+        </LinearGradient>
+      </Defs>
+      <Rect width="100%" height="100%" fill="url(#grad)" />
+    </Svg>
   );
 
   return (
@@ -352,44 +381,42 @@ export const AiRoadmapCreationList = () => {
               minIndexForVisible: 0,
               autoscrollToTopThreshold: 10,
             }}
-            onLayout={() => {
-              if (messages.length > 0) {
-                flatListRef.current?.scrollToEnd({ animated: false });
-              }
-            }}
             ListFooterComponent={renderFooter}
           />
         </AppView>
       </KeyboardGestureArea>
 
       {status === 'completed' ? (
-        <AppButton
-          style={{ position: 'absolute', bottom: 40, left: 0, right: 0 }}
-          center
-          onPress={handleNavigateToRoadmap}>
-          <AppView
-            row
-            gap-8
+        <AppView bg-transparent pointerEvents="box-none">
+          <GradientBackdrop />
+          <AppButton
+            style={{ position: 'absolute', bottom: 80, width: '100%' }}
             center
-            bg-success
-            br100
-            padding-10
-            paddingH-16
-            style={{
-              borderColor: Colors.success,
-            }}>
-            <TranslatedText
-              caption
-              translationKey="ai_roadmap.draft_dialog.view_button"
-            />
-            <AppIcon
-              set="Ionicons"
-              name="arrow-forward-circle-outline"
-              size={20}
-              color={Colors.white}
-            />
-          </AppView>
-        </AppButton>
+            onPress={handleNavigateToRoadmap}>
+            <AppView
+              row
+              gap-8
+              center
+              bg-success
+              br100
+              padding-12
+              paddingH-24
+              style={{
+                borderColor: Colors.success,
+              }}>
+              <TranslatedText
+                body2
+                translationKey="ai_roadmap.draft_dialog.view_button"
+              />
+              <AppIcon
+                set="Ionicons"
+                name="arrow-forward-circle-outline"
+                size={24}
+                color={Colors.white}
+              />
+            </AppView>
+          </AppButton>
+        </AppView>
       ) : (
         <KeyboardAvoidingView behavior="padding">
           <Composer
@@ -413,7 +440,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 60,
+    paddingTop: 8,
   },
 });

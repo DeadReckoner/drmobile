@@ -2,12 +2,12 @@ import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import { useGetJobStatusQuery } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
+  completeRoadmapCreationAction,
   resetCreationStateAction,
   selectAIRoadmapCreationState,
   selectAIRoadmapCreationStatus,
@@ -15,76 +15,93 @@ import {
   selectIsAIRoadmapInDraft,
   setCreationErrorAction,
 } from '@/store/slices/aiRoadmapCreationSlice';
+import { selectUser } from '@/store/slices/authSlice';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
 export const InProgressAIRoadmapBanner = () => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
   const status = useAppSelector(selectAIRoadmapCreationStatus);
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const isInDraft = useAppSelector(selectIsAIRoadmapInDraft);
   const { t } = useLocalization();
+  const hasWSStartedPolling = useRef<boolean>(false);
   const isCompleted = status === 'completed';
 
   const { aiRoadmapCreationJobResponse } = useAppSelector(
     selectAIRoadmapCreationState,
   );
 
-  // TODO N : Setup websocket to get the real time update status for roadmap creation.
-  // If job status is failed then stop polling and show error message.
-  // If completed then navigate to roadmap-details page with roadmap id(job result response has the roadmap-id)
-  // Same functionality should be implemente in the progress page to show the status of AI roadmap creation.
-
-  // Determine if we should skip polling based on job status
-  const shouldSkipPolling = React.useMemo(() => {
-    if (!aiRoadmapCreationJobResponse?.job_id) return true;
-    if (status === 'completed' || status === 'error') return true;
-    return false;
-  }, [aiRoadmapCreationJobResponse?.job_id, status]);
-
-  const { data: jobStatusData } = useGetJobStatusQuery(
-    {
-      jobId: aiRoadmapCreationJobResponse?.job_id || '',
-    },
-    {
-      skip: shouldSkipPolling || !aiRoadmapCreationJobResponse?.job_id,
-      pollingInterval: 60_000,
-    },
-  );
-
   useEffect(() => {
-    if (jobStatusData?.status === 'failed') {
-      dispatch(setCreationErrorAction(t('common.something_went_wrong')));
-    } else if (jobStatusData?.status === 'completed') {
-      if (jobStatusData?.result?.roadmap_id) {
-        const roadmap = {
-          roadmap_id: jobStatusData.result.roadmap_id,
-          goal: '',
-          description: '',
-          days: 0,
-          completed: false,
-          start_date: '',
-          milestones: [],
-          reason: '',
-        };
-        dispatch(setDraftRoadmapAction(roadmap));
-        dispatch(resetCreationStateAction());
-        dispatch(
-          roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
-            forceRefetch: true,
-          }),
-        );
-        router.navigate('/roadmap/roadmap-details');
+    if (hasWSStartedPolling.current) return;
+
+    if (!aiRoadmapCreationJobResponse?.ws_url) return;
+    if (status === 'completed' || status === 'error') return;
+
+    const wsURL = `${process.env.EXPO_PUBLIC_API_URL}/api/v1/${aiRoadmapCreationJobResponse.ws_url}`;
+    const ws = new WebSocket(wsURL, undefined, {
+      headers: {
+        Authorization: `Bearer ${user.access_token}`,
+      },
+    });
+
+    hasWSStartedPolling.current = true;
+    ws.onmessage = (event) => {
+      const jobStatusData = JSON.parse(event.data as string);
+      if (jobStatusData?.status === 'failed') {
+        dispatch(setCreationErrorAction(t('common.something_went_wrong')));
+      } else if (jobStatusData?.status === 'completed') {
+        if (
+          jobStatusData?.data?.roadmap_id ||
+          jobStatusData?.result?.roadmap_id
+        ) {
+          const roadmap = {
+            roadmap_id:
+              jobStatusData?.data?.roadmap_id ||
+              jobStatusData?.result?.roadmap_id,
+            goal: '',
+            description: '',
+            days: 0,
+            completed: false,
+            start_date: '',
+            milestones: [],
+            reason: '',
+          };
+          dispatch(setDraftRoadmapAction(roadmap));
+          dispatch(completeRoadmapCreationAction(roadmap));
+          hasWSStartedPolling.current = false;
+        }
       }
-    }
-  }, [jobStatusData, dispatch, t]);
+    };
+
+    ws.onerror = () => {
+      dispatch(setCreationErrorAction(t('common.something_went_wrong')));
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [
+    aiRoadmapCreationJobResponse?.ws_url,
+    user.access_token,
+    status,
+    dispatch,
+    t,
+  ]);
 
   const handlePress = () => {
     if (isCompleted && createdRoadmap) {
+      dispatch(
+        roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
+          forceRefetch: true,
+        }),
+      );
       dispatch(setDraftRoadmapAction(createdRoadmap));
+      dispatch(resetCreationStateAction());
       router.navigate('/roadmap/roadmap-details');
     } else {
       router.navigate('/roadmap/create-ai-roadmap');

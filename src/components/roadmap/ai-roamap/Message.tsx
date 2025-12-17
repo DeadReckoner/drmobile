@@ -56,8 +56,7 @@ export const Message = ({
       style={[
         styles.messageContainer,
         isSystem ? styles.systemMessage : styles.userMessage,
-      ]}
-      marginB-8>
+      ]}>
       <AppView
         style={[
           styles.messageBubble,
