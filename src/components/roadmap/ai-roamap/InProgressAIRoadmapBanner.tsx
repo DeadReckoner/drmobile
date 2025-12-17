@@ -3,19 +3,22 @@ import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useGetJobStatusQuery } from '@/hooks/roadmap';
+import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
-  completeRoadmapCreationAction,
+  resetCreationStateAction,
   selectAIRoadmapCreationState,
   selectAIRoadmapCreationStatus,
   selectCreatedRoadmap,
   selectIsAIRoadmapInDraft,
+  setCreationErrorAction,
 } from '@/store/slices/aiRoadmapCreationSlice';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
 export const InProgressAIRoadmapBanner = () => {
@@ -23,23 +26,24 @@ export const InProgressAIRoadmapBanner = () => {
   const status = useAppSelector(selectAIRoadmapCreationStatus);
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const isInDraft = useAppSelector(selectIsAIRoadmapInDraft);
+  const { t } = useLocalization();
+  const isCompleted = status === 'completed';
 
   const { aiRoadmapCreationJobResponse } = useAppSelector(
     selectAIRoadmapCreationState,
   );
 
-  const [hasError, setHasError] = useState(false);
+  // TODO N : Setup websocket to get the real time update status for roadmap creation.
+  // If job status is failed then stop polling and show error message.
+  // If completed then navigate to roadmap-details page with roadmap id(job result response has the roadmap-id)
+  // Same functionality should be implemente in the progress page to show the status of AI roadmap creation.
 
+  // Determine if we should skip polling based on job status
   const shouldSkipPolling = React.useMemo(() => {
     if (!aiRoadmapCreationJobResponse?.job_id) return true;
     if (status === 'completed' || status === 'error') return true;
     return false;
   }, [aiRoadmapCreationJobResponse?.job_id, status]);
-
-  // TODO N : Setup websocket to get the real time update status for roadmap creation.
-  // If job status is failed then stop polling and show error message.
-  // If completed then navigate to roadmap-details page with roadmap id(job result response has the roadmap-id)
-  // Same functionality should be implemente in the progress page to show the status of AI roadmap creation.
 
   const { data: jobStatusData } = useGetJobStatusQuery(
     {
@@ -53,7 +57,7 @@ export const InProgressAIRoadmapBanner = () => {
 
   useEffect(() => {
     if (jobStatusData?.status === 'failed') {
-      setHasError(true);
+      dispatch(setCreationErrorAction(t('common.something_went_wrong')));
     } else if (jobStatusData?.status === 'completed') {
       if (jobStatusData?.result?.roadmap_id) {
         const roadmap = {
@@ -67,12 +71,16 @@ export const InProgressAIRoadmapBanner = () => {
           reason: '',
         };
         dispatch(setDraftRoadmapAction(roadmap));
-        dispatch(completeRoadmapCreationAction(roadmap));
+        dispatch(resetCreationStateAction());
+        dispatch(
+          roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
+            forceRefetch: true,
+          }),
+        );
+        router.navigate('/roadmap/roadmap-details');
       }
     }
-  }, [jobStatusData, dispatch]);
-
-  const isCompleted = status === 'completed';
+  }, [jobStatusData, dispatch, t]);
 
   const handlePress = () => {
     if (isCompleted && createdRoadmap) {
@@ -102,7 +110,7 @@ export const InProgressAIRoadmapBanner = () => {
           'ai_roadmap.draft_banner.description' as TranslationKeysType,
       };
     }
-    if (hasError) {
+    if (status === 'error') {
       return {
         backgroundColor: Colors.error,
         iconName: 'alert-circle-outline' as const,

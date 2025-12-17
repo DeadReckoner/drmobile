@@ -7,20 +7,15 @@ import { Composer } from '@/components/roadmap/ai-roamap/Composer';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import {
-  useCreateAIRoadmapMutation,
-  useGetJobStatusQuery,
-} from '@/hooks/roadmap';
+import { useCreateAIRoadmapMutation } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addMessageAction,
-  completeRoadmapCreationAction,
   incrementPromptIndexAction,
   MessageItem,
   resetCreationStateAction,
-  selectAIRoadmapCreationState,
   selectAIRoadmapCreationStatus,
   selectAIRoadmapFormData,
   selectCurrentPromptIndex,
@@ -35,7 +30,6 @@ import {
   updateFormDataAction,
   updateMessageAction,
 } from '@/store/slices/aiRoadmapCreationSlice';
-import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router } from 'expo-router';
@@ -100,55 +94,7 @@ export const AiRoadmapCreationList = () => {
   const isTyping = useAppSelector(selectIsTyping);
   const formData = useAppSelector(selectAIRoadmapFormData);
 
-  const [createAIRoadmap, { reset }] = useCreateAIRoadmapMutation();
-  const { aiRoadmapCreationJobResponse } = useAppSelector(
-    selectAIRoadmapCreationState,
-  );
-
-  // TODO N : Setup websocket to get the real time update status for roadmap creation.
-  // If job status is failed then stop polling and show error message.
-  // If completed then navigate to roadmap-details page with roadmap id(job result response has the roadmap-id)
-  // Same functionality should be implemente in the progress page to show the status of AI roadmap creation.
-
-  // Determine if we should skip polling based on job status
-  const shouldSkipPolling = React.useMemo(() => {
-    if (!aiRoadmapCreationJobResponse?.job_id) return true;
-    if (status === 'completed' || status === 'error') return true;
-    return false;
-  }, [aiRoadmapCreationJobResponse?.job_id, status]);
-
-  const { data: jobStatusData } = useGetJobStatusQuery(
-    {
-      jobId: aiRoadmapCreationJobResponse?.job_id || '',
-    },
-    {
-      skip: shouldSkipPolling || !aiRoadmapCreationJobResponse?.job_id,
-      pollingInterval: 60_000,
-    },
-  );
-
-  useEffect(() => {
-    if (jobStatusData?.status === 'failed') {
-      reset();
-      dispatch(setCreationErrorAction(t('common.something_went_wrong')));
-    } else if (jobStatusData?.status === 'completed') {
-      if (jobStatusData?.result?.roadmap_id) {
-        const roadmap = {
-          roadmap_id: jobStatusData.result.roadmap_id,
-          goal: '',
-          description: '',
-          days: 0,
-          completed: false,
-          start_date: '',
-          milestones: [],
-          reason: '',
-        };
-        dispatch(setDraftRoadmapAction(roadmap));
-        dispatch(completeRoadmapCreationAction(roadmap));
-      }
-    }
-    flatListRef.current?.scrollToEnd({ animated: true });
-  }, [jobStatusData, dispatch, t, reset]);
+  const [createAIRoadmap] = useCreateAIRoadmapMutation();
 
   const flatListRef = useRef<FlatList>(null);
   const thankYouTimeout = useRef<NodeJS.Timeout | null>(null);

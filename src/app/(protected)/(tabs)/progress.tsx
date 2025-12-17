@@ -75,12 +75,11 @@ const Progress = () => {
           )}
         </AppView>
         <Divider />
-        {shouldShowAIRoadmapBanner && (
-          <>
-            <InProgressAIRoadmapBanner />
-            <Divider />
-          </>
-        )}
+        <AppView
+          style={{ display: shouldShowAIRoadmapBanner ? 'flex' : 'none' }}>
+          <InProgressAIRoadmapBanner />
+          <Divider />
+        </AppView>
         <AppView flex-1>
           {isLoading && (
             <AppView height={100}>

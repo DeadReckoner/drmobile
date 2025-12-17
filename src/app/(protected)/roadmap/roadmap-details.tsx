@@ -21,24 +21,28 @@ import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import {
+  resetDraftAction,
   selectDraftRoadmap,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 import { useDispatch } from 'react-redux';
 
 const RoadmapDetailsPage = () => {
   const selectedRoadmap = useAppSelector(selectDraftRoadmap);
-  const { data: roadmap = selectedRoadmap, isLoading: isRoadmapLoading } =
-    useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
-      skip: !selectedRoadmap?.roadmap_id,
-      refetchOnMountOrArgChange: true,
-    });
+  const {
+    data: roadmap = selectedRoadmap,
+    isLoading: isRoadmapLoading,
+    error,
+  } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
+    skip: !selectedRoadmap?.roadmap_id,
+    refetchOnMountOrArgChange: true,
+  });
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
@@ -52,6 +56,18 @@ const RoadmapDetailsPage = () => {
 
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
     useStartRoadmapMutation();
+
+  useEffect(() => {
+    if (error) {
+      dispatch(resetDraftAction());
+      dispatch(resetCreationStateAction());
+      router.back();
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(error),
+      });
+    }
+  }, [error, showToast, dispatch]);
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
