@@ -216,7 +216,7 @@ const roadmapDraftSlice = createSlice({
       if (!task) return;
       if (task) {
         if (
-          task.steps.every((s) => s.completed) ||
+          task.steps?.every((s) => s.completed) ||
           !task.steps ||
           task.steps?.length === 0
         ) {
@@ -227,7 +227,7 @@ const roadmapDraftSlice = createSlice({
       }
       const milestone = findSelectedMilestone(state);
       if (milestone) {
-        if (milestone?.tasks.every((t) => t.completed)) {
+        if (milestone?.tasks?.every((t) => t.completed)) {
           milestone.reached = true;
         } else {
           milestone.reached = false;

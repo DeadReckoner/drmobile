@@ -22,8 +22,10 @@ const removeIds = <T>(obj: T): T => {
 };
 
 export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
-  const activeMilestone = roadmap.milestones.find((m) => !m.reached);
-
+  if (!roadmap.milestones) {
+    return { ...roadmap, milestones: [] };
+  }
+  const activeMilestone = roadmap.milestones?.find((m) => !m.reached);
   if (!activeMilestone) {
     return {
       ...roadmap,

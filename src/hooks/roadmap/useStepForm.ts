@@ -70,7 +70,7 @@ export const useStepForm = ({
           await createStep({
             description: stepDescription,
             task_id: selectedTask.task_id,
-            number: selectedTask.steps.length + 1,
+            number: (selectedTask.steps || []).length + 1,
             completed: false,
           }).unwrap();
           onSuccess?.();

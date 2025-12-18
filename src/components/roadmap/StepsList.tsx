@@ -70,7 +70,8 @@ export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
   };
 
   const renderFooterComponent = () => {
-    if (task?.steps?.length === 0 || mode === 'view') return;
+    if (mode === 'view') return;
+    if (!task?.steps || task?.steps?.length === 0) return;
     return (
       <AppButton onPress={onAddNewStepPress}>
         <LineDivider marginV-0 />

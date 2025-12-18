@@ -49,14 +49,12 @@ export const RoadmapDetails = ({
       <Divider marginT-16 />
       <TranslatedText body1 marginB-16 translationKey="common.milestones" />
       <Divider marginT-4 />
-      {roadmap.milestones?.length > 0 && (
-        <MilestonesList
-          milestones={roadmap.milestones}
-          onAddNewMilestonePress={handleOnAddNewMilestone}
-          onMilestonePress={handleMilestonePress}
-          onTaskPress={handleOnTaskPress}
-        />
-      )}
+      <MilestonesList
+        milestones={roadmap?.milestones || []}
+        onAddNewMilestonePress={handleOnAddNewMilestone}
+        onMilestonePress={handleMilestonePress}
+        onTaskPress={handleOnTaskPress}
+      />
     </AppView>
   );
 };

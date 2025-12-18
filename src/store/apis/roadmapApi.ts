@@ -5,7 +5,6 @@ import {
   resetDraftAction,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
-import { RootStateType } from '@/store/types/store.types';
 import {
   structureRoadmapApiPayload,
   transformRoadmap,
@@ -31,26 +30,33 @@ const onUpdateRoadmapQueryStarted: TypedMutationOnQueryStarted<
   RoadmapType,
   RoadmapType,
   BaseQueryFunctionType
-> = async (roadmap, { dispatch, queryFulfilled, getState }) => {
+> = async (roadmap, { dispatch, queryFulfilled }) => {
   try {
     const { data } = await queryFulfilled;
-    const state = getState() as unknown as RootStateType;
-    const { selectedRoadmapIndex } = state.roadmapDraft;
 
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
-        let roadmapIdx = selectedRoadmapIndex;
-        if (roadmapIdx === -1) {
-          roadmapIdx = draft.findIndex(
-            (r) => r.roadmap_id === roadmap.roadmap_id,
-          );
-        }
+        const roadmapIdx = draft.findIndex(
+          (r) => r.roadmap_id === roadmap.roadmap_id,
+        );
 
         if (roadmapIdx !== -1) {
           draft[roadmapIdx] = data;
         }
       }),
     );
+
+    if (roadmap.roadmap_id) {
+      dispatch(
+        roadmapApi.util.updateQueryData(
+          'getRoadmapById',
+          roadmap.roadmap_id,
+          (draft) => {
+            Object.assign(draft, data);
+          },
+        ),
+      );
+    }
 
     dispatch(setDraftRoadmapAction(data));
   } catch {}
@@ -60,22 +66,23 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
   string,
   string,
   BaseQueryFunctionType
-> = async (roadmap_id, { dispatch, queryFulfilled, getState }) => {
+> = async (roadmap_id, { dispatch, queryFulfilled }) => {
   try {
     await queryFulfilled;
-    const state = getState() as unknown as RootStateType;
-    const { selectedRoadmapIndex } = state.roadmapDraft;
 
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
-        if (selectedRoadmapIndex !== -1) {
-          draft.splice(selectedRoadmapIndex, 1);
-        } else {
-          const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
-          if (idx !== -1) draft.splice(idx, 1);
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft.splice(idx, 1);
         }
       }),
     );
+
+    dispatch(
+      roadmapApi.util.invalidateTags([{ type: 'Roadmaps', id: roadmap_id }]),
+    );
+
     dispatch(resetDraftAction());
   } catch {}
 };
@@ -93,6 +100,12 @@ const onStartRoadmapQueryStarted: TypedMutationOnQueryStarted<
         if (idx !== -1) {
           draft[idx] = data;
         }
+      }),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        Object.assign(draft, data);
       }),
     );
   } catch {}

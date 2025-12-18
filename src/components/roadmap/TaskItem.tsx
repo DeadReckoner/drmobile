@@ -11,7 +11,12 @@ interface TaskItemProps {
 export const TaskItem = ({ task, onTaskClick }: TaskItemProps) => {
   return (
     <AppCard row centerV onPress={() => onTaskClick?.(task)}>
-      <AppCheckbox value={task.steps?.every((s) => s.completed)} />
+      <AppCheckbox
+        value={
+          (task?.steps?.length > 0 && task.steps?.every((s) => s.completed)) ||
+          false
+        }
+      />
       <Divider />
       <AppView flex-1>
         <AppText body2 textColor>

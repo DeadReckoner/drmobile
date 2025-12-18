@@ -38,6 +38,7 @@ export interface MilestoneType {
   day: number;
   reached: boolean;
   tasks: TaskType[];
+  date?: string;
 }
 
 type RoadmapGenerationStatusType =

@@ -16,7 +16,11 @@ interface RoadmapListItemProps {
 export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
   const { t } = useLocalization();
   const { theme } = useAppTheme();
-  const isRoadmapReady = roadmap.generation_status === 'completed';
+  const isRoadmapStarted =
+    roadmap.start_date !== '0001-01-01T00:00:00Z' &&
+    roadmap.milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
+    roadmap.start_date !== null;
+
   return (
     <AppCard paddingV-20 onPress={onPress}>
       <AppView row gap-16>
@@ -52,7 +56,7 @@ export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
                 {roadmap.progress || 0}%
               </AppText>
             </AppView>
-            {!isRoadmapReady && <AppIcon name="clockcircleo" size={20} />}
+            {!isRoadmapStarted && <AppIcon name="clockcircleo" size={20} />}
           </AppView>
         </AppView>
       </AppView>

@@ -162,7 +162,7 @@ const AddTask = () => {
                 )}
               </AppCard>
               <Divider margin-16 />
-              <StepsList mode="view" />
+              <StepsList mode={mode} />
             </AppView>
           )}
 

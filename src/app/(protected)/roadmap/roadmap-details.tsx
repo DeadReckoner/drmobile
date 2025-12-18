@@ -67,7 +67,10 @@ const RoadmapDetailsPage = () => {
         message: getApiErrorMessage(error),
       });
     }
-  }, [error, showToast, dispatch]);
+    if (roadmap?.roadmap_id && !!roadmap?.goal) {
+      dispatch(setDraftRoadmapAction(roadmap));
+    }
+  }, [roadmap, error, showToast, dispatch]);
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
@@ -93,7 +96,7 @@ const RoadmapDetailsPage = () => {
       type: 'success',
       message: t('common.deleted_successfully'),
     });
-    router.dismissTo('/progress');
+    router.dismissTo('/(protected)/(tabs)/progress');
   };
 
   const onBackPress = () => {
@@ -125,7 +128,6 @@ const RoadmapDetailsPage = () => {
         type,
       }).unwrap();
       dispatch(setDraftRoadmapAction(createdRoadmap));
-      dispatch(resetCreationStateAction());
       showToast({
         type: 'success',
         message: t('common.created_successfully'),
@@ -144,7 +146,7 @@ const RoadmapDetailsPage = () => {
       dispatch(
         setDraftRoadmapAction({
           ...finalRoadmap,
-          macro_map: selectedRoadmap.macro_map,
+          macro_map: roadmap?.macro_map,
         }),
       );
       showToast({
@@ -159,18 +161,51 @@ const RoadmapDetailsPage = () => {
     }
   };
 
-  const isRoadmapNotStarted =
-    selectedRoadmap.start_date === '0001-01-01T00:00:00Z' ||
-    selectedRoadmap.start_date === null;
+  const isRoadmapStarted =
+    roadmap.start_date !== '0001-01-01T00:00:00Z' &&
+    roadmap.milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
+    roadmap.start_date !== null;
 
   const hasMilestones =
-    selectedRoadmap.type === 'ai_generated'
+    roadmap.type === 'ai_generated'
       ? (
-          (selectedRoadmap.macro_map || roadmap?.macro_map)?.phases?.flatMap(
+          (roadmap.macro_map || roadmap?.macro_map)?.phases?.flatMap(
             (phase) => phase.macro_milestones,
           ) || []
         ).length > 0
-      : (selectedRoadmap.milestones?.length || 0) > 0;
+      : (roadmap.milestones?.length || 0) > 0;
+
+  const CreateRoadmapButton = () => {
+    if (
+      roadmap?.type === 'ai_generated' ||
+      !!roadmap?.roadmap_id ||
+      !hasMilestones
+    ) {
+      return null;
+    }
+
+    return (
+      <PrimaryButton
+        label="tabs.create_tab.submit_roadmap"
+        onPress={onCreateRoadmap}
+        shouldShowLoader
+        isLoading={isCreatingRoadmap || isStartingRoadmap}
+      />
+    );
+  };
+
+  const StartRoadmapButton = () => {
+    if (!hasMilestones) return null;
+    if (isRoadmapStarted) return null;
+    return (
+      <PrimaryButton
+        label="common.start_roadmap"
+        shouldShowLoader
+        isLoading={isStartingRoadmap || isCreatingRoadmap}
+        onPress={onStartRoadmap}
+      />
+    );
+  };
 
   return (
     <AppView flex-1 reanimated layout={LinearTransition}>
@@ -234,28 +269,23 @@ const RoadmapDetailsPage = () => {
               )}
               <Divider margin-8 />
 
-              {!isRoadmapLoading && (
+              {roadmap.milestones?.length > 0 && (
                 <>
-                  {roadmap.milestones?.length > 0 &&
-                    roadmap?.generation_status === 'processing' && (
-                      <PrimaryButton
-                        label="tabs.create_tab.submit_roadmap"
-                        onPress={onCreateRoadmap}
-                        shouldShowLoader
-                        isLoading={isCreatingRoadmap}
-                      />
-                    )}
-
-                  {!isRoadmapLoading &&
-                    isRoadmapNotStarted &&
-                    hasMilestones && (
-                      <PrimaryButton
-                        label="common.start_roadmap"
-                        shouldShowLoader
-                        isLoading={isStartingRoadmap}
-                        onPress={onStartRoadmap}
-                      />
-                    )}
+                  {isRoadmapLoading ? (
+                    <Loader
+                      marginT-16
+                      transparent
+                      containerStyle={{ position: 'relative', marginTop: 16 }}
+                    />
+                  ) : (
+                    <AppView
+                      reanimated
+                      entering={Animations.Entry.FadeInDownWithSpring()}
+                      exiting={Animations.Exit.FadeOutDown()}>
+                      <CreateRoadmapButton />
+                      <StartRoadmapButton />
+                    </AppView>
+                  )}
                 </>
               )}
             </AppView>

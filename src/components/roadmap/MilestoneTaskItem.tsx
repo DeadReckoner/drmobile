@@ -32,7 +32,13 @@ export const MilestoneTaskItem = ({
   };
   return (
     <AppView row paddingL-32 paddingV-16 paddingR-18 gap-16 center>
-      <AppCheckbox value={task.steps.every((step) => step.completed)} />
+      <AppCheckbox
+        value={
+          (task?.steps?.length > 0 &&
+            task.steps?.every((step) => step.completed)) ||
+          false
+        }
+      />
       <AppView flex>
         <AppText flex textColor body2>
           {task.title}

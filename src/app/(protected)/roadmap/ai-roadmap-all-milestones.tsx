@@ -41,7 +41,7 @@ const AIRoadmapMilestoneDetails = () => {
         <HeaderWithBack headerKey="common.milestones" />
         <Divider marginV-8 />
         <MilestonesList
-          milestones={roadmap?.milestones}
+          milestones={roadmap?.milestones || []}
           onMilestonePress={handleMilestonePress}
           onTaskPress={handleOnTaskPress}
           onAddNewMilestonePress={handleOnAddNewMilestone}

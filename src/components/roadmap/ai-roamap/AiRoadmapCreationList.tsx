@@ -10,6 +10,7 @@ import { AppView } from '@/components/ui';
 import { useCreateAIRoadmapMutation } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   addMessageAction,
@@ -207,6 +208,12 @@ export const AiRoadmapCreationList = () => {
   };
 
   const handleNavigateToRoadmap = () => {
+    dispatch(
+      roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
+        forceRefetch: true,
+      }),
+    );
+    dispatch(resetCreationStateAction());
     router.replace('/roadmap/roadmap-details');
   };
 

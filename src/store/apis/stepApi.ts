@@ -17,22 +17,47 @@ const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
   BaseQueryFunctionType
 > = async (_task, { dispatch, queryFulfilled, getState }) => {
   try {
-    const state = getState() as unknown as RootStateType;
     const { data } = await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
+    const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
+    const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
+    const taskIdx = state.roadmapDraft.selectedTaskIndex;
+    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
+
+    if (roadmapIdx === -1 || milestoneIdx === -1 || taskIdx === -1) {
+      return;
+    }
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
-        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
-        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
-        const taskIdx = state.roadmapDraft.selectedTaskIndex;
-        if (roadmapIdx === -1 || milestoneIdx === -1 || taskIdx === -1) {
-          return;
+        if (
+          !roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx].steps
+        ) {
+          roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx].steps =
+            [];
         }
         roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx].steps.push(
           data,
         );
-        dispatch(addStepAction(data));
       }),
     );
+
+    if (roadmapId) {
+      dispatch(
+        roadmapApi.util.updateQueryData(
+          'getRoadmapById',
+          roadmapId,
+          (draft) => {
+            if (!draft.milestones[milestoneIdx].tasks[taskIdx].steps) {
+              draft.milestones[milestoneIdx].tasks[taskIdx].steps = [];
+            }
+            draft.milestones[milestoneIdx].tasks[taskIdx].steps.push(data);
+          },
+        ),
+      );
+    }
+
+    dispatch(addStepAction(data));
 
     dispatch(
       taskApi.util.updateQueryData(
@@ -59,6 +84,10 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
   try {
     const { data } = await queryFulfilled;
     const state = getState() as unknown as RootStateType;
+    const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
+    const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
+    const taskIdx = state.roadmapDraft.selectedTaskIndex;
+    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
 
     dispatch(
       taskApi.util.updateQueryData(
@@ -80,28 +109,47 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
       ),
     );
 
+    if (roadmapIdx === -1 || milestoneIdx === -1 || taskIdx === -1) {
+      return;
+    }
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
-        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
-        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
-        const taskIdx = state.roadmapDraft.selectedTaskIndex;
-
-        if (roadmapIdx !== -1 && milestoneIdx !== -1 && taskIdx !== -1) {
-          const steps =
-            roadmaps[roadmapIdx]?.milestones[milestoneIdx]?.tasks[taskIdx]
-              ?.steps;
-          if (steps) {
-            const stepIdx = steps.findIndex((s) => s.step_id === data.step_id);
-            if (stepIdx !== -1) {
-              steps[stepIdx] = data;
-              const task =
-                roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx];
-              task.completed = task.steps?.every((s) => s.completed) || false;
-            }
+        const steps =
+          roadmaps[roadmapIdx]?.milestones[milestoneIdx]?.tasks[taskIdx]?.steps;
+        if (steps) {
+          const stepIdx = steps.findIndex((s) => s.step_id === data.step_id);
+          if (stepIdx !== -1) {
+            steps[stepIdx] = data;
+            const task =
+              roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx];
+            task.completed = task.steps?.every((s) => s.completed) || false;
           }
         }
       }),
     );
+
+    if (roadmapId) {
+      dispatch(
+        roadmapApi.util.updateQueryData(
+          'getRoadmapById',
+          roadmapId,
+          (draft) => {
+            const steps = draft.milestones[milestoneIdx]?.tasks[taskIdx]?.steps;
+            if (steps) {
+              const stepIdx = steps.findIndex(
+                (s) => s.step_id === data.step_id,
+              );
+              if (stepIdx !== -1) {
+                steps[stepIdx] = data;
+                const task = draft.milestones[milestoneIdx].tasks[taskIdx];
+                task.completed = task.steps?.every((s) => s.completed) || false;
+              }
+            }
+          },
+        ),
+      );
+    }
   } catch {}
 };
 
@@ -111,31 +159,49 @@ const onDeleteStepQueryStarted: TypedMutationOnQueryStarted<
   BaseQueryFunctionType
 > = async (step, { dispatch, queryFulfilled, getState }) => {
   try {
-    const state = getState() as unknown as RootStateType;
     await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
+    const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
+    const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
+    const taskIdx = state.roadmapDraft.selectedTaskIndex;
+    const stepIdx = state.roadmapDraft.selectedStepIndex;
+    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
+
+    if (
+      roadmapIdx === -1 ||
+      milestoneIdx === -1 ||
+      taskIdx === -1 ||
+      stepIdx === -1
+    ) {
+      return;
+    }
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
-        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
-        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
-        const taskIdx = state.roadmapDraft.selectedTaskIndex;
-        const stepIdx = state.roadmapDraft.selectedStepIndex;
-
-        if (
-          roadmapIdx === -1 ||
-          milestoneIdx === -1 ||
-          taskIdx === -1 ||
-          stepIdx === -1
-        ) {
-          return;
-        }
         roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[
           taskIdx
         ].steps.splice(stepIdx, 1);
-        dispatch(
-          removeStepAction({
-            step_id: step.step_id,
-          }),
-        );
+      }),
+    );
+
+    if (roadmapId) {
+      dispatch(
+        roadmapApi.util.updateQueryData(
+          'getRoadmapById',
+          roadmapId,
+          (draft) => {
+            draft.milestones[milestoneIdx].tasks[taskIdx].steps.splice(
+              stepIdx,
+              1,
+            );
+          },
+        ),
+      );
+    }
+
+    dispatch(
+      removeStepAction({
+        step_id: step.step_id,
       }),
     );
     dispatch(

@@ -12,6 +12,7 @@ import { selectShouldShowAIRoadmapBanner } from '@/store/slices/aiRoadmapCreatio
 import {
   setDraftRoadmapAction,
   setSelectedRoadmapIndex,
+  setShouldSyncWithServerAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
@@ -36,6 +37,7 @@ const Progress = () => {
       }),
     );
     dispatch(setSelectedRoadmapIndex(index));
+    dispatch(setShouldSyncWithServerAction(true));
     router.navigate('/roadmap/roadmap-details');
   };
 

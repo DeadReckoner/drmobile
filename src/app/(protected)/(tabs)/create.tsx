@@ -5,6 +5,7 @@ import { Divider } from '@/components/Divider';
 import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   resetCreationStateAction,
@@ -53,6 +54,12 @@ const Create = () => {
     setIsAIDraftDialogOpen(false);
     if (aiRoadmapStatus === 'completed' && createdRoadmap) {
       dispatch(setDraftRoadmapAction(createdRoadmap));
+      dispatch(resetCreationStateAction());
+      dispatch(
+        roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
+          forceRefetch: true,
+        }),
+      );
       router.navigate('/roadmap/roadmap-details');
     } else {
       router.navigate('/roadmap/create-ai-roadmap');

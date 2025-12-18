@@ -10,7 +10,6 @@ import {
 import {
   addTaskAction,
   removeTaskAction,
-  setDraftRoadmapAction,
   setSelectedTaskAction,
   updateTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
@@ -23,24 +22,34 @@ const onCreateTaskQueryStarted: TypedMutationOnQueryStarted<
   BaseQueryFunctionType
 > = async (_task, { dispatch, queryFulfilled, getState }) => {
   try {
-    const state = getState() as unknown as RootStateType;
     const { data } = await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
+    const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
+    const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
+    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
+
+    if (roadmapIdx === -1 || milestoneIdx === -1 || !roadmapId) {
+      return;
+    }
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
-        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
-        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
-        if (roadmapIdx === -1 || milestoneIdx === -1) {
-          return;
-        }
         const currentRoadmap = draft[roadmapIdx];
         currentRoadmap.milestones[milestoneIdx].tasks.push(data);
-        dispatch(addTaskAction(data));
-
         currentRoadmap.daysRemainingTillNextMilestone =
           currentRoadmap.milestones[milestoneIdx].tasks.length || 0;
-        dispatch(setDraftRoadmapAction(currentRoadmap));
       }),
     );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmapId, (draft) => {
+        draft.milestones[milestoneIdx].tasks.push(data);
+        draft.daysRemainingTillNextMilestone =
+          draft.milestones[milestoneIdx].tasks.length || 0;
+      }),
+    );
+
+    dispatch(addTaskAction(data));
   } catch {}
 };
 
@@ -52,26 +61,49 @@ const onUpdateTaskQueryStarted: TypedMutationOnQueryStarted<
   try {
     const { data } = await queryFulfilled;
     const state = getState() as unknown as RootStateType;
+    const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
+    const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
+    const taskIdx = state.roadmapDraft.selectedTaskIndex;
+    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
+
+    if (
+      roadmapIdx === -1 ||
+      milestoneIdx === -1 ||
+      taskIdx === -1 ||
+      !roadmapId
+    ) {
+      return;
+    }
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
-        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
-        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
-        const taskIdx = state.roadmapDraft.selectedTaskIndex;
-
-        if (roadmapIdx === -1 || milestoneIdx === -1 || taskIdx === -1) {
-          return;
-        }
-
         const updatedTask = {
           ...data,
           steps:
             draft[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx].steps,
         };
         draft[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx] = updatedTask;
-        dispatch(updateTaskAction(updatedTask));
-        dispatch(setSelectedTaskAction({ task: updatedTask }));
       }),
     );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmapId, (draft) => {
+        const updatedTask = {
+          ...data,
+          steps: draft.milestones[milestoneIdx].tasks[taskIdx].steps,
+        };
+        draft.milestones[milestoneIdx].tasks[taskIdx] = updatedTask;
+      }),
+    );
+
+    const updatedTask = {
+      ...data,
+      steps:
+        state.roadmapDraft.roadmap?.milestones[milestoneIdx].tasks[taskIdx]
+          .steps,
+    };
+    dispatch(updateTaskAction(updatedTask));
+    dispatch(setSelectedTaskAction({ task: updatedTask }));
   } catch {}
 };
 
@@ -83,27 +115,37 @@ const onDeleteTaskQueryStarted: TypedMutationOnQueryStarted<
   try {
     await queryFulfilled;
     const state = getState() as unknown as RootStateType;
+    const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
+    const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
+    const taskIdx = state.roadmapDraft.selectedTaskIndex;
+    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
+
+    if (
+      roadmapIdx === -1 ||
+      milestoneIdx === -1 ||
+      taskIdx === -1 ||
+      !roadmapId
+    ) {
+      return;
+    }
+
     dispatch(
       roadmapApi.util.updateQueryData('getRoadmaps', undefined, (roadmaps) => {
-        const roadmapIdx = state.roadmapDraft.selectedRoadmapIndex;
-        const milestoneIdx = state.roadmapDraft.selectedMilestoneIndex;
-        const taskIdx = state.roadmapDraft.selectedTaskIndex;
-
-        if (roadmapIdx === -1 || milestoneIdx === -1 || taskIdx === -1) {
-          return;
-        }
-
         roadmaps[roadmapIdx].milestones[milestoneIdx].tasks.splice(taskIdx, 1);
-        const updatedTasks =
-          roadmaps[roadmapIdx].milestones[milestoneIdx].tasks || [];
-
         roadmaps[roadmapIdx].daysRemainingTillNextMilestone =
-          updatedTasks.length || 0;
-
-        dispatch(removeTaskAction());
-        dispatch(setDraftRoadmapAction(roadmaps[roadmapIdx]));
+          roadmaps[roadmapIdx].milestones[milestoneIdx].tasks.length || 0;
       }),
     );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmapId, (draft) => {
+        draft.milestones[milestoneIdx].tasks.splice(taskIdx, 1);
+        draft.daysRemainingTillNextMilestone =
+          draft.milestones[milestoneIdx].tasks.length || 0;
+      }),
+    );
+
+    dispatch(removeTaskAction());
   } catch {}
 };
 
@@ -144,6 +186,7 @@ export const taskApi = api.injectEndpoints({
         method: 'GET',
       }),
       keepUnusedDataFor: 600,
+      providesTags: ['Tasks'],
     }),
     getTasksById: builder.query<CreateTaskResponseType, string>({
       query: (taskId) => ({

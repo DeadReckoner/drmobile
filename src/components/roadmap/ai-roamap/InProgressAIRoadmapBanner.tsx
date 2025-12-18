@@ -19,7 +19,7 @@ import { selectUser } from '@/store/slices/authSlice';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
 export const InProgressAIRoadmapBanner = () => {
@@ -29,7 +29,6 @@ export const InProgressAIRoadmapBanner = () => {
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const isInDraft = useAppSelector(selectIsAIRoadmapInDraft);
   const { t } = useLocalization();
-  const hasWSStartedPolling = useRef<boolean>(false);
   const isCompleted = status === 'completed';
 
   const { aiRoadmapCreationJobResponse } = useAppSelector(
@@ -37,8 +36,6 @@ export const InProgressAIRoadmapBanner = () => {
   );
 
   useEffect(() => {
-    if (hasWSStartedPolling.current) return;
-
     if (!aiRoadmapCreationJobResponse?.ws_url) return;
     if (status === 'completed' || status === 'error') return;
 
@@ -49,7 +46,6 @@ export const InProgressAIRoadmapBanner = () => {
       },
     });
 
-    hasWSStartedPolling.current = true;
     ws.onmessage = (event) => {
       const jobStatusData = JSON.parse(event.data as string);
       if (jobStatusData?.status === 'failed') {
@@ -73,7 +69,6 @@ export const InProgressAIRoadmapBanner = () => {
           };
           dispatch(setDraftRoadmapAction(roadmap));
           dispatch(completeRoadmapCreationAction(roadmap));
-          hasWSStartedPolling.current = false;
         }
       }
     };
