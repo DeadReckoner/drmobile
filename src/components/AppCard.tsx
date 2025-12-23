@@ -1,0 +1,10 @@
+import { AppButton } from '@/components/AppButton';
+import { TouchableOpacityProps } from 'react-native-ui-lib';
+
+export const AppCard = ({ children, ...props }: TouchableOpacityProps) => {
+  return (
+    <AppButton bg-cardBG padding-16 br40 {...props}>
+      {children}
+    </AppButton>
+  );
+};

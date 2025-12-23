@@ -1,31 +1,34 @@
 {
   "expo": {
-    "name": "dead-reckoner",
+    "name": "Dead Reckoner",
     "slug": "dead-reckoner",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/dead-reckoner-logo.png",
-    "splash": {
-      "image": "./assets/images/dead-reckoner-logo.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
-    },
-    "scheme": "myapp",
+    "icon": "./assets/images/icon.png",
+    "scheme": "deadreckoner",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mcboll.deadreckoner",
+      "bundleIdentifier": "com.deadreckoner.deadreckoner",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSContactsUsageDescription": "Dead Reckoner needs access to your contacts to help you invite friends to use the app."
+      },
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#5F6D76"
       },
-      "package": "com.mcboll.deadreckoner"
+      "package": "com.deadreckoner.deadreckoner",
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "READ_CONTACTS",
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -35,11 +38,61 @@
     "plugins": [
       "expo-router",
       [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow Dead Reckoner to access your contacts to invite friends."
+        }
+      ],
+      [
         "expo-splash-screen",
         {
-          "image": "./assets/images/dead-reckoner-logo.png",
-          "resizeMode": "cover",
-          "backgroundColor": "#ffffff"
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#5F6D76"
+        }
+      ],
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": ["en", "es", "fr"],
+            "android": ["en", "es", "fr"]
+          }
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/unbounded/200ExtraLight/Unbounded_200ExtraLight.ttf",
+            "node_modules/@expo-google-fonts/unbounded/300Light/Unbounded_300Light.ttf",
+            "node_modules/@expo-google-fonts/unbounded/400Regular/Unbounded_400Regular.ttf",
+            "node_modules/@expo-google-fonts/unbounded/700Bold/Unbounded_700Bold.ttf",
+            "node_modules/@expo-google-fonts/unbounded/600SemiBold/Unbounded_600SemiBold.ttf"
+          ]
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.597678270969-gc4jq97i7ugbg92d5k0k0vbcb9ert0ps"
+        }
+      ],
+      "expo-apple-authentication",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/ic_notification.png",
+          "color": "#5F6D76",
+          "iosDisplayInForeground": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Dead Reckoner needs access to your photos to upload images.",
+          "cameraPermission": "Dead Reckoner needs access to your camera to take photos."
         }
       ]
     ],
@@ -47,12 +100,11 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {
-        "origin": false
-      },
+      "router": {},
       "eas": {
         "projectId": "f705a6d0-838c-4b3c-92a4-d3af418ef3d8"
       }
-    }
+    },
+    "owner": "dead-reckoner"
   }
 }
