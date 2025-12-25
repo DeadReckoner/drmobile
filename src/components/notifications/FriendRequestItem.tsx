@@ -10,7 +10,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-interface NotificationItemProps {
+interface FriendRequestItemProps {
   notification: Friendship;
   onAccept: (_friendshipId: string) => void;
   onCancel: (_friendshipId: string) => void;
@@ -18,13 +18,13 @@ interface NotificationItemProps {
   isCancelling: boolean;
 }
 
-export const NotificationItem = ({
+export const FriendRequestItem = ({
   notification,
   onAccept,
   onCancel,
   isAccepting,
   isCancelling,
-}: NotificationItemProps) => {
+}: FriendRequestItemProps) => {
   const requesterName = notification.requester
     ? `${notification.requester.first_name} ${notification.requester.last_name}`.trim()
     : 'Unknown User';

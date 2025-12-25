@@ -67,10 +67,23 @@ const RoadmapDetailsPage = () => {
         message: getApiErrorMessage(error),
       });
     }
-    if (roadmap?.roadmap_id && !!roadmap?.goal) {
+  }, [error, showToast, dispatch]);
+
+  useEffect(() => {
+    if (
+      roadmap?.roadmap_id &&
+      !!roadmap?.goal &&
+      roadmap.roadmap_id !== selectedRoadmap?.roadmap_id
+    ) {
       dispatch(setDraftRoadmapAction(roadmap));
     }
-  }, [roadmap, error, showToast, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    roadmap?.roadmap_id,
+    roadmap?.goal,
+    selectedRoadmap?.roadmap_id,
+    dispatch,
+  ]);
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);

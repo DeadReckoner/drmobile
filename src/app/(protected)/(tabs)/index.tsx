@@ -9,6 +9,7 @@ import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlac
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
+import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
@@ -47,6 +48,7 @@ const Today = () => {
   };
 
   useGetFriendsQuery();
+  useGetNotificationsQuery();
 
   const onCalendarClick = () => {
     // router.navigate('/calendar');
