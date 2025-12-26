@@ -182,11 +182,11 @@ const RoadmapDetailsPage = () => {
   const hasMilestones =
     roadmap.type === 'ai_generated'
       ? (
-          (roadmap.macro_map || roadmap?.macro_map)?.phases?.flatMap(
+          roadmap?.macro_map?.phases?.flatMap(
             (phase) => phase.macro_milestones,
           ) || []
         ).length > 0
-      : (roadmap.milestones?.length || 0) > 0;
+      : (roadmap.milestones || []).length > 0;
 
   const CreateRoadmapButton = () => {
     if (
@@ -282,7 +282,7 @@ const RoadmapDetailsPage = () => {
               )}
               <Divider margin-8 />
 
-              {roadmap.milestones?.length > 0 && (
+              {hasMilestones && (
                 <>
                   {isRoadmapLoading ? (
                     <Loader
