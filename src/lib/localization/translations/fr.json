@@ -287,7 +287,8 @@
     "dependencies": "Dépendances",
     "why_it_is_needed": "Pourquoi est-ce nécessaire ?",
     "scan_qr_code": "Scannez ce code QR pour m'ajouter comme ami",
-    "error_occurred": "Une erreur s'est produite"
+    "error_occurred": "Une erreur s'est produite",
+    "unknown_user": "Utilisateur Inconnu"
   },
   "messages": {
     "no_messages_yet": "Pas encore de messages !",

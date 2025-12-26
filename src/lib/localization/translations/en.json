@@ -287,7 +287,8 @@
     "dependencies": "Dependencies",
     "why_it_is_needed": "Why it is needed?",
     "scan_qr_code": "Scan this QR code to add me as your friend",
-    "error_occurred": "An error occurred"
+    "error_occurred": "An error occurred",
+    "unknown_user": "Unknown User"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

@@ -45,7 +45,9 @@ const FriendDetails = () => {
 
   const friendNameParam =
     `${friendProfileData?.user.first_name || ''} ${friendProfileData?.user.last_name || ''}`?.trim() ||
-    (params['friendName'] as string | undefined);
+    (params['friendName'] as string | undefined)?.trim() ||
+    t('common.unknown_user');
+
   const friendEmailParam =
     friendProfileData?.user.email?.trim() ||
     (params['friendEmail'] as string | undefined);
