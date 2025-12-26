@@ -87,7 +87,7 @@ const FriendDetails = () => {
       setLocalFriendshipStatus('accepted');
     } else if (is403Error) {
       setLocalFriendshipStatus((prev) =>
-        prev === 'pending' ? 'pending' : null,
+        prev === 'pending' || prev === 'none' ? prev : null,
       );
     }
   }, [friendProfileData, is403Error]);
@@ -406,7 +406,7 @@ const FriendDetails = () => {
                   <TranslatedText
                     xsm
                     textColor
-                    translationKey="settings.friends"
+                    translationKey="tabs.messages"
                     style={styles.statLabel}
                     marginB-8
                   />
@@ -415,7 +415,7 @@ const FriendDetails = () => {
                 </AppView>
               </AppButton>
             )}
-            <AppView centerH style={styles.statBox}>
+            <AppView center style={styles.statBox}>
               <AppButton
                 center
                 paddingB-4
