@@ -5,11 +5,17 @@ import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
+import { AnchorRequestItem } from '@/components/notifications/AnchorRequestItem';
 import { FriendRequestItem } from '@/components/notifications/FriendRequestItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { Friendship } from '@/hooks/friends/types/friends.types';
+import { AnchorRequest, Friendship } from '@/hooks/friends/types/friends.types';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
+import {
+  useAcceptAnchorRequestMutation,
+  useGetMyAnchorRequestsQuery,
+  useRejectAnchorRequestMutation,
+} from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useToast } from '@/hooks/useToast';
@@ -29,8 +35,8 @@ import { Colors } from 'react-native-ui-lib';
 
 interface NotificationItem {
   id: string;
-  type: 'friend_request' | 'notification';
-  data: Friendship | NotificationType;
+  type: 'friend_request' | 'anchor_request' | 'notification';
+  data: Friendship | AnchorRequest | NotificationType;
 }
 
 const Notifications = () => {
@@ -49,9 +55,17 @@ const Notifications = () => {
   const {
     data: pendingRequestsData,
     isLoading,
-    error,
     refetch,
   } = useGetPendingFriendRequestsQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const {
+    data: anchorRequestsData,
+    isLoading: isLoadingAnchorRequests,
+    refetch: refetchAnchorRequests,
+  } = useGetMyAnchorRequestsQuery(undefined, {
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
@@ -59,6 +73,8 @@ const Notifications = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [acceptFriendRequest] = useAcceptFriendRequestMutation();
   const [rejectFriendRequest] = useRejectFriendRequestMutation();
+  const [acceptAnchorRequest] = useAcceptAnchorRequestMutation();
+  const [rejectAnchorRequest] = useRejectAnchorRequestMutation();
 
   const friendRequests = useMemo<Friendship[]>(() => {
     if (!pendingRequestsData || !currentUser) return [];
@@ -80,6 +96,16 @@ const Notifications = () => {
       });
     });
 
+    if (anchorRequestsData && Array.isArray(anchorRequestsData)) {
+      anchorRequestsData.forEach((request: AnchorRequest) => {
+        items.push({
+          id: `anchor_request_${request.request_id}`,
+          type: 'anchor_request',
+          data: request,
+        });
+      });
+    }
+
     if (notifications && Array.isArray(notifications)) {
       notifications.forEach((notification: NotificationType) => {
         items.push({
@@ -91,7 +117,7 @@ const Notifications = () => {
     }
 
     return items;
-  }, [friendRequests, notifications]);
+  }, [friendRequests, anchorRequestsData, notifications]);
 
   const handleAccept = useCallback(
     async (friendshipId: string) => {
@@ -143,16 +169,64 @@ const Notifications = () => {
     [rejectFriendRequest, showToast, t],
   );
 
+  const handleAcceptAnchor = useCallback(
+    async (requestId: string) => {
+      try {
+        setProcessingIds((prev) => ({ ...prev, [requestId]: 'accept' }));
+        await acceptAnchorRequest(requestId).unwrap();
+        showToast({
+          message: t('notifications.anchor_request_accepted'),
+          type: 'success',
+        });
+      } catch {
+        showToast({
+          message: t('common.something_went_wrong'),
+          type: 'failure',
+        });
+        setProcessingIds((prev) => {
+          const newState = { ...prev };
+          delete newState[requestId];
+          return newState;
+        });
+      }
+    },
+    [acceptAnchorRequest, showToast, t],
+  );
+
+  const handleRejectAnchor = useCallback(
+    async (requestId: string) => {
+      try {
+        setProcessingIds((prev) => ({ ...prev, [requestId]: 'cancel' }));
+        await rejectAnchorRequest(requestId).unwrap();
+        showToast({
+          message: t('notifications.anchor_request_rejected'),
+          type: 'success',
+        });
+      } catch {
+        showToast({
+          message: t('common.something_went_wrong'),
+          type: 'failure',
+        });
+        setProcessingIds((prev) => {
+          const newState = { ...prev };
+          delete newState[requestId];
+          return newState;
+        });
+      }
+    },
+    [rejectAnchorRequest, showToast, t],
+  );
+
   const keyExtractor = useCallback((item: NotificationItem) => item.id, []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await refetch();
+      await Promise.all([refetch(), refetchAnchorRequests()]);
     } finally {
       setRefreshing(false);
     }
-  }, [refetch]);
+  }, [refetch, refetchAnchorRequests]);
 
   const renderFriendRequestItem = useCallback(
     ({ item }: { item: NotificationItem }) => {
@@ -166,6 +240,20 @@ const Notifications = () => {
             onCancel={handleCancel}
             isAccepting={processingState === 'accept'}
             isCancelling={processingState === 'cancel'}
+          />
+        );
+      }
+
+      if (item.type === 'anchor_request') {
+        const anchorRequest = item.data as AnchorRequest;
+        const processingState = processingIds[anchorRequest.request_id];
+        return (
+          <AnchorRequestItem
+            notification={anchorRequest}
+            onAccept={handleAcceptAnchor}
+            onReject={handleRejectAnchor}
+            isAccepting={processingState === 'accept'}
+            isRejecting={processingState === 'cancel'}
           />
         );
       }
@@ -189,7 +277,13 @@ const Notifications = () => {
         </AppCard>
       );
     },
-    [processingIds, handleAccept, handleCancel],
+    [
+      processingIds,
+      handleAccept,
+      handleCancel,
+      handleAcceptAnchor,
+      handleRejectAnchor,
+    ],
   );
 
   const onNotificationSettingsBannerPress = useCallback(async () => {
@@ -209,58 +303,32 @@ const Notifications = () => {
   }, [permissionStatus, requestPermissions, showToast, t]);
 
   const renderEmptyComponent = () => {
-    if (isLoading) {
+    if (isLoading || isLoadingAnchorRequests) {
       return (
-        <AppView
-          reanimated
-          entering={Animations.Entry.FadeInDownWithSpring(300)}
-          exiting={Animations.Exit.FadeOutDown()}
-          style={styles.emptyContainer}>
+        <AppView style={styles.emptyContainer}>
           <Loader transparent />
         </AppView>
       );
     }
-    if (error) {
-      return (
-        <AppView
-          reanimated
-          entering={Animations.Entry.FadeInDownWithSpring(500)}
-          exiting={Animations.Exit.FadeOutDown()}
-          style={styles.emptyContainer}>
-          <AppIcon name="notification" size={48} color={Colors.secondary} />
-          <TranslatedText
-            marginT-16
-            secondary
-            center
-            translationKey="notifications.error_loading"
-          />
-        </AppView>
-      );
-    }
-    if (notificationsList.length === 0) {
-      return (
-        <AppView
-          reanimated
-          entering={Animations.Entry.FadeInDownWithSpring(500)}
-          exiting={Animations.Exit.FadeOutDown()}
-          style={styles.emptyContainer}>
-          <AppIcon name="notification" size={48} color={Colors.secondary} />
-          <TranslatedText
-            marginT-16
-            secondary
-            center
-            translationKey="notifications.no_notifications"
-          />
-          <TranslatedText
-            marginT-8
-            caption
-            secondary
-            center
-            translationKey="notifications.no_notifications_description"
-          />
-        </AppView>
-      );
-    }
+
+    return (
+      <AppView style={styles.emptyContainer}>
+        <AppIcon name="notification" size={48} color={Colors.secondary} />
+        <TranslatedText
+          marginT-16
+          secondary
+          center
+          translationKey="notifications.no_notifications"
+        />
+        <TranslatedText
+          marginT-8
+          caption
+          secondary
+          center
+          translationKey="notifications.no_notifications_description"
+        />
+      </AppView>
+    );
   };
 
   return (
@@ -309,8 +377,6 @@ const Notifications = () => {
         renderItem={renderFriendRequestItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
-        layout={Animations.Layout.Springify()}
-        entering={Animations.Entry.FadeInDownWithSpring(300)}
         refreshing={refreshing}
         onRefresh={onRefresh}
         ItemSeparatorComponent={() => <Divider margin-4 />}

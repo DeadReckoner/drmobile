@@ -53,7 +53,7 @@ export const FriendRequestItem = ({
               paddingH-16
               center
               br20
-              style={styles.acceptButton}
+              style={{ backgroundColor: Colors.blue }}
               disabled={isLoading}
               onPress={() => onAccept(notification.id)}>
               {isAccepting ? (
@@ -116,9 +116,6 @@ const styles = StyleSheet.create({
   textContainer: {
     flexWrap: 'wrap',
     maxWidth: '90%',
-  },
-  acceptButton: {
-    backgroundColor: '#4A90E2',
   },
   acceptButtonText: {
     fontSize: 12,

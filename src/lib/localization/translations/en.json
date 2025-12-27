@@ -240,9 +240,13 @@
     "no_notifications_description": "You're all caught up! New notifications will appear here.",
     "friend_request": "sent you a friend request",
     "accept": "Accept",
+    "reject": "Reject",
     "cancel": "Cancel",
     "friend_request_accepted": "Friend request accepted",
     "friend_request_rejected": "Friend request rejected",
+    "anchor_request_message": "wants you to be their anchor for {{goal}}",
+    "anchor_request_accepted": "Anchor request accepted",
+    "anchor_request_rejected": "Anchor request rejected",
     "loading": "Loading notifications...",
     "error_loading": "Failed to load notifications",
     "enable_notifications": "Enable Notifications",
@@ -272,6 +276,7 @@
     "updated_successfully": "Updated successfully",
     "created_successfully": "Created successfully",
     "started_successfully": "Started successfully",
+    "anchor_request_sent": "Anchor request sent to {{name}}",
     "cancel": "Cancel",
     "remove": "Remove",
     "are_you_sure": "Are you sure?",
@@ -289,6 +294,9 @@
     "scan_qr_code": "Scan this QR code to add me as your friend",
     "error_occurred": "An error occurred",
     "unknown_user": "Unknown User"
+  },
+  "roadmap": {
+    "select_anchor": "Select an Anchor"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

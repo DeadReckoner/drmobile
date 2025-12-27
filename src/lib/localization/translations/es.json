@@ -240,9 +240,13 @@
     "no_notifications_description": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",
     "friend_request": "te envió una solicitud de amistad",
     "accept": "Aceptar",
+    "reject": "Rechazar",
     "cancel": "Cancelar",
     "friend_request_accepted": "Solicitud de amistad aceptada",
     "friend_request_rejected": "Solicitud de amistad rechazada",
+    "anchor_request_message": "quiere que seas su ancla para {{goal}}",
+    "anchor_request_accepted": "Solicitud de ancla aceptada",
+    "anchor_request_rejected": "Solicitud de ancla rechazada",
     "loading": "Cargando notificaciones...",
     "error_loading": "Error al cargar notificaciones",
     "enable_notifications": "Habilitar Notificaciones",
@@ -272,6 +276,7 @@
     "updated_successfully": "Actualizado con éxito",
     "created_successfully": "Creado con éxito",
     "started_successfully": "Iniciado con éxito",
+    "anchor_request_sent": "Solicitud de ancla enviada a {{name}}",
     "cancel": "Cancelar",
     "remove": "Eliminar",
     "are_you_sure": "¿Estás seguro?",
@@ -289,6 +294,9 @@
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
     "error_occurred": "Ocurrió un error",
     "unknown_user": "Usuario Desconocido"
+  },
+  "roadmap": {
+    "select_anchor": "Seleccionar un ancla"
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",

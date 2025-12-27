@@ -368,7 +368,7 @@ const FriendDetails = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always">
-        <HeaderWithBack marginH-16 marginT-8 />
+        <HeaderWithBack marginH-16 />
         <AppView centerH marginT-20>
           <AppView bg-primary center style={styles.avatar} br100>
             <AppIcon

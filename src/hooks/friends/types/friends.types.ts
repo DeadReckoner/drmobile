@@ -57,3 +57,22 @@ export interface MessageResponse {
   status: number;
   message: string;
 }
+
+export interface AnchorRequest {
+  request_id: string;
+  roadmap_id: string;
+  requester_id: string;
+  anchor_id: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  created_at: string;
+  updated_at?: string;
+  roadmap?: RoadmapType;
+  requester?: User;
+  anchor?: User;
+}
+
+export interface AnchorRequestResponse {
+  request_id: string;
+  status: 'accepted' | 'rejected';
+  updated_at: string;
+}
