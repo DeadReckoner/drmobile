@@ -54,6 +54,21 @@
         "password_complexity": "Password must include an uppercase letter, lowercase letter, number and special character of each."
       },
       "otp_required": "OTP is required"
+    },
+    "complete_profile": {
+      "title": "Complete Your Profile",
+      "subtitle": "Please provide your name to continue",
+      "first_name_placeholder": "Enter your first name",
+      "last_name_placeholder": "Enter your last name",
+      "submit_button": "Continue",
+      "updating": "Updating profile..."
+    },
+    "update_profile": {
+      "first_name_min_length": "First name must be at least 2 characters",
+      "first_name_required": "First name is required",
+      "last_name_min_length": "Last name must be at least 2 characters",
+      "last_name_required": "Last name is required",
+      "profile_updated_success": "Profile updated successfully"
     }
   },
   "tabs": {
@@ -171,6 +186,7 @@
   },
   "settings": {
     "profile": "Profile",
+    "edit_profile": "Edit Profile",
     "settings": "Settings",
     "dark_mode": "Dark Mode",
     "language": "Language",

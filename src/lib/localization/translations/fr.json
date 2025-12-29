@@ -54,6 +54,21 @@
         "password_complexity": "Le mot de passe doit inclure une majuscule, une minuscule, un chiffre et un caractère spécial."
       },
       "otp_required": "OTP est requis"
+    },
+    "complete_profile": {
+      "title": "Complétez votre profil",
+      "subtitle": "Veuillez fournir votre nom pour continuer",
+      "first_name_placeholder": "Entrez votre prénom",
+      "last_name_placeholder": "Entrez votre nom",
+      "submit_button": "Continuer",
+      "updating": "Mise à jour du profil..."
+    },
+    "update_profile": {
+      "first_name_min_length": "Le prénom doit contenir au moins 2 caractères",
+      "first_name_required": "Le prénom est requis",
+      "last_name_min_length": "Le nom doit contenir au moins 2 caractères",
+      "last_name_required": "Le nom est requis",
+      "profile_updated_success": "Profil mis à jour avec succès"
     }
   },
   "ai_roadmap": {
@@ -171,6 +186,7 @@
   },
   "settings": {
     "profile": "Profil",
+    "edit_profile": "Modifier le Profil",
     "settings": "Paramètres",
     "dark_mode": "Mode Sombre",
     "language": "Langue",

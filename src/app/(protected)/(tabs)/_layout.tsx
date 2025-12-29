@@ -1,5 +1,6 @@
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
+import { CompleteProfile } from '@/components/auth/CompleteProfile';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useAppSelector } from '@/store/hooks/store.hooks';
@@ -101,6 +102,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
+      <CompleteProfile />
     </AppScreen>
   );
 }

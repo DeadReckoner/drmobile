@@ -85,17 +85,18 @@ export const useSupabaseAutoRefresh = () => {
           return;
         }
         if (session?.user && session?.access_token) {
-          dispatch(
-            setAuthUserAction({
-              access_token: session.access_token,
-              email: session.user.email || '',
-              id: session.user.id,
-              name: getUserName(session),
-              avatar: session.user.user_metadata?.avatar_url || '',
-            }),
-          );
           if (event === 'SIGNED_IN') {
             await handleUserCreation(session.user, session.access_token);
+          } else {
+            dispatch(
+              setAuthUserAction({
+                access_token: session.access_token,
+                email: session.user.email || '',
+                id: session.user.id,
+                name: getUserName(session),
+                avatar: session.user.user_metadata?.avatar_url || '',
+              }),
+            );
           }
         }
       }
