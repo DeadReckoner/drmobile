@@ -121,12 +121,17 @@ const Settings = () => {
           </AppView>
           <AppView center>
             <AppCard row center style={{ maxWidth: '80%' }}>
-              <AppView center paddingH-16 gap-8>
-                <TranslatedText xsm translationKey="settings.roadmaps" />
-                <AppText textColor body1>
-                  {data?.length}
-                </AppText>
-              </AppView>
+              <AppButton
+                onPress={() =>
+                  router.dismissTo('/(protected)/(tabs)/progress')
+                }>
+                <AppView center paddingH-16 gap-8>
+                  <TranslatedText xsm translationKey="settings.roadmaps" />
+                  <AppText textColor body1>
+                    {data?.length}
+                  </AppText>
+                </AppView>
+              </AppButton>
               <AppButton
                 onPress={() => router.navigate('/settings/my-friends')}>
                 <AppView center paddingH-16 gap-8>
