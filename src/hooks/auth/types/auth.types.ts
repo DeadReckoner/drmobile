@@ -40,9 +40,7 @@ export type SupabaseProviderErrorResponseType = {
   error: AuthErrorType;
 };
 
-export type UserAttributesType = {
-  password: UserAttributes['password'];
-};
+export type UserAttributesType = UserAttributes;
 
 export interface IAuthService {
   linkGoogleWithAuthProvider: (

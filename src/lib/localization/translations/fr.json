@@ -54,6 +54,21 @@
         "password_complexity": "Le mot de passe doit inclure une majuscule, une minuscule, un chiffre et un caractère spécial."
       },
       "otp_required": "OTP est requis"
+    },
+    "complete_profile": {
+      "title": "Complétez votre profil",
+      "subtitle": "Veuillez fournir votre nom pour continuer",
+      "first_name_placeholder": "Entrez votre prénom",
+      "last_name_placeholder": "Entrez votre nom",
+      "submit_button": "Continuer",
+      "updating": "Mise à jour du profil..."
+    },
+    "update_profile": {
+      "first_name_min_length": "Le prénom doit contenir au moins 2 caractères",
+      "first_name_required": "Le prénom est requis",
+      "last_name_min_length": "Le nom doit contenir au moins 2 caractères",
+      "last_name_required": "Le nom est requis",
+      "profile_updated_success": "Profil mis à jour avec succès"
     }
   },
   "ai_roadmap": {
@@ -171,6 +186,7 @@
   },
   "settings": {
     "profile": "Profil",
+    "edit_profile": "Modifier le Profil",
     "settings": "Paramètres",
     "dark_mode": "Mode Sombre",
     "language": "Langue",
@@ -240,9 +256,13 @@
     "no_notifications_description": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici.",
     "friend_request": "vous a envoyé une demande d'ami",
     "accept": "Accepter",
+    "reject": "Rejeter",
     "cancel": "Annuler",
     "friend_request_accepted": "Demande d'ami acceptée",
     "friend_request_rejected": "Demande d'ami rejetée",
+    "anchor_request_message": "veut que vous soyez son ancre pour {{goal}}",
+    "anchor_request_accepted": "Demande d'ancrage acceptée",
+    "anchor_request_rejected": "Demande d'ancrage rejetée",
     "loading": "Chargement des notifications...",
     "error_loading": "Échec du chargement des notifications",
     "enable_notifications": "Activer les Notifications",
@@ -272,6 +292,7 @@
     "updated_successfully": "Mis à jour avec succès",
     "created_successfully": "Créé avec succès",
     "started_successfully": "Démarré avec succès",
+    "anchor_request_sent": "Demande d'ancrage envoyée à {{name}}",
     "cancel": "Annuler",
     "remove": "Supprimer",
     "are_you_sure": "Êtes-vous sûr ?",
@@ -287,7 +308,11 @@
     "dependencies": "Dépendances",
     "why_it_is_needed": "Pourquoi est-ce nécessaire ?",
     "scan_qr_code": "Scannez ce code QR pour m'ajouter comme ami",
-    "error_occurred": "Une erreur s'est produite"
+    "error_occurred": "Une erreur s'est produite",
+    "unknown_user": "Utilisateur Inconnu"
+  },
+  "roadmap": {
+    "select_anchor": "Sélectionner une ancre"
   },
   "messages": {
     "no_messages_yet": "Pas encore de messages !",

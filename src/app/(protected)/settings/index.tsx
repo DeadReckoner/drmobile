@@ -24,7 +24,6 @@ import { selectSettings } from '@/store/slices/settingsSlice';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Linking, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from 'react-native-ui-lib';
 
 const SUPPORTED_LANGUAGES: SupportedLanguagesType[] = [
@@ -39,7 +38,6 @@ const Settings = () => {
   const dispatch = useAppDispatch();
   const { t, setLanguage } = useLocalization();
   const { toggleTheme, theme } = useAppTheme();
-  const { top } = useSafeAreaInsets();
   const { data = [] } = useGetRoadmapsQuery();
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
@@ -79,20 +77,39 @@ const Settings = () => {
   const SettingsItemDivider = () => <LineDivider marginV-0 />;
 
   return (
-    <AppScreen paddingH-0>
+    <AppScreen paddingH-0 safeArea>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.scrollContainer, { paddingTop: top }]}>
-        <HeaderWithBack headerKey="settings.profile" paddingH-16 />
+        contentContainerStyle={styles.scrollContainer}>
+        <AppView paddingH-16 row center spread>
+          <AppView flex-1>
+            <HeaderWithBack headerKey="settings.profile" />
+          </AppView>
+          <AppButton onPress={() => router.navigate('/settings/edit-profile')}>
+            <AppIcon set="Feather" name="settings" size={20} />
+          </AppButton>
+        </AppView>
         <AppView style={styles.content} key={theme}>
           <AppView gap-16 center paddingH-16>
-            {user.avatar ? (
-              <AppImage source={{ uri: user.avatar }} style={styles.image} />
-            ) : (
-              <AppView bg-primary br100 padding-20 style={styles.image} center>
-                <AppIcon name="user" size={40} color={Colors.white} />
+            <AppButton>
+              <AppView>
+                {user.avatar ? (
+                  <AppImage
+                    source={{ uri: user.avatar }}
+                    style={styles.image}
+                  />
+                ) : (
+                  <AppView
+                    bg-primary
+                    br100
+                    padding-20
+                    style={styles.image}
+                    center>
+                    <AppIcon name="user" size={40} color={Colors.white} />
+                  </AppView>
+                )}
               </AppView>
-            )}
+            </AppButton>
             <AppView gap-6 center>
               <AppText body1 textColor>
                 {user.name}
@@ -104,12 +121,17 @@ const Settings = () => {
           </AppView>
           <AppView center>
             <AppCard row center style={{ maxWidth: '80%' }}>
-              <AppView center paddingH-16 gap-8>
-                <TranslatedText xsm translationKey="settings.roadmaps" />
-                <AppText textColor body1>
-                  {data?.length}
-                </AppText>
-              </AppView>
+              <AppButton
+                onPress={() =>
+                  router.dismissTo('/(protected)/(tabs)/progress')
+                }>
+                <AppView center paddingH-16 gap-8>
+                  <TranslatedText xsm translationKey="settings.roadmaps" />
+                  <AppText textColor body1>
+                    {data?.length}
+                  </AppText>
+                </AppView>
+              </AppButton>
               <AppButton
                 onPress={() => router.navigate('/settings/my-friends')}>
                 <AppView center paddingH-16 gap-8>
@@ -254,4 +276,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   content: { flex: 1, justifyContent: 'space-evenly' },
+  editIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
 });

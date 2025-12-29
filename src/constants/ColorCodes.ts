@@ -9,6 +9,7 @@ export const LightColorCodes = {
   error: '#e93b3b',
   success: '#3BAF66',
   warning: '#e5bb00',
+  blue: '#4A90E2',
 
   screenBG: '#FFFFFF',
   cardBG: '#f7f7f7ff',
@@ -40,6 +41,8 @@ export const DarkColorCodes = {
   error: '#FF4E4E',
   success: '#3BAF66',
   warning: '#C1A700',
+
+  blue: '#4A90E2',
 
   screenBG: '#121414',
   cardBG: '#191C1E',

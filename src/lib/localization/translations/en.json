@@ -54,6 +54,21 @@
         "password_complexity": "Password must include an uppercase letter, lowercase letter, number and special character of each."
       },
       "otp_required": "OTP is required"
+    },
+    "complete_profile": {
+      "title": "Complete Your Profile",
+      "subtitle": "Please provide your name to continue",
+      "first_name_placeholder": "Enter your first name",
+      "last_name_placeholder": "Enter your last name",
+      "submit_button": "Continue",
+      "updating": "Updating profile..."
+    },
+    "update_profile": {
+      "first_name_min_length": "First name must be at least 2 characters",
+      "first_name_required": "First name is required",
+      "last_name_min_length": "Last name must be at least 2 characters",
+      "last_name_required": "Last name is required",
+      "profile_updated_success": "Profile updated successfully"
     }
   },
   "tabs": {
@@ -171,6 +186,7 @@
   },
   "settings": {
     "profile": "Profile",
+    "edit_profile": "Edit Profile",
     "settings": "Settings",
     "dark_mode": "Dark Mode",
     "language": "Language",
@@ -240,9 +256,13 @@
     "no_notifications_description": "You're all caught up! New notifications will appear here.",
     "friend_request": "sent you a friend request",
     "accept": "Accept",
+    "reject": "Reject",
     "cancel": "Cancel",
     "friend_request_accepted": "Friend request accepted",
     "friend_request_rejected": "Friend request rejected",
+    "anchor_request_message": "wants you to be their anchor for {{goal}}",
+    "anchor_request_accepted": "Anchor request accepted",
+    "anchor_request_rejected": "Anchor request rejected",
     "loading": "Loading notifications...",
     "error_loading": "Failed to load notifications",
     "enable_notifications": "Enable Notifications",
@@ -272,6 +292,7 @@
     "updated_successfully": "Updated successfully",
     "created_successfully": "Created successfully",
     "started_successfully": "Started successfully",
+    "anchor_request_sent": "Anchor request sent to {{name}}",
     "cancel": "Cancel",
     "remove": "Remove",
     "are_you_sure": "Are you sure?",
@@ -287,7 +308,11 @@
     "dependencies": "Dependencies",
     "why_it_is_needed": "Why it is needed?",
     "scan_qr_code": "Scan this QR code to add me as your friend",
-    "error_occurred": "An error occurred"
+    "error_occurred": "An error occurred",
+    "unknown_user": "Unknown User"
+  },
+  "roadmap": {
+    "select_anchor": "Select an Anchor"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

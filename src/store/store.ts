@@ -32,7 +32,9 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-      immutableCheck: false,
+      immutableCheck: {
+        warnAfter: 128,
+      },
     }).concat(api.middleware),
   devTools: false,
   enhancers: (getDefaultEnhancers) =>

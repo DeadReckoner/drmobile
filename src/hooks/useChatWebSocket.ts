@@ -34,6 +34,8 @@ export const useChatWebSocket = ({
           'getThreadMessages',
           threadId,
           (draft) => {
+            if (!draft) return;
+
             const optimisticIndex = draft.findIndex(
               (msg) =>
                 msg.message_id.startsWith('temp-') &&
@@ -87,15 +89,26 @@ export const useChatWebSocket = ({
         deleted_at: null,
       };
 
-      dispatch(
+      const patchResult = dispatch(
         messagesApi.util.updateQueryData(
           'getThreadMessages',
           threadId,
           (draft) => {
-            draft.push(optimisticMessage);
+            if (draft) {
+              draft.push(optimisticMessage);
+            }
+            return draft || [optimisticMessage];
           },
         ),
       );
+
+      if (!patchResult) {
+        dispatch(
+          messagesApi.util.upsertQueryData('getThreadMessages', threadId, [
+            optimisticMessage,
+          ]),
+        );
+      }
 
       wsSendMessage(content.trim());
     },

@@ -54,6 +54,21 @@
         "password_complexity": "La contraseña debe incluir una mayúscula, una minúscula, un número y un carácter especial."
       },
       "otp_required": "OTP es obligatorio"
+    },
+    "complete_profile": {
+      "title": "Completa tu perfil",
+      "subtitle": "Por favor proporciona tu nombre para continuar",
+      "first_name_placeholder": "Introduce tu nombre",
+      "last_name_placeholder": "Introduce tu apellido",
+      "submit_button": "Continuar",
+      "updating": "Actualizando perfil..."
+    },
+    "update_profile": {
+      "first_name_min_length": "El nombre debe tener al menos 2 caracteres",
+      "first_name_required": "El nombre es obligatorio",
+      "last_name_min_length": "El apellido debe tener al menos 2 caracteres",
+      "last_name_required": "El apellido es obligatorio",
+      "profile_updated_success": "Perfil actualizado exitosamente"
     }
   },
   "ai_roadmap": {
@@ -171,6 +186,7 @@
   },
   "settings": {
     "profile": "Perfil",
+    "edit_profile": "Editar Perfil",
     "settings": "Configuraciones",
     "dark_mode": "Modo Oscuro",
     "language": "Idioma",
@@ -240,9 +256,13 @@
     "no_notifications_description": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",
     "friend_request": "te envió una solicitud de amistad",
     "accept": "Aceptar",
+    "reject": "Rechazar",
     "cancel": "Cancelar",
     "friend_request_accepted": "Solicitud de amistad aceptada",
     "friend_request_rejected": "Solicitud de amistad rechazada",
+    "anchor_request_message": "quiere que seas su ancla para {{goal}}",
+    "anchor_request_accepted": "Solicitud de ancla aceptada",
+    "anchor_request_rejected": "Solicitud de ancla rechazada",
     "loading": "Cargando notificaciones...",
     "error_loading": "Error al cargar notificaciones",
     "enable_notifications": "Habilitar Notificaciones",
@@ -272,6 +292,7 @@
     "updated_successfully": "Actualizado con éxito",
     "created_successfully": "Creado con éxito",
     "started_successfully": "Iniciado con éxito",
+    "anchor_request_sent": "Solicitud de ancla enviada a {{name}}",
     "cancel": "Cancelar",
     "remove": "Eliminar",
     "are_you_sure": "¿Estás seguro?",
@@ -287,7 +308,11 @@
     "dependencies": "Dependencias",
     "why_it_is_needed": "¿Por qué es necesario?",
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
-    "error_occurred": "Ocurrió un error"
+    "error_occurred": "Ocurrió un error",
+    "unknown_user": "Usuario Desconocido"
+  },
+  "roadmap": {
+    "select_anchor": "Seleccionar un ancla"
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",
