@@ -34,13 +34,13 @@ export const FriendRequestItem = ({
   const { t } = useLocalization();
 
   return (
-    <AppCard padding-16 paddingV-20>
-      <AppView row gap-16 centerV>
+    <AppCard padding-16 paddingV-20 flex>
+      <AppView row gap-16 centerV flex>
         <AppView bg-outline br100 style={styles.avatarPlaceholder} center>
           <AppIcon name="user" size={24} color={Colors.inverseBackground} />
         </AppView>
 
-        <AppView gap-10>
+        <AppView gap-10 flex>
           <AppText body2 textColor style={styles.textContainer}>
             {requesterName}{' '}
             <AppText body2 textColor light>

@@ -309,10 +309,13 @@
     "why_it_is_needed": "Why it is needed?",
     "scan_qr_code": "Scan this QR code to add me as your friend",
     "error_occurred": "An error occurred",
-    "unknown_user": "Unknown User"
+    "unknown_user": "Unknown User",
+    "unknown_roadmap": "Unknown Roadmap"
   },
   "roadmap": {
-    "select_anchor": "Select an Anchor"
+    "select_anchor": "Select an Anchor",
+    "manage_anchors": "Manage Anchors",
+    "anchor_removed_successfully": "Anchor removed successfully"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

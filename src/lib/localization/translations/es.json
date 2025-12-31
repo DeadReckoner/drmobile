@@ -309,10 +309,13 @@
     "why_it_is_needed": "¿Por qué es necesario?",
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
     "error_occurred": "Ocurrió un error",
-    "unknown_user": "Usuario Desconocido"
+    "unknown_user": "Usuario Desconocido",
+    "unknown_roadmap": "Hoja de Ruta Desconocida"
   },
   "roadmap": {
-    "select_anchor": "Seleccionar un ancla"
+    "select_anchor": "Seleccionar un ancla",
+    "manage_anchors": "Gestionar anclas",
+    "anchor_removed_successfully": "Ancla eliminada con éxito"
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",

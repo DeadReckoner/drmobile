@@ -13,6 +13,7 @@ export type ThreadType = {
   participants: ThreadParticipantType[];
   created_at: string;
   updated_at: string;
+  total_unread: number;
 };
 
 export type MessageType = {

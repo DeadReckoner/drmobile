@@ -5,9 +5,9 @@ import { ThreadsList } from '@/components/messages/ThreadsList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useGetThreadsQuery } from '@/store/apis/messagesApi';
+import { messagesApi, useGetThreadsQuery } from '@/store/apis/messagesApi';
 import { ThreadType } from '@/store/apis/types/messagesApi.types';
-import { useAppSelector } from '@/store/hooks/store.hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
@@ -18,8 +18,20 @@ const Messages = () => {
   const { data, isLoading, refetch, isFetching } = useGetThreadsQuery();
   const { email: currentUserEmail } = useAppSelector(selectUser);
   const { t } = useLocalization();
+  const dispatch = useAppDispatch();
 
   const onThreadClick = (thread: ThreadType) => {
+    dispatch(
+      messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
+        const threadIndex = draft?.findIndex(
+          (t) => t.thread_id === thread.thread_id,
+        );
+        if (threadIndex !== undefined && threadIndex !== -1 && draft) {
+          draft[threadIndex].total_unread = 0;
+        }
+      }),
+    );
+
     const otherParticipant = thread.participants?.find(
       (participant) => participant.email !== currentUserEmail,
     );
