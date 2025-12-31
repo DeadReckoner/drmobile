@@ -26,6 +26,7 @@ export const friendsApi = api.injectEndpoints({
         method: 'GET',
       }),
       keepUnusedDataFor: 900,
+      providesTags: ['FriendsRequests'],
     }),
 
     sendFriendRequest: builder.mutation<ApiResponse<Friendship>, string>({

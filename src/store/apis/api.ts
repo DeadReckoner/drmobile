@@ -17,6 +17,8 @@ export const ApiCacheTags = Object.freeze({
   Threads: 'Threads',
   Tasks: 'Tasks',
   AnchorRequests: 'AnchorRequests',
+  Notifications: 'Notifications',
+  FriendsRequests: 'FriendsRequests',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
