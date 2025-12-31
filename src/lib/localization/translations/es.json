@@ -314,6 +314,7 @@
   },
   "roadmap": {
     "select_anchor": "Seleccionar un ancla",
+    "manage_anchor": "Gestionar ancla",
     "manage_anchors": "Gestionar anclas",
     "anchor_removed_successfully": "Ancla eliminada con éxito"
   },

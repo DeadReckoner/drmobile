@@ -314,6 +314,7 @@
   },
   "roadmap": {
     "select_anchor": "Select an Anchor",
+    "manage_anchor": "Manage Anchor",
     "manage_anchors": "Manage Anchors",
     "anchor_removed_successfully": "Anchor removed successfully"
   },

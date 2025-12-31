@@ -4,6 +4,7 @@ import {
   MessageResponse,
 } from '@/hooks/friends/types/friends.types';
 import { api } from '@/store/apis/api';
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
@@ -30,9 +31,17 @@ const onAcceptAnchorRequestStarted: TypedMutationOnQueryStarted<
   AnchorRequestResponse,
   string,
   BaseQueryFunctionType
-> = async (requestId, { dispatch, queryFulfilled }) => {
+> = async (requestId, { dispatch, queryFulfilled, getState }) => {
   try {
+    const state = getState();
+    const anchorRequests =
+      anchorApi.endpoints.getMyAnchorRequests.select()(state);
+    const request = anchorRequests.data?.find(
+      (req) => req.request_id === requestId,
+    );
+
     await queryFulfilled;
+
     dispatch(
       anchorApi.util.updateQueryData(
         'getMyAnchorRequests',
@@ -46,7 +55,17 @@ const onAcceptAnchorRequestStarted: TypedMutationOnQueryStarted<
       ),
     );
 
-    dispatch(api.util.invalidateTags(['Friends', 'Threads']));
+    if (request?.roadmap_id && request?.requester?.user_id) {
+      dispatch(
+        roadmapApi.util.updateQueryData(
+          'getRoadmapById',
+          request.roadmap_id,
+          (draft) => {
+            draft.anchor_id = request.requester?.user_id;
+          },
+        ),
+      );
+    }
   } catch {}
 };
 
@@ -77,15 +96,17 @@ const onRemoveAnchorStarted: TypedMutationOnQueryStarted<
   string,
   BaseQueryFunctionType
 > = async (roadmapId, { dispatch, queryFulfilled }) => {
+  const patchResult = dispatch(
+    roadmapApi.util.updateQueryData('getRoadmapById', roadmapId, (draft) => {
+      draft.anchor_id = '';
+    }),
+  );
+
   try {
     await queryFulfilled;
-    dispatch(
-      api.util.invalidateTags([
-        'Roadmaps',
-        { type: 'Roadmaps', id: roadmapId },
-      ]),
-    );
-  } catch {}
+  } catch {
+    patchResult.undo();
+  }
 };
 
 export const anchorApi = api.injectEndpoints({

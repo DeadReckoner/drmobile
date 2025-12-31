@@ -21,6 +21,7 @@ import {
   useCreateRoadmapMutation,
   useDeleteRoadmapMutation,
   useGetRoadmapByIdQuery,
+  useRemoveAnchorMutation,
   useStartRoadmapMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -37,7 +38,7 @@ import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 import { useDispatch } from 'react-redux';
@@ -48,6 +49,7 @@ const RoadmapDetailsPage = () => {
     data: roadmap = selectedRoadmap,
     isLoading: isRoadmapLoading,
     error,
+    isFetching: isRoadmapFetching,
   } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
     skip: !selectedRoadmap?.roadmap_id,
     refetchOnMountOrArgChange: true,
@@ -71,6 +73,8 @@ const RoadmapDetailsPage = () => {
     useGetFriendsQuery();
   const [createAnchorRequest, { isLoading: isCreatingAnchorRequest }] =
     useCreateAnchorRequestMutation();
+  const [removeAnchor, { isLoading: isRemovingAnchor }] =
+    useRemoveAnchorMutation();
 
   useEffect(() => {
     if (error) {
@@ -132,6 +136,24 @@ const RoadmapDetailsPage = () => {
     },
     [roadmap?.roadmap_id, createAnchorRequest, showToast, t],
   );
+
+  const onRemoveAnchor = useCallback(async () => {
+    if (!roadmap?.roadmap_id) return;
+
+    try {
+      await removeAnchor(roadmap.roadmap_id).unwrap();
+      showToast({
+        type: 'success',
+        message: t('roadmap.anchor_removed_successfully'),
+      });
+      setIsAnchorSheetVisible(false);
+    } catch (error) {
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(error),
+      });
+    }
+  }, [removeAnchor, showToast, t, roadmap?.roadmap_id]);
 
   const onDeleteConfirmation = async () => {
     hideDialog();
@@ -264,21 +286,22 @@ const RoadmapDetailsPage = () => {
     );
   };
 
+  const anchorID = roadmap?.anchor_id || selectedRoadmap?.anchor_id;
+  const isAnchorAssigned = !!anchorID;
+
+  const filteredFriends = isAnchorAssigned
+    ? friendsData?.filter((friend) => friend.friend.user_id === anchorID) || []
+    : friendsData || [];
+
   const renderAnchorItem = ({
     item,
-  }: LegendListRenderItemProps<FriendResponse>) => (
-    <AppButton
-      bg-cardBG
-      style={styles.friendCard}
-      disabled={isCreatingAnchorRequest}
-      onPress={() =>
-        onSelectAnchor(
-          item.friend.user_id,
-          `${item.friend.first_name} ${item.friend.last_name}`,
-        )
-      }>
-      <AppView row centerV spread>
-        <AppView row centerV gap-16>
+  }: LegendListRenderItemProps<FriendResponse>) => {
+    const isCurrentAnchor = item.friend.user_id === anchorID;
+    const isLoading = isCreatingAnchorRequest || isRemovingAnchor;
+
+    return (
+      <AppView row centerV flex>
+        <AppView row centerV gap-16 flex>
           <AppView style={styles.avatarPlaceholder} center bg-primary>
             <AppIcon name="user" size={16} color={Colors.secondary} />
           </AppView>
@@ -293,12 +316,34 @@ const RoadmapDetailsPage = () => {
             )}
           </AppView>
         </AppView>
-        {isCreatingAnchorRequest && (
-          <ActivityIndicator size="small" color={Colors.primary} />
-        )}
+        <AppButton
+          bg-cardBG
+          style={styles.friendCard}
+          disabled={isLoading}
+          onPress={() =>
+            isCurrentAnchor
+              ? onRemoveAnchor()
+              : onSelectAnchor(
+                  item.friend.user_id,
+                  `${item.friend.first_name} ${item.friend.last_name}`,
+                )
+          }>
+          {isLoading ? (
+            <Loader containerStyle={{ position: 'relative' }} />
+          ) : (
+            <AppIcon
+              set="Ionicons"
+              name={isCurrentAnchor ? 'remove-circle' : 'add-circle'}
+              size={24}
+            />
+          )}
+        </AppButton>
       </AppView>
-    </AppButton>
-  );
+    );
+  };
+
+  const isModalContentLoading =
+    isRoadmapFetching || isRoadmapLoading || isLoadingFriends;
 
   return (
     <AppView flex-1 reanimated layout={LinearTransition}>
@@ -415,33 +460,39 @@ const RoadmapDetailsPage = () => {
             body1
             semibold
             textColor
-            translationKey="roadmap.select_anchor"
+            translationKey={
+              isAnchorAssigned
+                ? 'roadmap.manage_anchor'
+                : 'roadmap.select_anchor'
+            }
           />
           <LineDivider />
-
-          {isLoadingFriends && (
-            <AppView center paddingV-40>
-              <ActivityIndicator size="small" color={Colors.primary} />
-            </AppView>
-          )}
-          <AppList
-            data={friendsData || []}
-            keyExtractor={(item, index) => item.friendship_id + index}
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-            renderItem={renderAnchorItem}
-            ItemSeparatorComponent={() => <Divider />}
-            ListEmptyComponent={() => (
-              <AppView flex-1 center paddingV-60>
-                <AppIcon name="user" size={48} color={Colors.secondary} />
-                <TranslatedText
-                  marginT-16
-                  secondary
-                  translationKey="settings.no_friends_found"
-                />
+          <AppView flex-1>
+            {isModalContentLoading && (
+              <AppView center marginT-8 marginB-20>
+                <Loader transparent containerStyle={{ position: 'relative' }} />
               </AppView>
             )}
-          />
+            <AppList
+              data={filteredFriends}
+              keyExtractor={(item, index) => item.friendship_id + index}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+              extraData={[isModalContentLoading, roadmap?.anchor_id]}
+              renderItem={renderAnchorItem}
+              ItemSeparatorComponent={() => <Divider />}
+              ListEmptyComponent={() => (
+                <AppView flex-1 center paddingV-60>
+                  <AppIcon name="user" size={48} color={Colors.secondary} />
+                  <TranslatedText
+                    marginT-16
+                    secondary
+                    translationKey="settings.no_friends_found"
+                  />
+                </AppView>
+              )}
+            />
+          </AppView>
         </AppView>
       </AppModal>
     </AppView>
@@ -456,6 +507,11 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
+  },
+  iconCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
   },
 });
 

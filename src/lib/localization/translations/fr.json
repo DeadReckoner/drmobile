@@ -314,6 +314,7 @@
   },
   "roadmap": {
     "select_anchor": "Sélectionner une ancre",
+    "manage_anchor": "Gérer l'ancre",
     "manage_anchors": "Gérer les ancres",
     "anchor_removed_successfully": "Ancre supprimée avec succès"
   },
