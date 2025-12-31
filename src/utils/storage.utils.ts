@@ -46,3 +46,19 @@ export const clearAppleUserName = async (): Promise<void> => {
     // Silently fail - storage errors shouldn't block operations
   }
 };
+
+export const saveExpoPushTokenStorage = async (
+  token: string,
+): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEYS.EXPO_PUSH_TOKEN, token);
+  } catch {}
+};
+
+export const getExpoPushTokenStorage = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem(STORAGE_KEYS.EXPO_PUSH_TOKEN);
+  } catch {
+    return null;
+  }
+};
