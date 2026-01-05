@@ -352,5 +352,9 @@
     "change_requests": "Solicitudes de Cambio",
     "change_requests_placeholder": "Ej. Ajustar intensidad, Cambiar correr por ciclismo",
     "submit_feedback": "Enviar Retroalimentación"
+  },
+  "coming_soon": {
+    "title": "Próximamente",
+    "description": "Estamos trabajando arduamente para traerte esta función. ¡Mantente atento a las actualizaciones!"
   }
 }

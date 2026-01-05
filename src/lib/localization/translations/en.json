@@ -352,5 +352,9 @@
     "change_requests": "Change Requests",
     "change_requests_placeholder": "Eg. Adjust intensity, Swap running with Cycling",
     "submit_feedback": "Submit Feedback"
+  },
+  "coming_soon": {
+    "title": "Coming Soon",
+    "description": "We're working hard to bring you this feature. Stay tuned for updates!"
   }
 }

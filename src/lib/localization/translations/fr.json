@@ -352,5 +352,9 @@
     "change_requests": "Demandes de Changement",
     "change_requests_placeholder": "Ex. Ajuster l'intensité, Remplacer la course par le vélo",
     "submit_feedback": "Soumettre le Retour"
+  },
+  "coming_soon": {
+    "title": "Bientôt disponible",
+    "description": "Nous travaillons dur pour vous apporter cette fonctionnalité. Restez à l'écoute pour les mises à jour !"
   }
 }

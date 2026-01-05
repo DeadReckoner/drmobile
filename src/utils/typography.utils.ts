@@ -32,6 +32,7 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   h2: {
     fontFamily: UNBOUNDED_SEMIBOLD,
     fontSize: 24,
+    lineHeight: 32,
   },
 
   caption: {
