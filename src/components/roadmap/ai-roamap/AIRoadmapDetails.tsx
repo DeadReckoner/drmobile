@@ -84,11 +84,7 @@ export const AIRoadmapDetails = ({
           {roadmap.macro_map?.phases[0].macro_milestones[0] && (
             <MacroMapListItem
               macroMilestone={roadmap.macro_map?.phases[0].macro_milestones[0]}
-              icon={
-                <AppButton onPress={onMacroMilestonePress}>
-                  <AppIcon set="Feather" name="arrow-right" size={20} />
-                </AppButton>
-              }
+              onPress={onMacroMilestonePress}
             />
           )}
           {roadmap?.milestones?.length > 0 && (
