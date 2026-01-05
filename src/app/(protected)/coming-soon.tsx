@@ -11,11 +11,11 @@ const ComingSoonPage = () => {
     <AppScreen safeArea>
       <HeaderWithBack />
       <AppView flex center absV absH padding-24 marginB-64>
-        <AppIcon set="Ionicons" name="rocket" size={120} style={styles.icon} />
+        <AppIcon set="Ionicons" name="rocket" size={90} style={styles.icon} />
         <TranslatedText
           marginT-24
           marginB-8
-          h2
+          h3
           regular
           center
           translationKey="coming_soon.title"
