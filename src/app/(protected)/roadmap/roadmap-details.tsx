@@ -45,15 +45,6 @@ import { useDispatch } from 'react-redux';
 
 const RoadmapDetailsPage = () => {
   const selectedRoadmap = useAppSelector(selectDraftRoadmap);
-  const {
-    data: roadmap = selectedRoadmap,
-    isLoading: isRoadmapLoading,
-    error,
-    isFetching: isRoadmapFetching,
-  } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
-    skip: !selectedRoadmap?.roadmap_id,
-    refetchOnMountOrArgChange: true,
-  });
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
@@ -75,6 +66,19 @@ const RoadmapDetailsPage = () => {
     useCreateAnchorRequestMutation();
   const [removeAnchor, { isLoading: isRemovingAnchor }] =
     useRemoveAnchorMutation();
+
+  const {
+    data,
+    isLoading: isRoadmapLoading,
+    error,
+    isFetching: isRoadmapFetching,
+  } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id, {
+    skip: !selectedRoadmap?.roadmap_id,
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+  });
+
+  const roadmap = data ?? selectedRoadmap;
 
   useEffect(() => {
     if (error) {
