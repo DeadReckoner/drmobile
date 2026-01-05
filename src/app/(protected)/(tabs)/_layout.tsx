@@ -3,7 +3,8 @@ import { AppScreen } from '@/components/AppScreen';
 import { CompleteProfile } from '@/components/auth/CompleteProfile';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useAppSelector } from '@/store/hooks/store.hooks';
+import { messagesApi } from '@/store/apis/messagesApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   resetDraftAction,
   setShouldSyncWithServerAction,
@@ -18,6 +19,7 @@ import { Colors, Typography } from 'react-native-ui-lib';
 export default function TabLayout() {
   const { t } = useLocalization();
   const theme = useAppSelector(selectTheme);
+  const dispatch = useAppDispatch();
 
   const screenOptions: BottomTabNavigationOptions = useMemo(
     () => ({
@@ -99,6 +101,15 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <AppIcon size={24} name="message1" color={color} />
             ),
+          }}
+          listeners={{
+            focus: () => {
+              dispatch(
+                messagesApi.endpoints.getThreads.initiate(undefined, {
+                  forceRefetch: true,
+                }),
+              );
+            },
           }}
         />
       </Tabs>
