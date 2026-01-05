@@ -13,18 +13,11 @@ export const getWebsocketPath = (threadId: string) => {
 export const messagesApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getThreads: builder.query<GetThreadsResponseType, void>({
-      query: () => ({
-        url: '/threads',
-        method: 'GET',
-      }),
-      keepUnusedDataFor: 300,
+      query: () => '/threads',
       providesTags: ['Threads'],
     }),
     getThreadMessages: builder.query<GetMessagesResponseType, string>({
-      query: (threadId) => ({
-        url: `/threads/${threadId}/messages`,
-        method: 'GET',
-      }),
+      query: (threadId) => `/threads/${threadId}/messages`,
       providesTags: (_result, _error, threadId) => [
         { type: 'Threads', id: `MESSAGES-${threadId}` },
       ],
