@@ -5,9 +5,9 @@ import { ThreadsList } from '@/components/messages/ThreadsList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import { messagesApi, useGetThreadsQuery } from '@/store/apis/messagesApi';
+import { useGetThreadsQuery } from '@/store/apis/messagesApi';
 import { ThreadType } from '@/store/apis/types/messagesApi.types';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
@@ -15,23 +15,17 @@ import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Messages = () => {
-  const { data, isLoading, refetch, isFetching } = useGetThreadsQuery();
+  const { data, isLoading, refetch, isFetching } = useGetThreadsQuery(
+    undefined,
+    {
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+    },
+  );
   const { email: currentUserEmail } = useAppSelector(selectUser);
   const { t } = useLocalization();
-  const dispatch = useAppDispatch();
 
   const onThreadClick = (thread: ThreadType) => {
-    dispatch(
-      messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
-        const threadIndex = draft?.findIndex(
-          (t) => t.thread_id === thread.thread_id,
-        );
-        if (threadIndex !== undefined && threadIndex !== -1 && draft) {
-          draft[threadIndex].total_unread = 0;
-        }
-      }),
-    );
-
     const otherParticipant = thread.participants?.find(
       (participant) => participant.email !== currentUserEmail,
     );

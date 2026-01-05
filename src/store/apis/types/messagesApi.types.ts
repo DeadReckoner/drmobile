@@ -14,6 +14,7 @@ export type ThreadType = {
   created_at: string;
   updated_at: string;
   total_unread: number;
+  LastMessage: MessageType | null;
 };
 
 export type MessageType = {
