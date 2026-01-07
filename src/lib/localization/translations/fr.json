@@ -83,7 +83,7 @@
       "constraints": "Quels obstacles potentiels pourraient se dresser sur ton chemin ? Et lesquels te semblent être les plus bloquants ? Ils peuvent être internes ou externes (ex. Internes : trouver la motivation pour se lever tôt ; Externes : travail ou obligations familiales).",
       "skill_level": "Y a-t-il des limites, des conditions ou des préférences personnelles dont je devrais tenir compte ? Cela peut inclure des contraintes d’emploi du temps, de budget, des facteurs physiques, des outils que tu peux ou ne peux pas utiliser, ou tout ce que tu souhaites inclure ou éviter.",
       "anything_else": "Y a-t-il autre chose que je devrais savoir avant de construire ta feuille de route ? Ajoute tout détail ou contexte utile pour façonner le plan.",
-      "thank_you": "Merci ! Je construis maintenant ta feuille de route personnalisée.",
+      "thank_you": "Merci ! La création de ta feuille de route personnalisée peut prendre quelques minutes. Tu seras notifié lorsque ce sera terminé.",
       "composer_placeholder": "Saisis ta réponse"
     },
     "in_progress_banner": {
