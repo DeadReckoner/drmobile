@@ -11,19 +11,25 @@ import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Messages = () => {
-  const { data, isLoading, refetch, isFetching } = useGetThreadsQuery(
-    undefined,
-    {
-      refetchOnMountOrArgChange: true,
-      refetchOnFocus: true,
-    },
-  );
+  const { data, isLoading, refetch, isFetching } = useGetThreadsQuery();
   const { email: currentUserEmail } = useAppSelector(selectUser);
   const { t } = useLocalization();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    try {
+      setIsRefreshing(true);
+      await refetch();
+    } catch {
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const onThreadClick = (thread: ThreadType) => {
     const otherParticipant = thread.participants?.find(
@@ -55,8 +61,8 @@ const Messages = () => {
         contentContainerStyle={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={refetch}
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
             tintColor={Colors.secondary}
           />
         }>

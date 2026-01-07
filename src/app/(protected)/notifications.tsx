@@ -50,7 +50,6 @@ const Notifications = () => {
   const { permissionStatus, requestPermissions } = usePushNotifications();
   const { data: notifications, refetch: refetchNotifications } =
     useGetNotificationsQuery(undefined, {
-      refetchOnFocus: true,
       refetchOnMountOrArgChange: true,
     });
 
@@ -59,7 +58,6 @@ const Notifications = () => {
     isLoading,
     refetch: refetchPendingFriendRequests,
   } = useGetPendingFriendRequestsQuery(undefined, {
-    refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
 
@@ -68,7 +66,6 @@ const Notifications = () => {
     isLoading: isLoadingAnchorRequests,
     refetch: refetchAnchorRequests,
   } = useGetMyAnchorRequestsQuery(undefined, {
-    refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
 
