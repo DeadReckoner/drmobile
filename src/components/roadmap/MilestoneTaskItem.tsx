@@ -14,11 +14,13 @@ import {
 interface MilestoneTaskItemProps {
   task: TaskType;
   onPress: (_task: TaskType) => void;
+  readonly?: boolean;
 }
 
 export const MilestoneTaskItem = ({
   task,
   onPress,
+  readonly = false,
 }: MilestoneTaskItemProps) => {
   const scale = useSharedValue(1);
   const iconStyles = useAnimatedStyle(() => ({
@@ -30,15 +32,14 @@ export const MilestoneTaskItem = ({
   const onPressOut = () => {
     scale.value = withSpring(1);
   };
+
+  const isTaskCompleted = readonly
+    ? task?.completed
+    : task?.steps?.length > 0 && task.steps?.every((step) => step.completed);
+
   return (
     <AppView row paddingL-32 paddingV-16 paddingR-18 gap-16 center>
-      <AppCheckbox
-        value={
-          (task?.steps?.length > 0 &&
-            task.steps?.every((step) => step.completed)) ||
-          false
-        }
-      />
+      <AppCheckbox value={isTaskCompleted} />
       <AppView flex>
         <AppText flex textColor body2>
           {task.title}
@@ -48,14 +49,16 @@ export const MilestoneTaskItem = ({
           {task.est_minutes ? `· ${task.est_minutes} mins` : ''}
         </AppText>
       </AppView>
-      <AppButton
-        onPress={() => onPress(task)}
-        onPressIn={onPressIn}
-        onPressOut={onPressOut}>
-        <AppView reanimated style={iconStyles}>
-          <AppIcon set="Feather" name={'arrow-right'} size={20} />
-        </AppView>
-      </AppButton>
+      {!readonly && (
+        <AppButton
+          onPress={() => onPress(task)}
+          onPressIn={onPressIn}
+          onPressOut={onPressOut}>
+          <AppView reanimated style={iconStyles}>
+            <AppIcon set="Feather" name={'arrow-right'} size={20} />
+          </AppView>
+        </AppButton>
+      )}
     </AppView>
   );
 };

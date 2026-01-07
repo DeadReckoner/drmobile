@@ -60,7 +60,7 @@
       "subtitle": "Please provide your name to continue",
       "first_name_placeholder": "Enter your first name",
       "last_name_placeholder": "Enter your last name",
-      "submit_button": "Continue",
+      "submit_button": "Update Profile",
       "updating": "Updating profile..."
     },
     "update_profile": {

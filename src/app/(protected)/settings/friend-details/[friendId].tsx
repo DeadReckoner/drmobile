@@ -175,10 +175,22 @@ const FriendDetails = () => {
     );
   }, []);
 
+  const handleRoadmapPress = useCallback((roadmap: RoadmapType) => {
+    router.navigate({
+      pathname: '/(protected)/settings/readonly-roadmap-details',
+      params: {
+        roadmap: JSON.stringify(roadmap),
+      },
+    });
+  }, []);
+
   const renderRoadmapItem = useCallback(
     ({ item: roadmap }: { item: RoadmapType }) => {
       return (
-        <AppCard key={roadmap.roadmap_id} paddingV-20 marginB-16>
+        <AppCard
+          paddingV-20
+          marginB-16
+          onPress={() => handleRoadmapPress(roadmap)}>
           <AppView row gap-16>
             <AppView bg-primary br30 center style={styles.roadmapIcon}>
               <AppIcon set="Feather" name="map" color={Colors.white} />
@@ -195,7 +207,7 @@ const FriendDetails = () => {
         </AppCard>
       );
     },
-    [],
+    [handleRoadmapPress],
   );
   const renderHeader = () => (
     <AppView marginT-24 row gap-8>
