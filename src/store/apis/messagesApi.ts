@@ -22,8 +22,15 @@ export const messagesApi = api.injectEndpoints({
         { type: 'Threads', id: `MESSAGES-${threadId}` },
       ],
     }),
+    getAllUnreadMessagesCount: builder.query<number, void>({
+      query: () => '/threads/unread',
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetThreadsQuery, useGetThreadMessagesQuery } = messagesApi;
+export const {
+  useGetThreadsQuery,
+  useGetThreadMessagesQuery,
+  useGetAllUnreadMessagesCountQuery,
+} = messagesApi;
