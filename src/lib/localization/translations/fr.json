@@ -273,6 +273,40 @@
     "contacts_denied_description": "Pour inviter des amis depuis vos contacts, nous avons besoin d'accéder à votre liste de contacts. Veuillez activer les permissions dans les paramètres de votre appareil.",
     "open_settings": "Ouvrir les Paramètres"
   },
+  "habits": {
+    "title_label": "Titre de l'habitude",
+    "title_placeholder": "Entrez le titre de l'habitude",
+    "description_label": "Description",
+    "description_placeholder": "Ajouter une description optionnelle",
+    "recurrence_label": "Type de récurrence",
+    "select_recurrence": "Sélectionner le type de récurrence",
+    "recurrence": {
+      "none": "Tâche unique",
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire",
+      "monthly": "Mensuel"
+    },
+    "day_of_month_label": "Jour du mois",
+    "day_of_month_placeholder": "Entrez le jour (1-31)",
+    "due_date_label": "Date d'échéance",
+    "start_date_label": "Date de début",
+    "end_date_label": "Date de fin (Optionnel)",
+    "reminder_time_label": "Heure de rappel (Optionnel)",
+    "select_date": "Sélectionner la date",
+    "select_time": "Sélectionner l'heure",
+    "create_habit": "Créer une habitude",
+    "update_habit": "Mettre à jour l'habitude",
+    "weekly_days_label": "Sélectionner les jours",
+    "select_days": "Sélectionner les jours",
+    "weekly_days_required": "Veuillez sélectionner au moins un jour pour l'habitude hebdomadaire",
+    "days_option": {
+      "weekdays": "Jours de semaine (Lun-Ven)",
+      "weekend": "Week-end (Sam-Dim)",
+      "everyday": "Tous les jours"
+    },
+    "created_successfully": "Habitude créée avec succès",
+    "updated_successfully": "Habitude mise à jour avec succès"
+  },
   "common": {
     "or": "Ou",
     "milestones": "Jalons",

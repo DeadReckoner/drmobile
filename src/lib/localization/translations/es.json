@@ -273,6 +273,40 @@
     "contacts_denied_description": "Para invitar amigos desde tus contactos, necesitamos acceso a tu lista de contactos. Por favor, habilita los permisos en la configuración de tu dispositivo.",
     "open_settings": "Abrir Configuración"
   },
+  "habits": {
+    "title_label": "Título del hábito",
+    "title_placeholder": "Ingresa el título del hábito",
+    "description_label": "Descripción",
+    "description_placeholder": "Agregar descripción opcional",
+    "recurrence_label": "Tipo de recurrencia",
+    "select_recurrence": "Seleccionar tipo de recurrencia",
+    "recurrence": {
+      "none": "Tarea única",
+      "daily": "Diario",
+      "weekly": "Semanal",
+      "monthly": "Mensual"
+    },
+    "day_of_month_label": "Día del mes",
+    "day_of_month_placeholder": "Ingresa el día (1-31)",
+    "due_date_label": "Fecha de vencimiento",
+    "start_date_label": "Fecha de inicio",
+    "end_date_label": "Fecha de finalización (Opcional)",
+    "reminder_time_label": "Hora de recordatorio (Opcional)",
+    "select_date": "Seleccionar fecha",
+    "select_time": "Seleccionar hora",
+    "create_habit": "Crear hábito",
+    "update_habit": "Actualizar hábito",
+    "weekly_days_label": "Seleccionar días",
+    "select_days": "Seleccionar días",
+    "weekly_days_required": "Por favor selecciona al menos un día para el hábito semanal",
+    "days_option": {
+      "weekdays": "Días laborables (Lun-Vie)",
+      "weekend": "Fin de semana (Sáb-Dom)",
+      "everyday": "Todos los días"
+    },
+    "created_successfully": "Hábito creado con éxito",
+    "updated_successfully": "Hábito actualizado con éxito"
+  },
   "common": {
     "or": "O",
     "milestones": "Hitos",

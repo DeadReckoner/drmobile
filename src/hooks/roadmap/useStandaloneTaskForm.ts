@@ -1,7 +1,11 @@
-import { WeekdayIndex } from '@/components/WeekdaySelector';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { useCreateHabitMutation } from '@/store/apis/habitsApi';
+import {
+  CreateHabitRequestType,
+  RecurrenceType,
+} from '@/store/apis/types/habitsApi.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectSelectedTask } from '@/store/slices/roadmapDraftSlice';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
@@ -9,27 +13,55 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 const createTaskValidationSchema = (t: (_: TranslationKeysType) => string) => {
-  const nameLabel = t('tabs.create_tab.task_name_label');
-  const descLabel = t('tabs.create_tab.task_desc_label');
-  const startDateLabel = t('tabs.create_tab.start_date');
-  const endDateLabel = t('tabs.create_tab.end_date');
+  const titleLabel = t('habits.title_label');
+  const descLabel = t('habits.description_label');
+  const recurrenceLabel = t('habits.recurrence_label');
+  const startDateLabel = t('habits.start_date_label');
+  const dayOfMonthLabel = t('habits.day_of_month_label');
+  const dueDateLabel = t('habits.due_date_label');
+
   return Yup.object({
-    taskName: Yup.string()
-      .label(nameLabel)
-      .min(2, isInvalidMessage(nameLabel, t))
-      .required(isRequiredMessage(nameLabel, t)),
-    taskDescription: Yup.string()
-      .label(descLabel)
-      .min(2, isInvalidMessage(descLabel, t))
-      .required(isRequiredMessage(descLabel, t)),
+    title: Yup.string()
+      .label(titleLabel)
+      .min(2, isInvalidMessage(titleLabel, t))
+      .required(isRequiredMessage(titleLabel, t)),
+    description: Yup.string().label(descLabel).optional(),
+    recurrenceType: Yup.string()
+      .label(recurrenceLabel)
+      .oneOf(['none', 'daily', 'weekly', 'monthly'])
+      .required(isRequiredMessage(recurrenceLabel, t)),
+    daysOfWeek: Yup.number()
+      .label(t('habits.weekly_days_label'))
+      .when('recurrenceType', {
+        is: 'weekly',
+        then: (schema) => schema.required(t('habits.weekly_days_required')),
+        otherwise: (schema) => schema.optional(),
+      }),
+    dayOfMonth: Yup.number()
+      .label(dayOfMonthLabel)
+      .min(1, isInvalidMessage(dayOfMonthLabel, t))
+      .max(31, isInvalidMessage(dayOfMonthLabel, t))
+      .when('recurrenceType', {
+        is: 'monthly',
+        then: (schema) =>
+          schema.required(isRequiredMessage(dayOfMonthLabel, t)),
+        otherwise: (schema) => schema.optional(),
+      }),
+    dueDate: Yup.string()
+      .label(dueDateLabel)
+      .when('recurrenceType', {
+        is: 'none',
+        then: (schema) => schema.required(isRequiredMessage(dueDateLabel, t)),
+        otherwise: (schema) => schema.optional(),
+      }),
     startDate: Yup.string()
       .label(startDateLabel)
-      .min(2, isInvalidMessage(startDateLabel, t))
-      .required(isRequiredMessage(startDateLabel, t)),
-    endDate: Yup.string()
-      .label(endDateLabel)
-      .min(2, isInvalidMessage(endDateLabel, t))
-      .required(isRequiredMessage(endDateLabel, t)),
+      .when('recurrenceType', {
+        is: (value: string) => value !== 'none',
+        then: (schema) => schema.required(isRequiredMessage(startDateLabel, t)),
+        otherwise: (schema) => schema.optional(),
+      }),
+    endDate: Yup.string().label(t('habits.end_date_label')).optional(),
   });
 };
 
@@ -39,37 +71,51 @@ type TaskSchemaType = Yup.InferType<
 
 interface TaskFormHookProps {
   mode?: FormEditModeType;
-  selectedDays: WeekdayIndex[];
   onSuccess?: () => void;
+  onError?: (_error: unknown) => void;
 }
 
 export const useStandaloneTaskForm = ({
   mode = 'create',
   onSuccess,
-  selectedDays: _selectedDays,
+  onError,
 }: TaskFormHookProps) => {
   const { t } = useLocalization();
   const schema = createTaskValidationSchema(t);
-  // const dispatch = useAppDispatch();
+  const [createHabit, { isLoading: isHabitCreating }] =
+    useCreateHabitMutation();
   const selectedTask = useAppSelector(selectSelectedTask);
   const canEdit = mode === 'edit';
 
-  //TODO: handle standalone task submission, remove unused variables
-  const onStandaloneTaskSubmit = async (_props: TaskSchemaType) => {
+  const onStandaloneTaskSubmit = async (props: TaskSchemaType) => {
+    const payload: CreateHabitRequestType = {
+      title: props.title,
+      description: props.description || undefined,
+      recurrence_type: props.recurrenceType as RecurrenceType,
+      start_date: props.startDate || props.dueDate || '',
+    };
+
+    if (props.endDate) {
+      payload.end_date = props.endDate || undefined;
+    }
+
+    if (props.recurrenceType === 'weekly' && props.daysOfWeek) {
+      payload.days_of_week = props.daysOfWeek;
+    } else if (props.recurrenceType === 'monthly' && props.dayOfMonth) {
+      payload.day_of_month = Number(props.dayOfMonth);
+    } else if (props.recurrenceType === 'none' && props.dueDate) {
+      payload.due_date = props.dueDate;
+    }
+
     if (canEdit) {
-      // dispatch(
-      //   updateTaskAction({
-      //     description: taskDescription,
-      //     title: taskName,
-      //   }),
-      // );
+      // TODO: Call update habit mutation
+      // const response = await updateHabit({ habit_id: selectedTask.id, ...payload });
     } else {
-      // dispatch(
-      //   addTaskAction({
-      //     description: taskDescription,
-      //     title: taskName,
-      //   }),
-      // );
+      try {
+        await createHabit(payload).unwrap();
+      } catch (error) {
+        onError?.(error);
+      }
     }
     onSuccess?.();
   };
@@ -77,8 +123,12 @@ export const useStandaloneTaskForm = ({
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<TaskSchemaType>({
       initialValues: {
-        taskName: (canEdit && selectedTask?.title) || '',
-        taskDescription: (canEdit && selectedTask?.description) || '',
+        title: (canEdit && selectedTask?.title) || '',
+        description: (canEdit && selectedTask?.description) || '',
+        recurrenceType: (canEdit && 'none') || ('none' as RecurrenceType),
+        daysOfWeek: undefined,
+        dayOfMonth: undefined,
+        dueDate: '',
         startDate: '',
         endDate: '',
       },
@@ -87,6 +137,7 @@ export const useStandaloneTaskForm = ({
     });
 
   return {
+    isLoading: isHabitCreating,
     handleChange: handleChange<keyof TaskSchemaType>,
     handleBlur: handleBlur<keyof TaskSchemaType>,
     ...restFormikOptions,

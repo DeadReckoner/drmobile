@@ -6,7 +6,7 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
-import { CreateStandaloneTaskForm } from '@/components/roadmap/CreateStandaloneTaskForm';
+import { CreateHabitTaskForm } from '@/components/roadmap/CreateHabitTaskForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { AppText, AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
@@ -77,7 +77,10 @@ const AddEditStandaloneTask = () => {
               marginT-0
             />
             <Divider margin-16 />
-            <CreateStandaloneTaskForm mode="create" />
+            <CreateHabitTaskForm
+              mode="create"
+              onSuccess={() => router.back()}
+            />
           </AppView>
         )}
 
@@ -104,7 +107,7 @@ const AddEditStandaloneTask = () => {
             reanimated
             entering={Animations.Entry.FadeInDown()}
             exiting={Animations.Exit.FadeOutDown()}>
-            <CreateStandaloneTaskForm
+            <CreateHabitTaskForm
               mode="edit"
               onSuccess={() => setIsEditing(false)}
             />

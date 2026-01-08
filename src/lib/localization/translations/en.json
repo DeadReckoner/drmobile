@@ -273,6 +273,40 @@
     "contacts_denied_description": "To invite friends from your contacts, we need access to your contacts list. Please enable permissions in your device settings.",
     "open_settings": "Open Settings"
   },
+  "habits": {
+    "title_label": "Habit Title",
+    "title_placeholder": "Enter habit title",
+    "description_label": "Description",
+    "description_placeholder": "Add optional description",
+    "recurrence_label": "Recurrence Type",
+    "select_recurrence": "Select recurrence type",
+    "recurrence": {
+      "none": "One-time Todo",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "day_of_month_label": "Day of Month",
+    "day_of_month_placeholder": "Enter day (1-31)",
+    "due_date_label": "Due Date",
+    "start_date_label": "Start Date",
+    "end_date_label": "End Date (Optional)",
+    "reminder_time_label": "Reminder Time (Optional)",
+    "select_date": "Select date",
+    "select_time": "Select time",
+    "create_habit": "Create Habit",
+    "update_habit": "Update Habit",
+    "weekly_days_label": "Select Days",
+    "select_days": "Select days",
+    "weekly_days_required": "Please select at least one day for weekly habit",
+    "days_option": {
+      "weekdays": "Weekdays (Mon-Fri)",
+      "weekend": "Weekend (Sat-Sun)",
+      "everyday": "Everyday"
+    },
+    "created_successfully": "Habit created successfully",
+    "updated_successfully": "Habit updated successfully"
+  },
   "common": {
     "or": "Or",
     "milestones": "Milestones",

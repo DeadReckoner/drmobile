@@ -71,9 +71,9 @@ const Create = () => {
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
   // TODO: Uncomment when add new task feature is ready
-  // const onAddNewTaskPress = () => {
-  //   router.navigate('/task/add-edit-standalone-task');
-  // };
+  const onAddNewHabitPress = () => {
+    router.navigate('/task/add-edit-habits-task');
+  };
   const navigateToComingSoon = () => {
     router.navigate('/coming-soon');
   };
@@ -105,7 +105,7 @@ const Create = () => {
             titleKey="tabs.create_tab.add_new_task_or_habit"
             descriptionKey="tabs.create_tab.add_new_task_desc"
             icon={<AppIcon name="addfile" color={Colors.white} />}
-            onPress={navigateToComingSoon}
+            onPress={onAddNewHabitPress}
           />
           <CreateTabListItem
             type="import_plan"
