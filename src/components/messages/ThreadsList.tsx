@@ -15,7 +15,7 @@ export const ThreadsList = ({ threads, onThreadClick }: ThreadsListProps) => {
     return (
       <ThreadListItem
         thread={item}
-        lastMessage=""
+        lastMessage={item.LastMessage?.content}
         onThreadClick={onThreadClick}
       />
     );

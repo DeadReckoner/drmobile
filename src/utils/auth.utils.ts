@@ -6,7 +6,16 @@ import { supabaseClient } from '@/lib/supabase/supabaseClient';
  */
 export const refreshUserSession = async () => {
   try {
-    const { data, error } = await supabaseClient.auth.refreshSession();
+    const refreshPromise = supabaseClient.auth.refreshSession();
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Session refresh timeout')), 5000);
+    });
+
+    const { data, error } = (await Promise.race([
+      refreshPromise,
+      timeoutPromise,
+    ])) as Awaited<ReturnType<typeof supabaseClient.auth.refreshSession>>;
+
     if (error) {
       throw error;
     }

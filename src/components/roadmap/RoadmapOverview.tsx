@@ -12,11 +12,13 @@ import { Colors } from 'react-native-ui-lib';
 interface RoadmapOverviewProps {
   roadmap: RoadmapType;
   toggleEditMode: () => void;
+  readonly?: boolean;
 }
 
 export const RoadmapOverview = ({
   roadmap,
   toggleEditMode,
+  readonly = false,
 }: RoadmapOverviewProps) => {
   const { theme } = useAppTheme();
   const roadmapProgress = roadmap.progress || 0;
@@ -27,9 +29,11 @@ export const RoadmapOverview = ({
         <AppText flex body2 light textColor marginR-16>
           {roadmap.description}
         </AppText>
-        <AppButton onPress={toggleEditMode}>
-          <AppIcon set="Feather" name={'edit'} size={20} />
-        </AppButton>
+        {!readonly && (
+          <AppButton onPress={toggleEditMode}>
+            <AppIcon set="Feather" name={'edit'} size={20} />
+          </AppButton>
+        )}
       </AppView>
       <LineDivider bg-secondary />
       <AppView row centerV spread>

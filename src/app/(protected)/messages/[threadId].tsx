@@ -10,10 +10,14 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useChatWebSocket } from '@/hooks/useChatWebSocket';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useGetThreadMessagesQuery } from '@/store/apis/messagesApi';
+import {
+  messagesApi,
+  useGetThreadMessagesQuery,
+} from '@/store/apis/messagesApi';
 import { MessageType } from '@/store/apis/types/messagesApi.types';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Colors } from 'react-native-ui-lib';
@@ -25,19 +29,32 @@ const ThreadDetailsScreen = () => {
     threadUserId: string;
   }>();
   const { t } = useLocalization();
+  const dispatch = useAppDispatch();
 
-  const { data: messages = [], isLoading } = useGetThreadMessagesQuery(
-    threadId || '',
-    {
-      skip: !threadId,
-      refetchOnMountOrArgChange: true,
-    },
-  );
+  const {
+    data: messages = [],
+    isLoading,
+    isFetching,
+  } = useGetThreadMessagesQuery(threadId || '', {
+    skip: !threadId,
+    refetchOnMountOrArgChange: true,
+  });
 
   const { sendMessage, isConnected } = useChatWebSocket({
     threadId: threadId || '',
     enabled: !!threadId,
   });
+
+  useEffect(() => {
+    dispatch(
+      messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
+        const threadIndex = draft?.findIndex((t) => t.thread_id === threadId);
+        if (threadIndex !== undefined && threadIndex !== -1 && draft) {
+          draft[threadIndex].total_unread = 0;
+        }
+      }),
+    );
+  }, [dispatch, threadId]);
 
   const handleSendMessage = (messageText: string) => {
     sendMessage(messageText);
@@ -108,7 +125,11 @@ const ThreadDetailsScreen = () => {
           maintainScrollAtEndThreshold={0.1}
           ListEmptyComponent={renderEmptyComponent}
         />
-        <MessageComposer onSend={handleSendMessage} disabled={!isConnected} />
+        <MessageComposer
+          isLoading={isLoading || isFetching}
+          onSend={handleSendMessage}
+          disabled={!isConnected}
+        />
       </AppScreen>
     </KeyboardAvoidingView>
   );

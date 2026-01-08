@@ -18,6 +18,7 @@ interface MilestonesListProps {
   onAddNewMilestonePress: () => void;
   onMilestonePress: (_milestone: MilestoneType | null, _index: number) => void;
   onTaskPress: (_task: TaskType, _index: number) => void;
+  readonly?: boolean;
 }
 
 export const MilestonesList = ({
@@ -25,6 +26,7 @@ export const MilestonesList = ({
   onAddNewMilestonePress,
   onMilestonePress,
   onTaskPress,
+  readonly = false,
 }: MilestonesListProps) => {
   const renderMilestone = ({
     item,
@@ -36,6 +38,7 @@ export const MilestonesList = ({
         milestone={item}
         onMilestonePress={(item) => onMilestonePress(item, index)}
         onTaskPress={onTaskPress}
+        readonly={readonly}
       />
     );
   };
@@ -52,7 +55,7 @@ export const MilestonesList = ({
   const renderItemSeparator = () => <LineDivider marginV-0 />;
 
   const renderFooterComponent = () => {
-    if (milestones.length === 0) return;
+    if (milestones.length === 0 || readonly) return;
     return (
       <AppButton onPress={onAddNewMilestonePress}>
         <LineDivider marginV-0 />

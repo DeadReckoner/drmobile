@@ -70,8 +70,12 @@ const Create = () => {
     dispatch(resetDraftAction());
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
-  const onAddNewTaskPress = () => {
-    router.navigate('/task/add-edit-standalone-task');
+  // TODO: Uncomment when add new task feature is ready
+  // const onAddNewTaskPress = () => {
+  //   router.navigate('/task/add-edit-standalone-task');
+  // };
+  const navigateToComingSoon = () => {
+    router.navigate('/coming-soon');
   };
   return (
     <AppScreen>
@@ -101,13 +105,13 @@ const Create = () => {
             titleKey="tabs.create_tab.add_new_task_or_habit"
             descriptionKey="tabs.create_tab.add_new_task_desc"
             icon={<AppIcon name="addfile" color={Colors.white} />}
-            onPress={onAddNewTaskPress}
+            onPress={navigateToComingSoon}
           />
           <CreateTabListItem
             type="import_plan"
             titleKey="tabs.create_tab.import_plan"
             descriptionKey="tabs.create_tab.import_plan_desc"
-            onPress={onAddNewTaskPress}
+            onPress={navigateToComingSoon}
             icon={<AppIcon name="export" color={Colors.white} />}
           />
           <Divider />

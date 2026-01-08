@@ -34,12 +34,14 @@ interface MilestoneListItemProps {
   milestone: MilestoneType;
   onMilestonePress: (_milestone: MilestoneType | null) => void;
   onTaskPress: (_task: TaskType, _index: number) => void;
+  readonly?: boolean;
 }
 
 export const MilestoneListItem = ({
   milestone,
   onMilestonePress,
   onTaskPress,
+  readonly = false,
 }: MilestoneListItemProps) => {
   const theme = useAppTheme();
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
@@ -94,12 +96,17 @@ export const MilestoneListItem = ({
     item,
     index,
   }: LegendListRenderItemProps<TaskType>) => (
-    <MilestoneTaskItem task={item} onPress={() => onTaskPress(item, index)} />
+    <MilestoneTaskItem
+      task={item}
+      onPress={() => onTaskPress(item, index)}
+      readonly={readonly}
+    />
   );
 
   const renderItemSeparator = () => <LineDivider marginV-0 />;
 
   const renderFooterComponent = () => {
+    if (readonly) return null;
     return (
       <AppButton onPress={handleOnAddNewTask}>
         <LineDivider marginV-0 />
@@ -124,12 +131,7 @@ export const MilestoneListItem = ({
   return (
     <AppView key={milestone.milestone_id}>
       <AppButton onPress={onPress}>
-        <MenuView
-          ref={menuRef}
-          themeVariant={theme.theme}
-          onPressAction={onMenuAction}
-          actions={MENU_ACTIONS}
-          shouldOpenOnLongPress={true}>
+        {readonly ? (
           <AppView row padding-16 gap-16 center>
             <AppCheckbox value={milestone.reached} />
             <AppText flex textColor body2>
@@ -141,7 +143,28 @@ export const MilestoneListItem = ({
               </AppView>
             </AppButton>
           </AppView>
-        </MenuView>
+        ) : (
+          <MenuView
+            ref={menuRef}
+            themeVariant={theme.theme}
+            onPressAction={onMenuAction}
+            actions={MENU_ACTIONS}
+            shouldOpenOnLongPress={true}>
+            <AppView row padding-16 gap-16 center>
+              <AppCheckbox value={milestone.reached} />
+              <AppText flex textColor body2>
+                {milestone.sub_goal}
+              </AppText>
+              <AppButton
+                onPress={onPress}
+                style={{ pointerEvents: 'box-only' }}>
+                <AppView reanimated style={chevronStyle}>
+                  <AppIcon set="Feather" name={'chevron-down'} />
+                </AppView>
+              </AppButton>
+            </AppView>
+          </MenuView>
+        )}
       </AppButton>
 
       <AppView style={{ overflow: 'hidden' }}>

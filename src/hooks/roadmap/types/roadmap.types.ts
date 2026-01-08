@@ -67,6 +67,8 @@ export interface RoadmapType {
 
   job_id?: string;
   generation_status?: RoadmapGenerationStatusType;
+
+  anchor_id?: string;
 }
 
 export interface MacroMap {

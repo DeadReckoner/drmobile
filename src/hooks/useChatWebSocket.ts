@@ -65,6 +65,24 @@ export const useChatWebSocket = ({
           },
         ),
       );
+
+      dispatch(
+        messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
+          if (!draft) return;
+
+          const threadToUpdate = draft.find(
+            (thread) => thread.thread_id === threadId,
+          );
+
+          if (threadToUpdate) {
+            threadToUpdate.LastMessage = {
+              ...message,
+              updated_at: message.created_at,
+              deleted_at: null,
+            };
+          }
+        }),
+      );
     },
     [dispatch, threadId],
   );

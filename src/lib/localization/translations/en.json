@@ -60,7 +60,7 @@
       "subtitle": "Please provide your name to continue",
       "first_name_placeholder": "Enter your first name",
       "last_name_placeholder": "Enter your last name",
-      "submit_button": "Continue",
+      "submit_button": "Update Profile",
       "updating": "Updating profile..."
     },
     "update_profile": {
@@ -145,7 +145,7 @@
       "constraints": "What potential obstacles could get in your way? And which ones feel like the biggest roadblocks? These can be internal or external (i.e., Internal: finding the willpower to wake up early, External: Work or family obligations.)",
       "skill_level": "Are there any limits, conditions, or personal preferences I should keep in mind? This could be schedule constraints, budget considerations, physical factors, tools you can or cannot use, or anything you want included or avoided.",
       "anything_else": "Anything else you want me to know before I build your roadmap? Add any details or context that would help shape the plan.",
-      "thank_you": "Thanks! I'm building your personalized roadmap now.",
+      "thank_you": "Thanks! Building your personalized roadmap may take a few minutes. You’ll be notified when it’s complete.",
       "composer_placeholder": "Enter your answer"
     },
     "in_progress_banner": {
@@ -309,10 +309,14 @@
     "why_it_is_needed": "Why it is needed?",
     "scan_qr_code": "Scan this QR code to add me as your friend",
     "error_occurred": "An error occurred",
-    "unknown_user": "Unknown User"
+    "unknown_user": "Unknown User",
+    "unknown_roadmap": "Unknown Roadmap"
   },
   "roadmap": {
-    "select_anchor": "Select an Anchor"
+    "select_anchor": "Select an Anchor",
+    "manage_anchor": "Manage Anchor",
+    "manage_anchors": "Manage Anchors",
+    "anchor_removed_successfully": "Anchor removed successfully"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",
@@ -348,5 +352,9 @@
     "change_requests": "Change Requests",
     "change_requests_placeholder": "Eg. Adjust intensity, Swap running with Cycling",
     "submit_feedback": "Submit Feedback"
+  },
+  "coming_soon": {
+    "title": "Coming Soon",
+    "description": "We're working hard to bring you this feature. Stay tuned for updates!"
   }
 }

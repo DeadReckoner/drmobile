@@ -21,6 +21,7 @@ export const notificationApi = api.injectEndpoints({
     }),
     getNotifications: builder.query<NotificationType[], void>({
       query: () => '/notifications',
+      providesTags: ['Notifications'],
     }),
   }),
   overrideExisting: false,

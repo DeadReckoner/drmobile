@@ -18,10 +18,12 @@ import { router } from 'expo-router';
 interface RoadmapDetailsProps {
   roadmap: RoadmapType;
   toggleEditMode: () => void;
+  readonly?: boolean;
 }
 export const RoadmapDetails = ({
   roadmap,
   toggleEditMode,
+  readonly = false,
 }: RoadmapDetailsProps) => {
   const dispatch = useAppDispatch();
 
@@ -43,9 +45,14 @@ export const RoadmapDetails = ({
       params: { mode: 'edit' },
     });
   };
+
   return (
     <AppView flex>
-      <RoadmapOverview roadmap={roadmap} toggleEditMode={toggleEditMode} />
+      <RoadmapOverview
+        roadmap={roadmap}
+        toggleEditMode={toggleEditMode}
+        readonly={readonly}
+      />
       <Divider marginT-16 />
       <TranslatedText body1 marginB-16 translationKey="common.milestones" />
       <Divider marginT-4 />
@@ -54,6 +61,7 @@ export const RoadmapDetails = ({
         onAddNewMilestonePress={handleOnAddNewMilestone}
         onMilestonePress={handleMilestonePress}
         onTaskPress={handleOnTaskPress}
+        readonly={readonly}
       />
     </AppView>
   );

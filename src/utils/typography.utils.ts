@@ -32,6 +32,13 @@ export const FONT_CONFIG_MAP: Record<string, FontTextStyleType> = {
   h2: {
     fontFamily: UNBOUNDED_SEMIBOLD,
     fontSize: 24,
+    lineHeight: 32,
+  },
+
+  h3: {
+    fontFamily: UNBOUNDED_SEMIBOLD,
+    fontSize: 20,
+    lineHeight: 28,
   },
 
   caption: {

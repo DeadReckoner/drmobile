@@ -48,16 +48,16 @@ const Notifications = () => {
   }>({});
 
   const { permissionStatus, requestPermissions } = usePushNotifications();
-  const { data: notifications } = useGetNotificationsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: notifications, refetch: refetchNotifications } =
+    useGetNotificationsQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    });
 
   const {
     data: pendingRequestsData,
     isLoading,
-    refetch,
+    refetch: refetchPendingFriendRequests,
   } = useGetPendingFriendRequestsQuery(undefined, {
-    refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
 
@@ -66,7 +66,6 @@ const Notifications = () => {
     isLoading: isLoadingAnchorRequests,
     refetch: refetchAnchorRequests,
   } = useGetMyAnchorRequestsQuery(undefined, {
-    refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
 
@@ -222,11 +221,20 @@ const Notifications = () => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refetch(), refetchAnchorRequests()]);
+      await Promise.allSettled([
+        refetchNotifications(),
+        refetchPendingFriendRequests(),
+        refetchAnchorRequests(),
+      ]);
+    } catch {
     } finally {
       setRefreshing(false);
     }
-  }, [refetch, refetchAnchorRequests]);
+  }, [
+    refetchNotifications,
+    refetchPendingFriendRequests,
+    refetchAnchorRequests,
+  ]);
 
   const renderFriendRequestItem = useCallback(
     ({ item }: { item: NotificationItem }) => {

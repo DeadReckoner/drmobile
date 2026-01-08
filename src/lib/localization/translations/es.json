@@ -60,7 +60,7 @@
       "subtitle": "Por favor proporciona tu nombre para continuar",
       "first_name_placeholder": "Introduce tu nombre",
       "last_name_placeholder": "Introduce tu apellido",
-      "submit_button": "Continuar",
+      "submit_button": "Actualizar perfil",
       "updating": "Actualizando perfil..."
     },
     "update_profile": {
@@ -83,7 +83,7 @@
       "constraints": "¿Qué posibles obstáculos podrían interponerse en tu camino? ¿Y cuáles sientes que son los mayores bloqueos? Pueden ser internos o externos (por ejemplo, Internos: encontrar la fuerza de voluntad para despertarte temprano; Externos: trabajo o compromisos familiares).",
       "skill_level": "¿Hay límites, condiciones o preferencias personales que deba tener en cuenta? Esto puede incluir restricciones de horario, presupuesto, factores físicos, herramientas que puedes o no usar, o cualquier cosa que quieras incluir o evitar.",
       "anything_else": "¿Hay algo más que deba saber antes de crear tu plan? Agrega cualquier detalle o contexto que ayude a darle forma.",
-      "thank_you": "¡Gracias! Estoy creando tu hoja de ruta personalizada ahora.",
+      "thank_you": "¡Gracias! La creación de tu hoja de ruta personalizada puede tardar unos minutos. Se te notificará cuando esté completa.",
       "composer_placeholder": "Escribe tu respuesta"
     },
     "in_progress_banner": {
@@ -309,10 +309,14 @@
     "why_it_is_needed": "¿Por qué es necesario?",
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
     "error_occurred": "Ocurrió un error",
-    "unknown_user": "Usuario Desconocido"
+    "unknown_user": "Usuario Desconocido",
+    "unknown_roadmap": "Hoja de Ruta Desconocida"
   },
   "roadmap": {
-    "select_anchor": "Seleccionar un ancla"
+    "select_anchor": "Seleccionar un ancla",
+    "manage_anchor": "Gestionar ancla",
+    "manage_anchors": "Gestionar anclas",
+    "anchor_removed_successfully": "Ancla eliminada con éxito"
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",
@@ -348,5 +352,9 @@
     "change_requests": "Solicitudes de Cambio",
     "change_requests_placeholder": "Ej. Ajustar intensidad, Cambiar correr por ciclismo",
     "submit_feedback": "Enviar Retroalimentación"
+  },
+  "coming_soon": {
+    "title": "Próximamente",
+    "description": "Estamos trabajando arduamente para traerte esta función. ¡Mantente atento a las actualizaciones!"
   }
 }

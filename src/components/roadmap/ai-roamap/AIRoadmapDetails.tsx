@@ -24,11 +24,13 @@ interface AIRoadmapDetailsProps {
   roadmap: RoadmapType;
   isRoadmapLoading?: boolean;
   toggleEditMode: () => void;
+  readonly?: boolean;
 }
 export const AIRoadmapDetails = ({
   roadmap,
   toggleEditMode,
   isRoadmapLoading,
+  readonly = false,
 }: AIRoadmapDetailsProps) => {
   const dispatch = useAppDispatch();
 
@@ -54,7 +56,11 @@ export const AIRoadmapDetails = ({
 
   return (
     <AppView flex>
-      <RoadmapOverview roadmap={roadmap} toggleEditMode={toggleEditMode} />
+      <RoadmapOverview
+        roadmap={roadmap}
+        toggleEditMode={toggleEditMode}
+        readonly={readonly}
+      />
       <Divider marginT-16 />
       {isRoadmapLoading ? (
         <Loader transparent containerStyle={styles.loader} />
@@ -65,33 +71,31 @@ export const AIRoadmapDetails = ({
           exiting={FadeOutUp}>
           <AppView row centerV spread marginB-16>
             <TranslatedText body2 translationKey="common.current_milestone" />
-            <AppButton onPress={onViewMacroMap}>
-              <AppView right>
-                <AppView
-                  row
-                  center
-                  gap-8
-                  br100
-                  padding-4
-                  paddingH-12
-                  bg-lightCardBG>
-                  <TranslatedText xsm translationKey="common.view_map" />
+            {!readonly && (
+              <AppButton onPress={onViewMacroMap}>
+                <AppView right>
+                  <AppView
+                    row
+                    center
+                    gap-8
+                    br100
+                    padding-4
+                    paddingH-12
+                    bg-lightCardBG>
+                    <TranslatedText xsm translationKey="common.view_map" />
+                  </AppView>
                 </AppView>
-              </AppView>
-            </AppButton>
+              </AppButton>
+            )}
           </AppView>
           {/* TODO: show the current running milestone */}
           {roadmap.macro_map?.phases[0].macro_milestones[0] && (
             <MacroMapListItem
               macroMilestone={roadmap.macro_map?.phases[0].macro_milestones[0]}
-              icon={
-                <AppButton onPress={onMacroMilestonePress}>
-                  <AppIcon set="Feather" name="arrow-right" size={20} />
-                </AppButton>
-              }
+              onPress={readonly ? () => {} : onMacroMilestonePress}
             />
           )}
-          {roadmap?.milestones?.length > 0 && (
+          {!readonly && roadmap?.milestones?.length > 0 && (
             <AppButton
               onPress={() => {
                 router.navigate(

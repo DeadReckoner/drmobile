@@ -25,19 +25,17 @@ export const AnchorRequestItem = ({
   isAccepting,
   isRejecting,
 }: AnchorRequestItemProps) => {
+  const { t } = useLocalization();
   const requesterName = notification.requester
     ? `${notification.requester.first_name} ${notification.requester.last_name}`.trim()
-    : 'Unknown User';
+    : t('common.unknown_user');
 
-  const roadmapGoal = notification.roadmap?.goal || 'their roadmap';
-
+  const roadmapGoal = notification.roadmap?.goal || t('common.unknown_roadmap');
   const isLoading = isAccepting || isRejecting;
 
-  const { t } = useLocalization();
-
   return (
-    <AppCard padding-16 paddingV-20>
-      <AppView row gap-16 centerV>
+    <AppCard padding-16 paddingV-20 flex>
+      <AppView row gap-16 centerV flex>
         <AppView bg-outline br100 style={styles.avatarPlaceholder} center>
           <AppIcon
             set="Feather"
@@ -47,7 +45,7 @@ export const AnchorRequestItem = ({
           />
         </AppView>
 
-        <AppView gap-10>
+        <AppView gap-10 flex>
           <AppText body2 textColor style={styles.textContainer}>
             {requesterName}{' '}
             <AppText body2 textColor light>

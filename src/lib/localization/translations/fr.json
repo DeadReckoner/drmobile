@@ -60,7 +60,7 @@
       "subtitle": "Veuillez fournir votre nom pour continuer",
       "first_name_placeholder": "Entrez votre prénom",
       "last_name_placeholder": "Entrez votre nom",
-      "submit_button": "Continuer",
+      "submit_button": "Mettre à jour le profil",
       "updating": "Mise à jour du profil..."
     },
     "update_profile": {
@@ -83,7 +83,7 @@
       "constraints": "Quels obstacles potentiels pourraient se dresser sur ton chemin ? Et lesquels te semblent être les plus bloquants ? Ils peuvent être internes ou externes (ex. Internes : trouver la motivation pour se lever tôt ; Externes : travail ou obligations familiales).",
       "skill_level": "Y a-t-il des limites, des conditions ou des préférences personnelles dont je devrais tenir compte ? Cela peut inclure des contraintes d’emploi du temps, de budget, des facteurs physiques, des outils que tu peux ou ne peux pas utiliser, ou tout ce que tu souhaites inclure ou éviter.",
       "anything_else": "Y a-t-il autre chose que je devrais savoir avant de construire ta feuille de route ? Ajoute tout détail ou contexte utile pour façonner le plan.",
-      "thank_you": "Merci ! Je construis maintenant ta feuille de route personnalisée.",
+      "thank_you": "Merci ! La création de ta feuille de route personnalisée peut prendre quelques minutes. Tu seras notifié lorsque ce sera terminé.",
       "composer_placeholder": "Saisis ta réponse"
     },
     "in_progress_banner": {
@@ -309,10 +309,14 @@
     "why_it_is_needed": "Pourquoi est-ce nécessaire ?",
     "scan_qr_code": "Scannez ce code QR pour m'ajouter comme ami",
     "error_occurred": "Une erreur s'est produite",
-    "unknown_user": "Utilisateur Inconnu"
+    "unknown_user": "Utilisateur Inconnu",
+    "unknown_roadmap": "Feuille de Route Inconnue"
   },
   "roadmap": {
-    "select_anchor": "Sélectionner une ancre"
+    "select_anchor": "Sélectionner une ancre",
+    "manage_anchor": "Gérer l'ancre",
+    "manage_anchors": "Gérer les ancres",
+    "anchor_removed_successfully": "Ancre supprimée avec succès"
   },
   "messages": {
     "no_messages_yet": "Pas encore de messages !",
@@ -348,5 +352,9 @@
     "change_requests": "Demandes de Changement",
     "change_requests_placeholder": "Ex. Ajuster l'intensité, Remplacer la course par le vélo",
     "submit_feedback": "Soumettre le Retour"
+  },
+  "coming_soon": {
+    "title": "Bientôt disponible",
+    "description": "Nous travaillons dur pour vous apporter cette fonctionnalité. Restez à l'écoute pour les mises à jour !"
   }
 }
