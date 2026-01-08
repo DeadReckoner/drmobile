@@ -37,7 +37,7 @@ const ThreadDetailsScreen = () => {
     isFetching,
   } = useGetThreadMessagesQuery(threadId || '', {
     skip: !threadId,
-    refetchOnMountOrArgChange: 20,
+    refetchOnMountOrArgChange: true,
   });
 
   const { sendMessage, isConnected } = useChatWebSocket({

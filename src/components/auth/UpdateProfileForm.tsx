@@ -49,16 +49,18 @@ export const UpdateProfileForm = ({
     enableReinitialize: true,
     onSubmit: async (values) => {
       try {
-        const { error } = await updateUserWithAuthProvider({
-          data: {
-            firstName: values.first_name.trim(),
-            lastName: values.last_name.trim(),
-          },
-        });
-        const response = await updateUser({
-          first_name: values.first_name.trim(),
-          last_name: values.last_name.trim(),
-        }).unwrap();
+        const [response, { error }] = await Promise.all([
+          updateUser({
+            first_name: values.first_name.trim(),
+            last_name: values.last_name.trim(),
+          }).unwrap(),
+          updateUserWithAuthProvider({
+            data: {
+              firstName: values.first_name.trim(),
+              lastName: values.last_name.trim(),
+            },
+          }),
+        ]);
 
         if (error) {
           throw error;

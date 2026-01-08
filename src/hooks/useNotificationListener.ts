@@ -11,10 +11,13 @@ export const useNotificationListener = () => {
   const dispatch = useAppDispatch();
   const path = usePathname();
 
-  const handleNotificationProcessing = (data: { [key: string]: unknown }) => {
+  const handleNotificationProcessing = (
+    content: Notifications.NotificationContent,
+  ) => {
+    const data = content.data;
     switch (data?.type) {
       case 'message_new':
-        handleNewMessages(data.thread_id as string);
+        handleNewMessages(data.thread_id as string, content.body || '');
         break;
       default:
         break;
@@ -22,7 +25,7 @@ export const useNotificationListener = () => {
   };
   const redirect = (notification: Notifications.Notification) => {
     const data = notification.request.content.data;
-    handleNotificationProcessing(data);
+    handleNotificationProcessing(notification.request.content);
     switch (data?.type) {
       case 'message_new':
         router.push(`/messages/${data.thread_id}`);
@@ -39,7 +42,7 @@ export const useNotificationListener = () => {
     })();
   };
 
-  const handleNewMessages = (thread_id: string) => {
+  const handleNewMessages = (thread_id: string, content: string) => {
     if (path === `/messages/${thread_id}`) {
       return;
     }
@@ -48,8 +51,34 @@ export const useNotificationListener = () => {
         const threadIndex = draft?.findIndex((t) => t.thread_id === thread_id);
         if (threadIndex !== undefined && threadIndex !== -1 && draft) {
           draft[threadIndex].total_unread += 1;
+          draft[threadIndex].LastMessage = {
+            content: content,
+            created_at: new Date().toISOString(),
+            message_id: `notification-${Date.now()}`,
+            thread_id: thread_id,
+            user_id: '',
+            deleted_at: null,
+            updated_at: new Date().toISOString(),
+          };
         }
       }),
+    );
+    dispatch(
+      messagesApi.util.updateQueryData(
+        'getThreadMessages',
+        thread_id,
+        (draft) => {
+          draft?.unshift({
+            content: content,
+            created_at: new Date().toISOString(),
+            message_id: `notification-${Date.now()}`,
+            thread_id: thread_id,
+            user_id: '',
+            deleted_at: null,
+            updated_at: new Date().toISOString(),
+          });
+        },
+      ),
     );
   };
 
@@ -69,8 +98,7 @@ export const useNotificationListener = () => {
 
     const subscriptionReceived = Notifications.addNotificationReceivedListener(
       (notification) => {
-        const data = notification.request.content.data;
-        handleNotificationProcessing(data);
+        handleNotificationProcessing(notification.request.content);
       },
     );
 
