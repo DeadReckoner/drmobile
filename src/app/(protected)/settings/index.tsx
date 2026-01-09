@@ -152,6 +152,16 @@ const Settings = () => {
               translationKey="settings.settings"
             />
             <LineDivider marginT-0 marginV-0 />
+            <AppButton
+              onPress={() => router.navigate('/settings/archived-habits')}>
+              <SettingsItem
+                translationKey="habits.archived_habits"
+                rightElement={
+                  <AppIcon set="Ionicons" name="archive-outline" size={22} />
+                }
+              />
+            </AppButton>
+            <LineDivider marginT-0 marginV-0 />
             <SettingsItem
               translationKey="settings.dark_mode"
               rightElement={

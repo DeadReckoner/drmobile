@@ -76,6 +76,12 @@
     "progress": "Progress",
     "create": "Create",
     "messages": "Messages",
+    "today_tab": {
+      "habits_title": "Your Habits",
+      "tasks_title": "Today's Tasks",
+      "no_habits_yet": "No habits yet!",
+      "no_habits_description": "Create recurring habits to build consistency in your daily routine."
+    },
     "create_tab": {
       "build_roadmap_ai": "Use AI to Build My Roadmap",
       "build_roadmap_ai_desc": "Let our AI generate a step-by-step roadmap based on your objectives and priorities.",
@@ -107,8 +113,8 @@
       "create_roadmap_button": "Create Roadmap",
       "no_milestones_yet": "No milestones yet!",
       "no_roadmaps_yet": "No roadmaps yet!",
-      "no_tasks_yet": "No tasks!",
-      "no_tasks_description": "You’re all caught up for today. New tasks will appear here.",
+      "no_tasks_yet": "No tasks or habits!",
+      "no_tasks_description": "You’re all caught up for today. New tasks/habits will appear here.",
       "add_new_milestone_desc": "Create a milestone to break your roadmap into manageable phases.",
       "add_new_roadmap_desc": "Create a roadmap to structure your goals with milestones.",
       "no_steps_yet": "No steps yet!",
@@ -305,7 +311,17 @@
       "everyday": "Everyday"
     },
     "created_successfully": "Habit created successfully",
-    "updated_successfully": "Habit updated successfully"
+    "updated_successfully": "Habit updated successfully",
+    "deleted_successfully": "Habit deleted successfully",
+    "archive_habit": "Archive Habit",
+    "archived_successfully": "Habit archived successfully",
+    "marked_completed_for_today": "Habit marked as completed for today",
+    "mark_complete": "Mark as Complete",
+    "mark_incomplete": "Mark as Incomplete",
+    "delete_habit": "Delete Habit",
+    "archived_habits": "Archived Habits",
+    "no_archived_habits": "No archived habits",
+    "no_archived_habits_description": "Your archived habits will appear here"
   },
   "common": {
     "or": "Or",

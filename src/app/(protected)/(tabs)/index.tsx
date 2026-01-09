@@ -1,3 +1,4 @@
+import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
@@ -12,17 +13,27 @@ import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
+import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { useToast } from '@/hooks/useToast';
+import {
+  useArchiveHabitMutation,
+  useCompleteHabitMutation,
+  useDeleteHabitMutation,
+  useGetHabitsQuery,
+} from '@/store/apis/habitsApi';
+import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import {
   setSelectedTaskAction,
   setShouldSyncWithServerAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -32,8 +43,28 @@ const Today = () => {
       DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
     );
 
+  const {
+    data: habitsData,
+    isLoading: habitsLoading,
+    refetch: refetchHabits,
+    isFetching: habitsFetching,
+    // } = useGetTodayHabitsQuery();
+  } = useGetHabitsQuery({ include_archived: false });
+
   const dispatch = useAppDispatch();
   const { requestPermissions } = usePushNotifications();
+  const { showToast } = useToast();
+  const { t } = useLocalization();
+
+  const [selectedHabit, setSelectedHabit] = useState<HabitType | null>(null);
+  const [isHabitModalVisible, setIsHabitModalVisible] = useState(false);
+
+  const [completeHabit, { isLoading: isCompletingHabit }] =
+    useCompleteHabitMutation();
+  const [archiveHabit, { isLoading: isArchivingHabit }] =
+    useArchiveHabitMutation();
+  const [deleteHabit, { isLoading: isDeletingHabit }] =
+    useDeleteHabitMutation();
 
   useEffect(() => {
     (async () => {
@@ -73,6 +104,106 @@ const Today = () => {
     [data],
   );
 
+  const handleRefresh = () => {
+    refetch();
+    refetchHabits();
+  };
+
+  const handleHabitClick = (habit: HabitType) => {
+    setSelectedHabit(habit);
+    setIsHabitModalVisible(true);
+  };
+
+  const handleCloseHabitModal = () => {
+    setIsHabitModalVisible(false);
+    setSelectedHabit(null);
+  };
+
+  const handleMarkCompleted = async () => {
+    if (!selectedHabit) return;
+
+    try {
+      await completeHabit({
+        habit_id: selectedHabit.habit_id,
+        date: DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+      }).unwrap();
+
+      showToast({
+        message: t('habits.marked_completed_for_today'),
+        type: 'success',
+      });
+      handleCloseHabitModal();
+    } catch (error) {
+      showToast({
+        message: getApiErrorMessage(error),
+        type: 'failure',
+      });
+    }
+  };
+
+  const handleArchiveHabit = async () => {
+    if (!selectedHabit) return;
+
+    try {
+      await archiveHabit(selectedHabit.habit_id).unwrap();
+
+      showToast({
+        message: t('habits.archived_successfully'),
+        type: 'success',
+      });
+      handleCloseHabitModal();
+    } catch (error) {
+      showToast({
+        message: getApiErrorMessage(error),
+        type: 'failure',
+      });
+    }
+  };
+
+  const handleDeleteHabit = async () => {
+    if (!selectedHabit) return;
+
+    try {
+      await deleteHabit(selectedHabit.habit_id).unwrap();
+
+      showToast({
+        message: t('habits.deleted_successfully'),
+        type: 'success',
+      });
+      handleCloseHabitModal();
+    } catch (error) {
+      showToast({
+        message: getApiErrorMessage(error),
+        type: 'failure',
+      });
+    }
+  };
+  const isHabitOperationsInProgress =
+    isCompletingHabit || isArchivingHabit || isDeletingHabit;
+
+  const HABITS_ACTIONS = [
+    {
+      label: t('habits.mark_complete'),
+      onPress: handleMarkCompleted,
+      disabled: isHabitOperationsInProgress,
+      icon: true && (
+        <AppIcon set="Ionicons" name="checkmark-circle" size={20} />
+      ),
+    },
+    {
+      label: t('habits.archive_habit'),
+      onPress: handleArchiveHabit,
+      disabled: isHabitOperationsInProgress,
+      icon: <AppIcon set="Ionicons" name="archive" size={18} />,
+    },
+    {
+      label: t('habits.delete_habit'),
+      onPress: handleDeleteHabit,
+      disabled: isHabitOperationsInProgress || isDeletingHabit,
+      icon: <AppIcon name="delete" size={20} color={Colors.error} />,
+    },
+  ];
+
   const renderEmptyComponent = () => {
     return (
       <EmptyListItemPlaceholder
@@ -111,6 +242,57 @@ const Today = () => {
     );
   };
 
+  const renderHabitItem = ({ item }: LegendListRenderItemProps<HabitType>) => {
+    const getRecurrenceText = () => {
+      switch (item.recurrence_type) {
+        case 'daily':
+          return 'Daily';
+        case 'weekly':
+          return 'Weekly';
+        case 'monthly':
+          return 'Monthly';
+        default:
+          return 'One-time';
+      }
+    };
+
+    return (
+      <AppCard
+        style={styles.habitCard}
+        row
+        centerV
+        onPress={() => handleHabitClick(item)}
+        padding-0>
+        <AppView
+          br40
+          style={[
+            styles.indicator,
+            {
+              backgroundColor: Colors.secondary,
+            },
+          ]}
+        />
+        <AppView flex-1 padding-16>
+          <AppView row centerV spread>
+            <AppText body2 textColor>
+              {item.title}
+            </AppText>
+            <AppView bg-primary paddingH-8 paddingV-4 br100>
+              <AppText textColor sm regular>
+                {getRecurrenceText()}
+              </AppText>
+            </AppView>
+          </AppView>
+          {item.description && (
+            <AppText xsm textColor marginT-4>
+              {item.description}
+            </AppText>
+          )}
+        </AppView>
+      </AppCard>
+    );
+  };
+
   return (
     <AppScreen>
       <ScrollView
@@ -119,8 +301,10 @@ const Today = () => {
         contentContainerStyle={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={refetch}
+            refreshing={
+              (isFetching && !isLoading) || (habitsFetching && !habitsLoading)
+            }
+            onRefresh={handleRefresh}
             tintColor={Colors.secondary}
           />
         }>
@@ -140,27 +324,44 @@ const Today = () => {
           </AppView>
         </AppView>
         <Divider />
+        {habitsLoading ||
+          (isLoading && (
+            <AppView height={80}>
+              <Loader transparent />
+            </AppView>
+          ))}
 
-        {isLoading ? (
-          <AppView height={100}>
-            <Loader transparent />
-          </AppView>
-        ) : (
-          <AppView
-            pointerEvents={isFetching ? 'none' : 'auto'}
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <AppList<TaskType>
-              keyExtractor={(i) => i.task_id}
-              data={nonCompletedTasks || []}
-              renderItem={renderItem}
-              ListEmptyComponent={renderEmptyComponent}
-              ListFooterComponent={() => <Divider />}
-              ItemSeparatorComponent={() => <Divider />}
-            />
-          </AppView>
-        )}
+        {(!data || data?.length === 0) &&
+          !isLoading &&
+          (!habitsData || habitsData?.length === 0) &&
+          !habitsLoading &&
+          renderEmptyComponent()}
+
+        <AppView
+          reanimated
+          entering={Animations.Entry.FadeInDownWithSpring()}
+          exiting={Animations.Exit.FadeOutDown()}>
+          <AppList<HabitType>
+            keyExtractor={(i) => i.habit_id}
+            data={habitsData || []}
+            renderItem={renderHabitItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+        </AppView>
+
+        <AppView
+          reanimated
+          entering={Animations.Entry.FadeInDownWithSpring()}
+          exiting={Animations.Exit.FadeOutDown()}>
+          <AppList<TaskType>
+            keyExtractor={(i) => i.task_id}
+            data={nonCompletedTasks || []}
+            renderItem={renderItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+        </AppView>
         <Divider margin-4 />
         {completedTasks?.length > 0 && (
           <>
@@ -170,13 +371,34 @@ const Today = () => {
               keyExtractor={(i) => i.task_id}
               data={completedTasks || []}
               renderItem={renderItem}
-              ListEmptyComponent={renderEmptyComponent}
               ListFooterComponent={() => <Divider />}
               ItemSeparatorComponent={() => <Divider />}
             />
           </>
         )}
       </ScrollView>
+
+      <AppActionSheetModal
+        visible={isHabitModalVisible}
+        title={selectedHabit?.title}
+        onDismiss={handleCloseHabitModal}
+        options={HABITS_ACTIONS}
+      />
+
+      {(isCompletingHabit || isArchivingHabit || isDeletingHabit) && (
+        <AppView
+          reanimated
+          entering={Animations.Entry.FadeInDown()}
+          exiting={Animations.Exit.FadeOutDown()}
+          absF
+          center
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            zIndex: 9999,
+          }}>
+          <Loader />
+        </AppView>
+      )}
     </AppScreen>
   );
 };
@@ -186,6 +408,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingBottom: 24,
   },
-  indicator: { height: '100%', width: 6 },
+  indicator: { height: '100%', width: 4 },
   taskCard: { overflow: 'hidden' },
+  habitCard: {
+    overflow: 'hidden',
+    borderLeftWidth: 2,
+    borderLeftColor: Colors.secondary,
+  },
 });

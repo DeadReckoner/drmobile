@@ -127,6 +127,12 @@
     "progress": "Progrès",
     "create": "Créer",
     "messages": "Messages",
+    "today_tab": {
+      "habits_title": "Vos Habitudes",
+      "tasks_title": "Tâches d'Aujourd'hui",
+      "no_habits_yet": "Pas encore d'habitudes !",
+      "no_habits_description": "Créez des habitudes récurrentes pour établir une cohérence dans votre routine quotidienne."
+    },
     "create_tab": {
       "build_roadmap_ai": "Utiliser l’IA pour Créer ma Feuille de Route",
       "build_roadmap_ai_desc": "Laissez notre IA générer une feuille de route étape par étape basée sur vos objectifs et priorités.",
@@ -158,8 +164,8 @@
       "create_roadmap_button": "Créer Feuille de Route",
       "no_milestones_yet": "Pas encore de jalons !",
       "no_roadmaps_yet": "Pas encore de feuilles de route !",
-      "no_tasks_yet": "Pas de tâches !",
-      "no_tasks_description": "Vous êtes à jour pour aujourd’hui. De nouvelles tâches apparaîtront ici.",
+      "no_tasks_yet": "Pas encore de tâches ou d’habitudes !",
+      "no_tasks_description": "Vous êtes à jour pour aujourd’hui. De nouvelles tâches/habitudes apparaîtront ici.",
       "add_new_milestone_desc": "Créez un jalon pour diviser votre feuille de route en phases gérables.",
       "add_new_roadmap_desc": "Créez une feuille de route pour structurer vos objectifs avec des jalons.",
       "no_steps_yet": "Pas encore d’étapes !",
@@ -305,7 +311,17 @@
       "everyday": "Tous les jours"
     },
     "created_successfully": "Habitude créée avec succès",
-    "updated_successfully": "Habitude mise à jour avec succès"
+    "updated_successfully": "Habitude mise à jour avec succès",
+    "deleted_successfully": "Habitude supprimée avec succès",
+    "archive_habit": "Archiver l'habitude",
+    "archived_successfully": "Habitude archivée avec succès",
+    "marked_completed_for_today": "Habitude marquée comme complétée pour aujourd'hui",
+    "mark_complete": "Marquer comme complétée",
+    "mark_incomplete": "Marquer comme incomplète",
+    "archived_habits": "Habitudes archivées",
+    "delete_habit": "Supprimer l'habitude",
+    "no_archived_habits": "Aucune habitude archivée",
+    "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici"
   },
   "common": {
     "or": "Ou",

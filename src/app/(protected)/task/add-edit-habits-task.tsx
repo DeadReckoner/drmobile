@@ -79,7 +79,7 @@ const AddEditStandaloneTask = () => {
             <Divider margin-16 />
             <CreateHabitTaskForm
               mode="create"
-              onSuccess={() => router.back()}
+              onSuccess={() => router.dismissTo('/(protected)/(tabs)')}
             />
           </AppView>
         )}

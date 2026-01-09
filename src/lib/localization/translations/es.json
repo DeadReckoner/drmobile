@@ -127,6 +127,12 @@
     "progress": "Progreso",
     "create": "Crear",
     "messages": "Mensajes",
+    "today_tab": {
+      "habits_title": "Tus Hábitos",
+      "tasks_title": "Tareas de Hoy",
+      "no_habits_yet": "¡Aún no hay hábitos!",
+      "no_habits_description": "Crea hábitos recurrentes para construir consistencia en tu rutina diaria."
+    },
     "create_tab": {
       "build_roadmap_ai": "Usar IA para Crear mi Hoja de Ruta",
       "build_roadmap_ai_desc": "Deja que nuestra IA genere una hoja de ruta paso a paso basada en tus objetivos y prioridades.",
@@ -158,8 +164,8 @@
       "create_roadmap_button": "Crear Hoja de Ruta",
       "no_milestones_yet": "¡Aún no hay hitos!",
       "no_roadmaps_yet": "¡Aún no hay hojas de ruta!",
-      "no_tasks_yet": "¡No hay tareas!",
-      "no_tasks_description": "Ya estás al día por hoy. Nuevas tareas aparecerán aquí.",
+      "no_tasks_yet": "¡Aún no hay tareas o hábitos!",
+      "no_tasks_description": "Ya estás al día por hoy. Nuevas tareas/hábitos aparecerán aquí.",
       "add_new_milestone_desc": "Crea un hito para dividir tu hoja de ruta en fases manejables.",
       "add_new_roadmap_desc": "Crea una hoja de ruta para estructurar tus objetivos con hitos.",
       "no_steps_yet": "¡Aún no hay pasos!",
@@ -305,7 +311,17 @@
       "everyday": "Todos los días"
     },
     "created_successfully": "Hábito creado con éxito",
-    "updated_successfully": "Hábito actualizado con éxito"
+    "updated_successfully": "ábito actualizado con éxito",
+    "deleted_successfully": "ábito eliminado con éxito",
+    "archive_habit": "Archivar hábito",
+    "archived_successfully": "ábito archivado con éxito",
+    "marked_completed_for_today": "ábito marcado como completado para hoy",
+    "mark_complete": "Marcar como completado",
+    "mark_incomplete": "Marcar como incompleto",
+    "delete_habit": "Eliminar hábito",
+    "archived_habits": "Hábitos archivados",
+    "no_archived_habits": "No hay hábitos archivados",
+    "no_archived_habits_description": "Tus hábitos archivados aparecerán aquí"
   },
   "common": {
     "or": "O",

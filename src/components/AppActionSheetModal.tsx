@@ -32,7 +32,9 @@ export const AppActionSheetModal = (
             <AppText body2 textColor flex>
               {option.label}
             </AppText>
-            {option.icon}
+            <AppView center style={styles.iconContainer}>
+              {option.icon}
+            </AppView>
           </AppView>
         </AppButton>
       </AppView>
@@ -71,5 +73,8 @@ const styles = StyleSheet.create({
   dialogContainer: {
     borderTopEndRadius: 8,
     borderTopStartRadius: 8,
+  },
+  iconContainer: {
+    minWidth: 20,
   },
 });
