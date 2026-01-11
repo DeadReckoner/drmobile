@@ -316,6 +316,7 @@
     "archive_habit": "Archive Habit",
     "archived_successfully": "Habit archived successfully",
     "marked_completed_for_today": "Habit marked as completed for today",
+    "marked_incomplete": "Habit marked as incomplete",
     "mark_complete": "Mark as Complete",
     "mark_incomplete": "Mark as Incomplete",
     "delete_habit": "Delete Habit",

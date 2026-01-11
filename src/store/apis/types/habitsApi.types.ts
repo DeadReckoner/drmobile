@@ -61,8 +61,8 @@ export type HabitCompletionType = {
 };
 
 export type HabitWithStatusType = HabitType & {
+  is_completed?: boolean;
   completion_status?: {
-    is_completed: boolean;
     count: number;
     completion_id?: string;
   };
