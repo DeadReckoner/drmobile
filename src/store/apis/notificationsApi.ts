@@ -26,3 +26,6 @@ export const notificationApi = api.injectEndpoints({
   }),
   overrideExisting: false,
 });
+
+export const { useAddNotificationTokenMutation, useGetNotificationsQuery } =
+  notificationApi;
