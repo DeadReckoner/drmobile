@@ -1,13 +1,16 @@
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
-import { useCreateHabitMutation } from '@/store/apis/habitsApi';
+import {
+  useCreateHabitMutation,
+  useUpdateHabitMutation,
+} from '@/store/apis/habitsApi';
 import {
   CreateHabitRequestType,
   RecurrenceType,
 } from '@/store/apis/types/habitsApi.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectSelectedTask } from '@/store/slices/roadmapDraftSlice';
+import { selectSelectedHabit } from '@/store/slices/roadmapDraftSlice';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -84,7 +87,9 @@ export const useStandaloneTaskForm = ({
   const schema = createTaskValidationSchema(t);
   const [createHabit, { isLoading: isHabitCreating }] =
     useCreateHabitMutation();
-  const selectedTask = useAppSelector(selectSelectedTask);
+  const [updateHabit, { isLoading: isHabitUpdating }] =
+    useUpdateHabitMutation();
+  const selectedHabit = useAppSelector(selectSelectedHabit);
   const canEdit = mode === 'edit';
 
   const onStandaloneTaskSubmit = async (props: TaskSchemaType) => {
@@ -107,9 +112,11 @@ export const useStandaloneTaskForm = ({
       payload.due_date = props.dueDate;
     }
 
-    if (canEdit) {
-      // TODO: Call update habit mutation
-      // const response = await updateHabit({ habit_id: selectedTask.id, ...payload });
+    if (canEdit && selectedHabit?.habit_id) {
+      await updateHabit({
+        habit_id: selectedHabit?.habit_id,
+        ...payload,
+      }).unwrap();
     } else {
       try {
         await createHabit(payload).unwrap();
@@ -123,21 +130,24 @@ export const useStandaloneTaskForm = ({
   const { handleChange, handleBlur, ...restFormikOptions } =
     useFormik<TaskSchemaType>({
       initialValues: {
-        title: (canEdit && selectedTask?.title) || '',
-        description: (canEdit && selectedTask?.description) || '',
-        recurrenceType: (canEdit && 'none') || ('none' as RecurrenceType),
-        daysOfWeek: undefined,
-        dayOfMonth: undefined,
-        dueDate: '',
-        startDate: '',
-        endDate: '',
+        title: (canEdit && selectedHabit?.title) || '',
+        description: (canEdit && selectedHabit?.description) || '',
+        recurrenceType:
+          selectedHabit?.recurrence_type ||
+          (canEdit && 'none') ||
+          ('none' as RecurrenceType),
+        daysOfWeek: selectedHabit?.days_of_week || undefined,
+        dayOfMonth: selectedHabit?.day_of_month || undefined,
+        dueDate: selectedHabit?.due_date || '',
+        startDate: selectedHabit?.start_date || '',
+        endDate: selectedHabit?.end_date || '',
       },
       validationSchema: schema,
       onSubmit: onStandaloneTaskSubmit,
     });
 
   return {
-    isLoading: isHabitCreating,
+    isLoading: isHabitCreating || isHabitUpdating,
     handleChange: handleChange<keyof TaskSchemaType>,
     handleBlur: handleBlur<keyof TaskSchemaType>,
     ...restFormikOptions,

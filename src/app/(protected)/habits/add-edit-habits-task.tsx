@@ -12,20 +12,29 @@ import { AppText, AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectSelectedTask } from '@/store/slices/roadmapDraftSlice';
+import { useGetHabitQuery } from '@/store/apis/habitsApi';
 import { Animations } from '@/utils/animation.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-const AddEditStandaloneTask = () => {
-  const { mode } = useLocalSearchParams<{ mode: FormEditModeType }>();
-  const selectedTask = useAppSelector(selectSelectedTask);
+const AddEditHabitTask = () => {
+  const {
+    mode,
+    habitId,
+    isHabitEditing = false,
+  } = useLocalSearchParams<{
+    mode: FormEditModeType;
+    habitId: string;
+    isHabitEditing: string;
+  }>();
+  const { data: selectedTask } = useGetHabitQuery(habitId);
   const { showToast } = useToast();
   const { t } = useLocalization();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(
+    isHabitEditing === 'true' || false,
+  );
 
   const canEdit = mode === 'edit';
 
@@ -49,16 +58,23 @@ const AddEditStandaloneTask = () => {
         <AppView>{!isEditing && <HeaderWithBack />}</AppView>
         {canEdit && (
           <AppView row gap-16 center style={styles.headerOptions}>
-            <AppButton onPress={() => setIsEditing((edit) => !edit)}>
+            <AppButton
+              onPress={() =>
+                isHabitEditing === 'true'
+                  ? router.back()
+                  : setIsEditing((edit) => !edit)
+              }>
               <AppIcon
                 set="Feather"
                 name={isEditing ? 'x' : 'edit'}
                 size={isEditing ? 22 : 20}
               />
             </AppButton>
-            <AppButton onPress={showDialog}>
-              <AppIcon name={'delete'} color={Colors.error} size={20} />
-            </AppButton>
+            {!isEditing && (
+              <AppButton onPress={showDialog}>
+                <AppIcon name={'delete'} color={Colors.error} size={20} />
+              </AppButton>
+            )}
           </AppView>
         )}
       </AppView>
@@ -70,7 +86,7 @@ const AddEditStandaloneTask = () => {
             entering={Animations.Entry.FadeInDown()}
             exiting={Animations.Exit.FadeOutDown()}>
             <ScreenHeader
-              title="tabs.create_tab.add_new_task"
+              title="tabs.create_tab.add_new_task_or_habit"
               subtitle="tabs.create_tab.add_new_task_desc"
               titleProps={{ body1: true }}
               subtileProps={{ xsm: true }}
@@ -134,7 +150,7 @@ const AddEditStandaloneTask = () => {
   );
 };
 
-export default AddEditStandaloneTask;
+export default AddEditHabitTask;
 
 const styles = StyleSheet.create({
   scrollContainer: {

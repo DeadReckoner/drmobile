@@ -54,6 +54,16 @@ export const AIRoadmapDetails = ({
     }
   };
 
+  const firstNonCompletedMilestoneIndex = roadmap.milestones?.findIndex(
+    (milestone) => milestone.reached,
+  );
+  const displayedMacroMap =
+    roadmap.macro_map?.phases?.[0]?.macro_milestones?.[
+      firstNonCompletedMilestoneIndex === -1
+        ? 0
+        : firstNonCompletedMilestoneIndex || 0
+    ];
+
   return (
     <AppView flex>
       <RoadmapOverview
@@ -88,10 +98,9 @@ export const AIRoadmapDetails = ({
               </AppButton>
             )}
           </AppView>
-          {/* TODO: show the current running milestone */}
-          {roadmap.macro_map?.phases[0].macro_milestones[0] && (
+          {displayedMacroMap && (
             <MacroMapListItem
-              macroMilestone={roadmap.macro_map?.phases[0].macro_milestones[0]}
+              macroMilestone={displayedMacroMap}
               onPress={readonly ? () => {} : onMacroMilestonePress}
             />
           )}

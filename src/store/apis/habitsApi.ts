@@ -1,4 +1,5 @@
 import { api } from '@/store/apis/api';
+import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   CompleteHabitRequestType,
   CompleteHabitResponseType,
@@ -17,6 +18,207 @@ import {
   UpdateHabitRequestType,
   UpdateHabitResponseType,
 } from '@/store/apis/types/habitsApi.types';
+import { DateUtils } from '@/utils/date.utils';
+import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
+
+const onCreateHabitStarted: TypedMutationOnQueryStarted<
+  HabitType,
+  HabitType,
+  BaseQueryFunctionType
+> = async (_arg, { dispatch, queryFulfilled }) => {
+  try {
+    const { data: createdHabit } = await queryFulfilled;
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getHabits',
+        { include_archived: false },
+        (draft: GetHabitsResponseType) => {
+          draft.unshift(createdHabit);
+        },
+      ),
+    );
+    if (DateUtils.isSameDate(createdHabit.start_date, DateUtils.createDate())) {
+      dispatch(
+        habitsApi.util.updateQueryData(
+          'getTodayHabits',
+          undefined,
+          (draft: GetTodayHabitsResponseType) => {
+            draft.unshift(createdHabit);
+          },
+        ),
+      );
+    }
+  } catch {}
+};
+
+const onUpdateHabitQueryStarted: TypedMutationOnQueryStarted<
+  HabitType,
+  HabitType,
+  BaseQueryFunctionType
+> = async ({ habit_id }, { dispatch, queryFulfilled }) => {
+  try {
+    const { data: updatedHabit } = await queryFulfilled;
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getHabits',
+        { include_archived: false },
+        (draft: GetHabitsResponseType) => {
+          const index = draft.findIndex((habit) => habit.habit_id === habit_id);
+          if (index !== -1) {
+            draft[index] = updatedHabit;
+          }
+        },
+      ),
+    );
+
+    dispatch(
+      habitsApi.util.updateQueryData('getHabit', habit_id, () => updatedHabit),
+    );
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getTodayHabits',
+        undefined,
+        (draft: GetTodayHabitsResponseType) => {
+          const index = draft.findIndex((habit) => habit.habit_id === habit_id);
+          if (index !== -1) {
+            draft[index] = updatedHabit;
+          }
+        },
+      ),
+    );
+  } catch {}
+};
+
+const onDeleteHabitQueryStarted: TypedMutationOnQueryStarted<
+  void,
+  string,
+  BaseQueryFunctionType
+> = async (habitId, { dispatch, queryFulfilled }) => {
+  try {
+    await queryFulfilled;
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getHabits',
+        { include_archived: false },
+        (draft: GetHabitsResponseType) => {
+          const index = draft.findIndex((habit) => habit.habit_id === habitId);
+          if (index !== -1) {
+            draft.splice(index, 1);
+          }
+        },
+      ),
+    );
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getTodayHabits',
+        undefined,
+        (draft: GetTodayHabitsResponseType) => {
+          const index = draft.findIndex((habit) => habit.habit_id === habitId);
+          if (index !== -1) {
+            draft.splice(index, 1);
+          }
+        },
+      ),
+    );
+  } catch {}
+};
+
+const onArchiveHabitQueryStarted: TypedMutationOnQueryStarted<
+  HabitType,
+  string,
+  BaseQueryFunctionType
+> = async (habitId, { dispatch, queryFulfilled }) => {
+  try {
+    await queryFulfilled;
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getHabits',
+        { include_archived: false },
+        (draft: GetHabitsResponseType) => {
+          const index = draft.findIndex((habit) => habit.habit_id === habitId);
+          if (index !== -1) {
+            draft.splice(index, 1);
+          }
+        },
+      ),
+    );
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getTodayHabits',
+        undefined,
+        (draft: GetTodayHabitsResponseType) => {
+          const index = draft.findIndex((habit) => habit.habit_id === habitId);
+          if (index !== -1) {
+            draft.splice(index, 1);
+          }
+        },
+      ),
+    );
+  } catch {}
+};
+
+const onCompleteHabitQueryStarted: TypedMutationOnQueryStarted<
+  CompleteHabitResponseType,
+  CompleteHabitRequestType,
+  BaseQueryFunctionType
+> = async ({ habit_id, date }, { dispatch, queryFulfilled }) => {
+  try {
+    await queryFulfilled;
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getTodayHabits',
+        undefined,
+        (draft: GetTodayHabitsResponseType) => {
+          const habit = draft.find((h) => h.habit_id === habit_id);
+          if (habit) {
+            habit.is_completed = true;
+          }
+        },
+      ),
+    );
+
+    dispatch(
+      habitsApi.util.invalidateTags([
+        { type: 'Habits', id: habit_id },
+        { type: 'Habits', id: 'LIST' },
+        { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
+        { type: 'Habits', id: `STATS-${habit_id}` },
+        ...(date ? [{ type: 'Habits' as const, id: `DATE-${date}` }] : []),
+      ]),
+    );
+  } catch {}
+};
+
+const onUncompleteHabitQueryStarted: TypedMutationOnQueryStarted<
+  void,
+  UncompleteHabitRequestType,
+  BaseQueryFunctionType
+> = async ({ habit_id, date }, { dispatch, queryFulfilled }) => {
+  try {
+    await queryFulfilled;
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getTodayHabits',
+        undefined,
+        (draft: GetTodayHabitsResponseType) => {
+          const habit = draft.find((h) => h.habit_id === habit_id);
+          if (habit) {
+            habit.is_completed = false;
+          }
+        },
+      ),
+    );
+    dispatch(
+      habitsApi.util.invalidateTags([
+        { type: 'Habits', id: habit_id },
+        { type: 'Habits', id: 'LIST' },
+        { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
+        { type: 'Habits', id: `STATS-${habit_id}` },
+        ...(date ? [{ type: 'Habits' as const, id: `DATE-${date}` }] : []),
+      ]),
+    );
+  } catch {}
+};
 
 export const habitsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -29,20 +231,7 @@ export const habitsApi = api.injectEndpoints({
         method: 'POST',
         body,
       }),
-      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
-        try {
-          const { data: createdHabit } = await queryFulfilled;
-          dispatch(
-            habitsApi.util.updateQueryData(
-              'getHabits',
-              { include_archived: false },
-              (draft: GetHabitsResponseType) => {
-                draft.unshift(createdHabit);
-              },
-            ),
-          );
-        } catch {}
-      },
+      onQueryStarted: onCreateHabitStarted,
     }),
 
     getHabits: builder.query<GetHabitsResponseType, GetHabitsQueryParamsType>({
@@ -112,36 +301,7 @@ export const habitsApi = api.injectEndpoints({
         method: 'PATCH',
         body,
       }),
-      onQueryStarted: async ({ habit_id }, { dispatch, queryFulfilled }) => {
-        try {
-          const { data: updatedHabit } = await queryFulfilled;
-
-          // Update getHabits cache
-          dispatch(
-            habitsApi.util.updateQueryData(
-              'getHabits',
-              { include_archived: false },
-              (draft: GetHabitsResponseType) => {
-                const index = draft.findIndex(
-                  (habit) => habit.habit_id === habit_id,
-                );
-                if (index !== -1) {
-                  draft[index] = updatedHabit;
-                }
-              },
-            ),
-          );
-
-          // Update getHabit cache
-          dispatch(
-            habitsApi.util.updateQueryData(
-              'getHabit',
-              habit_id,
-              () => updatedHabit,
-            ),
-          );
-        } catch {}
-      },
+      onQueryStarted: onUpdateHabitQueryStarted,
     }),
 
     deleteHabit: builder.mutation<void, string>({
@@ -149,25 +309,7 @@ export const habitsApi = api.injectEndpoints({
         url: `/habits/${habitId}`,
         method: 'DELETE',
       }),
-      onQueryStarted: async (habitId, { dispatch, queryFulfilled }) => {
-        try {
-          await queryFulfilled;
-          dispatch(
-            habitsApi.util.updateQueryData(
-              'getHabits',
-              { include_archived: false },
-              (draft: GetHabitsResponseType) => {
-                const index = draft.findIndex(
-                  (habit) => habit.habit_id === habitId,
-                );
-                if (index !== -1) {
-                  draft.splice(index, 1);
-                }
-              },
-            ),
-          );
-        } catch {}
-      },
+      onQueryStarted: onDeleteHabitQueryStarted,
     }),
 
     archiveHabit: builder.mutation<HabitType, string>({
@@ -175,25 +317,7 @@ export const habitsApi = api.injectEndpoints({
         url: `/habits/${habitId}/archive`,
         method: 'POST',
       }),
-      onQueryStarted: async (habitId, { dispatch, queryFulfilled }) => {
-        try {
-          await queryFulfilled;
-          dispatch(
-            habitsApi.util.updateQueryData(
-              'getHabits',
-              { include_archived: false },
-              (draft: GetHabitsResponseType) => {
-                const index = draft.findIndex(
-                  (habit) => habit.habit_id === habitId,
-                );
-                if (index !== -1) {
-                  draft.splice(index, 1);
-                }
-              },
-            ),
-          );
-        } catch {}
-      },
+      onQueryStarted: onArchiveHabitQueryStarted,
     }),
 
     completeHabit: builder.mutation<
@@ -205,24 +329,7 @@ export const habitsApi = api.injectEndpoints({
         method: 'POST',
         body: date || count ? { date, count } : undefined,
       }),
-      // Invalidate tags as cache update is complex (stats, completions, date-specific queries)
-      invalidatesTags: (_result, _error, { habit_id, date }) => {
-        const tags: (
-          | { type: 'Habits'; id: string }
-          | { type: 'Habits'; id: 'TODAY' }
-        )[] = [
-          { type: 'Habits', id: habit_id },
-          { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
-          { type: 'Habits', id: `STATS-${habit_id}` },
-          { type: 'Habits', id: 'TODAY' },
-        ];
-
-        if (date) {
-          tags.push({ type: 'Habits', id: `DATE-${date}` });
-        }
-
-        return tags;
-      },
+      onQueryStarted: onCompleteHabitQueryStarted,
     }),
 
     uncompleteHabit: builder.mutation<void, UncompleteHabitRequestType>({
@@ -231,24 +338,7 @@ export const habitsApi = api.injectEndpoints({
         method: 'DELETE',
         body: date ? { date } : undefined,
       }),
-      // Invalidate tags as cache update is complex (stats, completions, date-specific queries)
-      invalidatesTags: (_result, _error, { habit_id, date }) => {
-        const tags: (
-          | { type: 'Habits'; id: string }
-          | { type: 'Habits'; id: 'TODAY' }
-        )[] = [
-          { type: 'Habits', id: habit_id },
-          { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
-          { type: 'Habits', id: `STATS-${habit_id}` },
-          { type: 'Habits', id: 'TODAY' },
-        ];
-
-        if (date) {
-          tags.push({ type: 'Habits', id: `DATE-${date}` });
-        }
-
-        return tags;
-      },
+      onQueryStarted: onUncompleteHabitQueryStarted,
     }),
 
     getHabitCompletions: builder.query<GetHabitCompletionsResponseType, string>(

@@ -3,6 +3,8 @@ import { SlideUpTextCarousel } from '@/components/roadmap/ai-roamap/SlideUpTextC
 import { AppImage, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectJobStatusResponse } from '@/store/slices/aiRoadmapCreationSlice';
 import { Animations } from '@/utils/animation.utils';
 import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
@@ -15,7 +17,7 @@ import {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { Assets, Colors } from 'react-native-ui-lib';
+import { Assets, Colors, ProgressBar } from 'react-native-ui-lib';
 
 const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
   const loadingTexts = t('ai_roadmap.loading_texts');
@@ -48,6 +50,7 @@ export const AiRoadmapCreationLoader = () => {
       ['#00B2FF', '#ba24ffff'],
     ),
   }));
+  const jobStatusData = useAppSelector(selectJobStatusResponse);
 
   return (
     <AppView
@@ -78,6 +81,11 @@ export const AiRoadmapCreationLoader = () => {
         <AppView height={60} marginT-40>
           <SlideUpTextCarousel items={loadingTexts} />
         </AppView>
+        <ProgressBar
+          fullWidth
+          progress={jobStatusData?.progress || 0}
+          style={{ width: 180 }}
+        />
       </AppView>
     </AppView>
   );

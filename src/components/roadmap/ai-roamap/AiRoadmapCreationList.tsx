@@ -184,7 +184,7 @@ export const AiRoadmapCreationList = () => {
 
   const handleAiRoadmapCreation = (
     formData: Record<string, string>,
-    timeout: number = 1200,
+    timeout: number = 2500,
   ) => {
     createAIRoadmapApiTimeout.current = setTimeout(async () => {
       try {

@@ -4,6 +4,7 @@ import type {
   StepType,
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
+import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import { transformRoadmap } from '@/utils/roadmap.utils';
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
@@ -12,6 +13,7 @@ type DraftState = {
   roadmap: RoadmapType;
   selectedMilestone?: MilestoneType | null;
   selectedTask?: TaskType | null;
+  selectedHabit?: HabitType | null;
   selectedStep?: StepType | null;
 
   selectedRoadmapIndex: number;
@@ -341,6 +343,9 @@ const roadmapDraftSlice = createSlice({
     setSelectedStepIndex(state, action: PayloadAction<number>) {
       state.selectedStepIndex = action.payload ?? -1;
     },
+    setSelectedHabit(state, action: PayloadAction<HabitType>) {
+      state.selectedHabit = action.payload;
+    },
   },
 });
 
@@ -365,6 +370,7 @@ export const {
   setSelectedMilestoneIndex,
   setSelectedTaskIndex,
   setSelectedStepIndex,
+  setSelectedHabit,
 } = roadmapDraftSlice.actions;
 
 export const selectDraftSlice = createAppSelector(
@@ -379,6 +385,9 @@ export const selectSelectedMilestone = createAppSelector(
 );
 export const selectSelectedTask = createAppSelector(
   (state) => state.roadmapDraft.selectedTask,
+);
+export const selectSelectedHabit = createAppSelector(
+  (state) => state.roadmapDraft.selectedHabit,
 );
 export const selectSelectedStep = createAppSelector(
   (state) => state.roadmapDraft.selectedStep,

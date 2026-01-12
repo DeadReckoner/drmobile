@@ -70,9 +70,8 @@ const Create = () => {
     dispatch(resetDraftAction());
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
-  // TODO: Uncomment when add new task feature is ready
   const onAddNewHabitPress = () => {
-    router.navigate('/task/add-edit-habits-task');
+    router.navigate('/habits/add-edit-habits-task');
   };
   const navigateToComingSoon = () => {
     router.navigate('/coming-soon');

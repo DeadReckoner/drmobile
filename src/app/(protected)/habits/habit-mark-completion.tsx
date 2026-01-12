@@ -1,5 +1,6 @@
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
+import { HabitInfoItem } from '@/components/HabitInfoItem';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -15,6 +16,7 @@ import {
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 const HabitMarkCompletion = () => {
@@ -25,8 +27,10 @@ const HabitMarkCompletion = () => {
   const { t } = useLocalization();
   const { showToast } = useToast();
 
-  const { data: habit, isLoading } = useGetHabitQuery(habitId);
-  const isHabitCompleted = isCompleted === 'true';
+  const { data: habit, isLoading, error } = useGetHabitQuery(habitId);
+  const [isHabitCompleted, setIsHabitCompleted] = useState(
+    isCompleted === 'true',
+  );
 
   const [completeHabit, { isLoading: isCompletingHabit }] =
     useCompleteHabitMutation();
@@ -58,26 +62,12 @@ const HabitMarkCompletion = () => {
           type: 'success',
         });
       }
+      setIsHabitCompleted(!isHabitCompleted);
     } catch (error) {
       showToast({
         message: getApiErrorMessage(error),
         type: 'failure',
       });
-    }
-  };
-
-  const getRecurrenceText = () => {
-    if (!habit) return '';
-
-    switch (habit.recurrence_type) {
-      case 'daily':
-        return t('habits.recurrence.daily');
-      case 'weekly':
-        return t('habits.recurrence.weekly');
-      case 'monthly':
-        return t('habits.recurrence.monthly');
-      default:
-        return t('habits.recurrence.none');
     }
   };
 
@@ -96,20 +86,9 @@ const HabitMarkCompletion = () => {
     return days.join(', ');
   };
 
-  if (isLoading) {
+  if (error || (!isLoading && !habit)) {
     return (
-      <AppScreen>
-        <HeaderWithBack />
-        <AppView flex-1 center>
-          <Loader />
-        </AppView>
-      </AppScreen>
-    );
-  }
-
-  if (!habit) {
-    return (
-      <AppScreen>
+      <AppScreen safeArea>
         <HeaderWithBack />
         <AppView flex-1 center>
           <TranslatedText translationKey="common.error_occurred" />
@@ -125,111 +104,91 @@ const HabitMarkCompletion = () => {
       <AppView row centerV spread>
         <HeaderWithBack />
       </AppView>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}>
-        <AppView spread flex-1>
-          <AppView>
-            <Divider margin-12 />
-            <AppView row centerV spread>
-              <AppText subtitle1 textColor flex-1 marginR-16>
-                {habit.title}
-              </AppText>
-              <AppView row centerV>
-                <AppView bg-primary paddingH-10 paddingV-4 br100>
-                  <AppText textColor xsm regular>
-                    {getRecurrenceText()}
-                  </AppText>
+      {isLoading ? <Loader transparent /> : null}
+      {habit && (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContainer}>
+          <AppView spread flex-1>
+            <AppView>
+              <Divider margin-12 />
+              <AppView row centerV spread>
+                <AppText subtitle1 textColor flex-1 marginR-16>
+                  {habit?.title}
+                </AppText>
+                <AppView row centerV>
+                  <AppView bg-primary paddingH-10 paddingV-4 br100>
+                    <AppText
+                      textColor
+                      xsm
+                      regular
+                      style={{ textTransform: 'capitalize' }}>
+                      {habit?.recurrence_type === 'none'
+                        ? t('habits.recurrence.none')
+                        : habit?.recurrence_type}
+                    </AppText>
+                  </AppView>
                 </AppView>
               </AppView>
-            </AppView>
-            <Divider />
+              <Divider />
 
-            {habit.description && (
-              <>
-                <TranslatedText
-                  semibold
+              {habit?.description && (
+                <HabitInfoItem
                   translationKey="habits.description_label"
+                  value={habit.description}
                 />
-                <AppText body2 textColor>
-                  {habit.description}
-                </AppText>
-                <Divider />
-              </>
-            )}
+              )}
 
-            {habit.recurrence_type === 'weekly' && habit.days_of_week && (
-              <>
-                <TranslatedText
-                  semibold
+              {habit?.recurrence_type === 'weekly' && habit?.days_of_week && (
+                <HabitInfoItem
                   translationKey="habits.weekly_days_label"
+                  value={getDaysOfWeekText(habit.days_of_week)}
                 />
-                <AppText body2 textColor>
-                  {getDaysOfWeekText(habit.days_of_week)}
-                </AppText>
-                <Divider />
-              </>
-            )}
+              )}
 
-            {habit.recurrence_type === 'monthly' && habit.day_of_month && (
-              <>
-                <TranslatedText
-                  semibold
+              {habit?.recurrence_type === 'monthly' && habit?.day_of_month && (
+                <HabitInfoItem
                   translationKey="habits.day_of_month_label"
+                  value={habit.day_of_month}
                 />
-                <AppText body2 textColor>
-                  {habit.day_of_month}
-                </AppText>
-                <Divider />
-              </>
-            )}
+              )}
 
-            {habit.recurrence_type === 'none' && habit.due_date && (
-              <>
-                <TranslatedText
-                  semibold
+              {habit?.recurrence_type === 'none' && habit?.due_date && (
+                <HabitInfoItem
                   translationKey="habits.due_date_label"
+                  value={DateUtils.formatDate(habit.due_date, 'MMM DD, YYYY')}
                 />
-                <AppText body2 textColor>
-                  {DateUtils.formatDate(habit.due_date, 'MMM DD, YYYY')}
-                </AppText>
-                <Divider />
-              </>
-            )}
+              )}
 
-            <TranslatedText semibold translationKey="habits.start_date_label" />
-            <AppText body2 textColor>
-              {DateUtils.formatDate(habit.start_date, 'MMM DD, YYYY')}
-            </AppText>
-            <Divider />
+              {habit?.start_date && (
+                <HabitInfoItem
+                  translationKey="habits.start_date_label"
+                  value={DateUtils.formatDate(habit.start_date, 'MMM DD, YYYY')}
+                />
+              )}
 
-            {habit.end_date && (
-              <>
-                <TranslatedText
-                  semibold
+              {habit?.end_date && (
+                <HabitInfoItem
                   translationKey="habits.end_date_label"
+                  value={DateUtils.formatDate(habit.end_date, 'MMM DD, YYYY')}
                 />
-                <AppText body2 textColor>
-                  {DateUtils.formatDate(habit.end_date, 'MMM DD, YYYY')}
-                </AppText>
-                <Divider />
-              </>
-            )}
-          </AppView>
+              )}
+            </AppView>
 
-          <PrimaryButton
-            disabled={isProcessing}
-            label={
-              isHabitCompleted
-                ? 'habits.mark_incomplete'
-                : 'habits.mark_complete'
-            }
-            shouldShowLoader
-            isLoading={isProcessing}
-            onPress={handleToggleHabitCompletion}
-          />
-        </AppView>
-      </ScrollView>
+            <PrimaryButton
+              disabled={isProcessing}
+              label={
+                isHabitCompleted
+                  ? 'habits.mark_incomplete'
+                  : 'habits.mark_complete'
+              }
+              shouldShowLoader
+              isLoading={isProcessing}
+              onPress={handleToggleHabitCompletion}
+            />
+          </AppView>
+        </ScrollView>
+      )}
     </AppScreen>
   );
 };
