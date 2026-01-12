@@ -117,7 +117,7 @@ export const WeekdaySelector = ({
         extraData={selected}
         horizontal
         scrollEnabled={false}
-        keyExtractor={(i) => i}
+        keyExtractor={(i, index) => i + index}
       />
     </AppView>
   );

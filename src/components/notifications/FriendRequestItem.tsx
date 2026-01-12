@@ -10,7 +10,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-interface NotificationItemProps {
+interface FriendRequestItemProps {
   notification: Friendship;
   onAccept: (_friendshipId: string) => void;
   onCancel: (_friendshipId: string) => void;
@@ -18,13 +18,13 @@ interface NotificationItemProps {
   isCancelling: boolean;
 }
 
-export const NotificationItem = ({
+export const FriendRequestItem = ({
   notification,
   onAccept,
   onCancel,
   isAccepting,
   isCancelling,
-}: NotificationItemProps) => {
+}: FriendRequestItemProps) => {
   const requesterName = notification.requester
     ? `${notification.requester.first_name} ${notification.requester.last_name}`.trim()
     : 'Unknown User';
@@ -34,13 +34,13 @@ export const NotificationItem = ({
   const { t } = useLocalization();
 
   return (
-    <AppCard padding-16 paddingV-20>
-      <AppView row gap-16 centerV>
+    <AppCard padding-16 paddingV-20 flex>
+      <AppView row gap-16 centerV flex>
         <AppView bg-outline br100 style={styles.avatarPlaceholder} center>
           <AppIcon name="user" size={24} color={Colors.inverseBackground} />
         </AppView>
 
-        <AppView gap-10>
+        <AppView gap-10 flex>
           <AppText body2 textColor style={styles.textContainer}>
             {requesterName}{' '}
             <AppText body2 textColor light>
@@ -53,7 +53,7 @@ export const NotificationItem = ({
               paddingH-16
               center
               br20
-              style={styles.acceptButton}
+              style={{ backgroundColor: Colors.blue }}
               disabled={isLoading}
               onPress={() => onAccept(notification.id)}>
               {isAccepting ? (
@@ -116,9 +116,6 @@ const styles = StyleSheet.create({
   textContainer: {
     flexWrap: 'wrap',
     maxWidth: '90%',
-  },
-  acceptButton: {
-    backgroundColor: '#4A90E2',
   },
   acceptButtonText: {
     fontSize: 12,

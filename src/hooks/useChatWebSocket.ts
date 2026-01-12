@@ -34,6 +34,8 @@ export const useChatWebSocket = ({
           'getThreadMessages',
           threadId,
           (draft) => {
+            if (!draft) return;
+
             const optimisticIndex = draft.findIndex(
               (msg) =>
                 msg.message_id.startsWith('temp-') &&
@@ -63,6 +65,24 @@ export const useChatWebSocket = ({
           },
         ),
       );
+
+      dispatch(
+        messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
+          if (!draft) return;
+
+          const threadToUpdate = draft.find(
+            (thread) => thread.thread_id === threadId,
+          );
+
+          if (threadToUpdate) {
+            threadToUpdate.LastMessage = {
+              ...message,
+              updated_at: message.created_at,
+              deleted_at: null,
+            };
+          }
+        }),
+      );
     },
     [dispatch, threadId],
   );
@@ -87,15 +107,26 @@ export const useChatWebSocket = ({
         deleted_at: null,
       };
 
-      dispatch(
+      const patchResult = dispatch(
         messagesApi.util.updateQueryData(
           'getThreadMessages',
           threadId,
           (draft) => {
-            draft.push(optimisticMessage);
+            if (draft) {
+              draft.push(optimisticMessage);
+            }
+            return draft || [optimisticMessage];
           },
         ),
       );
+
+      if (!patchResult) {
+        dispatch(
+          messagesApi.util.upsertQueryData('getThreadMessages', threadId, [
+            optimisticMessage,
+          ]),
+        );
+      }
 
       wsSendMessage(content.trim());
     },

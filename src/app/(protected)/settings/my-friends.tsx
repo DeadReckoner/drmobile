@@ -52,10 +52,8 @@ const MyFriends = () => {
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: friendsData, isLoading: isLoadingFriends } = useGetFriendsQuery(
-    undefined,
-    { refetchOnFocus: true },
-  );
+  const { data: friendsData, isLoading: isLoadingFriends } =
+    useGetFriendsQuery();
 
   const [searchUsers, { data: searchData, isFetching: isSearching }] =
     useLazySearchUsersQuery();

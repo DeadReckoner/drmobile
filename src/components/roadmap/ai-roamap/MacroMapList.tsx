@@ -3,7 +3,7 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { MacroMap } from '@/hooks/roadmap/types/roadmap.types';
-import React from 'react';
+import React, { useState } from 'react';
 import { MacroMapListItem } from './MacroMapListItem';
 
 interface MacroMapListProps {
@@ -11,14 +11,27 @@ interface MacroMapListProps {
 }
 
 export const MacroMapList = ({ macroMap }: MacroMapListProps) => {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const handleToggle = (id: string) => {
+    setExpandedId((prevId) => (prevId === id ? null : id));
+  };
+
   const renderMacroMilestone = ({
     item,
   }: {
     item: MacroMap['phases'][0]['macro_milestones'][0];
     index: number;
   }) => {
+    const isExpanded = expandedId === item.macro_milestone_id;
     return (
-      <MacroMapListItem key={item.macro_milestone_id} macroMilestone={item} />
+      <MacroMapListItem
+        key={item.macro_milestone_id}
+        macroMilestone={item}
+        isExpanded={isExpanded}
+        onPress={() => handleToggle(item.macro_milestone_id)}
+        isCollapsable={false}
+      />
     );
   };
 
@@ -37,6 +50,7 @@ export const MacroMapList = ({ macroMap }: MacroMapListProps) => {
     <AppList
       data={macroMap.phases.flatMap((phase) => phase.macro_milestones)}
       keyExtractor={(item) => item.macro_milestone_id || item.name}
+      extraData={expandedId}
       renderItem={renderMacroMilestone}
       ItemSeparatorComponent={renderItemSeparator}
       ListEmptyComponent={renderEmptyMilestoneComponent}

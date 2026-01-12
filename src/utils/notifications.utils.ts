@@ -103,4 +103,5 @@ export const notificationsUtils = {
   getBadgeCount,
   setBadgeCount,
   setupNotificationHandler,
+  onPushTokenChange: Notifications.addPushTokenListener,
 };

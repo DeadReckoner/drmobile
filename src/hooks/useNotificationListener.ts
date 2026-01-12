@@ -1,16 +1,38 @@
+import { messagesApi } from '@/store/apis/messagesApi';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { notificationsUtils } from '@/utils/notifications.utils';
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 
 notificationsUtils.setupNotificationHandler();
 
 export const useNotificationListener = () => {
-  const redirect = (_notification: Notifications.Notification) => {
-    //TODO: Handle other types of notifications
-    // const screen = notification.request.content.data;
+  const dispatch = useAppDispatch();
+  const path = usePathname();
 
-    router.push('/notifications');
+  const handleNotificationProcessing = (
+    content: Notifications.NotificationContent,
+  ) => {
+    const data = content.data;
+    switch (data?.type) {
+      case 'message_new':
+        handleNewMessages(data.thread_id as string, content.body || '');
+        break;
+      default:
+        break;
+    }
+  };
+  const redirect = (notification: Notifications.Notification) => {
+    const data = notification.request.content.data;
+    handleNotificationProcessing(notification.request.content);
+    switch (data?.type) {
+      case 'message_new':
+        router.push(`/messages/${data.thread_id}`);
+        break;
+      default:
+        router.push('/notifications');
+    }
 
     (async () => {
       try {
@@ -18,6 +40,46 @@ export const useNotificationListener = () => {
         await Notifications.clearLastNotificationResponseAsync();
       } catch {}
     })();
+  };
+
+  const handleNewMessages = (thread_id: string, content: string) => {
+    if (path === `/messages/${thread_id}`) {
+      return;
+    }
+    dispatch(
+      messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
+        const threadIndex = draft?.findIndex((t) => t.thread_id === thread_id);
+        if (threadIndex !== undefined && threadIndex !== -1 && draft) {
+          draft[threadIndex].total_unread += 1;
+          draft[threadIndex].LastMessage = {
+            content: content,
+            created_at: new Date().toISOString(),
+            message_id: `notification-${Date.now()}`,
+            thread_id: thread_id,
+            user_id: '',
+            deleted_at: null,
+            updated_at: new Date().toISOString(),
+          };
+        }
+      }),
+    );
+    dispatch(
+      messagesApi.util.updateQueryData(
+        'getThreadMessages',
+        thread_id,
+        (draft) => {
+          draft?.unshift({
+            content: content,
+            created_at: new Date().toISOString(),
+            message_id: `notification-${Date.now()}`,
+            thread_id: thread_id,
+            user_id: '',
+            deleted_at: null,
+            updated_at: new Date().toISOString(),
+          });
+        },
+      ),
+    );
   };
 
   useEffect(() => {
@@ -34,8 +96,16 @@ export const useNotificationListener = () => {
         redirect(response.notification);
       });
 
+    const subscriptionReceived = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        handleNotificationProcessing(notification.request.content);
+      },
+    );
+
     return () => {
       subscriptionResponseReceived.remove();
+      subscriptionReceived.remove();
     };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };

@@ -10,14 +10,29 @@ import { ThreadType } from '@/store/apis/types/messagesApi.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
-import { router } from 'expo-router';
+import { router, Tabs } from 'expo-router';
+import { useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Messages = () => {
-  const { data, isLoading, refetch, isFetching } = useGetThreadsQuery();
+  const { data, isLoading, refetch } = useGetThreadsQuery(undefined, {
+    refetchOnMountOrArgChange: 20,
+  });
   const { email: currentUserEmail } = useAppSelector(selectUser);
   const { t } = useLocalization();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const hadUnreadMessages = data?.some((thread) => thread.total_unread > 0);
+
+  const onRefresh = async () => {
+    try {
+      setIsRefreshing(true);
+      await refetch();
+    } catch {
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const onThreadClick = (thread: ThreadType) => {
     const otherParticipant = thread.participants?.find(
@@ -42,36 +57,40 @@ const Messages = () => {
   };
 
   return (
-    <AppScreen>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentInsetAdjustmentBehavior="always"
-        contentContainerStyle={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={refetch}
-            tintColor={Colors.secondary}
-          />
-        }>
-        <Divider />
-        <TranslatedText h2 translationKey="tabs.messages" />
-        <Divider />
-        {isLoading ? (
-          <AppView height={100}>
-            <Loader transparent />
-          </AppView>
-        ) : (
-          <AppView
-            pointerEvents={isFetching ? 'none' : 'auto'}
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <ThreadsList threads={data || []} onThreadClick={onThreadClick} />
-          </AppView>
-        )}
-      </ScrollView>
-    </AppScreen>
+    <>
+      <Tabs.Screen
+        options={{ tabBarBadgeStyle: { opacity: hadUnreadMessages ? 1 : 0 } }}
+      />
+      <AppScreen>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentInsetAdjustmentBehavior="always"
+          contentContainerStyle={styles.scrollContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+              tintColor={Colors.secondary}
+            />
+          }>
+          <Divider />
+          <TranslatedText h2 translationKey="tabs.messages" />
+          <Divider />
+          {isLoading ? (
+            <AppView height={100}>
+              <Loader transparent />
+            </AppView>
+          ) : (
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <ThreadsList threads={data || []} onThreadClick={onThreadClick} />
+            </AppView>
+          )}
+        </ScrollView>
+      </AppScreen>
+    </>
   );
 };
 

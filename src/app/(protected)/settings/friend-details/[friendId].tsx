@@ -45,7 +45,9 @@ const FriendDetails = () => {
 
   const friendNameParam =
     `${friendProfileData?.user.first_name || ''} ${friendProfileData?.user.last_name || ''}`?.trim() ||
-    (params['friendName'] as string | undefined);
+    (params['friendName'] as string | undefined)?.trim() ||
+    t('common.unknown_user');
+
   const friendEmailParam =
     friendProfileData?.user.email?.trim() ||
     (params['friendEmail'] as string | undefined);
@@ -87,7 +89,7 @@ const FriendDetails = () => {
       setLocalFriendshipStatus('accepted');
     } else if (is403Error) {
       setLocalFriendshipStatus((prev) =>
-        prev === 'pending' ? 'pending' : null,
+        prev === 'pending' || prev === 'none' ? prev : null,
       );
     }
   }, [friendProfileData, is403Error]);
@@ -173,10 +175,22 @@ const FriendDetails = () => {
     );
   }, []);
 
+  const handleRoadmapPress = useCallback((roadmap: RoadmapType) => {
+    router.navigate({
+      pathname: '/(protected)/settings/readonly-roadmap-details',
+      params: {
+        roadmap: JSON.stringify(roadmap),
+      },
+    });
+  }, []);
+
   const renderRoadmapItem = useCallback(
     ({ item: roadmap }: { item: RoadmapType }) => {
       return (
-        <AppCard key={roadmap.roadmap_id} paddingV-20 marginB-16>
+        <AppCard
+          paddingV-20
+          marginB-16
+          onPress={() => handleRoadmapPress(roadmap)}>
           <AppView row gap-16>
             <AppView bg-primary br30 center style={styles.roadmapIcon}>
               <AppIcon set="Feather" name="map" color={Colors.white} />
@@ -193,7 +207,7 @@ const FriendDetails = () => {
         </AppCard>
       );
     },
-    [],
+    [handleRoadmapPress],
   );
   const renderHeader = () => (
     <AppView marginT-24 row gap-8>
@@ -366,7 +380,7 @@ const FriendDetails = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always">
-        <HeaderWithBack marginH-16 marginT-8 />
+        <HeaderWithBack marginH-16 />
         <AppView centerH marginT-20>
           <AppView bg-primary center style={styles.avatar} br100>
             <AppIcon
@@ -406,7 +420,7 @@ const FriendDetails = () => {
                   <TranslatedText
                     xsm
                     textColor
-                    translationKey="settings.friends"
+                    translationKey="tabs.messages"
                     style={styles.statLabel}
                     marginB-8
                   />
@@ -415,7 +429,7 @@ const FriendDetails = () => {
                 </AppView>
               </AppButton>
             )}
-            <AppView centerH style={styles.statBox}>
+            <AppView center style={styles.statBox}>
               <AppButton
                 center
                 paddingB-4

@@ -24,11 +24,7 @@
       },
       "package": "com.deadreckoner.deadreckoner",
       "edgeToEdgeEnabled": true,
-      "permissions": [
-        "READ_CONTACTS",
-        "android.permission.READ_CONTACTS",
-        "android.permission.WRITE_CONTACTS"
-      ]
+      "permissions": ["android.permission.READ_CONTACTS"]
     },
     "web": {
       "bundler": "metro",

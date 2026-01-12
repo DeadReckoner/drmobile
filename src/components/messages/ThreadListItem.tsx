@@ -42,7 +42,7 @@ export const ThreadListItem = ({
 
   return (
     <AppCard paddingV-16 paddingH-16 onPress={() => onThreadClick?.(thread)}>
-      <AppView centerV row spread>
+      <AppView row spread>
         <AppView row centerV gap-12 flex-1>
           <AppView bg-primary center style={styles.avatar}>
             <AppIcon
@@ -70,10 +70,23 @@ export const ThreadListItem = ({
             )}
           </AppView>
         </AppView>
-        <AppView>
+        <AppView marginT-4 gap-6>
           <AppText sm textColor>
             {DateUtils.formatRelativeTime(thread.updated_at)}
           </AppText>
+          {thread?.total_unread > 0 && (
+            <AppView
+              flex-0
+              center
+              br100
+              bg-error
+              paddingH-4
+              style={{ alignSelf: 'center', minWidth: 20, minHeight: 20 }}>
+              <AppText sm semibold textColor>
+                {thread.total_unread}
+              </AppText>
+            </AppView>
+          )}
         </AppView>
       </AppView>
     </AppCard>

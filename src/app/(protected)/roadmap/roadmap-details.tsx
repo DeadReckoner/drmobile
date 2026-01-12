@@ -1,19 +1,27 @@
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppKeyboardController } from '@/components/AppKeyboardController';
+import { AppList } from '@/components/AppList';
+import { AppModal } from '@/components/AppModal';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { AddEditCustomRoadmapForm } from '@/components/roadmap/AddEditCustomRoadmapForm';
 import { AIRoadmapDetails } from '@/components/roadmap/ai-roamap/AIRoadmapDetails';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
-import { AppView } from '@/components/ui';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppText, AppView } from '@/components/ui';
+import { useGetFriendsQuery } from '@/hooks/friends';
+import { FriendResponse } from '@/hooks/friends/types/friends.types';
 import {
+  useCreateAnchorRequestMutation,
   useCreateRoadmapMutation,
   useDeleteRoadmapMutation,
   useGetRoadmapByIdQuery,
+  useRemoveAnchorMutation,
   useStartRoadmapMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -27,25 +35,20 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 import { useDispatch } from 'react-redux';
 
 const RoadmapDetailsPage = () => {
   const selectedRoadmap = useAppSelector(selectDraftRoadmap);
-  const {
-    data: roadmap = selectedRoadmap,
-    isLoading: isRoadmapLoading,
-    error,
-  } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id || '', {
-    skip: !selectedRoadmap?.roadmap_id,
-    refetchOnMountOrArgChange: true,
-  });
 
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
+  const [isAnchorSheetVisible, setIsAnchorSheetVisible] = useState(false);
 
   const { t } = useLocalization();
   const { showToast } = useToast();
@@ -57,6 +60,25 @@ const RoadmapDetailsPage = () => {
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
     useStartRoadmapMutation();
 
+  const { data: friendsData, isLoading: isLoadingFriends } =
+    useGetFriendsQuery();
+  const [createAnchorRequest, { isLoading: isCreatingAnchorRequest }] =
+    useCreateAnchorRequestMutation();
+  const [removeAnchor, { isLoading: isRemovingAnchor }] =
+    useRemoveAnchorMutation();
+
+  const {
+    data,
+    isLoading: isRoadmapLoading,
+    error,
+    isFetching: isRoadmapFetching,
+  } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id, {
+    skip: !selectedRoadmap?.roadmap_id,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const roadmap = data ?? selectedRoadmap;
+
   useEffect(() => {
     if (error) {
       dispatch(resetDraftAction());
@@ -67,14 +89,74 @@ const RoadmapDetailsPage = () => {
         message: getApiErrorMessage(error),
       });
     }
-    if (roadmap?.roadmap_id && !!roadmap?.goal) {
+  }, [error, showToast, dispatch]);
+
+  useEffect(() => {
+    if (
+      roadmap?.roadmap_id &&
+      !!roadmap?.goal &&
+      roadmap.roadmap_id !== selectedRoadmap?.roadmap_id
+    ) {
       dispatch(setDraftRoadmapAction(roadmap));
     }
-  }, [roadmap, error, showToast, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    roadmap?.roadmap_id,
+    roadmap?.goal,
+    selectedRoadmap?.roadmap_id,
+    dispatch,
+  ]);
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
   const showDialog = () => setIsDeleteMilestoneDialogOpen(true);
+
+  const onAnchorPress = useCallback(() => {
+    setIsAnchorSheetVisible(true);
+  }, []);
+
+  const onSelectAnchor = useCallback(
+    async (friendId: string, friendName: string) => {
+      if (!roadmap?.roadmap_id) return;
+
+      try {
+        await createAnchorRequest({
+          roadmapId: roadmap.roadmap_id,
+          anchorId: friendId,
+        }).unwrap();
+
+        showToast({
+          type: 'success',
+          message: t('common.anchor_request_sent', { name: friendName }),
+        });
+        setIsAnchorSheetVisible(false);
+      } catch (error) {
+        showToast({
+          type: 'failure',
+          message: getApiErrorMessage(error),
+        });
+      }
+    },
+    [roadmap?.roadmap_id, createAnchorRequest, showToast, t],
+  );
+
+  const onRemoveAnchor = useCallback(async () => {
+    if (!roadmap?.roadmap_id) return;
+
+    try {
+      await removeAnchor(roadmap.roadmap_id).unwrap();
+      showToast({
+        type: 'success',
+        message: t('roadmap.anchor_removed_successfully'),
+      });
+      setIsAnchorSheetVisible(false);
+    } catch (error) {
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(error),
+      });
+    }
+  }, [removeAnchor, showToast, t, roadmap?.roadmap_id]);
 
   const onDeleteConfirmation = async () => {
     hideDialog();
@@ -169,11 +251,11 @@ const RoadmapDetailsPage = () => {
   const hasMilestones =
     roadmap.type === 'ai_generated'
       ? (
-          (roadmap.macro_map || roadmap?.macro_map)?.phases?.flatMap(
+          roadmap?.macro_map?.phases?.flatMap(
             (phase) => phase.macro_milestones,
           ) || []
         ).length > 0
-      : (roadmap.milestones?.length || 0) > 0;
+      : (roadmap.milestones || []).length > 0;
 
   const CreateRoadmapButton = () => {
     if (
@@ -207,6 +289,65 @@ const RoadmapDetailsPage = () => {
     );
   };
 
+  const anchorID = roadmap?.anchor_id || selectedRoadmap?.anchor_id;
+  const isAnchorAssigned = !!anchorID;
+
+  const filteredFriends = isAnchorAssigned
+    ? friendsData?.filter((friend) => friend.friend.user_id === anchorID) || []
+    : friendsData || [];
+
+  const renderAnchorItem = ({
+    item,
+  }: LegendListRenderItemProps<FriendResponse>) => {
+    const isCurrentAnchor = item.friend.user_id === anchorID;
+    const isLoading = isCreatingAnchorRequest || isRemovingAnchor;
+
+    return (
+      <AppView row centerV flex>
+        <AppView row centerV gap-16 flex>
+          <AppView style={styles.avatarPlaceholder} center bg-primary>
+            <AppIcon name="user" size={16} color={Colors.secondary} />
+          </AppView>
+          <AppView flex gap-4>
+            <AppText body2 textColor>
+              {item.friend.first_name} {item.friend.last_name}
+            </AppText>
+            {item.friend.email && (
+              <AppText xsm secondary>
+                {item.friend.email}
+              </AppText>
+            )}
+          </AppView>
+        </AppView>
+        <AppButton
+          bg-cardBG
+          style={styles.friendCard}
+          disabled={isLoading}
+          onPress={() =>
+            isCurrentAnchor
+              ? onRemoveAnchor()
+              : onSelectAnchor(
+                  item.friend.user_id,
+                  `${item.friend.first_name} ${item.friend.last_name}`,
+                )
+          }>
+          {isLoading ? (
+            <Loader containerStyle={{ position: 'relative' }} />
+          ) : (
+            <AppIcon
+              set="Ionicons"
+              name={isCurrentAnchor ? 'remove-circle' : 'add-circle'}
+              size={24}
+            />
+          )}
+        </AppButton>
+      </AppView>
+    );
+  };
+
+  const isModalContentLoading =
+    isRoadmapFetching || isRoadmapLoading || isLoadingFriends;
+
   return (
     <AppView flex-1 reanimated layout={LinearTransition}>
       {(isLoading || (isRoadmapLoading && !roadmap?.goal)) && <Loader />}
@@ -218,7 +359,12 @@ const RoadmapDetailsPage = () => {
             goBackOnPress={false}
             onBackPress={onBackPress}
           />
-          <AppView row gap-16 top>
+          <AppView row gap-20 top>
+            {!isEditing && !!roadmap?.roadmap_id && (
+              <AppButton onPress={onAnchorPress}>
+                <AppIcon set="Feather" name="anchor" size={20} />
+              </AppButton>
+            )}
             {isEditing && (
               <AppButton onPress={toggleEditMode}>
                 <AppIcon
@@ -269,7 +415,7 @@ const RoadmapDetailsPage = () => {
               )}
               <Divider margin-8 />
 
-              {roadmap.milestones?.length > 0 && (
+              {hasMilestones && (
                 <>
                   {isRoadmapLoading ? (
                     <Loader
@@ -309,8 +455,67 @@ const RoadmapDetailsPage = () => {
           }
         />
       </AppKeyboardController>
+      <AppModal
+        visible={isAnchorSheetVisible}
+        setIsVisible={setIsAnchorSheetVisible}>
+        <AppView paddingB-24 flex-1>
+          <TranslatedText
+            body1
+            semibold
+            textColor
+            translationKey={
+              isAnchorAssigned
+                ? 'roadmap.manage_anchor'
+                : 'roadmap.select_anchor'
+            }
+          />
+          <LineDivider />
+          <AppView flex-1>
+            {isModalContentLoading && (
+              <AppView center marginT-8 marginB-20>
+                <Loader transparent containerStyle={{ position: 'relative' }} />
+              </AppView>
+            )}
+            <AppList
+              data={filteredFriends}
+              keyExtractor={(item, index) => item.friendship_id + index}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+              extraData={[isModalContentLoading, roadmap?.anchor_id]}
+              renderItem={renderAnchorItem}
+              ItemSeparatorComponent={() => <Divider />}
+              ListEmptyComponent={() => (
+                <AppView flex-1 center paddingV-60>
+                  <AppIcon name="user" size={48} color={Colors.secondary} />
+                  <TranslatedText
+                    marginT-16
+                    secondary
+                    translationKey="settings.no_friends_found"
+                  />
+                </AppView>
+              )}
+            />
+          </AppView>
+        </AppView>
+      </AppModal>
     </AppView>
   );
 };
+
+const styles = StyleSheet.create({
+  friendCard: {
+    borderRadius: 8,
+  },
+  avatarPlaceholder: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  iconCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+  },
+});
 
 export default RoadmapDetailsPage;

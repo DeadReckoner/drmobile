@@ -1,18 +1,19 @@
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetProps,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import React, { useCallback, useRef } from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Colors, ModalProps } from 'react-native-ui-lib';
+import { Colors } from 'react-native-ui-lib';
 
-interface AppModalProps extends Omit<ModalProps, 'visible'> {
+interface AppModalProps extends Omit<BottomSheetProps, 'visible'> {
   visible: boolean;
   setIsVisible: (_visible: boolean) => void;
-  children?: React.ReactNode;
   snapPoints?: string[] | number[];
   enablePanDownToClose?: boolean;
+  dismissible?: boolean;
   backgroundStyle?: ViewStyle;
   contentContainerStyle?: ViewStyle;
 }
@@ -22,6 +23,7 @@ export const AppModal = ({
   setIsVisible,
   children,
   enablePanDownToClose = true,
+  dismissible = true,
   backgroundStyle,
   contentContainerStyle,
   ...props
@@ -30,11 +32,11 @@ export const AppModal = ({
 
   const handleSheetChanges = useCallback(
     (index: number) => {
-      if (index === -1) {
+      if (index === -1 && dismissible) {
         setIsVisible(false);
       }
     },
-    [setIsVisible],
+    [setIsVisible, dismissible],
   );
 
   const renderBackdrop = useCallback(
@@ -44,10 +46,10 @@ export const AppModal = ({
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         opacity={0.5}
-        pressBehavior="close"
+        pressBehavior={dismissible ? 'close' : 'none'}
       />
     ),
-    [],
+    [dismissible],
   );
 
   if (!visible) {
@@ -59,9 +61,9 @@ export const AppModal = ({
       <BottomSheet
         ref={bottomSheetRef}
         index={1}
-        snapPoints={['60%', '70%', '90%']}
+        snapPoints={['60%', '90%']}
         onChange={handleSheetChanges}
-        enablePanDownToClose={enablePanDownToClose}
+        enablePanDownToClose={dismissible ? enablePanDownToClose : false}
         backdropComponent={renderBackdrop}
         backgroundStyle={[{ backgroundColor: Colors.cardBG }, backgroundStyle]}
         handleIndicatorStyle={[

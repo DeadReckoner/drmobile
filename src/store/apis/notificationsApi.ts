@@ -2,6 +2,7 @@ import { api } from '@/store/apis/api';
 import {
   AddNotificationTokenPayload,
   AddNotificationTokenResponse,
+  NotificationType,
 } from '@/store/apis/types/notificationsApi.types';
 
 export const notificationApi = api.injectEndpoints({
@@ -17,6 +18,10 @@ export const notificationApi = api.injectEndpoints({
           body: tokenPayload,
         };
       },
+    }),
+    getNotifications: builder.query<NotificationType[], void>({
+      query: () => '/notifications',
+      providesTags: ['Notifications'],
     }),
   }),
   overrideExisting: false,

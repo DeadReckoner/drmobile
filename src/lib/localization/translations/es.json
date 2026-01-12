@@ -54,6 +54,21 @@
         "password_complexity": "La contraseña debe incluir una mayúscula, una minúscula, un número y un carácter especial."
       },
       "otp_required": "OTP es obligatorio"
+    },
+    "complete_profile": {
+      "title": "Completa tu perfil",
+      "subtitle": "Por favor proporciona tu nombre para continuar",
+      "first_name_placeholder": "Introduce tu nombre",
+      "last_name_placeholder": "Introduce tu apellido",
+      "submit_button": "Actualizar perfil",
+      "updating": "Actualizando perfil..."
+    },
+    "update_profile": {
+      "first_name_min_length": "El nombre debe tener al menos 2 caracteres",
+      "first_name_required": "El nombre es obligatorio",
+      "last_name_min_length": "El apellido debe tener al menos 2 caracteres",
+      "last_name_required": "El apellido es obligatorio",
+      "profile_updated_success": "Perfil actualizado exitosamente"
     }
   },
   "ai_roadmap": {
@@ -68,7 +83,7 @@
       "constraints": "¿Qué posibles obstáculos podrían interponerse en tu camino? ¿Y cuáles sientes que son los mayores bloqueos? Pueden ser internos o externos (por ejemplo, Internos: encontrar la fuerza de voluntad para despertarte temprano; Externos: trabajo o compromisos familiares).",
       "skill_level": "¿Hay límites, condiciones o preferencias personales que deba tener en cuenta? Esto puede incluir restricciones de horario, presupuesto, factores físicos, herramientas que puedes o no usar, o cualquier cosa que quieras incluir o evitar.",
       "anything_else": "¿Hay algo más que deba saber antes de crear tu plan? Agrega cualquier detalle o contexto que ayude a darle forma.",
-      "thank_you": "¡Gracias! Estoy creando tu hoja de ruta personalizada ahora.",
+      "thank_you": "¡Gracias! La creación de tu hoja de ruta personalizada puede tardar unos minutos. Se te notificará cuando esté completa.",
       "composer_placeholder": "Escribe tu respuesta"
     },
     "in_progress_banner": {
@@ -112,6 +127,12 @@
     "progress": "Progreso",
     "create": "Crear",
     "messages": "Mensajes",
+    "today_tab": {
+      "habits_title": "Tus Hábitos",
+      "tasks_title": "Tareas de Hoy",
+      "no_habits_yet": "¡Aún no hay hábitos!",
+      "no_habits_description": "Crea hábitos recurrentes para construir consistencia en tu rutina diaria."
+    },
     "create_tab": {
       "build_roadmap_ai": "Usar IA para Crear mi Hoja de Ruta",
       "build_roadmap_ai_desc": "Deja que nuestra IA genere una hoja de ruta paso a paso basada en tus objetivos y prioridades.",
@@ -143,8 +164,8 @@
       "create_roadmap_button": "Crear Hoja de Ruta",
       "no_milestones_yet": "¡Aún no hay hitos!",
       "no_roadmaps_yet": "¡Aún no hay hojas de ruta!",
-      "no_tasks_yet": "¡No hay tareas!",
-      "no_tasks_description": "Ya estás al día por hoy. Nuevas tareas aparecerán aquí.",
+      "no_tasks_yet": "¡Aún no hay tareas o hábitos!",
+      "no_tasks_description": "Ya estás al día por hoy. Nuevas tareas/hábitos aparecerán aquí.",
       "add_new_milestone_desc": "Crea un hito para dividir tu hoja de ruta en fases manejables.",
       "add_new_roadmap_desc": "Crea una hoja de ruta para estructurar tus objetivos con hitos.",
       "no_steps_yet": "¡Aún no hay pasos!",
@@ -171,6 +192,7 @@
   },
   "settings": {
     "profile": "Perfil",
+    "edit_profile": "Editar Perfil",
     "settings": "Configuraciones",
     "dark_mode": "Modo Oscuro",
     "language": "Idioma",
@@ -240,9 +262,13 @@
     "no_notifications_description": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",
     "friend_request": "te envió una solicitud de amistad",
     "accept": "Aceptar",
+    "reject": "Rechazar",
     "cancel": "Cancelar",
     "friend_request_accepted": "Solicitud de amistad aceptada",
     "friend_request_rejected": "Solicitud de amistad rechazada",
+    "anchor_request_message": "quiere que seas su ancla para {{goal}}",
+    "anchor_request_accepted": "Solicitud de ancla aceptada",
+    "anchor_request_rejected": "Solicitud de ancla rechazada",
     "loading": "Cargando notificaciones...",
     "error_loading": "Error al cargar notificaciones",
     "enable_notifications": "Habilitar Notificaciones",
@@ -252,6 +278,51 @@
     "contacts_denied_title": "Permiso de Contactos Denegado",
     "contacts_denied_description": "Para invitar amigos desde tus contactos, necesitamos acceso a tu lista de contactos. Por favor, habilita los permisos en la configuración de tu dispositivo.",
     "open_settings": "Abrir Configuración"
+  },
+  "habits": {
+    "title_label": "Título del hábito",
+    "title_placeholder": "Ingresa el título del hábito",
+    "description_label": "Descripción",
+    "description_placeholder": "Agregar descripción opcional",
+    "recurrence_label": "Tipo de recurrencia",
+    "select_recurrence": "Seleccionar tipo de recurrencia",
+    "recurrence": {
+      "none": "Tarea única",
+      "daily": "Diario",
+      "weekly": "Semanal",
+      "monthly": "Mensual"
+    },
+    "day_of_month_label": "Día del mes",
+    "day_of_month_placeholder": "Ingresa el día (1-31)",
+    "due_date_label": "Fecha de vencimiento",
+    "start_date_label": "Fecha de inicio",
+    "end_date_label": "Fecha de finalización (Opcional)",
+    "reminder_time_label": "Hora de recordatorio (Opcional)",
+    "select_date": "Seleccionar fecha",
+    "select_time": "Seleccionar hora",
+    "create_habit": "Crear hábito",
+    "update_habit": "Actualizar hábito",
+    "weekly_days_label": "Seleccionar días",
+    "select_days": "Seleccionar días",
+    "weekly_days_required": "Por favor selecciona al menos un día para el hábito semanal",
+    "days_option": {
+      "weekdays": "Días laborables (Lun-Vie)",
+      "weekend": "Fin de semana (Sáb-Dom)",
+      "everyday": "Todos los días"
+    },
+    "created_successfully": "Hábito creado con éxito",
+    "updated_successfully": "ábito actualizado con éxito",
+    "deleted_successfully": "ábito eliminado con éxito",
+    "archive_habit": "Archivar hábito",
+    "archived_successfully": "ábito archivado con éxito",
+    "marked_completed_for_today": "ábito marcado como completado para hoy",
+    "marked_incomplete": "ábito marcado como incompleto",
+    "mark_complete": "Marcar como completado",
+    "mark_incomplete": "Marcar como incompleto",
+    "delete_habit": "Eliminar hábito",
+    "archived_habits": "Hábitos archivados",
+    "no_archived_habits": "No hay hábitos archivados",
+    "no_archived_habits_description": "Tus hábitos archivados aparecerán aquí"
   },
   "common": {
     "or": "O",
@@ -272,6 +343,7 @@
     "updated_successfully": "Actualizado con éxito",
     "created_successfully": "Creado con éxito",
     "started_successfully": "Iniciado con éxito",
+    "anchor_request_sent": "Solicitud de ancla enviada a {{name}}",
     "cancel": "Cancelar",
     "remove": "Eliminar",
     "are_you_sure": "¿Estás seguro?",
@@ -287,7 +359,15 @@
     "dependencies": "Dependencias",
     "why_it_is_needed": "¿Por qué es necesario?",
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
-    "error_occurred": "Ocurrió un error"
+    "error_occurred": "Ocurrió un error",
+    "unknown_user": "Usuario Desconocido",
+    "unknown_roadmap": "Hoja de Ruta Desconocida"
+  },
+  "roadmap": {
+    "select_anchor": "Seleccionar un ancla",
+    "manage_anchor": "Gestionar ancla",
+    "manage_anchors": "Gestionar anclas",
+    "anchor_removed_successfully": "Ancla eliminada con éxito"
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",
@@ -323,5 +403,9 @@
     "change_requests": "Solicitudes de Cambio",
     "change_requests_placeholder": "Ej. Ajustar intensidad, Cambiar correr por ciclismo",
     "submit_feedback": "Enviar Retroalimentación"
+  },
+  "coming_soon": {
+    "title": "Próximamente",
+    "description": "Estamos trabajando arduamente para traerte esta función. ¡Mantente atento a las actualizaciones!"
   }
 }

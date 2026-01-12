@@ -1,8 +1,11 @@
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
+import { CompleteProfile } from '@/components/auth/CompleteProfile';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
+import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useAppSelector } from '@/store/hooks/store.hooks';
+import { messagesApi, useGetThreadsQuery } from '@/store/apis/messagesApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   resetDraftAction,
   setShouldSyncWithServerAction,
@@ -12,11 +15,13 @@ import { store } from '@/store/store';
 import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Tabs } from 'expo-router';
 import { useMemo } from 'react';
+import { StyleSheet } from 'react-native';
 import { Colors, Typography } from 'react-native-ui-lib';
 
 export default function TabLayout() {
   const { t } = useLocalization();
   const theme = useAppSelector(selectTheme);
+  const dispatch = useAppDispatch();
 
   const screenOptions: BottomTabNavigationOptions = useMemo(
     () => ({
@@ -40,6 +45,9 @@ export default function TabLayout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [theme],
   );
+
+  const { data } = useGetThreadsQuery();
+  const hadUnreadMessages = data?.some((thread) => thread.total_unread > 0);
 
   return (
     <AppScreen paddingH-0>
@@ -96,11 +104,38 @@ export default function TabLayout() {
           options={{
             title: t('tabs.messages'),
             tabBarIcon: ({ color }) => (
-              <AppIcon size={24} name="message1" color={color} />
+              <AppView>
+                <AppIcon size={24} name="message1" color={color} />
+                {hadUnreadMessages && <AppView style={styles.customBadge} />}
+              </AppView>
             ),
+          }}
+          listeners={{
+            focus: () => {
+              dispatch(
+                messagesApi.endpoints.getThreads.initiate(undefined, {
+                  forceRefetch: true,
+                }),
+              );
+            },
           }}
         />
       </Tabs>
+      <CompleteProfile />
     </AppScreen>
   );
 }
+
+const styles = StyleSheet.create({
+  customBadge: {
+    position: 'absolute',
+    right: -3,
+    top: -3,
+    width: 12,
+    height: 12,
+    borderRadius: 9,
+    backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

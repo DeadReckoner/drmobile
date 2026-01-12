@@ -9,9 +9,12 @@ import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlac
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
+import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { useGetTodayHabitsQuery } from '@/store/apis/habitsApi';
+import { HabitWithStatusType } from '@/store/apis/types/habitsApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import {
   setSelectedTaskAction,
@@ -31,6 +34,13 @@ const Today = () => {
       DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
     );
 
+  const {
+    data: habitsData,
+    isLoading: habitsLoading,
+    refetch: refetchHabits,
+    isFetching: habitsFetching,
+  } = useGetTodayHabitsQuery();
+
   const dispatch = useAppDispatch();
   const { requestPermissions } = usePushNotifications();
 
@@ -47,6 +57,7 @@ const Today = () => {
   };
 
   useGetFriendsQuery();
+  useGetNotificationsQuery();
 
   const onCalendarClick = () => {
     // router.navigate('/calendar');
@@ -70,6 +81,18 @@ const Today = () => {
       data?.filter((task) => task.steps?.every((step) => step.completed)) || [],
     [data],
   );
+
+  const handleRefresh = () => {
+    refetch();
+    refetchHabits();
+  };
+
+  const handleHabitClick = (habit: HabitWithStatusType) => {
+    router.push({
+      pathname: '/habits/habit-mark-completion',
+      params: { habitId: habit.habit_id, isCompleted: `${habit.is_completed}` },
+    });
+  };
 
   const renderEmptyComponent = () => {
     return (
@@ -109,6 +132,66 @@ const Today = () => {
     );
   };
 
+  const renderHabitItem = ({
+    item,
+  }: LegendListRenderItemProps<HabitWithStatusType>) => {
+    const getRecurrenceText = () => {
+      switch (item.recurrence_type) {
+        case 'daily':
+          return 'Daily';
+        case 'weekly':
+          return 'Weekly';
+        case 'monthly':
+          return 'Monthly';
+        default:
+          return 'One-time';
+      }
+    };
+
+    return (
+      <AppCard
+        style={styles.habitCard}
+        row
+        centerV
+        onPress={() => handleHabitClick(item)}
+        padding-0>
+        <AppView
+          br40
+          style={[
+            styles.indicator,
+            {
+              backgroundColor: item.is_completed
+                ? Colors.success
+                : Colors.secondary,
+            },
+          ]}
+        />
+        <AppView flex-1 padding-16 centerV>
+          <AppView row>
+            <AppText body2 textColor flex-1 marginR-8 numberOfLines={2}>
+              {item.title}
+            </AppText>
+            <AppView
+              bg-primary
+              paddingH-8
+              paddingV-4
+              br100
+              style={styles.habitChipContainer}>
+              <AppText textColor sm regular numberOfLines={2}>
+                {getRecurrenceText()}
+              </AppText>
+            </AppView>
+          </AppView>
+          {item.description && (
+            <AppText xsm textColor marginT-4>
+              {item.description}
+            </AppText>
+          )}
+        </AppView>
+      </AppCard>
+    );
+  };
+
   return (
     <AppScreen>
       <ScrollView
@@ -117,8 +200,10 @@ const Today = () => {
         contentContainerStyle={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={refetch}
+            refreshing={
+              (isFetching && !isLoading) || (habitsFetching && !habitsLoading)
+            }
+            onRefresh={handleRefresh}
             tintColor={Colors.secondary}
           />
         }>
@@ -138,27 +223,43 @@ const Today = () => {
           </AppView>
         </AppView>
         <Divider />
-
-        {isLoading ? (
-          <AppView height={100}>
+        {(habitsLoading || isLoading) && (
+          <AppView height={80}>
             <Loader transparent />
           </AppView>
-        ) : (
-          <AppView
-            pointerEvents={isFetching ? 'none' : 'auto'}
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <AppList<TaskType>
-              keyExtractor={(i) => i.task_id}
-              data={nonCompletedTasks || []}
-              renderItem={renderItem}
-              ListEmptyComponent={renderEmptyComponent}
-              ListFooterComponent={() => <Divider />}
-              ItemSeparatorComponent={() => <Divider />}
-            />
-          </AppView>
         )}
+
+        {(!data || data?.length === 0) &&
+          !isLoading &&
+          (!habitsData || habitsData?.length === 0) &&
+          !habitsLoading &&
+          renderEmptyComponent()}
+
+        <AppView
+          reanimated
+          entering={Animations.Entry.FadeInDownWithSpring()}
+          exiting={Animations.Exit.FadeOutDown()}>
+          <AppList<HabitWithStatusType>
+            keyExtractor={(i) => i.habit_id}
+            data={habitsData || []}
+            renderItem={renderHabitItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+        </AppView>
+
+        <AppView
+          reanimated
+          entering={Animations.Entry.FadeInDownWithSpring()}
+          exiting={Animations.Exit.FadeOutDown()}>
+          <AppList<TaskType>
+            keyExtractor={(i) => i.task_id}
+            data={nonCompletedTasks || []}
+            renderItem={renderItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+        </AppView>
         <Divider margin-4 />
         {completedTasks?.length > 0 && (
           <>
@@ -168,7 +269,6 @@ const Today = () => {
               keyExtractor={(i) => i.task_id}
               data={completedTasks || []}
               renderItem={renderItem}
-              ListEmptyComponent={renderEmptyComponent}
               ListFooterComponent={() => <Divider />}
               ItemSeparatorComponent={() => <Divider />}
             />
@@ -180,10 +280,17 @@ const Today = () => {
 };
 
 export default Today;
+
 const styles = StyleSheet.create({
   scrollContainer: {
     paddingBottom: 24,
   },
-  indicator: { height: '100%', width: 6 },
+  indicator: { height: '100%', width: 4 },
   taskCard: { overflow: 'hidden' },
+  habitCard: {
+    overflow: 'hidden',
+    borderLeftWidth: 2,
+    borderLeftColor: Colors.secondary,
+  },
+  habitChipContainer: { alignSelf: 'flex-start' },
 });
