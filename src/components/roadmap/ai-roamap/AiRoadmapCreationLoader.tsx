@@ -1,6 +1,7 @@
 import { AppIcon } from '@/components/AppIcon';
+import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { SlideUpTextCarousel } from '@/components/roadmap/ai-roamap/SlideUpTextCarousel';
-import { AppImage, AppView } from '@/components/ui';
+import { AppImage, AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
@@ -57,14 +58,16 @@ export const AiRoadmapCreationLoader = () => {
       reanimated
       entering={Animations.Entry.FadeInDownWithSpring().duration(1500)}
       exiting={Animations.Exit.FadeOutDown().duration(1000)}
-      center
       style={[
         StyleSheet.absoluteFillObject,
         styles.loader,
         { backgroundColor: Colors.dialogOverlay },
       ]}>
-      <AppView center marginB-20>
-        <AppView>
+      <AppView absT absH useSafeArea>
+        <HeaderWithBack marginH-16 />
+      </AppView>
+      <AppView marginB-20 flex center>
+        <AppView center>
           <AppView
             reanimated
             center
@@ -78,14 +81,19 @@ export const AiRoadmapCreationLoader = () => {
             <AppIcon set="Feather" name="map" color={Colors.white} size={24} />
           </AppView>
         </AppView>
-        <AppView height={60} marginT-40>
+        <AppView marginT-40>
           <SlideUpTextCarousel items={loadingTexts} />
         </AppView>
-        <ProgressBar
-          fullWidth
-          progress={jobStatusData?.progress || 0}
-          style={{ width: 180 }}
-        />
+        <AppView row center gap-4 marginT-12 marginL-24>
+          <ProgressBar
+            fullWidth
+            progress={jobStatusData?.progress || 0}
+            style={{ width: 180 }}
+          />
+          <AppText xsm textColor center style={{ width: 40 }}>
+            {jobStatusData?.progress || 0}%
+          </AppText>
+        </AppView>
       </AppView>
     </AppView>
   );
