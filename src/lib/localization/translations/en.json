@@ -151,7 +151,7 @@
       "constraints": "What potential obstacles could get in your way? And which ones feel like the biggest roadblocks? These can be internal or external (i.e., Internal: finding the willpower to wake up early, External: Work or family obligations.)",
       "skill_level": "Are there any limits, conditions, or personal preferences I should keep in mind? This could be schedule constraints, budget considerations, physical factors, tools you can or cannot use, or anything you want included or avoided.",
       "anything_else": "Anything else you want me to know before I build your roadmap? Add any details or context that would help shape the plan.",
-      "thank_you": "Thanks! Building your personalized roadmap may take a few minutes. You’ll be notified when it’s complete.",
+      "thank_you": "Got it. We’re building your personalized roadmap. This may take a few minutes. You can leave the app if you'd like, just don’t close it. We’ll notify you when it’s ready.",
       "composer_placeholder": "Enter your answer"
     },
     "in_progress_banner": {

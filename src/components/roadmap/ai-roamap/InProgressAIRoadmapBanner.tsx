@@ -43,6 +43,9 @@ export const InProgressAIRoadmapBanner = () => {
     },
     {
       skip: !aiRoadmapCreationJobResponse?.job_id,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMountOrArgChange: true,
     },
   );
 
