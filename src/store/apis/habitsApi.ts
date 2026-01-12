@@ -18,7 +18,6 @@ import {
   UpdateHabitRequestType,
   UpdateHabitResponseType,
 } from '@/store/apis/types/habitsApi.types';
-import { DateUtils } from '@/utils/date.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateHabitStarted: TypedMutationOnQueryStarted<
@@ -37,17 +36,7 @@ const onCreateHabitStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
-    if (DateUtils.isSameDate(createdHabit.start_date, DateUtils.createDate())) {
-      dispatch(
-        habitsApi.util.updateQueryData(
-          'getTodayHabits',
-          undefined,
-          (draft: GetTodayHabitsResponseType) => {
-            draft.unshift(createdHabit);
-          },
-        ),
-      );
-    }
+    dispatch(habitsApi.util.invalidateTags([{ type: 'Habits', id: 'TODAY' }]));
   } catch {}
 };
 

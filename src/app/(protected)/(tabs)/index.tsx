@@ -25,24 +25,23 @@ import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
   const { t } = useLocalization();
-  const { data, isLoading, refetch, isFetching } =
-    useGetUserTasksByStartDateQuery(
-      DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
-    );
+  const { data, isLoading, refetch } = useGetUserTasksByStartDateQuery(
+    DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+  );
 
   const {
     data: habitsData,
     isLoading: habitsLoading,
     refetch: refetchHabits,
-    isFetching: habitsFetching,
   } = useGetTodayHabitsQuery();
 
+  const [manualRefreshing, setManualRefreshing] = useState(false);
   const dispatch = useAppDispatch();
   const { requestPermissions } = usePushNotifications();
 
@@ -84,9 +83,14 @@ const Today = () => {
     [data],
   );
 
-  const handleRefresh = () => {
-    refetch();
-    refetchHabits();
+  const handleRefresh = async () => {
+    try {
+      setManualRefreshing(true);
+      await Promise.allSettled([refetch().unwrap(), refetchHabits().unwrap()]);
+    } catch {
+    } finally {
+      setManualRefreshing(false);
+    }
   };
 
   const handleHabitClick = (habit: HabitWithStatusType) => {
@@ -191,9 +195,7 @@ const Today = () => {
         contentContainerStyle={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={
-              (isFetching && !isLoading) || (habitsFetching && !habitsLoading)
-            }
+            refreshing={manualRefreshing}
             onRefresh={handleRefresh}
             tintColor={Colors.secondary}
           />

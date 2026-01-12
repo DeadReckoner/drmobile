@@ -62,7 +62,6 @@ const Progress = () => {
   const HeaderSegment = () => (
     <AppView
       row
-      flex
       br20
       style={{
         borderWidth: 1,
@@ -153,6 +152,7 @@ const Progress = () => {
 
           {isHabitsTabSelected && (
             <AppView
+              flex-1
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring().delay(250)}
               exiting={Animations.Exit.FadeOutDown()}>
@@ -170,5 +170,6 @@ export default Progress;
 const style = StyleSheet.create({
   scrollContainer: {
     position: 'relative',
+    flexGrow: 1,
   },
 });

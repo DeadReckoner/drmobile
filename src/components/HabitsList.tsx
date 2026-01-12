@@ -21,11 +21,11 @@ import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 export const HabitsList = () => {
-  const { data, isLoading, refetch, isFetching } = useGetHabitsQuery({
+  const { data, isLoading, isFetching } = useGetHabitsQuery({
     include_archived: false,
   });
 
@@ -43,10 +43,6 @@ export const HabitsList = () => {
   const [deleteHabit, { isLoading: isDeletingHabit }] =
     useDeleteHabitMutation();
 
-  const handleRefresh = () => {
-    refetch();
-  };
-
   const handleHabitClick = (habit: HabitType) => {
     setIsHabitModalVisible(true);
     setSelectedLocalHabit(habit);
@@ -55,7 +51,6 @@ export const HabitsList = () => {
 
   const handleCloseHabitModal = () => {
     setIsHabitModalVisible(false);
-    setSelectedLocalHabit(null);
   };
 
   const handleEditHabit = () => {
@@ -87,6 +82,8 @@ export const HabitsList = () => {
         message: getApiErrorMessage(error),
         type: 'failure',
       });
+    } finally {
+      setSelectedLocalHabit(null);
     }
   };
 
@@ -106,6 +103,8 @@ export const HabitsList = () => {
         message: getApiErrorMessage(error),
         type: 'failure',
       });
+    } finally {
+      setSelectedLocalHabit(null);
     }
   };
 
@@ -143,70 +142,74 @@ export const HabitsList = () => {
 
   const renderHabitItem = ({ item }: LegendListRenderItemProps<HabitType>) => {
     return (
-      <AppCard
-        style={styles.habitCard}
-        row
-        onPress={() => handleHabitClick(item)}>
-        <AppView flex-1>
-          <AppView row centerV flex-1 gap-4>
-            <AppText body2 textColor flex-1>
-              {item.title}
-            </AppText>
-            <AppView bg-primary paddingH-8 paddingV-4 br100>
-              <AppText
-                textColor
-                sm
-                regular
-                style={{ textTransform: 'capitalize' }}>
-                {item.recurrence_type === 'none'
-                  ? t('habits.recurrence.none')
-                  : item.recurrence_type}
-              </AppText>
+      <>
+        {selectedHabit?.habit_id === item.habit_id &&
+          (isArchivingHabit || isDeletingHabit) && (
+            <AppView
+              absF
+              br40
+              style={{
+                overflow: 'hidden',
+                zIndex: 10,
+              }}
+              reanimated
+              entering={Animations.Entry.FadeInDown()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <Loader />
             </AppView>
-          </AppView>
-          {item.description && (
-            <AppText xsm textColor marginT-4>
-              {item.description}
-            </AppText>
           )}
-        </AppView>
-      </AppCard>
+        <AppCard
+          style={styles.habitCard}
+          row
+          onPress={() => handleHabitClick(item)}>
+          <AppView flex-1>
+            <AppView row centerV flex-1 gap-4>
+              <AppText body2 textColor flex-1>
+                {item.title}
+              </AppText>
+              <AppView bg-primary paddingH-8 paddingV-4 br100>
+                <AppText
+                  textColor
+                  sm
+                  regular
+                  style={{ textTransform: 'capitalize' }}>
+                  {item.recurrence_type === 'none'
+                    ? t('habits.recurrence.none')
+                    : item.recurrence_type}
+                </AppText>
+              </AppView>
+            </AppView>
+            {item.description && (
+              <AppText xsm textColor marginT-4>
+                {item.description}
+              </AppText>
+            )}
+          </AppView>
+        </AppCard>
+      </>
     );
   };
 
   return (
     <>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentInsetAdjustmentBehavior="always"
-        refreshControl={
-          <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={handleRefresh}
-            tintColor={Colors.secondary}
-          />
-        }>
-        {isLoading && (
-          <AppView height={80}>
-            <Loader transparent />
-          </AppView>
-        )}
-
-        {!data?.length && !isLoading && renderEmptyComponent()}
-
-        <AppView
-          reanimated
-          entering={Animations.Entry.FadeInDownWithSpring()}
-          exiting={Animations.Exit.FadeOutDown()}>
-          <AppList<HabitType>
-            keyExtractor={(i) => i.habit_id}
-            data={data || []}
-            renderItem={renderHabitItem}
-            ListFooterComponent={() => <Divider />}
-            ItemSeparatorComponent={() => <Divider />}
-          />
-        </AppView>
-      </ScrollView>
+      <AppView
+        pointerEvents={isFetching ? 'none' : 'auto'}
+        reanimated
+        entering={Animations.Entry.FadeInDownWithSpring()}
+        exiting={Animations.Exit.FadeOutDown()}>
+        <AppList<HabitType>
+          scrollEnabled={false}
+          keyExtractor={(i) => i.habit_id}
+          data={data || []}
+          extraData={[selectedHabit, isArchivingHabit, isDeletingHabit]}
+          renderItem={renderHabitItem}
+          ListFooterComponent={() => <Divider />}
+          ItemSeparatorComponent={() => <Divider />}
+          ListEmptyComponent={() =>
+            !isLoading && !isFetching && renderEmptyComponent()
+          }
+        />
+      </AppView>
 
       <AppActionSheetModal
         visible={isHabitModalVisible}
@@ -214,17 +217,6 @@ export const HabitsList = () => {
         onDismiss={handleCloseHabitModal}
         options={HABITS_ACTIONS}
       />
-
-      {(isArchivingHabit || isDeletingHabit) && (
-        <AppView
-          reanimated
-          entering={Animations.Entry.FadeInDown()}
-          exiting={Animations.Exit.FadeOutDown()}
-          absF
-          center>
-          <Loader transparent />
-        </AppView>
-      )}
     </>
   );
 };
