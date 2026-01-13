@@ -143,25 +143,26 @@ export const HabitsList = () => {
   const renderHabitItem = ({ item }: LegendListRenderItemProps<HabitType>) => {
     return (
       <>
-        {selectedHabit?.habit_id === item.habit_id &&
-          (isArchivingHabit || isDeletingHabit) && (
-            <AppView
-              absF
-              br40
-              style={{
-                overflow: 'hidden',
-                zIndex: 10,
-              }}
-              reanimated
-              entering={Animations.Entry.FadeInDown()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <Loader />
-            </AppView>
-          )}
         <AppCard
+          disabled={isHabitOperationsInProgress}
           style={styles.habitCard}
           row
           onPress={() => handleHabitClick(item)}>
+          {selectedHabit?.habit_id === item.habit_id &&
+            isHabitOperationsInProgress && (
+              <AppView
+                absF
+                br40
+                style={{
+                  overflow: 'hidden',
+                  zIndex: 10,
+                }}
+                reanimated
+                entering={Animations.Entry.FadeInDown()}
+                exiting={Animations.Exit.FadeOutDown()}>
+                <Loader />
+              </AppView>
+            )}
           <AppView flex-1>
             <AppView row centerV flex-1 gap-4>
               <AppText body2 textColor flex-1>

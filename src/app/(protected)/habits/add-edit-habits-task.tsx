@@ -29,7 +29,9 @@ const AddEditHabitTask = () => {
     habitId: string;
     isHabitEditing: string;
   }>();
-  const { data: selectedTask } = useGetHabitQuery(habitId);
+  const { data: selectedTask } = useGetHabitQuery(habitId, {
+    skip: !habitId,
+  });
   const { showToast } = useToast();
   const { t } = useLocalization();
   const [isEditing, setIsEditing] = useState(

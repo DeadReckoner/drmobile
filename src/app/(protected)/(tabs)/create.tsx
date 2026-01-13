@@ -16,6 +16,7 @@ import {
 import {
   resetDraftAction,
   setDraftRoadmapAction,
+  setSelectedHabit,
 } from '@/store/slices/roadmapDraftSlice';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -71,6 +72,7 @@ const Create = () => {
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
   const onAddNewHabitPress = () => {
+    dispatch(setSelectedHabit(null));
     router.navigate('/habits/add-edit-habits-task');
   };
   const navigateToComingSoon = () => {

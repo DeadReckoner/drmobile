@@ -36,7 +36,11 @@ const onCreateHabitStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
-    dispatch(habitsApi.util.invalidateTags([{ type: 'Habits', id: 'TODAY' }]));
+    dispatch(
+      habitsApi.endpoints.getTodayHabits.initiate(undefined, {
+        forceRefetch: true,
+      }),
+    );
   } catch {}
 };
 
@@ -242,6 +246,7 @@ export const habitsApi = api.injectEndpoints({
 
     getTodayHabits: builder.query<GetTodayHabitsResponseType, void>({
       query: () => '/habits/today',
+      keepUnusedDataFor: 3600,
       providesTags: (result) =>
         result
           ? [

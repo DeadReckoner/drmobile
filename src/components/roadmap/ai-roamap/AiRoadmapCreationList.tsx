@@ -151,7 +151,6 @@ export const AiRoadmapCreationList = () => {
     }
   }, [isTyping, messages.length]);
 
-  // Scroll to end when thank_you message is growing
   useEffect(() => {
     const thankYouMessage = messages.find((msg) => msg.id === 'thank-you');
     if (thankYouMessage && thankYouMessage.isTyping) {

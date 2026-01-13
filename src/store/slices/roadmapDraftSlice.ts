@@ -41,6 +41,7 @@ const initialState: DraftState = {
   selectedMilestone: null,
   selectedTask: null,
   selectedStep: null,
+  selectedHabit: null,
 
   selectedRoadmapIndex: -1,
   selectedMilestoneIndex: -1,
@@ -343,7 +344,7 @@ const roadmapDraftSlice = createSlice({
     setSelectedStepIndex(state, action: PayloadAction<number>) {
       state.selectedStepIndex = action.payload ?? -1;
     },
-    setSelectedHabit(state, action: PayloadAction<HabitType>) {
+    setSelectedHabit(state, action: PayloadAction<HabitType | null>) {
       state.selectedHabit = action.payload;
     },
   },
