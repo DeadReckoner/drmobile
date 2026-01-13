@@ -25,9 +25,11 @@ import {
   useRejectFriendRequestMutation,
 } from '@/store/apis/friendsApi';
 import { NotificationType } from '@/store/apis/types/notificationsApi.types';
-import { useAppSelector } from '@/store/hooks/store.hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
+import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
+import { router } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Linking, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
@@ -35,8 +37,12 @@ import { Colors } from 'react-native-ui-lib';
 
 interface NotificationItem {
   id: string;
-  type: 'friend_request' | 'anchor_request' | 'notification';
-  data: Friendship | AnchorRequest | NotificationType;
+  type:
+    | 'friend_request'
+    | 'anchor_request'
+    | 'notification'
+    | 'roadmap_complete';
+  data: Friendship | AnchorRequest | NotificationType | { roadmap_id: string };
 }
 
 const Notifications = () => {
@@ -69,6 +75,7 @@ const Notifications = () => {
     refetchOnMountOrArgChange: true,
   });
 
+  const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
   const [acceptFriendRequest] = useAcceptFriendRequestMutation();
   const [rejectFriendRequest] = useRejectFriendRequestMutation();
@@ -236,6 +243,28 @@ const Notifications = () => {
     refetchAnchorRequests,
   ]);
 
+  const onNotificationPress = useCallback(
+    (notification: NotificationType) => {
+      if (notification.type === 'roadmap_complete') {
+        const notificationData = notification.data as { roadmap_id: string };
+        dispatch(
+          setDraftRoadmapAction({
+            roadmap_id: notificationData.roadmap_id,
+            goal: '',
+            description: '',
+            days: 0,
+            completed: false,
+            start_date: '',
+            milestones: [],
+            reason: '',
+          }),
+        );
+        router.navigate('/roadmap/roadmap-details');
+      }
+    },
+    [dispatch],
+  );
+
   const renderFriendRequestItem = useCallback(
     ({ item }: { item: NotificationItem }) => {
       if (item.type === 'friend_request') {
@@ -268,7 +297,7 @@ const Notifications = () => {
 
       const notification = item.data as NotificationType;
       return (
-        <AppCard padding-16>
+        <AppCard padding-16 onPress={() => onNotificationPress(notification)}>
           <AppView row gap-12 centerV>
             <AppView bg-outline br100 style={styles.iconContainer} center>
               <AppIcon name="notification" size={20} color={Colors.textColor} />
@@ -291,6 +320,7 @@ const Notifications = () => {
       handleCancel,
       handleAcceptAnchor,
       handleRejectAnchor,
+      onNotificationPress,
     ],
   );
 

@@ -12,6 +12,7 @@ import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
+import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useGetTodayHabitsQuery } from '@/store/apis/habitsApi';
 import { HabitWithStatusType } from '@/store/apis/types/habitsApi.types';
@@ -24,23 +25,23 @@ import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
-  const { data, isLoading, refetch, isFetching } =
-    useGetUserTasksByStartDateQuery(
-      DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
-    );
+  const { t } = useLocalization();
+  const { data, isLoading, refetch } = useGetUserTasksByStartDateQuery(
+    DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+  );
 
   const {
     data: habitsData,
     isLoading: habitsLoading,
     refetch: refetchHabits,
-    isFetching: habitsFetching,
   } = useGetTodayHabitsQuery();
 
+  const [manualRefreshing, setManualRefreshing] = useState(false);
   const dispatch = useAppDispatch();
   const { requestPermissions } = usePushNotifications();
 
@@ -82,9 +83,14 @@ const Today = () => {
     [data],
   );
 
-  const handleRefresh = () => {
-    refetch();
-    refetchHabits();
+  const handleRefresh = async () => {
+    try {
+      setManualRefreshing(true);
+      await Promise.allSettled([refetch().unwrap(), refetchHabits().unwrap()]);
+    } catch {
+    } finally {
+      setManualRefreshing(false);
+    }
   };
 
   const handleHabitClick = (habit: HabitWithStatusType) => {
@@ -135,19 +141,6 @@ const Today = () => {
   const renderHabitItem = ({
     item,
   }: LegendListRenderItemProps<HabitWithStatusType>) => {
-    const getRecurrenceText = () => {
-      switch (item.recurrence_type) {
-        case 'daily':
-          return 'Daily';
-        case 'weekly':
-          return 'Weekly';
-        case 'monthly':
-          return 'Monthly';
-        default:
-          return 'One-time';
-      }
-    };
-
     return (
       <AppCard
         style={styles.habitCard}
@@ -178,7 +171,9 @@ const Today = () => {
               br100
               style={styles.habitChipContainer}>
               <AppText textColor sm regular numberOfLines={2}>
-                {getRecurrenceText()}
+                {item.recurrence_type === 'none'
+                  ? t('habits.recurrence.none')
+                  : item.recurrence_type}
               </AppText>
             </AppView>
           </AppView>
@@ -200,9 +195,7 @@ const Today = () => {
         contentContainerStyle={styles.scrollContainer}
         refreshControl={
           <RefreshControl
-            refreshing={
-              (isFetching && !isLoading) || (habitsFetching && !habitsLoading)
-            }
+            refreshing={manualRefreshing}
             onRefresh={handleRefresh}
             tintColor={Colors.secondary}
           />
@@ -289,8 +282,6 @@ const styles = StyleSheet.create({
   taskCard: { overflow: 'hidden' },
   habitCard: {
     overflow: 'hidden',
-    borderLeftWidth: 2,
-    borderLeftColor: Colors.secondary,
   },
   habitChipContainer: { alignSelf: 'flex-start' },
 });

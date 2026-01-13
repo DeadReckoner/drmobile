@@ -70,50 +70,22 @@ export const CreateHabitTaskForm = ({
     {
       label: t('habits.recurrence.none'),
       value: 'none',
-      icon: (
-        <AppIcon
-          set="Ionicons"
-          name="checkbox-outline"
-          size={16}
-          color={Colors.primary}
-        />
-      ),
+      icon: null,
     },
     {
       label: t('habits.recurrence.daily'),
       value: 'daily',
-      icon: (
-        <AppIcon
-          set="Ionicons"
-          name="calendar"
-          size={16}
-          color={Colors.primary}
-        />
-      ),
+      icon: null,
     },
     {
       label: t('habits.recurrence.weekly'),
       value: 'weekly',
-      icon: (
-        <AppIcon
-          set="Ionicons"
-          name="calendar-outline"
-          size={16}
-          color={Colors.primary}
-        />
-      ),
+      icon: null,
     },
     {
       label: t('habits.recurrence.monthly'),
       value: 'monthly',
-      icon: (
-        <AppIcon
-          set="Ionicons"
-          name="calendar-sharp"
-          size={16}
-          color={Colors.primary}
-        />
-      ),
+      icon: null,
     },
   ];
 

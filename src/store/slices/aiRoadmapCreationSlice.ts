@@ -19,6 +19,14 @@ export type AIRoadmapCreationStatus =
   | 'completed'
   | 'error';
 
+export type JobStatusResponseType = {
+  type: 'status';
+  job_id: string;
+  progress: number;
+  status: string;
+  message: string;
+};
+
 interface AIRoadmapCreationState {
   status: AIRoadmapCreationStatus;
   messages: MessageItem[];
@@ -30,6 +38,7 @@ interface AIRoadmapCreationState {
   createdAt: number | null;
   createdRoadmap: RoadmapType | null;
   aiRoadmapCreationJobResponse: RoadmapCreationJobResponse | null;
+  jobStatusResponse?: JobStatusResponseType | null;
 }
 
 const initialState: AIRoadmapCreationState = {
@@ -134,6 +143,12 @@ const aiRoadmapCreationSlice = createSlice({
     ) => {
       state.aiRoadmapCreationJobResponse = action.payload;
     },
+    setAiJobStatusAction: (
+      state,
+      action: PayloadAction<JobStatusResponseType | null>,
+    ) => {
+      state.jobStatusResponse = action.payload;
+    },
 
     // Reset the entire state
     resetCreationStateAction: () => initialState,
@@ -153,6 +168,7 @@ export const {
   setCreationErrorAction,
   resetCreationStateAction,
   setAIRoadmapJobCreationResponseAction,
+  setAiJobStatusAction,
 } = aiRoadmapCreationSlice.actions;
 
 // Selectors
@@ -198,6 +214,10 @@ export const selectCreatedRoadmapId = createAppSelector(
 
 export const selectCreatedRoadmap = createAppSelector(
   (state) => state.aiRoadmapCreation.createdRoadmap,
+);
+
+export const selectJobStatusResponse = createAppSelector(
+  (state) => state.aiRoadmapCreation.jobStatusResponse,
 );
 
 export const selectShouldShowAIRoadmapBanner = createAppSelector((state) => {

@@ -1,5 +1,7 @@
+import { AppButton } from '@/components/AppButton';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
+import { HabitsList } from '@/components/HabitsList';
 import { Loader } from '@/components/Loader';
 import { InProgressAIRoadmapBanner } from '@/components/roadmap/ai-roamap/InProgressAIRoadmapBanner';
 import { RoadmapList } from '@/components/roadmap/RoadmapList';
@@ -7,6 +9,7 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { useGetHabitsQuery } from '@/store/apis/habitsApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { selectShouldShowAIRoadmapBanner } from '@/store/slices/aiRoadmapCreationSlice';
 import {
@@ -24,10 +27,15 @@ import { Colors } from 'react-native-ui-lib';
 const Progress = () => {
   const dispatch = useAppDispatch();
   const { data = [], isLoading, refetch, isFetching } = useGetRoadmapsQuery();
+  const { refetch: refetchHabits } = useGetHabitsQuery({
+    include_archived: false,
+  });
+
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const shouldShowAIRoadmapBanner = useAppSelector(
     selectShouldShowAIRoadmapBanner,
   );
+  const [selectedTab, setSelectedTab] = useState('roadmaps');
 
   const onItemPress = (roadmap: RoadmapType, index: number) => {
     dispatch(
@@ -44,22 +52,57 @@ const Progress = () => {
   const handleRefresh = useCallback(async () => {
     setManualRefreshing(true);
     try {
-      await refetch().unwrap();
+      await Promise.allSettled([refetch().unwrap(), refetchHabits().unwrap()]);
+    } catch {
     } finally {
       setManualRefreshing(false);
     }
-  }, [refetch]);
+  }, [refetch, refetchHabits]);
+
+  const HeaderSegment = () => (
+    <AppView
+      row
+      br20
+      style={{
+        borderWidth: 1,
+        borderColor: Colors.primary,
+      }}>
+      <AppButton
+        center
+        flex
+        paddingV-8
+        style={{
+          backgroundColor:
+            selectedTab === 'roadmaps' ? Colors.primary : 'transparent',
+        }}
+        onPress={() => setSelectedTab('roadmaps')}>
+        <TranslatedText caption translationKey="settings.roadmaps" />
+      </AppButton>
+      <AppView width={1} bg-primary />
+      <AppButton
+        center
+        flex
+        paddingV-8
+        style={{
+          backgroundColor:
+            selectedTab === 'habits' ? Colors.primary : 'transparent',
+        }}
+        onPress={() => setSelectedTab('habits')}>
+        <TranslatedText caption translationKey="settings.habits" />
+      </AppButton>
+    </AppView>
+  );
 
   const visibleRoadmaps = data.filter(
     (roadmap) => roadmap.generation_status !== 'failed',
   );
+  const isRoadmapTabSelected = selectedTab === 'roadmaps';
+  const isHabitsTabSelected = selectedTab === 'habits';
 
   return (
     <AppScreen>
       <Animated.ScrollView
-        layout={Animations.Layout.Springify()}
-        entering={Animations.Entry.FadeInDown()}
-        exiting={Animations.Exit.FadeOutDown()}
+        contentContainerStyle={style.scrollContainer}
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -82,19 +125,38 @@ const Progress = () => {
           <InProgressAIRoadmapBanner />
           <Divider />
         </AppView>
+        <HeaderSegment />
+        <Divider />
         <AppView flex-1>
-          {isLoading && (
-            <AppView height={100}>
-              <Loader transparent />
-            </AppView>
-          )}
-          {!isLoading && (
+          {isRoadmapTabSelected && (
             <AppView
+              flex-1
               pointerEvents={isFetching ? 'none' : 'auto'}
               reanimated
-              entering={Animations.Entry.FadeInDownWithSpring()}
+              entering={Animations.Entry.FadeInDownWithSpring().delay(250)}
               exiting={Animations.Exit.FadeOutDown()}>
-              <RoadmapList data={visibleRoadmaps} onItemPress={onItemPress} />
+              {isLoading ? (
+                <AppView height={100}>
+                  <Loader transparent />
+                </AppView>
+              ) : (
+                <AppView>
+                  <RoadmapList
+                    data={visibleRoadmaps}
+                    onItemPress={onItemPress}
+                  />
+                </AppView>
+              )}
+            </AppView>
+          )}
+
+          {isHabitsTabSelected && (
+            <AppView
+              flex-1
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring().delay(250)}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <HabitsList />
             </AppView>
           )}
         </AppView>
@@ -108,5 +170,6 @@ export default Progress;
 const style = StyleSheet.create({
   scrollContainer: {
     position: 'relative',
+    flexGrow: 1,
   },
 });

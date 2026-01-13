@@ -6,6 +6,7 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { AppText, AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
 import { useGetHabitsQuery } from '@/store/apis/habitsApi';
 import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { Animations } from '@/utils/animation.utils';
@@ -15,11 +16,13 @@ import { Colors } from 'react-native-ui-lib';
 
 const ArchivedHabits = () => {
   const {
-    data: archivedHabits,
+    data: habits,
     isLoading,
     refetch,
     isFetching,
   } = useGetHabitsQuery({ include_archived: true });
+  const archivedHabits = habits?.filter((habit) => habit.archived);
+  const { t } = useLocalization();
 
   const renderEmptyComponent = () => {
     return (
@@ -31,19 +34,6 @@ const ArchivedHabits = () => {
   };
 
   const renderHabitItem = ({ item }: LegendListRenderItemProps<HabitType>) => {
-    const getRecurrenceText = () => {
-      switch (item.recurrence_type) {
-        case 'daily':
-          return 'Daily';
-        case 'weekly':
-          return 'Weekly';
-        case 'monthly':
-          return 'Monthly';
-        default:
-          return 'One-time';
-      }
-    };
-
     return (
       <AppCard row centerV padding-0>
         <AppView flex-1 padding-16>
@@ -53,7 +43,9 @@ const ArchivedHabits = () => {
             </AppText>
             <AppView bg-primary paddingH-8 paddingV-4 br100>
               <AppText textColor sm regular>
-                {getRecurrenceText()}
+                {item.recurrence_type === 'none'
+                  ? t('habits.recurrence.none')
+                  : item.recurrence_type}
               </AppText>
             </AppView>
           </AppView>

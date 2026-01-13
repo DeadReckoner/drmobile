@@ -41,9 +41,14 @@ const formatRelativeTime = (date: AppDate): string => {
   return dateObj.format('MM/DD/YYYY');
 };
 
+const isSameDate = (date1: AppDate, date2: AppDate): boolean => {
+  return dayjs(date1).isSame(dayjs(date2), 'day');
+};
+
 export const DateUtils = {
   daysBetween,
   createDate,
   formatDate,
+  isSameDate,
   formatRelativeTime,
 };
