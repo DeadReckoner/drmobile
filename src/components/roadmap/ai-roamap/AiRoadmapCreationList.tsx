@@ -152,6 +152,17 @@ export const AiRoadmapCreationList = () => {
   }, [isTyping, messages.length]);
 
   useEffect(() => {
+    const thankYouMessage = messages.find((msg) => msg.id === 'thank-you');
+    if (thankYouMessage && thankYouMessage.isTyping) {
+      const scrollInterval = setInterval(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 150);
+
+      return () => clearInterval(scrollInterval);
+    }
+  }, [messages]);
+
+  useEffect(() => {
     const keyboardDidShow = Keyboard.addListener('keyboardDidShow', () => {
       flatListRef.current?.scrollToEnd({ animated: true });
     });
@@ -184,7 +195,7 @@ export const AiRoadmapCreationList = () => {
 
   const handleAiRoadmapCreation = (
     formData: Record<string, string>,
-    timeout: number = 1200,
+    timeout: number = 5200,
   ) => {
     createAIRoadmapApiTimeout.current = setTimeout(async () => {
       try {
@@ -202,7 +213,6 @@ export const AiRoadmapCreationList = () => {
         if (createAIRoadmapApiTimeout.current) {
           clearTimeout(createAIRoadmapApiTimeout.current);
         }
-        flatListRef.current?.scrollToEnd({ animated: true });
       }
     }, timeout);
   };

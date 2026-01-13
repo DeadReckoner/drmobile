@@ -19,4 +19,5 @@ export type NotificationType = {
   sent_at: string;
   error: string;
   created_at: string;
+  data: Record<string, any>;
 };

@@ -14,6 +14,7 @@ export type HabitType = {
   start_date: string;
   end_date?: string;
   is_archived: boolean;
+  archived?: boolean;
   created_at: string;
   updated_at: string;
 };

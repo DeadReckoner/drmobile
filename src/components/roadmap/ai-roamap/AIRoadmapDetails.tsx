@@ -13,6 +13,7 @@ import {
   setSelectedMilestoneAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import {
   FadeInDown,
@@ -39,12 +40,23 @@ export const AIRoadmapDetails = ({
     router.navigate('/(protected)/roadmap/ai-roadmap-macromap');
   };
 
+  const firstNonCompletedMilestoneIndex = useMemo(() => {
+    const index = roadmap.milestones?.findIndex(
+      (milestone) => milestone.reached,
+    );
+    return index === -1 ? 0 : index;
+  }, [roadmap.milestones]);
+
+  const displayedMacroMap =
+    roadmap.macro_map?.phases?.[0]?.macro_milestones?.[
+      firstNonCompletedMilestoneIndex
+    ];
+
   const onMacroMilestonePress = () => {
-    // TODO: set the active milestone insteadof hardcoded first milestone
-    if (roadmap.milestones?.[0].tasks?.length) {
+    if (roadmap.milestones?.[firstNonCompletedMilestoneIndex].tasks?.length) {
       dispatch(
         setSelectedMilestoneAction({
-          milestone: roadmap.milestones[0],
+          milestone: roadmap.milestones[firstNonCompletedMilestoneIndex],
         }),
       );
       router.navigate({
@@ -88,10 +100,9 @@ export const AIRoadmapDetails = ({
               </AppButton>
             )}
           </AppView>
-          {/* TODO: show the current running milestone */}
-          {roadmap.macro_map?.phases[0].macro_milestones[0] && (
+          {displayedMacroMap && (
             <MacroMapListItem
-              macroMilestone={roadmap.macro_map?.phases[0].macro_milestones[0]}
+              macroMilestone={displayedMacroMap}
               onPress={readonly ? () => {} : onMacroMilestonePress}
             />
           )}

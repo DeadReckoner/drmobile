@@ -2,6 +2,7 @@ import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { useGetJobStatusQuery } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { roadmapApi } from '@/store/apis/roadmapApi';
@@ -13,6 +14,7 @@ import {
   selectAIRoadmapCreationStatus,
   selectCreatedRoadmap,
   selectIsAIRoadmapInDraft,
+  setAiJobStatusAction,
   setCreationErrorAction,
 } from '@/store/slices/aiRoadmapCreationSlice';
 import { selectUser } from '@/store/slices/authSlice';
@@ -35,6 +37,50 @@ export const InProgressAIRoadmapBanner = () => {
     selectAIRoadmapCreationState,
   );
 
+  const { data: jobStatusData } = useGetJobStatusQuery(
+    {
+      jobId: aiRoadmapCreationJobResponse?.job_id || '',
+    },
+    {
+      skip: !aiRoadmapCreationJobResponse?.job_id,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  useEffect(() => {
+    if (jobStatusData?.job_id) {
+      dispatch(
+        setAiJobStatusAction({
+          type: 'status',
+          message: 'job status update from polling',
+          ...jobStatusData,
+        }),
+      );
+
+      if (jobStatusData?.status === 'failed') {
+        dispatch(setCreationErrorAction(t('common.something_went_wrong')));
+      } else if (jobStatusData?.status === 'completed') {
+        if (jobStatusData?.result?.roadmap_id) {
+          const roadmap = {
+            roadmap_id: jobStatusData?.result?.roadmap_id,
+            goal: '',
+            description: '',
+            days: 0,
+            completed: false,
+            start_date: '',
+            milestones: [],
+            reason: '',
+          };
+          dispatch(setDraftRoadmapAction(roadmap));
+          dispatch(completeRoadmapCreationAction(roadmap));
+        }
+      }
+      dispatch(setAiJobStatusAction(null));
+    }
+  }, [jobStatusData, dispatch, t]);
+
   useEffect(() => {
     if (!aiRoadmapCreationJobResponse?.ws_url) return;
     if (status === 'completed' || status === 'error') return;
@@ -48,8 +94,11 @@ export const InProgressAIRoadmapBanner = () => {
 
     ws.onmessage = (event) => {
       const jobStatusData = JSON.parse(event.data as string);
+      dispatch(setAiJobStatusAction(jobStatusData));
+
       if (jobStatusData?.status === 'failed') {
         dispatch(setCreationErrorAction(t('common.something_went_wrong')));
+        dispatch(setAiJobStatusAction(null));
       } else if (jobStatusData?.status === 'completed') {
         if (
           jobStatusData?.data?.roadmap_id ||
@@ -70,6 +119,7 @@ export const InProgressAIRoadmapBanner = () => {
           dispatch(setDraftRoadmapAction(roadmap));
           dispatch(completeRoadmapCreationAction(roadmap));
         }
+        dispatch(setAiJobStatusAction(null));
       }
     };
 
