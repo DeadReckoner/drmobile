@@ -1,6 +1,4 @@
-import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
-import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
@@ -11,7 +9,6 @@ import { AppText, AppView } from '@/components/ui';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectSelectedTask } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
-import { router } from 'expo-router';
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
@@ -27,11 +24,6 @@ const TodayTaskDetails = () => {
     } catch {}
   }, [task?.dependencies]);
 
-  const onRoadmapButtonPress = () => {
-    router.navigate({
-      pathname: '/roadmap/roadmap-details',
-    });
-  };
   return (
     <AppScreen>
       <ScrollView
@@ -39,9 +31,6 @@ const TodayTaskDetails = () => {
         showsVerticalScrollIndicator={false}>
         <AppView row spread centerV>
           <HeaderWithBack />
-          <AppButton onPress={onRoadmapButtonPress}>
-            <AppIcon set="Feather" name="map" size={18} />
-          </AppButton>
         </AppView>
         <Divider />
         <AppCard>

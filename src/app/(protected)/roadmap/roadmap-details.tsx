@@ -26,6 +26,7 @@ import {
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
+import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import {
@@ -81,9 +82,10 @@ const RoadmapDetailsPage = () => {
 
   useEffect(() => {
     if (error) {
+      dispatch(roadmapApi.util.resetApiState());
       dispatch(resetDraftAction());
       dispatch(resetCreationStateAction());
-      router.back();
+      router.dismissTo('/(protected)/(tabs)/progress');
       showToast({
         type: 'failure',
         message: getApiErrorMessage(error),

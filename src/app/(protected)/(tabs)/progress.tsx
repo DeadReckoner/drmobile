@@ -46,7 +46,17 @@ const Progress = () => {
     );
     dispatch(setSelectedRoadmapIndex(index));
     dispatch(setShouldSyncWithServerAction(true));
-    router.navigate('/roadmap/roadmap-details');
+
+    const isRoadmapStarted =
+      roadmap.start_date !== '0001-01-01T00:00:00Z' &&
+      roadmap.milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
+      roadmap.start_date !== null;
+
+    if (!isRoadmapStarted) {
+      router.navigate('/roadmap/roadmap-details');
+    } else {
+      router.navigate('/roadmap/roadmap-execution');
+    }
   };
 
   const handleRefresh = useCallback(async () => {

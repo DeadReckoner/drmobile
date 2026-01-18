@@ -42,7 +42,7 @@ export const AIRoadmapDetails = ({
 
   const firstNonCompletedMilestoneIndex = useMemo(() => {
     const index = roadmap.milestones?.findIndex(
-      (milestone) => milestone.reached,
+      (milestone) => !milestone.reached,
     );
     return index === -1 ? 0 : index;
   }, [roadmap.milestones]);

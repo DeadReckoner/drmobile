@@ -368,7 +368,12 @@
     "select_anchor": "Select an Anchor",
     "manage_anchor": "Manage Anchor",
     "manage_anchors": "Manage Anchors",
-    "anchor_removed_successfully": "Anchor removed successfully"
+    "anchor_removed_successfully": "Anchor removed successfully",
+    "continue_current_task": "Continue Current Task",
+    "all_tasks_completed": "All tasks completed!",
+    "goal": "Goal",
+    "progress": "Progress",
+    "view_full_plan": "View Full Plan"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",
