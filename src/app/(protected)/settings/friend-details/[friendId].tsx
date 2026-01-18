@@ -177,7 +177,7 @@ const FriendDetails = () => {
 
   const handleRoadmapPress = useCallback((roadmap: RoadmapType) => {
     router.navigate({
-      pathname: '/(protected)/settings/readonly-roadmap-details',
+      pathname: '/settings/readonly-roadmap-details',
       params: {
         roadmap: JSON.stringify(roadmap),
       },
