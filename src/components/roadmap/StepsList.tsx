@@ -64,7 +64,7 @@ export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
         title="tabs.create_tab.no_steps_yet"
         subtitle="tabs.create_tab.add_new_step_desc"
         btnText="tabs.create_tab.add_new_step"
-        onPress={onAddNewStepPress}
+        onPress={mode === 'view' ? undefined : onAddNewStepPress}
       />
     );
   };

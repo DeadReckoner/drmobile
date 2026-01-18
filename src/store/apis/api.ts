@@ -1,6 +1,7 @@
 import { Env } from '@/constants/Env';
 import i18nConfig from '@/lib/localization/i18nConfig';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
+import { setAuthUserAction } from '@/store/slices/authSlice';
 import { showToastAction } from '@/store/slices/settingsSlice';
 import { RootStateType } from '@/store/types/store.types';
 import { isTokenError, refreshUserSession } from '@/utils/auth.utils';
@@ -49,31 +50,37 @@ export const createBaseQueryWithReauth = () => {
         const newSession = await refreshUserSession();
 
         if (newSession?.access_token) {
+          const currentUser = (apiQuery.getState() as RootStateType).auth.user;
+          apiQuery.dispatch(
+            setAuthUserAction({
+              ...currentUser,
+              access_token: newSession.access_token,
+            }),
+          );
+
           const retryResult = await baseQueryWithReauth(
             args,
             apiQuery,
             extraOptions,
           );
           return retryResult;
-        } else {
-          throw new Error('Session refresh failed');
         }
-      } catch {
-        apiQuery.dispatch(api.util.resetApiState());
-        apiQuery.dispatch(
-          showToastAction({
-            toastProps: {
-              type: 'failure',
-              message: i18nConfig.t('authentication.errors.session_expired'),
-            },
-          }),
-        );
-        supabaseClient.auth
-          .signOut()
-          .then(() => {})
-          .catch(() => {});
-      }
+      } catch {}
+      apiQuery.dispatch(api.util.resetApiState());
+      apiQuery.dispatch(
+        showToastAction({
+          toastProps: {
+            type: 'failure',
+            message: i18nConfig.t('authentication.errors.session_expired'),
+          },
+        }),
+      );
+      supabaseClient.auth
+        .signOut()
+        .then(() => {})
+        .catch(() => {});
     }
+
     return result;
   };
 };
@@ -83,4 +90,5 @@ export const api = createApi({
   tagTypes: [...Object.values(ApiCacheTags)],
   endpoints: () => ({}),
   keepUnusedDataFor: 86400,
+  refetchOnReconnect: true,
 });
