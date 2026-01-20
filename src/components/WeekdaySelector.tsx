@@ -8,9 +8,20 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 export type WeekdayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 = Sun ... 6 = Sat
 
+// Bitmask values: Sunday=1, Monday=2, Tuesday=4, Wednesday=8, Thursday=16, Friday=32, Saturday=64
+const DAY_TO_BITMASK: Record<WeekdayIndex, number> = {
+  0: 1, // Sunday
+  1: 2, // Monday
+  2: 4, // Tuesday
+  3: 8, // Wednesday
+  4: 16, // Thursday
+  5: 32, // Friday
+  6: 64, // Saturday
+};
+
 type WeekdaySelectorProps = {
-  value?: WeekdayIndex[];
-  onDaysChanged?: (_days: WeekdayIndex[]) => void;
+  value?: number; // Bitmask value
+  onDaysChanged?: (_bitmask: number) => void;
   allowEmpty?: boolean;
   fullNames?: boolean;
   disabled?: boolean;
@@ -27,6 +38,23 @@ const FULL_DAY_LABELS: string[] = [
   'Saturday',
 ];
 
+// Convert bitmask to array of WeekdayIndex
+const bitmaskToDays = (bitmask: number): WeekdayIndex[] => {
+  const days: WeekdayIndex[] = [];
+  for (let i = 0; i <= 6; i++) {
+    const dayIndex = i as WeekdayIndex;
+    if (bitmask & DAY_TO_BITMASK[dayIndex]) {
+      days.push(dayIndex);
+    }
+  }
+  return days;
+};
+
+// Convert array of WeekdayIndex to bitmask
+const daysToBitmask = (days: WeekdayIndex[]): number => {
+  return days.reduce((mask, day) => mask | DAY_TO_BITMASK[day], 0 as number);
+};
+
 export const WeekdaySelector = ({
   value,
   onDaysChanged,
@@ -34,22 +62,20 @@ export const WeekdaySelector = ({
   fullNames = false,
   disabled = false,
 }: WeekdaySelectorProps) => {
-  const [selected, setSelected] = useState<WeekdayIndex[]>(value ?? []);
-
-  const valueSignature = useMemo(
-    () => (Array.isArray(value) ? value.join(',') : ''),
-    [value],
+  const [selectedDays, setSelectedDays] = useState<WeekdayIndex[]>(
+    value ? bitmaskToDays(value) : [],
   );
 
   useEffect(() => {
-    if (Array.isArray(valueSignature)) {
-      setSelected(valueSignature);
-    }
-  }, [valueSignature]);
+    const newDays = value ? bitmaskToDays(value) : [];
+    setSelectedDays(newDays);
+  }, [value]);
 
   useEffect(() => {
-    onDaysChanged?.(selected);
-  }, [selected, onDaysChanged]);
+    const bitmask = daysToBitmask(selectedDays);
+    onDaysChanged?.(bitmask);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDays]);
 
   const labels = useMemo(
     () => (fullNames ? FULL_DAY_LABELS : SHORT_DAY_LABELS),
@@ -57,15 +83,15 @@ export const WeekdaySelector = ({
   );
 
   const isSelected = useCallback(
-    (index: WeekdayIndex) => selected.includes(index),
-    [selected],
+    (index: WeekdayIndex) => selectedDays.includes(index),
+    [selectedDays],
   );
 
   const toggleDay = useCallback(
     (index: WeekdayIndex) => {
       if (disabled) return;
 
-      setSelected((prev) => {
+      setSelectedDays((prev) => {
         const currentlySelected = prev.includes(index);
         if (currentlySelected) {
           const next = prev.filter((d) => d !== index) as WeekdayIndex[];
@@ -114,7 +140,7 @@ export const WeekdaySelector = ({
       <AppList
         data={labels}
         renderItem={renderItem}
-        extraData={selected}
+        extraData={selectedDays}
         horizontal
         scrollEnabled={false}
         keyExtractor={(i, index) => i + index}

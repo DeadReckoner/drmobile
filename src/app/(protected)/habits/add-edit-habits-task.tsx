@@ -148,6 +148,7 @@ const AddEditHabitTask = () => {
           <AppIcon name="close" color={Colors.textOnPrimary} size={14} />
         }
       />
+      <Divider margin-24 />
     </AppKeyboardController>
   );
 };
