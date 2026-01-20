@@ -14,6 +14,7 @@ import {
   updateTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
+import { DateUtils } from '@/utils/date.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateTaskQueryStarted: TypedMutationOnQueryStarted<
@@ -143,6 +144,13 @@ const onDeleteTaskQueryStarted: TypedMutationOnQueryStarted<
         draft.daysRemainingTillNextMilestone =
           draft.milestones[milestoneIdx].tasks.length || 0;
       }),
+    );
+
+    dispatch(
+      taskApi.endpoints.getUserTasksByStartDate.initiate(
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+        { forceRefetch: true },
+      ),
     );
 
     dispatch(removeTaskAction());

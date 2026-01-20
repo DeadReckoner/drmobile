@@ -97,8 +97,7 @@ const RoadmapExecution = () => {
             {currentMilestone && (
               <AppView marginT-8 row centerV style={{ flexWrap: 'wrap' }}>
                 <AppText subtitle2 light textColor flex-1>
-                  {t('common.current_milestone')}: {currentMilestone.sub_goal}{' '}
-                  asasa ass
+                  {t('common.current_milestone')}: {currentMilestone.sub_goal}
                 </AppText>
               </AppView>
             )}

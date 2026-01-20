@@ -1,10 +1,12 @@
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
+import { taskApi } from '@/store/apis/taskApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   resetDraftAction,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { DateUtils } from '@/utils/date.utils';
 import {
   structureRoadmapApiPayload,
   transformRoadmap,
@@ -81,6 +83,12 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
 
     dispatch(
       roadmapApi.util.invalidateTags([{ type: 'Roadmaps', id: roadmap_id }]),
+    );
+    dispatch(
+      taskApi.endpoints.getUserTasksByStartDate.initiate(
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+        { forceRefetch: true },
+      ),
     );
 
     dispatch(resetDraftAction());

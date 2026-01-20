@@ -155,7 +155,7 @@ const Today = () => {
             {
               backgroundColor: item.is_completed
                 ? Colors.success
-                : Colors.secondary,
+                : Colors.primary,
             },
           ]}
         />
