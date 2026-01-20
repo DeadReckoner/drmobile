@@ -27,7 +27,8 @@ import {
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { roadmapApi } from '@/store/apis/roadmapApi';
-import { useAppSelector } from '@/store/hooks/store.hooks';
+import { taskApi } from '@/store/apis/taskApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import {
   resetDraftAction,
@@ -36,13 +37,13 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
-import { useDispatch } from 'react-redux';
 
 const RoadmapDetailsPage = () => {
   const selectedRoadmap = useAppSelector(selectDraftRoadmap);
@@ -53,7 +54,7 @@ const RoadmapDetailsPage = () => {
 
   const { t } = useLocalization();
   const { showToast } = useToast();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [deleteRoadmap, { isLoading }] = useDeleteRoadmapMutation();
   const [createRoadmap, { isLoading: isCreatingRoadmap }] =
     useCreateRoadmapMutation();
@@ -75,7 +76,7 @@ const RoadmapDetailsPage = () => {
     isFetching: isRoadmapFetching,
   } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id, {
     skip: !selectedRoadmap?.roadmap_id,
-    refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: 20,
     refetchOnFocus: true,
   });
 
@@ -166,6 +167,12 @@ const RoadmapDetailsPage = () => {
     if (roadmap.roadmap_id) {
       try {
         await deleteRoadmap(roadmap.roadmap_id).unwrap();
+        dispatch(
+          taskApi.endpoints.getUserTasksByStartDate.initiate(
+            DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+            { forceRefetch: true },
+          ),
+        );
         onDeleteSuccess();
       } catch (error) {
         showToast({

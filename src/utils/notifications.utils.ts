@@ -17,7 +17,13 @@ const requestPermissions = async () => {
   let finalStatus = existingStatus;
 
   if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
+    const { status } = await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+      },
+    });
     finalStatus = status;
   }
 
@@ -90,11 +96,12 @@ const setBadgeCount = async (count: number) => {
 
 const setupNotificationHandler = () => {
   Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldPlaySound: false,
-      shouldSetBadge: false,
+    handleNotification: async (_notification) => ({
+      shouldPlaySound: true,
+      shouldSetBadge: true,
       shouldShowBanner: true,
       shouldShowList: true,
+      shouldShowAlert: true,
     }),
   });
 };

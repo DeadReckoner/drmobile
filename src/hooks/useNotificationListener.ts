@@ -96,7 +96,7 @@ export const useNotificationListener = () => {
     return () => {
       appState.remove();
     };
-  }, [redirect]);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -126,5 +126,5 @@ export const useNotificationListener = () => {
       subscriptionResponseReceived.remove();
       subscriptionReceived.remove();
     };
-  }, [pathname, handleNotificationProcessing, redirect, dispatch]);
+  }, [pathname, handleNotificationProcessing, redirect]);
 };
