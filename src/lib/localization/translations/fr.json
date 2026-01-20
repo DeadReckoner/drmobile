@@ -384,7 +384,9 @@
     "send_message_error": "Échec de l'envoi du message. Veuillez réessayer.",
     "conversation_with": "Conversation avec",
     "no_shared_roadmaps": "Aucune Feuille de Route Partagée",
-    "no_shared_roadmaps_description": "Cet utilisateur n'a pas encore partagé de feuille de route avec vous."
+    "no_shared_roadmaps_description": "Cet utilisateur n'a pas encore partagé de feuille de route avec vous.",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
   },
   "feedback": {
     "title": "Retour d'expérience",

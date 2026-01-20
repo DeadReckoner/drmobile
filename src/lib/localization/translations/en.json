@@ -384,7 +384,9 @@
     "send_message_error": "Failed to send message. Please try again.",
     "conversation_with": "Conversation with",
     "no_shared_roadmaps": "No Shared Roadmaps",
-    "no_shared_roadmaps_description": "This user hasn't shared any roadmaps with you yet."
+    "no_shared_roadmaps_description": "This user hasn't shared any roadmaps with you yet.",
+    "today": "Today",
+    "yesterday": "Yesterday"
   },
   "feedback": {
     "title": "Feedback",
