@@ -21,3 +21,14 @@ export type NotificationType = {
   created_at: string;
   data: Record<string, any>;
 };
+
+export type NotificationEventType =
+  | 'roadmap_complete'
+  | 'roadmap_failed'
+  | 'friend_request'
+  | 'friend_accepted'
+  | 'friend_rejected'
+  | 'anchor_request'
+  | 'anchor_accepted'
+  | 'anchor_rejected'
+  | 'message_new';

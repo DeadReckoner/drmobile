@@ -17,7 +17,7 @@ import {
 import { MessageType } from '@/store/apis/types/messagesApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Colors } from 'react-native-ui-lib';
@@ -45,16 +45,25 @@ const ThreadDetailsScreen = () => {
     enabled: !!threadId,
   });
 
-  useEffect(() => {
-    dispatch(
-      messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
-        const threadIndex = draft?.findIndex((t) => t.thread_id === threadId);
-        if (threadIndex !== undefined && threadIndex !== -1 && draft) {
-          draft[threadIndex].total_unread = 0;
-        }
-      }),
-    );
+  const resetThreadUnreadCount = useCallback(() => {
+    if (threadId) {
+      dispatch(
+        messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
+          const threadIndex = draft?.findIndex((t) => t.thread_id === threadId);
+          if (threadIndex !== undefined && threadIndex !== -1 && draft) {
+            draft[threadIndex].total_unread = 0;
+          }
+        }),
+      );
+    }
   }, [dispatch, threadId]);
+
+  useEffect(() => {
+    resetThreadUnreadCount();
+    return () => {
+      resetThreadUnreadCount();
+    };
+  }, [resetThreadUnreadCount]);
 
   const handleSendMessage = (messageText: string) => {
     sendMessage(messageText);

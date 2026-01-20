@@ -4,8 +4,8 @@ import { CompleteProfile } from '@/components/auth/CompleteProfile';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import { messagesApi, useGetThreadsQuery } from '@/store/apis/messagesApi';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { useGetThreadsQuery } from '@/store/apis/messagesApi';
+import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
   resetDraftAction,
   setShouldSyncWithServerAction,
@@ -21,7 +21,6 @@ import { Colors, Typography } from 'react-native-ui-lib';
 export default function TabLayout() {
   const { t } = useLocalization();
   const theme = useAppSelector(selectTheme);
-  const dispatch = useAppDispatch();
 
   const screenOptions: BottomTabNavigationOptions = useMemo(
     () => ({
@@ -46,7 +45,11 @@ export default function TabLayout() {
     [theme],
   );
 
-  const { data } = useGetThreadsQuery();
+  const { data } = useGetThreadsQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+  });
   const hadUnreadMessages = data?.some((thread) => thread.total_unread > 0);
 
   return (
@@ -109,15 +112,6 @@ export default function TabLayout() {
                 {hadUnreadMessages && <AppView style={styles.customBadge} />}
               </AppView>
             ),
-          }}
-          listeners={{
-            focus: () => {
-              dispatch(
-                messagesApi.endpoints.getThreads.initiate(undefined, {
-                  forceRefetch: true,
-                }),
-              );
-            },
           }}
         />
       </Tabs>

@@ -5,27 +5,42 @@ import { ThreadsList } from '@/components/messages/ThreadsList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useGetThreadsQuery } from '@/store/apis/messagesApi';
+import { messagesApi, useGetThreadsQuery } from '@/store/apis/messagesApi';
 import { ThreadType } from '@/store/apis/types/messagesApi.types';
-import { useAppSelector } from '@/store/hooks/store.hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router, Tabs } from 'expo-router';
-import { useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { AppState, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Messages = () => {
-  const { data, isLoading, refetch } = useGetThreadsQuery(undefined, {
-    refetchOnMountOrArgChange: 20,
-  });
+  const { data, isLoading, refetch } = useGetThreadsQuery(undefined);
+  const dispatch = useAppDispatch();
   const { email: currentUserEmail } = useAppSelector(selectUser);
   const { t } = useLocalization();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const hadUnreadMessages = data?.some((thread) => thread.total_unread > 0);
 
+  useEffect(() => {
+    const appStateSubscription = AppState.addEventListener(
+      'change',
+      (nextAppState) => {
+        if (nextAppState === 'active') {
+          refetch();
+        }
+      },
+    );
+
+    return () => {
+      appStateSubscription.remove();
+    };
+  }, [refetch]);
+
   const onRefresh = async () => {
     try {
+      dispatch(messagesApi.util.resetApiState());
       setIsRefreshing(true);
       await refetch();
     } catch {
