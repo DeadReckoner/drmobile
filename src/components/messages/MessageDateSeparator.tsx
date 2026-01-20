@@ -32,10 +32,6 @@ export const MessageDateSeparator = ({ date }: MessageDateSeparatorProps) => {
   return (
     <AppView center paddingV-12>
       <AppView paddingH-12 paddingV-4 bg-primary br100 style={styles.chip}>
-        {/* <TranslatedText caption1 white center>
-          {getDateLabel(date)}
-        </TranslatedText> */}
-
         <AppText sm textColor regular>
           {getDateLabel(date)}
         </AppText>

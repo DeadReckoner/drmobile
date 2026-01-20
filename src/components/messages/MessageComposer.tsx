@@ -33,7 +33,7 @@ export const MessageComposer = ({
   };
   if (isLoading) {
     return (
-      <AppView padding-32>
+      <AppView padding-32 paddingB-80>
         <Loader transparent />
       </AppView>
     );
