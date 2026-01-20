@@ -5,6 +5,7 @@ import { notificationsUtils } from '@/utils/notifications.utils';
 import * as Notifications from 'expo-notifications';
 import { router, usePathname } from 'expo-router';
 import { useCallback, useEffect } from 'react';
+import { AppState } from 'react-native';
 
 notificationsUtils.setupNotificationHandler();
 
@@ -82,6 +83,22 @@ export const useNotificationListener = () => {
   );
 
   useEffect(() => {
+    const appState = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        (async () => {
+          try {
+            await notificationsUtils.setBadgeCount(0);
+          } catch {}
+        })();
+      }
+    });
+
+    return () => {
+      appState.remove();
+    };
+  }, [redirect]);
+
+  useEffect(() => {
     (async () => {
       try {
         const last = await Notifications.getLastNotificationResponseAsync();
@@ -101,6 +118,7 @@ export const useNotificationListener = () => {
           notification.request.content.data.type as NotificationEventType,
           notification.request.content,
         );
+        notificationsUtils.updateBadgeCount().catch(() => {});
       },
     );
 

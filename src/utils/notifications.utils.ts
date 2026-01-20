@@ -78,8 +78,14 @@ const getBadgeCount = async () => {
   return await Notifications.getBadgeCountAsync();
 };
 
+const updateBadgeCount = async () => {
+  const currentCount = await getBadgeCount();
+  const newCount = currentCount + 1;
+  await Notifications.setBadgeCountAsync(newCount < 0 ? 0 : newCount);
+};
+
 const setBadgeCount = async (count: number) => {
-  await Notifications.setBadgeCountAsync(count);
+  return await Notifications.setBadgeCountAsync(count);
 };
 
 const setupNotificationHandler = () => {
@@ -102,6 +108,7 @@ export const notificationsUtils = {
   cancelAllNotifications,
   getBadgeCount,
   setBadgeCount,
+  updateBadgeCount,
   setupNotificationHandler,
   onPushTokenChange: Notifications.addPushTokenListener,
 };
