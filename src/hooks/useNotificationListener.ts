@@ -80,6 +80,7 @@ export const useNotificationListener = () => {
       if (nextAppState === 'active') {
         (async () => {
           try {
+            dispatch(messagesApi.util.invalidateTags(['Threads']));
             await notificationsUtils.setBadgeCount(0);
           } catch {}
         })();
@@ -89,7 +90,7 @@ export const useNotificationListener = () => {
     return () => {
       appState.remove();
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     (async () => {
