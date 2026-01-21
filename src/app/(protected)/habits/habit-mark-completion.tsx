@@ -103,7 +103,7 @@ const HabitMarkCompletion = () => {
                   {habit?.title}
                 </AppText>
                 <AppView row centerV>
-                  <AppView bg-primary paddingH-10 paddingV-4 br100>
+                  <AppView bg-accent paddingH-10 paddingV-4 br100>
                     <AppText
                       textColor
                       xsm

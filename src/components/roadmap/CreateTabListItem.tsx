@@ -24,7 +24,7 @@ export const CreateTabListItem = ({
   return (
     <AppCard paddingV-20 onPress={onPress}>
       <AppView row gap-16>
-        <AppView bg-primary br30 center style={styles.iconContainer}>
+        <AppView bg-accent br30 center style={styles.iconContainer}>
           {type === 'ai' && (
             <AppImage
               style={[StyleSheet.absoluteFillObject]}

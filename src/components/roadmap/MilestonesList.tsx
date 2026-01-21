@@ -48,7 +48,7 @@ export const MilestonesList = ({
       title="tabs.create_tab.no_milestones_yet"
       subtitle="tabs.create_tab.add_new_milestone_desc"
       btnText="tabs.create_tab.add_new_milestone"
-      onPress={onAddNewMilestonePress}
+      onPress={readonly ? undefined : onAddNewMilestonePress}
     />
   );
 

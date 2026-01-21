@@ -8,19 +8,35 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import { useGetFriendProfileQuery } from '@/hooks/friends';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback } from 'react';
-import { StyleSheet } from 'react-native';
+import { RefreshControl, StyleSheet } from 'react-native';
 import { Assets, Colors } from 'react-native-ui-lib';
 
 const AllowedRoadmaps = () => {
   const params = useLocalSearchParams<{ threadUserId: string }>();
-  const { data } = useGetFriendProfileQuery(params['threadUserId']);
+  const { data, isFetching, refetch } = useGetFriendProfileQuery(
+    params['threadUserId'],
+    {
+      skip: !params['threadUserId'],
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+    },
+  );
 
   const renderHeader = () => <HeaderWithBack marginB-16 />;
 
   const renderItem = ({ item: roadmap }: { item: RoadmapType }) => (
-    <AppCard paddingV-20 onPress={() => {}}>
+    <AppCard
+      paddingV-20
+      onPress={() => {
+        router.navigate({
+          pathname: '/settings/readonly-roadmap-details',
+          params: {
+            roadmap: JSON.stringify(roadmap),
+          },
+        });
+      }}>
       <AppView row gap-16>
         <AppView bg-primary br30 center style={styles.iconContainer}>
           {roadmap.type === 'ai_generated' && (
@@ -75,6 +91,9 @@ const AllowedRoadmaps = () => {
           ListHeaderComponent={renderHeader}
           ListEmptyComponent={renderEmptyRoadmaps}
           ItemSeparatorComponent={renderItemSeparator}
+          refreshControl={
+            <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+          }
         />
       </AppView>
     </AppScreen>

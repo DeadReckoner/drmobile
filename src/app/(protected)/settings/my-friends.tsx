@@ -53,13 +53,17 @@ const MyFriends = () => {
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: friendsData, isLoading: isLoadingFriends } =
-    useGetFriendsQuery();
+  const {
+    data: friendsData,
+    isLoading: isLoadingFriends,
+    refetch,
+    isFetching,
+  } = useGetFriendsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [searchUsers, { data: searchData, isFetching: isSearching }] =
     useLazySearchUsersQuery();
-
-  const { refetch, isFetching } = useGetFriendsQuery();
 
   const friends = useMemo<Friend[]>(() => {
     if (!friendsData) return [];

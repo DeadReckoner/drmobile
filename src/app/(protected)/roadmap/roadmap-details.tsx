@@ -75,6 +75,7 @@ const RoadmapDetailsPage = () => {
     isLoading: isRoadmapLoading,
     error,
     isFetching: isRoadmapFetching,
+    refetch,
   } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id, {
     skip: !selectedRoadmap?.roadmap_id,
     refetchOnMountOrArgChange: 20,
@@ -117,8 +118,9 @@ const RoadmapDetailsPage = () => {
   const showDialog = () => setIsDeleteMilestoneDialogOpen(true);
 
   const onAnchorPress = useCallback(() => {
+    refetch();
     setIsAnchorSheetVisible(true);
-  }, []);
+  }, [refetch]);
 
   const onSelectAnchor = useCallback(
     async (friendId: string, friendName: string) => {
@@ -492,7 +494,7 @@ const RoadmapDetailsPage = () => {
               keyExtractor={(item, index) => item.friendship_id + index}
               showsVerticalScrollIndicator={false}
               bounces={false}
-              extraData={[isModalContentLoading, roadmap?.anchor_id]}
+              extraData={[isModalContentLoading, roadmap, roadmap?.anchor_id]}
               renderItem={renderAnchorItem}
               ItemSeparatorComponent={() => <Divider />}
               ListEmptyComponent={() => (

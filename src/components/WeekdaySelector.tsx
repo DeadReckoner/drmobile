@@ -4,6 +4,7 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Colors } from 'react-native-ui-lib';
 
 export type WeekdayIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 = Sun ... 6 = Sat
 
@@ -120,7 +121,7 @@ export const WeekdaySelector = ({
           height={28}
           center
           br20
-          bg-primary
+          backgroundColor={active ? Colors.accent : Colors.primary}
           style={{
             opacity: active ? 1 : 0.5,
           }}>

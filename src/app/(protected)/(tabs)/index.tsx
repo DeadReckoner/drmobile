@@ -184,7 +184,7 @@ const Today = () => {
               {item.title}
             </AppText>
             <AppView
-              bg-primary
+              bg-accent
               paddingH-8
               paddingV-4
               br100

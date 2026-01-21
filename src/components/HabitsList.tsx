@@ -168,7 +168,7 @@ export const HabitsList = () => {
               <AppText body2 textColor flex-1>
                 {item.title}
               </AppText>
-              <AppView bg-primary paddingH-8 paddingV-4 br100>
+              <AppView bg-accent paddingH-8 paddingV-4 br100>
                 <AppText
                   textColor
                   sm

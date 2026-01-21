@@ -12,7 +12,7 @@ interface AppAvatarProps {
 
 export const AppAvatar = ({
   size = 16,
-  backgroundColor = Colors.primary,
+  backgroundColor = Colors.accent,
   iconColor = Colors.white,
   containerStyle,
 }: AppAvatarProps) => {

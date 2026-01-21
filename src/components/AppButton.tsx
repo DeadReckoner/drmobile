@@ -1,4 +1,5 @@
 import { AppTouchableOpacity } from '@/components/ui';
+import * as Haptics from 'expo-haptics';
 import React, { useRef } from 'react';
 import { TouchableOpacityProps } from 'react-native-ui-lib';
 
@@ -12,6 +13,7 @@ export const AppButton = ({ onPress, ...restProps }: TouchableOpacityProps) => {
     if (now - lastPress.current > DELAY) {
       lastPress.current = now;
       onPress?.();
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   };
   return (

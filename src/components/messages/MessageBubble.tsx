@@ -31,7 +31,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
         style={[
           styles.messageBubble,
           isCurrentUser
-            ? { backgroundColor: Colors.cardBG }
+            ? { backgroundColor: Colors.accent }
             : { backgroundColor: Colors.lightCardBG },
         ]}
         padding-8>
@@ -48,10 +48,11 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
         <AppView marginT-4 style={{ alignSelf: 'flex-end' }}>
           <AppText
             sm
+            regular
             style={[
               styles.timeText,
               isCurrentUser
-                ? { color: Colors.textOnPrimary, opacity: 0.7 }
+                ? { color: Colors.textOnPrimary }
                 : { color: Colors.secondary },
             ]}>
             {formattedTime}
