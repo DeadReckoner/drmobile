@@ -92,6 +92,16 @@ const Today = () => {
     [data],
   );
 
+  const nonCompletedHabits = useMemo(
+    () => habitsData?.filter((habit) => !habit.is_completed),
+    [habitsData],
+  );
+
+  const completedHabits = useMemo(
+    () => habitsData?.filter((habit) => habit.is_completed) || [],
+    [habitsData],
+  );
+
   const handleRefresh = async () => {
     try {
       setManualRefreshing(true);
@@ -243,7 +253,7 @@ const Today = () => {
           exiting={Animations.Exit.FadeOutDown()}>
           <AppList<HabitWithStatusType>
             keyExtractor={(i) => i.habit_id}
-            data={habitsData || []}
+            data={nonCompletedHabits || []}
             renderItem={renderHabitItem}
             ListFooterComponent={() => <Divider />}
             ItemSeparatorComponent={() => <Divider />}
@@ -258,23 +268,33 @@ const Today = () => {
             keyExtractor={(i) => i.task_id}
             data={nonCompletedTasks || []}
             renderItem={renderItem}
-            ListFooterComponent={() => <Divider />}
             ItemSeparatorComponent={() => <Divider />}
           />
         </AppView>
-        <Divider margin-4 />
+        {(completedTasks?.length > 0 || completedHabits?.length > 0) && (
+          <TranslatedText
+            body2
+            translationKey="common.completed_tasks"
+            marginB-8
+          />
+        )}
         {completedTasks?.length > 0 && (
-          <>
-            <TranslatedText body1 translationKey="common.completed_tasks" />
-            <Divider margin-4 />
-            <AppList<TaskType>
-              keyExtractor={(i) => i.task_id}
-              data={completedTasks || []}
-              renderItem={renderItem}
-              ListFooterComponent={() => <Divider />}
-              ItemSeparatorComponent={() => <Divider />}
-            />
-          </>
+          <AppList<TaskType>
+            keyExtractor={(i) => i.task_id}
+            data={completedTasks || []}
+            renderItem={renderItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+        )}
+        {completedHabits?.length > 0 && (
+          <AppList<HabitWithStatusType>
+            keyExtractor={(i) => i.habit_id}
+            data={completedHabits || []}
+            renderItem={renderHabitItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
         )}
       </ScrollView>
     </AppScreen>
