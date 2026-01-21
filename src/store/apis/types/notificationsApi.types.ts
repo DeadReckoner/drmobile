@@ -28,8 +28,14 @@ export type FriendRequestData = {
   friendship_id: string;
   requester_id: string;
 };
-export type FriendAcceptedData = { friendship_id: string };
-export type FriendRejectedData = { friendship_id: string };
+export type FriendAcceptedData = {
+  addressee_id: string;
+  friendship_id: string;
+};
+export type FriendRejectedData = {
+  addressee_id: string;
+  friendship_id: string;
+};
 export type AnchorRequestData = {
   request_id: string;
   roadmap_id: string;
@@ -38,7 +44,10 @@ export type AnchorAcceptedData = {
   request_id: string;
   roadmap_id: string;
 };
-export type AnchorRejectedData = { anchor_request_id: string };
+export type AnchorRejectedData = {
+  request_id: string;
+  roadmap_id: string;
+};
 export type MessageNewData = {
   message_id: string;
   thread_id: string;

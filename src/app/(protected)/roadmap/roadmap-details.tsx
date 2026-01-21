@@ -349,7 +349,11 @@ const RoadmapDetailsPage = () => {
           ) : (
             <AppIcon
               set="Ionicons"
-              name={isCurrentAnchor ? 'remove-circle' : 'add-circle'}
+              name={
+                isAnchorAssigned && isCurrentAnchor
+                  ? 'remove-circle'
+                  : 'add-circle'
+              }
               size={24}
             />
           )}

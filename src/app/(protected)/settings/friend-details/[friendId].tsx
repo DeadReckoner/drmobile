@@ -41,6 +41,7 @@ const FriendDetails = () => {
     isLoading,
     error,
   } = useGetFriendProfileQuery(friendId, {
+    skip: !friendId,
     refetchOnMountOrArgChange: true,
   });
 

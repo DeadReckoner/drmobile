@@ -23,6 +23,7 @@ import {
 import {
   AnchorAcceptedData,
   AnchorRequestData,
+  FriendAcceptedData,
   FriendRequestData,
   NotificationType,
 } from '@/store/apis/types/notificationsApi.types';
@@ -199,13 +200,28 @@ const Notifications = () => {
           },
         });
       }
-      if (notification.type === 'anchor_accepted') {
+      if (
+        notification.type === 'anchor_accepted' ||
+        notification.type === 'anchor_rejected'
+      ) {
         router.navigate({
           pathname: '/settings/readonly-roadmap-details',
           params: {
             roadmap: JSON.stringify({
               roadmap_id: (notification.data as AnchorAcceptedData).roadmap_id,
             }),
+          },
+        });
+      }
+
+      if (
+        notification.type === 'friend_accepted' ||
+        notification.type === 'friend_rejected'
+      ) {
+        router.navigate({
+          pathname: '/settings/friend-details/[friendId]',
+          params: {
+            friendId: (notification.data as FriendAcceptedData).addressee_id,
           },
         });
       }
@@ -248,7 +264,10 @@ const Notifications = () => {
       const isClickable =
         type === 'roadmap_complete' ||
         type === 'message_new' ||
-        type === 'anchor_accepted';
+        type === 'anchor_accepted' ||
+        type === 'anchor_rejected' ||
+        type === 'friend_accepted' ||
+        type === 'friend_rejected';
 
       return (
         <AppCard
