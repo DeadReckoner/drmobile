@@ -1,3 +1,4 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppKeyboardController } from '@/components/AppKeyboardController';
@@ -316,7 +317,7 @@ const RoadmapDetailsPage = () => {
       <AppView row centerV flex>
         <AppView row centerV gap-16 flex>
           <AppView style={styles.avatarPlaceholder} center bg-primary>
-            <AppIcon name="user" size={16} color={Colors.secondary} />
+            <AppAvatar />
           </AppView>
           <AppView flex gap-4>
             <AppText body2 textColor>

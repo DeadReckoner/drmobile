@@ -1,3 +1,4 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
@@ -98,9 +99,7 @@ const InviteFriends = () => {
       centerV
       spread
       style={styles.contactCard}>
-      <AppView style={styles.avatar} center backgroundColor={Colors.primary}>
-        <AppIcon set="Feather" name="user" size={16} color={Colors.white} />
-      </AppView>
+      <AppAvatar />
 
       <AppView flex marginL-16>
         <AppText textColor body2 style={styles.contactName}>

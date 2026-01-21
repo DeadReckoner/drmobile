@@ -1,5 +1,5 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppCard } from '@/components/AppCard';
-import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -8,8 +8,6 @@ import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { DateUtils } from '@/utils/date.utils';
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Colors } from 'react-native-ui-lib';
 
 interface ThreadListItemProps {
   thread: ThreadType;
@@ -45,14 +43,7 @@ export const ThreadListItem = ({
     <AppCard paddingV-16 paddingH-16 onPress={() => onThreadClick?.(thread)}>
       <AppView row spread>
         <AppView row centerV gap-12 flex-1>
-          <AppView bg-primary center style={styles.avatar}>
-            <AppIcon
-              set="AntDesign"
-              name="user"
-              size={20}
-              color={Colors.white}
-            />
-          </AppView>
+          <AppAvatar size={20} />
           <AppView flex-1 gap-4>
             <AppText body2 textColor numberOfLines={1}>
               {displayName}
@@ -96,11 +87,3 @@ export const ThreadListItem = ({
     </AppCard>
   );
 };
-
-const styles = StyleSheet.create({
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-});

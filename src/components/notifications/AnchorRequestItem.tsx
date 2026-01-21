@@ -1,6 +1,6 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
-import { AppIcon } from '@/components/AppIcon';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
@@ -36,14 +36,7 @@ export const AnchorRequestItem = ({
   return (
     <AppCard padding-16 paddingV-20 flex>
       <AppView row gap-16 centerV flex>
-        <AppView bg-outline br100 style={styles.avatarPlaceholder} center>
-          <AppIcon
-            set="Feather"
-            name="anchor"
-            size={24}
-            color={Colors.inverseBackground}
-          />
-        </AppView>
+        <AppAvatar size={24} />
 
         <AppView gap-10 flex>
           <AppText body2 textColor style={styles.textContainer}>

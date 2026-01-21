@@ -1,3 +1,4 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
@@ -240,14 +241,7 @@ const FriendDetails = () => {
           <HeaderWithBack marginH-16 marginT-8 />
           <AppView centerH marginT-20>
             {/* <AppImage source={{ uri: friendProfileData?.data.user. }} style={styles.image} /> */}
-            <AppView bg-primary center style={styles.avatar} br100>
-              <AppIcon
-                set="AntDesign"
-                name="user"
-                size={40}
-                color={Colors.white}
-              />
-            </AppView>
+            <AppAvatar size={40} />
             <AppText body1 textColor marginT-18 center>
               {friendNameParam}
             </AppText>
@@ -382,14 +376,7 @@ const FriendDetails = () => {
         contentInsetAdjustmentBehavior="always">
         <HeaderWithBack marginH-16 />
         <AppView centerH marginT-20>
-          <AppView bg-primary center style={styles.avatar} br100>
-            <AppIcon
-              set="AntDesign"
-              name="user"
-              size={40}
-              color={Colors.white}
-            />
-          </AppView>
+          <AppAvatar size={40} />
           <AppText body1 textColor marginT-18 center>
             {friendNameParam}
           </AppText>

@@ -1,4 +1,5 @@
 import { AppActionSheetModal } from '@/components/AppActionSheetModal';
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
@@ -99,14 +100,7 @@ const Settings = () => {
                     style={styles.image}
                   />
                 ) : (
-                  <AppView
-                    bg-primary
-                    br100
-                    padding-20
-                    style={styles.image}
-                    center>
-                    <AppIcon name="user" size={40} color={Colors.white} />
-                  </AppView>
+                  <AppAvatar size={48} />
                 )}
               </AppView>
             </AppButton>
