@@ -1,6 +1,5 @@
 import { AppButton } from '@/components/AppButton';
 import { AppList } from '@/components/AppList';
-import { Divider } from '@/components/Divider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { LegendListRenderItemProps } from '@legendapp/list';
@@ -135,8 +134,7 @@ export const WeekdaySelector = ({
 
   return (
     <AppView>
-      <TranslatedText translationKey="tabs.create_tab.repeats_on" />
-      <Divider />
+      <TranslatedText marginB-8 translationKey="tabs.create_tab.repeats_on" />
       <AppList
         data={labels}
         renderItem={renderItem}

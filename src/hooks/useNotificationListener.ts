@@ -1,5 +1,4 @@
 import { messagesApi } from '@/store/apis/messagesApi';
-import { NotificationEventType } from '@/store/apis/types/notificationsApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { notificationsUtils } from '@/utils/notifications.utils';
 import * as Notifications from 'expo-notifications';
@@ -42,12 +41,9 @@ export const useNotificationListener = () => {
   );
 
   const handleNotificationProcessing = useCallback(
-    (
-      type: NotificationEventType,
-      content: Notifications.NotificationContent,
-    ) => {
+    (content: Notifications.NotificationContent) => {
       const data = content.data;
-      switch (type) {
+      switch (data.type) {
         case 'message_new':
           handleNewMessages(data.thread_id as string, content.body || '');
           break;
@@ -60,10 +56,7 @@ export const useNotificationListener = () => {
   const redirect = useCallback(
     (notification: Notifications.Notification) => {
       const data = notification.request.content.data;
-      handleNotificationProcessing(
-        data.type as NotificationEventType,
-        notification.request.content,
-      );
+      handleNotificationProcessing(notification.request.content);
       switch (data?.type) {
         case 'message_new':
           router.push(`/messages/${data.thread_id}`);
@@ -114,10 +107,7 @@ export const useNotificationListener = () => {
 
     const subscriptionReceived = Notifications.addNotificationReceivedListener(
       (notification) => {
-        handleNotificationProcessing(
-          notification.request.content.data.type as NotificationEventType,
-          notification.request.content,
-        );
+        handleNotificationProcessing(notification.request.content);
         notificationsUtils.updateBadgeCount().catch(() => {});
       },
     );

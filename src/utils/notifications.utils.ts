@@ -101,7 +101,6 @@ const setupNotificationHandler = () => {
       shouldSetBadge: true,
       shouldShowBanner: true,
       shouldShowList: true,
-      shouldShowAlert: true,
     }),
   });
 };

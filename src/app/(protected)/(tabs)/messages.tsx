@@ -16,7 +16,7 @@ import { AppState, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Messages = () => {
-  const { data, isLoading, refetch } = useGetThreadsQuery(undefined);
+  const { data, isLoading, refetch, isUninitialized } = useGetThreadsQuery();
   const dispatch = useAppDispatch();
   const { email: currentUserEmail } = useAppSelector(selectUser);
   const { t } = useLocalization();
@@ -27,7 +27,7 @@ const Messages = () => {
     const appStateSubscription = AppState.addEventListener(
       'change',
       (nextAppState) => {
-        if (nextAppState === 'active') {
+        if (nextAppState === 'active' && !isUninitialized && !isLoading) {
           refetch();
         }
       },
@@ -36,7 +36,7 @@ const Messages = () => {
     return () => {
       appStateSubscription.remove();
     };
-  }, [refetch]);
+  }, [refetch, isLoading, isUninitialized]);
 
   const onRefresh = async () => {
     try {

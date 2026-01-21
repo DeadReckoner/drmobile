@@ -31,15 +31,24 @@ import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
   const { t } = useLocalization();
-  const { data, isLoading, refetch } = useGetUserTasksByStartDateQuery(
+  const [currentDate] = useState(() =>
     DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+  );
+
+  const { data, isLoading, refetch } = useGetUserTasksByStartDateQuery(
+    currentDate,
+    {
+      refetchOnMountOrArgChange: true,
+    },
   );
 
   const {
     data: habitsData,
     isLoading: habitsLoading,
     refetch: refetchHabits,
-  } = useGetTodayHabitsQuery();
+  } = useGetTodayHabitsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const dispatch = useAppDispatch();
