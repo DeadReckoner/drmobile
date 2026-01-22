@@ -33,14 +33,13 @@ const ThreadDetailsScreen = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
 
-  const {
-    data: messages = [],
-    isLoading,
-    isFetching,
-  } = useGetThreadMessagesQuery(threadId || '', {
-    skip: !threadId,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: messages = [], isLoading } = useGetThreadMessagesQuery(
+    threadId || '',
+    {
+      skip: !threadId,
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
   const { sendMessage, isConnected } = useChatWebSocket({
     threadId: threadId || '',
@@ -181,7 +180,7 @@ const ThreadDetailsScreen = () => {
               ListEmptyComponent={renderEmptyComponent}
             />
             <MessageComposer
-              isLoading={isLoading || isFetching}
+              isLoading={!isConnected || isLoading}
               onSend={handleSendMessage}
               disabled={!isConnected}
             />

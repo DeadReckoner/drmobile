@@ -59,10 +59,17 @@ export const useNotificationListener = () => {
       handleNotificationProcessing(notification.request.content);
       switch (data?.type) {
         case 'message_new':
-          router.push(`/messages/${data.thread_id}`);
+          router.navigate({
+            pathname: `/messages/[threadId]`,
+            params: {
+              threadId: data.thread_id as string,
+              threadUserId: data.sender_id as string,
+              threadName: notification.request.content.title || ' ',
+            },
+          });
           break;
         default:
-          router.push('/notifications');
+          router.navigate('/notifications');
       }
 
       (async () => {

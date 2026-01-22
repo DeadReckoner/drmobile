@@ -70,12 +70,12 @@ export const useChatWebSocket = ({
         messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
           if (!draft) return;
 
-          const threadToUpdate = draft.find(
+          const threadToUpdate = draft.findIndex(
             (thread) => thread.thread_id === threadId,
           );
 
-          if (threadToUpdate) {
-            threadToUpdate.LastMessage = {
+          if (threadToUpdate !== -1) {
+            draft[threadToUpdate].LastMessage = {
               ...message,
               updated_at: message.created_at,
               deleted_at: null,
@@ -103,7 +103,7 @@ export const useChatWebSocket = ({
         user_id: user.id,
         content: content.trim(),
         created_at: new Date().toISOString(),
-        updated_at: null,
+        updated_at: new Date().toISOString(),
         deleted_at: null,
       };
 

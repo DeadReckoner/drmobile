@@ -65,7 +65,7 @@ export const ThreadListItem = ({
         <AppView marginT-4 gap-6>
           <AppText sm textColor>
             {DateUtils.formatRelativeTime(
-              thread.LastMessage?.created_at || thread.created_at,
+              thread.LastMessage?.updated_at || thread.updated_at,
             )}
           </AppText>
           {thread?.LastMessage?.user_id !== currentUserId &&
