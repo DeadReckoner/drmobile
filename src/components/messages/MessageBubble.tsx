@@ -1,24 +1,37 @@
+import { AppIcon } from '@/components/AppIcon';
 import { AppText, AppView } from '@/components/ui';
 import { MessageType } from '@/store/apis/types/messagesApi.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { DateUtils } from '@/utils/date.utils';
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 interface MessageBubbleProps {
   message: MessageType;
+  onRetry?: (_messageId: string) => void;
 }
 
-export const MessageBubble = ({ message }: MessageBubbleProps) => {
+export const MessageBubble = ({ message, onRetry }: MessageBubbleProps) => {
   const { id: currentUserId } = useAppSelector(selectUser);
   const isCurrentUser = message.user_id === currentUserId;
+  const isPending = message.isPending;
+  const hasError = !!message.error;
 
   const formattedTime = DateUtils.formatDate(
     DateUtils.createDate(message.created_at),
     'h:mm A',
   );
+
+  const handleRetry = () => {
+    if (hasError && onRetry) {
+      onRetry(message.message_id);
+    }
+  };
+
+  const BubbleWrapper = hasError ? TouchableOpacity : AppView;
+  const bubbleWrapperProps = hasError ? { onPress: handleRetry } : {};
 
   return (
     <AppView
@@ -27,11 +40,12 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
         isCurrentUser ? styles.currentUserMessage : styles.otherUserMessage,
       ]}
       marginB-4>
-      <AppView
+      <BubbleWrapper
+        {...bubbleWrapperProps}
         style={[
           styles.messageBubble,
           isCurrentUser
-            ? { backgroundColor: Colors.accent }
+            ? { backgroundColor: hasError ? Colors.$iconDanger : Colors.accent }
             : { backgroundColor: Colors.lightCardBG },
         ]}
         padding-8>
@@ -45,7 +59,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
           }>
           {message.content}
         </AppText>
-        <AppView marginT-4 style={{ alignSelf: 'flex-end' }}>
+        <AppView row marginT-4 style={{ alignSelf: 'flex-end' }} centerV gap-4>
           <AppText
             sm
             regular
@@ -57,8 +71,28 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
             ]}>
             {formattedTime}
           </AppText>
+          {isCurrentUser && (
+            <>
+              {hasError && (
+                <AppIcon
+                  name="alert-circle"
+                  set="Feather"
+                  size={12}
+                  color={Colors.textOnPrimary}
+                />
+              )}
+              {!isPending && !hasError && (
+                <AppIcon
+                  name="check"
+                  set="Feather"
+                  size={12}
+                  color={Colors.textOnPrimary}
+                />
+              )}
+            </>
+          )}
         </AppView>
-      </AppView>
+      </BubbleWrapper>
     </AppView>
   );
 };
