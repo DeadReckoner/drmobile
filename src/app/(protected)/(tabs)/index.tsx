@@ -24,7 +24,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
-import { router } from 'expo-router';
+import { router, Tabs } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
@@ -96,7 +96,7 @@ const Today = () => {
   );
 
   const nonCompletedHabits = useMemo(
-    () => habitsData?.filter((habit) => !habit.is_completed),
+    () => habitsData?.filter((habit) => !habit.is_completed) || [],
     [habitsData],
   );
 
@@ -211,6 +211,18 @@ const Today = () => {
 
   return (
     <AppScreen>
+      <Tabs.Screen
+        options={{
+          tabBarIcon: ({ color }) => (
+            <AppView>
+              <AppIcon size={28} name="home" color={color} />
+              {nonCompletedHabits.length > 0 && (
+                <AppView style={styles.customBadge} />
+              )}
+            </AppView>
+          ),
+        }}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always"
@@ -316,4 +328,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   habitChipContainer: { alignSelf: 'flex-start' },
+  customBadge: {
+    position: 'absolute',
+    right: -2,
+    top: 0,
+    width: 12,
+    height: 12,
+    borderRadius: 9,
+    backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
