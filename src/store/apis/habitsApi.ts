@@ -36,11 +36,8 @@ const onCreateHabitStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
-    dispatch(
-      habitsApi.endpoints.getTodayHabits.initiate(undefined, {
-        forceRefetch: true,
-      }),
-    );
+    // Invalidate today's habits to refetch with the new habit
+    dispatch(habitsApi.util.invalidateTags([{ type: 'Habits', id: 'TODAY' }]));
   } catch {}
 };
 
@@ -67,18 +64,9 @@ const onUpdateHabitQueryStarted: TypedMutationOnQueryStarted<
     dispatch(
       habitsApi.util.updateQueryData('getHabit', habit_id, () => updatedHabit),
     );
-    dispatch(
-      habitsApi.util.updateQueryData(
-        'getTodayHabits',
-        undefined,
-        (draft: GetTodayHabitsResponseType) => {
-          const index = draft.findIndex((habit) => habit.habit_id === habit_id);
-          if (index !== -1) {
-            draft[index] = updatedHabit;
-          }
-        },
-      ),
-    );
+
+    // Invalidate today's habits to refetch with updated habit
+    dispatch(habitsApi.util.invalidateTags([{ type: 'Habits', id: 'TODAY' }]));
   } catch {}
 };
 
@@ -101,18 +89,9 @@ const onDeleteHabitQueryStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
-    dispatch(
-      habitsApi.util.updateQueryData(
-        'getTodayHabits',
-        undefined,
-        (draft: GetTodayHabitsResponseType) => {
-          const index = draft.findIndex((habit) => habit.habit_id === habitId);
-          if (index !== -1) {
-            draft.splice(index, 1);
-          }
-        },
-      ),
-    );
+
+    // Invalidate today's habits to refetch without deleted habit
+    dispatch(habitsApi.util.invalidateTags([{ type: 'Habits', id: 'TODAY' }]));
   } catch {}
 };
 
@@ -135,18 +114,9 @@ const onArchiveHabitQueryStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
-    dispatch(
-      habitsApi.util.updateQueryData(
-        'getTodayHabits',
-        undefined,
-        (draft: GetTodayHabitsResponseType) => {
-          const index = draft.findIndex((habit) => habit.habit_id === habitId);
-          if (index !== -1) {
-            draft.splice(index, 1);
-          }
-        },
-      ),
-    );
+
+    // Invalidate today's habits to refetch without archived habit
+    dispatch(habitsApi.util.invalidateTags([{ type: 'Habits', id: 'TODAY' }]));
   } catch {}
 };
 
@@ -157,23 +127,13 @@ const onCompleteHabitQueryStarted: TypedMutationOnQueryStarted<
 > = async ({ habit_id, date }, { dispatch, queryFulfilled }) => {
   try {
     await queryFulfilled;
-    dispatch(
-      habitsApi.util.updateQueryData(
-        'getTodayHabits',
-        undefined,
-        (draft: GetTodayHabitsResponseType) => {
-          const habit = draft.find((h) => h.habit_id === habit_id);
-          if (habit) {
-            habit.is_completed = true;
-          }
-        },
-      ),
-    );
 
+    // Invalidate tags to refetch fresh data
     dispatch(
       habitsApi.util.invalidateTags([
         { type: 'Habits', id: habit_id },
         { type: 'Habits', id: 'LIST' },
+        { type: 'Habits', id: 'TODAY' }, // Force refetch of today's habits
         { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
         { type: 'Habits', id: `STATS-${habit_id}` },
         ...(date ? [{ type: 'Habits' as const, id: `DATE-${date}` }] : []),
@@ -189,22 +149,13 @@ const onUncompleteHabitQueryStarted: TypedMutationOnQueryStarted<
 > = async ({ habit_id, date }, { dispatch, queryFulfilled }) => {
   try {
     await queryFulfilled;
-    dispatch(
-      habitsApi.util.updateQueryData(
-        'getTodayHabits',
-        undefined,
-        (draft: GetTodayHabitsResponseType) => {
-          const habit = draft.find((h) => h.habit_id === habit_id);
-          if (habit) {
-            habit.is_completed = false;
-          }
-        },
-      ),
-    );
+
+    // Invalidate tags to refetch fresh data
     dispatch(
       habitsApi.util.invalidateTags([
         { type: 'Habits', id: habit_id },
         { type: 'Habits', id: 'LIST' },
+        { type: 'Habits', id: 'TODAY' }, // Force refetch of today's habits
         { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
         { type: 'Habits', id: `STATS-${habit_id}` },
         ...(date ? [{ type: 'Habits' as const, id: `DATE-${date}` }] : []),
@@ -246,7 +197,7 @@ export const habitsApi = api.injectEndpoints({
 
     getTodayHabits: builder.query<GetTodayHabitsResponseType, void>({
       query: () => '/habits/today',
-      keepUnusedDataFor: 3600,
+      keepUnusedDataFor: 60, // Reduce cache time to prevent stale data across days
       providesTags: (result) =>
         result
           ? [
