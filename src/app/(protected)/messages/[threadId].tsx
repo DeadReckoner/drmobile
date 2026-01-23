@@ -118,7 +118,6 @@ const ThreadDetailsScreen = () => {
         isPending: true,
       };
 
-      // Add to cache immediately (optimistic update)
       dispatch(
         messagesApi.util.updateQueryData(
           'getThreadMessages',
