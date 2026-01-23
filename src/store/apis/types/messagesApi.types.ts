@@ -25,6 +25,8 @@ export type MessageType = {
   created_at: string;
   updated_at: string | null;
   deleted_at: string | null;
+  isPending?: boolean;
+  error?: string;
 };
 
 export type GetThreadsResponseType = ThreadType[];

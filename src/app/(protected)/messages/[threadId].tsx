@@ -16,7 +16,8 @@ import {
   useGetThreadMessagesQuery,
 } from '@/store/apis/messagesApi';
 import { MessageType } from '@/store/apis/types/messagesApi.types';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo } from 'react';
@@ -32,6 +33,7 @@ const ThreadDetailsScreen = () => {
   }>();
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
 
   const { data: messages = [], isLoading } = useGetThreadMessagesQuery(
     threadId || '',
@@ -41,7 +43,7 @@ const ThreadDetailsScreen = () => {
     },
   );
 
-  const { sendMessage, isConnected } = useChatWebSocket({
+  const { wsSendMessage, isConnected, retryMessage } = useChatWebSocket({
     threadId: threadId || '',
     enabled: !!threadId,
   });
@@ -100,15 +102,46 @@ const ThreadDetailsScreen = () => {
     return items;
   }, [messages]);
 
-  const handleSendMessage = (messageText: string) => {
-    sendMessage(messageText);
-  };
+  const handleSendMessage = useCallback(
+    (messageText: string) => {
+      if (!messageText?.trim() || !user?.id || !threadId) return;
+
+      const tempId = `temp-${Date.now()}-${Math.random()}`;
+      const optimisticMessage: MessageType = {
+        message_id: tempId,
+        thread_id: threadId,
+        user_id: user.id,
+        content: messageText.trim(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        deleted_at: null,
+        isPending: true,
+      };
+
+      dispatch(
+        messagesApi.util.updateQueryData(
+          'getThreadMessages',
+          threadId,
+          (draft) => {
+            if (draft && Array.isArray(draft)) {
+              draft.push(optimisticMessage);
+            } else {
+              return [optimisticMessage];
+            }
+          },
+        ),
+      );
+
+      wsSendMessage(messageText.trim(), tempId);
+    },
+    [dispatch, threadId, user?.id, wsSendMessage],
+  );
 
   const renderItem = ({ item }: { item: MessageListItem }) => {
     if (item.type === 'dateSeparator') {
       return <MessageDateSeparator date={item.date} />;
     }
-    return <MessageBubble message={item.data} />;
+    return <MessageBubble message={item.data} onRetry={retryMessage} />;
   };
 
   const handleRoadmapClick = () => {
@@ -180,7 +213,7 @@ const ThreadDetailsScreen = () => {
               ListEmptyComponent={renderEmptyComponent}
             />
             <MessageComposer
-              isLoading={!isConnected || isLoading}
+              isLoading={isLoading || !isConnected}
               onSend={handleSendMessage}
               disabled={!isConnected}
             />
