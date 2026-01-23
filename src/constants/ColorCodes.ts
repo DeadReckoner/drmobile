@@ -10,6 +10,7 @@ export const LightColorCodes = {
   success: '#3BAF66',
   warning: '#e5bb00',
   blue: '#4A90E2',
+  accent: '#7393B3',
 
   screenBG: '#FFFFFF',
   cardBG: '#f7f7f7ff',
@@ -43,6 +44,7 @@ export const DarkColorCodes = {
   warning: '#C1A700',
 
   blue: '#4A90E2',
+  accent: '#7393B3',
 
   screenBG: '#121414',
   cardBG: '#191C1E',

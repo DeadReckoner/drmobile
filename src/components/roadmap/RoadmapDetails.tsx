@@ -42,7 +42,7 @@ export const RoadmapDetails = ({
     dispatch(setSelectedTaskAction({ task, index }));
     router.navigate({
       pathname: '/task/add-edit-task',
-      params: { mode: 'edit' },
+      params: { mode: readonly ? 'view' : 'edit' },
     });
   };
 
@@ -55,7 +55,6 @@ export const RoadmapDetails = ({
       />
       <Divider marginT-16 />
       <TranslatedText body1 marginB-16 translationKey="common.milestones" />
-      <Divider marginT-4 />
       <MilestonesList
         milestones={roadmap?.milestones || []}
         onAddNewMilestonePress={handleOnAddNewMilestone}

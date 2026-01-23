@@ -1,21 +1,21 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
-import { AppIcon } from '@/components/AppIcon';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { AnchorRequest } from '@/hooks/friends/types/friends.types';
-import { useLocalization } from '@/hooks/useLocalization';
+import { AnchorRequestData } from '@/store/apis/types/notificationsApi.types';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 interface AnchorRequestItemProps {
-  notification: AnchorRequest;
+  notification: AnchorRequestData;
   onAccept: (_requestId: string) => void;
   onReject: (_requestId: string) => void;
   isAccepting: boolean;
   isRejecting: boolean;
+  description?: string;
 }
 
 export const AnchorRequestItem = ({
@@ -24,33 +24,17 @@ export const AnchorRequestItem = ({
   onReject,
   isAccepting,
   isRejecting,
+  description,
 }: AnchorRequestItemProps) => {
-  const { t } = useLocalization();
-  const requesterName = notification.requester
-    ? `${notification.requester.first_name} ${notification.requester.last_name}`.trim()
-    : t('common.unknown_user');
-
-  const roadmapGoal = notification.roadmap?.goal || t('common.unknown_roadmap');
   const isLoading = isAccepting || isRejecting;
 
   return (
     <AppCard padding-16 paddingV-20 flex>
       <AppView row gap-16 centerV flex>
-        <AppView bg-outline br100 style={styles.avatarPlaceholder} center>
-          <AppIcon
-            set="Feather"
-            name="anchor"
-            size={24}
-            color={Colors.inverseBackground}
-          />
-        </AppView>
-
+        <AppAvatar size={20} />
         <AppView gap-10 flex>
           <AppText body2 textColor style={styles.textContainer}>
-            {requesterName}{' '}
-            <AppText body2 textColor light>
-              {t('notifications.anchor_request_message', { goal: roadmapGoal })}
-            </AppText>
+            {description}
           </AppText>
           <AppView row gap-8>
             <AppButton

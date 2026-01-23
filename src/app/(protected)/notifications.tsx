@@ -4,16 +4,13 @@ import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
-import { Loader } from '@/components/Loader';
 import { AnchorRequestItem } from '@/components/notifications/AnchorRequestItem';
 import { FriendRequestItem } from '@/components/notifications/FriendRequestItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { AnchorRequest, Friendship } from '@/hooks/friends/types/friends.types';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
 import {
   useAcceptAnchorRequestMutation,
-  useGetMyAnchorRequestsQuery,
   useRejectAnchorRequestMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -21,34 +18,27 @@ import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useToast } from '@/hooks/useToast';
 import {
   useAcceptFriendRequestMutation,
-  useGetPendingFriendRequestsQuery,
   useRejectFriendRequestMutation,
 } from '@/store/apis/friendsApi';
-import { NotificationType } from '@/store/apis/types/notificationsApi.types';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import { selectUser } from '@/store/slices/authSlice';
+import {
+  AnchorAcceptedData,
+  AnchorRequestData,
+  FriendAcceptedData,
+  FriendRequestData,
+  NotificationType,
+} from '@/store/apis/types/notificationsApi.types';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Linking, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
-interface NotificationItem {
-  id: string;
-  type:
-    | 'friend_request'
-    | 'anchor_request'
-    | 'notification'
-    | 'roadmap_complete';
-  data: Friendship | AnchorRequest | NotificationType | { roadmap_id: string };
-}
-
 const Notifications = () => {
   const { t } = useLocalization();
   const { showToast } = useToast();
-  const currentUser = useAppSelector(selectUser);
   const [processingIds, setProcessingIds] = useState<{
     [key: string]: 'accept' | 'cancel';
   }>({});
@@ -59,71 +49,12 @@ const Notifications = () => {
       refetchOnMountOrArgChange: true,
     });
 
-  const {
-    data: pendingRequestsData,
-    isLoading,
-    refetch: refetchPendingFriendRequests,
-  } = useGetPendingFriendRequestsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
-
-  const {
-    data: anchorRequestsData,
-    isLoading: isLoadingAnchorRequests,
-    refetch: refetchAnchorRequests,
-  } = useGetMyAnchorRequestsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
-
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
   const [acceptFriendRequest] = useAcceptFriendRequestMutation();
   const [rejectFriendRequest] = useRejectFriendRequestMutation();
   const [acceptAnchorRequest] = useAcceptAnchorRequestMutation();
   const [rejectAnchorRequest] = useRejectAnchorRequestMutation();
-
-  const friendRequests = useMemo<Friendship[]>(() => {
-    if (!pendingRequestsData || !currentUser) return [];
-    return pendingRequestsData.filter(
-      (friendship) =>
-        friendship.status === 'pending' &&
-        friendship.requester_id !== currentUser.id,
-    );
-  }, [pendingRequestsData, currentUser]);
-
-  const notificationsList = useMemo<NotificationItem[]>(() => {
-    const items: NotificationItem[] = [];
-
-    friendRequests.forEach((request) => {
-      items.push({
-        id: `friend_request_${request.id}`,
-        type: 'friend_request',
-        data: request,
-      });
-    });
-
-    if (anchorRequestsData && Array.isArray(anchorRequestsData)) {
-      anchorRequestsData.forEach((request: AnchorRequest) => {
-        items.push({
-          id: `anchor_request_${request.request_id}`,
-          type: 'anchor_request',
-          data: request,
-        });
-      });
-    }
-
-    if (notifications && Array.isArray(notifications)) {
-      notifications.forEach((notification: NotificationType) => {
-        items.push({
-          id: `notification_${notification.notification_id}`,
-          type: 'notification',
-          data: notification,
-        });
-      });
-    }
-
-    return items;
-  }, [friendRequests, anchorRequestsData, notifications]);
 
   const handleAccept = useCallback(
     async (friendshipId: string) => {
@@ -189,6 +120,7 @@ const Notifications = () => {
           message: t('common.something_went_wrong'),
           type: 'failure',
         });
+      } finally {
         setProcessingIds((prev) => {
           const newState = { ...prev };
           delete newState[requestId];
@@ -213,6 +145,7 @@ const Notifications = () => {
           message: t('common.something_went_wrong'),
           type: 'failure',
         });
+      } finally {
         setProcessingIds((prev) => {
           const newState = { ...prev };
           delete newState[requestId];
@@ -223,30 +156,25 @@ const Notifications = () => {
     [rejectAnchorRequest, showToast, t],
   );
 
-  const keyExtractor = useCallback((item: NotificationItem) => item.id, []);
+  const keyExtractor = useCallback(
+    (item: NotificationType) => item.notification_id,
+    [],
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.allSettled([
-        refetchNotifications(),
-        refetchPendingFriendRequests(),
-        refetchAnchorRequests(),
-      ]);
+      await Promise.allSettled([refetchNotifications()]);
     } catch {
     } finally {
       setRefreshing(false);
     }
-  }, [
-    refetchNotifications,
-    refetchPendingFriendRequests,
-    refetchAnchorRequests,
-  ]);
+  }, [refetchNotifications]);
 
   const onNotificationPress = useCallback(
     (notification: NotificationType) => {
       if (notification.type === 'roadmap_complete') {
-        const notificationData = notification.data as { roadmap_id: string };
+        const notificationData = notification.data;
         dispatch(
           setDraftRoadmapAction({
             roadmap_id: notificationData.roadmap_id,
@@ -261,15 +189,52 @@ const Notifications = () => {
         );
         router.navigate('/roadmap/roadmap-details');
       }
+
+      if (notification.type === 'message_new') {
+        router.navigate({
+          pathname: `/messages/[threadId]`,
+          params: {
+            threadId: notification.data?.thread_id,
+            threadName: notification.title,
+            threadUserId: notification.data?.sender_id,
+          },
+        });
+      }
+      if (
+        notification.type === 'anchor_accepted' ||
+        notification.type === 'anchor_rejected'
+      ) {
+        router.navigate({
+          pathname: '/settings/readonly-roadmap-details',
+          params: {
+            roadmap: JSON.stringify({
+              roadmap_id: (notification.data as AnchorAcceptedData).roadmap_id,
+            }),
+          },
+        });
+      }
+
+      if (
+        notification.type === 'friend_accepted' ||
+        notification.type === 'friend_rejected'
+      ) {
+        router.navigate({
+          pathname: '/settings/friend-details/[friendId]',
+          params: {
+            friendId: (notification.data as FriendAcceptedData).addressee_id,
+          },
+        });
+      }
     },
     [dispatch],
   );
 
   const renderFriendRequestItem = useCallback(
-    ({ item }: { item: NotificationItem }) => {
-      if (item.type === 'friend_request') {
-        const friendship = item.data as Friendship;
-        const processingState = processingIds[friendship.id];
+    ({ item }: { item: NotificationType }) => {
+      const type = item.type;
+      if (type === 'friend_request') {
+        const friendship = item.data as FriendRequestData;
+        const processingState = processingIds[friendship.friendship_id];
         return (
           <FriendRequestItem
             notification={friendship}
@@ -277,15 +242,17 @@ const Notifications = () => {
             onCancel={handleCancel}
             isAccepting={processingState === 'accept'}
             isCancelling={processingState === 'cancel'}
+            description={item.body}
           />
         );
       }
 
-      if (item.type === 'anchor_request') {
-        const anchorRequest = item.data as AnchorRequest;
+      if (type === 'anchor_request') {
+        const anchorRequest = item.data as AnchorRequestData;
         const processingState = processingIds[anchorRequest.request_id];
         return (
           <AnchorRequestItem
+            description={item.body}
             notification={anchorRequest}
             onAccept={handleAcceptAnchor}
             onReject={handleRejectAnchor}
@@ -294,20 +261,28 @@ const Notifications = () => {
           />
         );
       }
+      const isClickable =
+        type === 'roadmap_complete' ||
+        type === 'message_new' ||
+        type === 'anchor_accepted' ||
+        type === 'anchor_rejected' ||
+        type === 'friend_accepted' ||
+        type === 'friend_rejected';
 
-      const notification = item.data as NotificationType;
       return (
-        <AppCard padding-16 onPress={() => onNotificationPress(notification)}>
+        <AppCard
+          padding-16
+          onPress={isClickable ? () => onNotificationPress(item) : undefined}>
           <AppView row gap-12 centerV>
-            <AppView bg-outline br100 style={styles.iconContainer} center>
+            <AppView bg-accent br100 style={styles.iconContainer} center>
               <AppIcon name="notification" size={20} color={Colors.textColor} />
             </AppView>
             <AppView flex>
               <AppText textColor body2 medium marginB-4>
-                {notification.title}
+                {item.title}
               </AppText>
               <AppText textColor caption secondary>
-                {notification.body}
+                {item.body}
               </AppText>
             </AppView>
           </AppView>
@@ -341,14 +316,6 @@ const Notifications = () => {
   }, [permissionStatus, requestPermissions, showToast, t]);
 
   const renderEmptyComponent = () => {
-    if (isLoading || isLoadingAnchorRequests) {
-      return (
-        <AppView style={styles.emptyContainer}>
-          <Loader transparent />
-        </AppView>
-      );
-    }
-
     return (
       <AppView style={styles.emptyContainer}>
         <AppIcon name="notification" size={48} color={Colors.secondary} />
@@ -410,7 +377,7 @@ const Notifications = () => {
         )}
       </AppView>
       <Animated.FlatList
-        data={notificationsList}
+        data={notifications || []}
         contentInsetAdjustmentBehavior="always"
         renderItem={renderFriendRequestItem}
         keyExtractor={keyExtractor}

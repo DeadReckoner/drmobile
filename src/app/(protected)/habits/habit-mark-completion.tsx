@@ -6,6 +6,7 @@ import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
+import { WeekdaySelector } from '@/components/WeekdaySelector';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import {
@@ -71,21 +72,6 @@ const HabitMarkCompletion = () => {
     }
   };
 
-  const getDaysOfWeekText = (bitmask?: number) => {
-    if (!bitmask) return '';
-
-    const days = [];
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-    for (let i = 0; i < 7; i++) {
-      if (bitmask & (1 << i)) {
-        days.push(dayNames[i]);
-      }
-    }
-
-    return days.join(', ');
-  };
-
   if (error || (!isLoading && !habit)) {
     return (
       <AppScreen safeArea>
@@ -117,7 +103,7 @@ const HabitMarkCompletion = () => {
                   {habit?.title}
                 </AppText>
                 <AppView row centerV>
-                  <AppView bg-primary paddingH-10 paddingV-4 br100>
+                  <AppView bg-accent paddingH-10 paddingV-4 br100>
                     <AppText
                       textColor
                       xsm
@@ -140,10 +126,10 @@ const HabitMarkCompletion = () => {
               )}
 
               {habit?.recurrence_type === 'weekly' && habit?.days_of_week && (
-                <HabitInfoItem
-                  translationKey="habits.weekly_days_label"
-                  value={getDaysOfWeekText(habit.days_of_week)}
-                />
+                <>
+                  <WeekdaySelector disabled value={habit.days_of_week} />
+                  <Divider />
+                </>
               )}
 
               {habit?.recurrence_type === 'monthly' && habit?.day_of_month && (

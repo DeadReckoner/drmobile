@@ -339,7 +339,7 @@
     "days": "Días",
     "is_required": "es obligatorio",
     "is_invalid": "no es válido!",
-    "completed_tasks": "Tareas Completadas",
+    "completed_tasks": "Tareas Completadas/Hábitos",
     "deleted_successfully": "Eliminado con éxito",
     "updated_successfully": "Actualizado con éxito",
     "created_successfully": "Creado con éxito",
@@ -384,7 +384,9 @@
     "send_message_error": "Error al enviar mensaje. Por favor, inténtalo de nuevo.",
     "conversation_with": "Conversación con",
     "no_shared_roadmaps": "Sin Hojas de Ruta Compartidas",
-    "no_shared_roadmaps_description": "Este usuario aún no ha compartido ninguna hoja de ruta contigo."
+    "no_shared_roadmaps_description": "Este usuario aún no ha compartido ninguna hoja de ruta contigo.",
+    "today": "Hoy",
+    "yesterday": "Ayer"
   },
   "feedback": {
     "title": "Retroalimentación",

@@ -7,6 +7,31 @@ import {
   UserSearchResult,
 } from '@/hooks/friends/types/friends.types';
 import { api } from '@/store/apis/api';
+import { notificationApi } from '@/store/apis/notificationsApi';
+
+const removeFromNotifications = (dispatch: any, friendshipId: string) => {
+  dispatch(
+    notificationApi.util.updateQueryData(
+      'getNotifications',
+      undefined,
+      (draft) => {
+        const index = draft.findIndex(
+          (n) =>
+            n.type === 'friend_request' &&
+            n.data.friendship_id === friendshipId,
+        );
+        if (index === -1) return;
+        //TODO: re-enable marking as read if backend needs it to remove it from list
+        // dispatch(
+        //   notificationApi.endpoints.markNotificationAsRead.initiate(
+        //     draft[index].notification_id,
+        //   ),
+        // );
+        draft.splice(index, 1);
+      },
+    ),
+  );
+};
 
 export const friendsApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -105,6 +130,7 @@ export const friendsApi = api.injectEndpoints({
               },
             ),
           );
+          removeFromNotifications(dispatch, friendshipId);
         } catch {}
       },
     }),
@@ -132,6 +158,7 @@ export const friendsApi = api.injectEndpoints({
               },
             ),
           );
+          removeFromNotifications(dispatch, friendshipId);
         } catch {}
       },
     }),

@@ -24,25 +24,34 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
-import { router } from 'expo-router';
+import { router, Tabs } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
   const { t } = useLocalization();
-  const { data, isLoading, refetch } = useGetUserTasksByStartDateQuery(
+  const [currentDate] = useState(() =>
     DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+  );
+
+  const { data, isLoading, refetch } = useGetUserTasksByStartDateQuery(
+    currentDate,
+    {
+      refetchOnMountOrArgChange: true,
+    },
   );
 
   const {
     data: habitsData,
     isLoading: habitsLoading,
     refetch: refetchHabits,
-  } = useGetTodayHabitsQuery(undefined, {
-    // Refetch if 60 seconds have passed since last fetch to ensure fresh data across days
-    refetchOnMountOrArgChange: 60,
-  });
+  } = useGetTodayHabitsQuery(
+    DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const dispatch = useAppDispatch();
@@ -84,6 +93,16 @@ const Today = () => {
     () =>
       data?.filter((task) => task.steps?.every((step) => step.completed)) || [],
     [data],
+  );
+
+  const nonCompletedHabits = useMemo(
+    () => habitsData?.filter((habit) => !habit.is_completed) || [],
+    [habitsData],
+  );
+
+  const completedHabits = useMemo(
+    () => habitsData?.filter((habit) => habit.is_completed) || [],
+    [habitsData],
   );
 
   const handleRefresh = async () => {
@@ -158,7 +177,7 @@ const Today = () => {
             {
               backgroundColor: item.is_completed
                 ? Colors.success
-                : Colors.secondary,
+                : Colors.primary,
             },
           ]}
         />
@@ -168,7 +187,7 @@ const Today = () => {
               {item.title}
             </AppText>
             <AppView
-              bg-primary
+              bg-accent
               paddingH-8
               paddingV-4
               br100
@@ -192,6 +211,18 @@ const Today = () => {
 
   return (
     <AppScreen>
+      <Tabs.Screen
+        options={{
+          tabBarIcon: ({ color }) => (
+            <AppView>
+              <AppIcon size={28} name="home" color={color} />
+              {nonCompletedHabits.length > 0 && (
+                <AppView style={styles.customBadge} />
+              )}
+            </AppView>
+          ),
+        }}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always"
@@ -237,7 +268,7 @@ const Today = () => {
           exiting={Animations.Exit.FadeOutDown()}>
           <AppList<HabitWithStatusType>
             keyExtractor={(i) => i.habit_id}
-            data={habitsData || []}
+            data={nonCompletedHabits || []}
             renderItem={renderHabitItem}
             ListFooterComponent={() => <Divider />}
             ItemSeparatorComponent={() => <Divider />}
@@ -252,23 +283,33 @@ const Today = () => {
             keyExtractor={(i) => i.task_id}
             data={nonCompletedTasks || []}
             renderItem={renderItem}
-            ListFooterComponent={() => <Divider />}
             ItemSeparatorComponent={() => <Divider />}
           />
         </AppView>
-        <Divider margin-4 />
+        {(completedTasks?.length > 0 || completedHabits?.length > 0) && (
+          <TranslatedText
+            body2
+            translationKey="common.completed_tasks"
+            marginB-8
+          />
+        )}
         {completedTasks?.length > 0 && (
-          <>
-            <TranslatedText body1 translationKey="common.completed_tasks" />
-            <Divider margin-4 />
-            <AppList<TaskType>
-              keyExtractor={(i) => i.task_id}
-              data={completedTasks || []}
-              renderItem={renderItem}
-              ListFooterComponent={() => <Divider />}
-              ItemSeparatorComponent={() => <Divider />}
-            />
-          </>
+          <AppList<TaskType>
+            keyExtractor={(i) => i.task_id}
+            data={completedTasks || []}
+            renderItem={renderItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
+        )}
+        {completedHabits?.length > 0 && (
+          <AppList<HabitWithStatusType>
+            keyExtractor={(i) => i.habit_id}
+            data={completedHabits || []}
+            renderItem={renderHabitItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+          />
         )}
       </ScrollView>
     </AppScreen>
@@ -287,4 +328,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   habitChipContainer: { alignSelf: 'flex-start' },
+  customBadge: {
+    position: 'absolute',
+    right: -2,
+    top: 0,
+    width: 12,
+    height: 12,
+    borderRadius: 9,
+    backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

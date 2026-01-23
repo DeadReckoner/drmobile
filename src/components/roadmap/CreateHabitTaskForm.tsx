@@ -4,6 +4,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
+import { WeekdaySelector } from '@/components/WeekdaySelector';
 import { AppText, AppTouchableOpacity, AppView } from '@/components/ui';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useStandaloneTaskForm } from '@/hooks/roadmap/useStandaloneTaskForm';
@@ -27,7 +28,6 @@ export const CreateHabitTaskForm = ({
   const { showToast } = useToast();
   const { t } = useLocalization();
   const [isFrequencyModalOpen, setIsFrequencyModalOpen] = useState(false);
-  const [isDaysModalOpen, setIsDaysModalOpen] = useState(false);
 
   const onFormSuccess = () => {
     showToast({
@@ -96,52 +96,6 @@ export const CreateHabitTaskForm = ({
     return selected?.label || t('habits.select_recurrence');
   };
 
-  const weeklyDaysOptions = [
-    {
-      label: t('habits.days_option.weekdays'),
-      value: 62, // Mon-Fri (2+4+8+16+32)
-      icon: (
-        <AppIcon
-          set="Ionicons"
-          name="briefcase-outline"
-          size={16}
-          color={Colors.primary}
-        />
-      ),
-    },
-    {
-      label: t('habits.days_option.weekend'),
-      value: 65, // Sat-Sun (1+64)
-      icon: (
-        <AppIcon
-          set="Ionicons"
-          name="sunny-outline"
-          size={16}
-          color={Colors.primary}
-        />
-      ),
-    },
-    {
-      label: t('habits.days_option.everyday'),
-      value: 127, // All days (1+2+4+8+16+32+64)
-      icon: (
-        <AppIcon
-          set="Ionicons"
-          name="calendar"
-          size={16}
-          color={Colors.primary}
-        />
-      ),
-    },
-  ];
-
-  const getDaysLabel = () => {
-    const selected = weeklyDaysOptions.find(
-      (opt) => opt.value === values.daysOfWeek,
-    );
-    return selected?.label || t('habits.select_days');
-  };
-
   return (
     <AppView>
       <TranslatedTextInput
@@ -163,7 +117,6 @@ export const CreateHabitTaskForm = ({
         multiline
       />
 
-      {/* Recurrence Type Selector */}
       <AppView marginB-16>
         <AppText body2 textColor marginB-8>
           {t('habits.recurrence_label')}
@@ -191,28 +144,13 @@ export const CreateHabitTaskForm = ({
         )}
       </AppView>
 
-      {/* Show Days Selector only for weekly recurrence */}
       {values.recurrenceType === 'weekly' && (
         <AppView marginB-16>
-          <AppText body2 textColor marginB-8>
-            {t('habits.weekly_days_label')}
-          </AppText>
-          <AppTouchableOpacity
-            onPress={() => setIsDaysModalOpen(true)}
-            style={[
-              styles.fieldStyle,
-              { borderColor: Colors.secondary, borderWidth: 1 },
-            ]}>
-            <AppText body2 textColor>
-              {getDaysLabel()}
-            </AppText>
-            <AppIcon
-              set="Feather"
-              name="chevron-down"
-              size={20}
-              color={Colors.secondary}
-            />
-          </AppTouchableOpacity>
+          <WeekdaySelector
+            value={values.daysOfWeek}
+            onDaysChanged={(bitmask) => setFieldValue('daysOfWeek', bitmask)}
+            allowEmpty={false}
+          />
           {touched.daysOfWeek && errors.daysOfWeek && (
             <AppText error sm marginT-8>
               {errors.daysOfWeek}
@@ -221,7 +159,6 @@ export const CreateHabitTaskForm = ({
         </AppView>
       )}
 
-      {/* Day of Month (for monthly recurrence) */}
       {values.recurrenceType === 'monthly' && (
         <TranslatedTextInput
           labelKey="habits.day_of_month_label"
@@ -234,7 +171,6 @@ export const CreateHabitTaskForm = ({
         />
       )}
 
-      {/* Due Date (for one-time todos) */}
       {values.recurrenceType === 'none' && (
         <AppDateTimePicker
           style={[StyleSheet.absoluteFillObject]}
@@ -261,7 +197,6 @@ export const CreateHabitTaskForm = ({
         />
       )}
 
-      {/* Start/End Date (for recurring habits) */}
       {values.recurrenceType !== 'none' && (
         <>
           <AppDateTimePicker
@@ -326,7 +261,6 @@ export const CreateHabitTaskForm = ({
         isLoading={isLoading}
       />
 
-      {/* Recurrence Selection Modal */}
       <AppActionSheetModal
         visible={isFrequencyModalOpen}
         title={t('habits.select_recurrence')}
@@ -337,21 +271,6 @@ export const CreateHabitTaskForm = ({
           onPress: () => {
             setFieldValue('recurrenceType', option.value);
             setIsFrequencyModalOpen(false);
-          },
-        }))}
-      />
-
-      {/* Days of Week Selection Modal */}
-      <AppActionSheetModal
-        visible={isDaysModalOpen}
-        title={t('habits.select_days')}
-        onDismiss={() => setIsDaysModalOpen(false)}
-        options={weeklyDaysOptions.map((option) => ({
-          label: option.label,
-          icon: option.icon,
-          onPress: () => {
-            setFieldValue('daysOfWeek', option.value);
-            setIsDaysModalOpen(false);
           },
         }))}
       />

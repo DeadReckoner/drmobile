@@ -6,6 +6,7 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { MessageBubble } from '@/components/messages/MessageBubble';
 import { MessageComposer } from '@/components/messages/MessageComposer';
+import { MessageDateSeparator } from '@/components/messages/MessageDateSeparator';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import { useChatWebSocket } from '@/hooks/useChatWebSocket';
@@ -16,8 +17,9 @@ import {
 } from '@/store/apis/messagesApi';
 import { MessageType } from '@/store/apis/types/messagesApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { DateUtils } from '@/utils/date.utils';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Colors } from 'react-native-ui-lib';
@@ -31,37 +33,82 @@ const ThreadDetailsScreen = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
 
-  const {
-    data: messages = [],
-    isLoading,
-    isFetching,
-  } = useGetThreadMessagesQuery(threadId || '', {
-    skip: !threadId,
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: messages = [], isLoading } = useGetThreadMessagesQuery(
+    threadId || '',
+    {
+      skip: !threadId,
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
   const { sendMessage, isConnected } = useChatWebSocket({
     threadId: threadId || '',
     enabled: !!threadId,
   });
 
-  useEffect(() => {
-    dispatch(
-      messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
-        const threadIndex = draft?.findIndex((t) => t.thread_id === threadId);
-        if (threadIndex !== undefined && threadIndex !== -1 && draft) {
-          draft[threadIndex].total_unread = 0;
-        }
-      }),
-    );
+  const resetThreadUnreadCount = useCallback(() => {
+    if (threadId) {
+      dispatch(
+        messagesApi.util.updateQueryData('getThreads', undefined, (draft) => {
+          const threadIndex = draft?.findIndex((t) => t.thread_id === threadId);
+          if (threadIndex !== undefined && threadIndex !== -1 && draft) {
+            draft[threadIndex].total_unread = 0;
+          }
+        }),
+      );
+    }
   }, [dispatch, threadId]);
+
+  useEffect(() => {
+    resetThreadUnreadCount();
+    return () => {
+      resetThreadUnreadCount();
+    };
+  }, [resetThreadUnreadCount]);
+
+  type MessageListItem =
+    | { type: 'message'; data: MessageType }
+    | { type: 'dateSeparator'; date: string; id: string };
+
+  const messagesWithSeparators = useMemo((): MessageListItem[] => {
+    if (!messages || messages.length === 0) return [];
+
+    const items: MessageListItem[] = [];
+    let lastDate: string | null = null;
+
+    messages.forEach((message) => {
+      const messageDate = DateUtils.formatDate(
+        message.created_at,
+        'MM-DD-YYYY',
+      );
+
+      if (lastDate !== messageDate) {
+        items.push({
+          type: 'dateSeparator',
+          date: message.created_at,
+          id: `separator-${messageDate}`,
+        });
+        lastDate = messageDate;
+      }
+
+      items.push({
+        type: 'message',
+        data: message,
+      });
+    });
+
+    return items;
+  }, [messages]);
 
   const handleSendMessage = (messageText: string) => {
     sendMessage(messageText);
   };
 
-  const renderMessage = ({ item }: { item: MessageType }) => {
-    return <MessageBubble message={item} />;
+  const renderItem = ({ item }: { item: MessageListItem }) => {
+    if (item.type === 'dateSeparator') {
+      return <MessageDateSeparator date={item.date} />;
+    }
+    return <MessageBubble message={item.data} />;
   };
 
   const handleRoadmapClick = () => {
@@ -106,30 +153,39 @@ const ThreadDetailsScreen = () => {
             </AppButton>
           </AppView>
         </AppView>
-        {isLoading && (
+        {isLoading ? (
           <AppView height={150}>
             <Loader transparent />
           </AppView>
+        ) : (
+          <>
+            <AppList<MessageListItem>
+              data={messagesWithSeparators || []}
+              renderItem={renderItem}
+              keyExtractor={(item) =>
+                item.type === 'message' ? item.data.message_id : item.id
+              }
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="interactive"
+              alignItemsAtEnd
+              initialScrollIndex={
+                messagesWithSeparators?.length > 0
+                  ? messagesWithSeparators.length - 1
+                  : 0
+              }
+              maintainScrollAtEnd
+              maintainScrollAtEndThreshold={0.1}
+              ListEmptyComponent={renderEmptyComponent}
+            />
+            <MessageComposer
+              isLoading={!isConnected || isLoading}
+              onSend={handleSendMessage}
+              disabled={!isConnected}
+            />
+          </>
         )}
-        <AppList<MessageType>
-          data={messages || []}
-          renderItem={renderMessage}
-          keyExtractor={(item) => item.message_id}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="interactive"
-          alignItemsAtEnd
-          initialScrollIndex={messages?.length > 0 ? messages.length - 1 : 0}
-          maintainScrollAtEnd
-          maintainScrollAtEndThreshold={0.1}
-          ListEmptyComponent={renderEmptyComponent}
-        />
-        <MessageComposer
-          isLoading={isLoading || isFetching}
-          onSend={handleSendMessage}
-          disabled={!isConnected}
-        />
       </AppScreen>
     </KeyboardAvoidingView>
   );

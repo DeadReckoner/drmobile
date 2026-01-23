@@ -1,3 +1,4 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
@@ -52,13 +53,17 @@ const MyFriends = () => {
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: friendsData, isLoading: isLoadingFriends } =
-    useGetFriendsQuery();
+  const {
+    data: friendsData,
+    isLoading: isLoadingFriends,
+    refetch,
+    isFetching,
+  } = useGetFriendsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [searchUsers, { data: searchData, isFetching: isSearching }] =
     useLazySearchUsersQuery();
-
-  const { refetch, isFetching } = useGetFriendsQuery();
 
   const friends = useMemo<Friend[]>(() => {
     if (!friendsData) return [];
@@ -162,9 +167,7 @@ const MyFriends = () => {
             {item.avatar ? (
               <AppImage source={{ uri: item.avatar }} style={styles.avatar} />
             ) : (
-              <AppView style={styles.avatarPlaceholder} center bg-primary>
-                <AppIcon name="user" size={16} color={Colors.secondary} />
-              </AppView>
+              <AppAvatar />
             )}
             <AppView flex gap-4>
               <AppText body2 textColor>

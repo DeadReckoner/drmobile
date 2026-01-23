@@ -80,7 +80,10 @@ const onDeleteRoadmapQueryStarted: TypedMutationOnQueryStarted<
     );
 
     dispatch(
-      roadmapApi.util.invalidateTags([{ type: 'Roadmaps', id: roadmap_id }]),
+      roadmapApi.util.invalidateTags([
+        { type: 'Roadmaps', id: roadmap_id },
+        'Tasks',
+      ]),
     );
 
     dispatch(resetDraftAction());

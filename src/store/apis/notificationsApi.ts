@@ -23,9 +23,19 @@ export const notificationApi = api.injectEndpoints({
       query: () => '/notifications',
       providesTags: ['Notifications'],
     }),
+    markNotificationAsRead: builder.mutation<NotificationType, string>({
+      query: (notificationId) => ({
+        url: `/notifications/${notificationId}/read`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['Notifications'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useAddNotificationTokenMutation, useGetNotificationsQuery } =
-  notificationApi;
+export const {
+  useAddNotificationTokenMutation,
+  useGetNotificationsQuery,
+  useMarkNotificationAsReadMutation,
+} = notificationApi;

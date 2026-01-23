@@ -1,21 +1,21 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
-import { AppIcon } from '@/components/AppIcon';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { Friendship } from '@/hooks/friends/types/friends.types';
-import { useLocalization } from '@/hooks/useLocalization';
+import { FriendRequestData } from '@/store/apis/types/notificationsApi.types';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 interface FriendRequestItemProps {
-  notification: Friendship;
+  notification: FriendRequestData;
   onAccept: (_friendshipId: string) => void;
   onCancel: (_friendshipId: string) => void;
   isAccepting: boolean;
   isCancelling: boolean;
+  description?: string;
 }
 
 export const FriendRequestItem = ({
@@ -24,28 +24,17 @@ export const FriendRequestItem = ({
   onCancel,
   isAccepting,
   isCancelling,
+  description,
 }: FriendRequestItemProps) => {
-  const requesterName = notification.requester
-    ? `${notification.requester.first_name} ${notification.requester.last_name}`.trim()
-    : 'Unknown User';
-
   const isLoading = isAccepting || isCancelling;
-
-  const { t } = useLocalization();
 
   return (
     <AppCard padding-16 paddingV-20 flex>
       <AppView row gap-16 centerV flex>
-        <AppView bg-outline br100 style={styles.avatarPlaceholder} center>
-          <AppIcon name="user" size={24} color={Colors.inverseBackground} />
-        </AppView>
-
+        <AppAvatar size={20} />
         <AppView gap-10 flex>
           <AppText body2 textColor style={styles.textContainer}>
-            {requesterName}{' '}
-            <AppText body2 textColor light>
-              {t('notifications.friend_request')}.
-            </AppText>
+            {description}
           </AppText>
           <AppView row gap-8>
             <AppButton
@@ -55,7 +44,7 @@ export const FriendRequestItem = ({
               br20
               style={{ backgroundColor: Colors.blue }}
               disabled={isLoading}
-              onPress={() => onAccept(notification.id)}>
+              onPress={() => onAccept(notification.friendship_id)}>
               {isAccepting ? (
                 <AppView paddingH-16>
                   <Loader
@@ -81,7 +70,7 @@ export const FriendRequestItem = ({
               center
               bg-error
               disabled={isLoading}
-              onPress={() => onCancel(notification.id)}>
+              onPress={() => onCancel(notification.friendship_id)}>
               {isCancelling ? (
                 <AppView paddingH-12>
                   <Loader

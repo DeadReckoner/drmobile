@@ -17,7 +17,13 @@ const requestPermissions = async () => {
   let finalStatus = existingStatus;
 
   if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
+    const { status } = await Notifications.requestPermissionsAsync({
+      ios: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+      },
+    });
     finalStatus = status;
   }
 
@@ -78,15 +84,21 @@ const getBadgeCount = async () => {
   return await Notifications.getBadgeCountAsync();
 };
 
+const updateBadgeCount = async () => {
+  const currentCount = await getBadgeCount();
+  const newCount = currentCount + 1;
+  await Notifications.setBadgeCountAsync(newCount < 0 ? 0 : newCount);
+};
+
 const setBadgeCount = async (count: number) => {
-  await Notifications.setBadgeCountAsync(count);
+  return await Notifications.setBadgeCountAsync(count);
 };
 
 const setupNotificationHandler = () => {
   Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldPlaySound: false,
-      shouldSetBadge: false,
+    handleNotification: async (_notification) => ({
+      shouldPlaySound: true,
+      shouldSetBadge: true,
       shouldShowBanner: true,
       shouldShowList: true,
     }),
@@ -102,6 +114,7 @@ export const notificationsUtils = {
   cancelAllNotifications,
   getBadgeCount,
   setBadgeCount,
+  updateBadgeCount,
   setupNotificationHandler,
   onPushTokenChange: Notifications.addPushTokenListener,
 };

@@ -1,3 +1,4 @@
+import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppKeyboardController } from '@/components/AppKeyboardController';
@@ -27,7 +28,8 @@ import {
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { roadmapApi } from '@/store/apis/roadmapApi';
-import { useAppSelector } from '@/store/hooks/store.hooks';
+import { taskApi } from '@/store/apis/taskApi';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import {
   resetDraftAction,
@@ -36,13 +38,13 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { LinearTransition } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
-import { useDispatch } from 'react-redux';
 
 const RoadmapDetailsPage = () => {
   const selectedRoadmap = useAppSelector(selectDraftRoadmap);
@@ -53,7 +55,7 @@ const RoadmapDetailsPage = () => {
 
   const { t } = useLocalization();
   const { showToast } = useToast();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [deleteRoadmap, { isLoading }] = useDeleteRoadmapMutation();
   const [createRoadmap, { isLoading: isCreatingRoadmap }] =
     useCreateRoadmapMutation();
@@ -73,9 +75,11 @@ const RoadmapDetailsPage = () => {
     isLoading: isRoadmapLoading,
     error,
     isFetching: isRoadmapFetching,
+    refetch,
   } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id, {
     skip: !selectedRoadmap?.roadmap_id,
-    refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: 20,
+    refetchOnFocus: true,
   });
 
   const roadmap = data ?? selectedRoadmap;
@@ -114,8 +118,9 @@ const RoadmapDetailsPage = () => {
   const showDialog = () => setIsDeleteMilestoneDialogOpen(true);
 
   const onAnchorPress = useCallback(() => {
+    refetch();
     setIsAnchorSheetVisible(true);
-  }, []);
+  }, [refetch]);
 
   const onSelectAnchor = useCallback(
     async (friendId: string, friendName: string) => {
@@ -165,6 +170,12 @@ const RoadmapDetailsPage = () => {
     if (roadmap.roadmap_id) {
       try {
         await deleteRoadmap(roadmap.roadmap_id).unwrap();
+        dispatch(
+          taskApi.endpoints.getUserTasksByStartDate.initiate(
+            DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+            { forceRefetch: true },
+          ),
+        );
         onDeleteSuccess();
       } catch (error) {
         showToast({
@@ -308,7 +319,7 @@ const RoadmapDetailsPage = () => {
       <AppView row centerV flex>
         <AppView row centerV gap-16 flex>
           <AppView style={styles.avatarPlaceholder} center bg-primary>
-            <AppIcon name="user" size={16} color={Colors.secondary} />
+            <AppAvatar />
           </AppView>
           <AppView flex gap-4>
             <AppText body2 textColor>
@@ -338,7 +349,11 @@ const RoadmapDetailsPage = () => {
           ) : (
             <AppIcon
               set="Ionicons"
-              name={isCurrentAnchor ? 'remove-circle' : 'add-circle'}
+              name={
+                isAnchorAssigned && isCurrentAnchor
+                  ? 'remove-circle'
+                  : 'add-circle'
+              }
               size={24}
             />
           )}
@@ -483,7 +498,7 @@ const RoadmapDetailsPage = () => {
               keyExtractor={(item, index) => item.friendship_id + index}
               showsVerticalScrollIndicator={false}
               bounces={false}
-              extraData={[isModalContentLoading, roadmap?.anchor_id]}
+              extraData={[isModalContentLoading, roadmap, roadmap?.anchor_id]}
               renderItem={renderAnchorItem}
               ItemSeparatorComponent={() => <Divider />}
               ListEmptyComponent={() => (

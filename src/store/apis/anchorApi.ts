@@ -4,6 +4,7 @@ import {
   MessageResponse,
 } from '@/hooks/friends/types/friends.types';
 import { api } from '@/store/apis/api';
+import { notificationApi } from '@/store/apis/notificationsApi';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
@@ -41,7 +42,6 @@ const onAcceptAnchorRequestStarted: TypedMutationOnQueryStarted<
     );
 
     await queryFulfilled;
-
     dispatch(
       anchorApi.util.updateQueryData(
         'getMyAnchorRequests',
@@ -54,6 +54,8 @@ const onAcceptAnchorRequestStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
+
+    removeFromNotifications(dispatch, requestId);
 
     if (request?.roadmap_id && request?.requester?.user_id) {
       dispatch(
@@ -88,6 +90,7 @@ const onRejectAnchorRequestStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
+    removeFromNotifications(dispatch, requestId);
   } catch {}
 };
 
@@ -107,6 +110,28 @@ const onRemoveAnchorStarted: TypedMutationOnQueryStarted<
   } catch {
     patchResult.undo();
   }
+};
+
+const removeFromNotifications = (dispatch: any, requestId: string) => {
+  dispatch(
+    notificationApi.util.updateQueryData(
+      'getNotifications',
+      undefined,
+      (draft) => {
+        const index = draft.findIndex(
+          (n) => n.type === 'anchor_request' && n.data.request_id === requestId,
+        );
+        if (index === -1) return;
+        //TODO: re-enable marking as read if backend needs it to remove it from list
+        // dispatch(
+        //   notificationApi.endpoints.markNotificationAsRead.initiate(
+        //     draft[index].notification_id,
+        //   ),
+        // );
+        draft.splice(index, 1);
+      },
+    ),
+  );
 };
 
 export const anchorApi = api.injectEndpoints({

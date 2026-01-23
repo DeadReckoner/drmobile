@@ -6,9 +6,10 @@ import { Loader } from '@/components/Loader';
 import { InProgressAIRoadmapBanner } from '@/components/roadmap/ai-roamap/InProgressAIRoadmapBanner';
 import { RoadmapList } from '@/components/roadmap/RoadmapList';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
+import { AppText, AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { useLocalization } from '@/hooks/useLocalization';
 import { useGetHabitsQuery } from '@/store/apis/habitsApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { selectShouldShowAIRoadmapBanner } from '@/store/slices/aiRoadmapCreationSlice';
@@ -26,6 +27,7 @@ import { Colors } from 'react-native-ui-lib';
 
 const Progress = () => {
   const dispatch = useAppDispatch();
+  const { t } = useLocalization();
   const { data = [], isLoading, refetch, isFetching } = useGetRoadmapsQuery();
   const { refetch: refetchHabits } = useGetHabitsQuery({
     include_archived: false,
@@ -98,7 +100,9 @@ const Progress = () => {
             selectedTab === 'habits' ? Colors.primary : 'transparent',
         }}
         onPress={() => setSelectedTab('habits')}>
-        <TranslatedText caption translationKey="settings.habits" />
+        <AppText textColor caption>
+          {t('settings.habits')}/{t('common.tasks')}
+        </AppText>
       </AppButton>
     </AppView>
   );

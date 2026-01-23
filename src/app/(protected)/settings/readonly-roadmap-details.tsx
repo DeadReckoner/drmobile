@@ -3,16 +3,28 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
 import { AppView } from '@/components/ui';
+import { useGetRoadmapByIdQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 
 const ReadonlyRoadmapDetails = () => {
   const params = useLocalSearchParams<{
     roadmap: string;
   }>();
   const [roadmap, setRoadmap] = useState<RoadmapType | null>(null);
+
+  const {
+    data: remoteRoadmap,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useGetRoadmapByIdQuery(roadmap?.roadmap_id || '', {
+    skip: !roadmap?.roadmap_id,
+  });
+
+  const finalRoadmap = remoteRoadmap || roadmap;
 
   useEffect(() => {
     if (params.roadmap) {
@@ -30,17 +42,23 @@ const ReadonlyRoadmapDetails = () => {
     <AppScreen>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading || isFetching}
+            onRefresh={refetch}
+          />
+        }>
         <HeaderWithBack
-          headerText={roadmap?.goal}
+          headerText={finalRoadmap?.goal}
           goBackOnPress={false}
           onBackPress={onBackPress}
         />
         <Divider margin-16 />
-        {roadmap && (
+        {finalRoadmap && (
           <AppView flex>
             <RoadmapDetails
-              roadmap={roadmap}
+              roadmap={finalRoadmap}
               toggleEditMode={() => {}}
               readonly
             />

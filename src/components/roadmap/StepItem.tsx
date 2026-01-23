@@ -4,6 +4,7 @@ import { AppCheckbox, AppText, AppView } from '@/components/ui';
 import {
   FormEditModeType,
   StepType,
+  TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
 import { useUpdateStepMutation } from '@/hooks/step';
 import { useToast } from '@/hooks/useToast';
@@ -58,22 +59,22 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
             index,
           }),
         );
+        if (!task) return;
 
-        let updatedTask = null;
-        if (task) {
-          updatedTask = {
-            ...task,
-            steps:
-              task.steps.map((s, i) =>
-                i === index ? { ...s, completed: value } : s,
-              ) || [],
-          };
-          dispatch(
-            setSelectedTaskAction({
-              task: updatedTask,
-            }),
-          );
-        }
+        const updatedTask = {
+          ...task,
+          steps:
+            task.steps.map((s, i) =>
+              i === index ? { ...s, completed: value } : s,
+            ) || [],
+        } as TaskType;
+        if (!updatedTask) return;
+        dispatch(
+          setSelectedTaskAction({
+            task: updatedTask,
+          }),
+        );
+
         await updateStep({
           description: step.description,
           number: step.number,
@@ -81,7 +82,11 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
           task_id: step.task_id,
           completed: value,
         }).unwrap();
-        dispatch(roadmapApi.util.invalidateTags(['Roadmaps']));
+        dispatch(
+          roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
+            forceRefetch: true,
+          }),
+        );
       } catch (error) {
         showToast({
           type: 'failure',

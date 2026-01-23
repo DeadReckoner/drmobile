@@ -339,7 +339,7 @@
     "days": "Jours",
     "is_required": "est requis",
     "is_invalid": "n'est pas valide !",
-    "completed_tasks": "Tâches Completées",
+    "completed_tasks": "Tâches Completées/Habitudes",
     "deleted_successfully": "Supprimé avec succès",
     "updated_successfully": "Mis à jour avec succès",
     "created_successfully": "Créé avec succès",
@@ -384,7 +384,9 @@
     "send_message_error": "Échec de l'envoi du message. Veuillez réessayer.",
     "conversation_with": "Conversation avec",
     "no_shared_roadmaps": "Aucune Feuille de Route Partagée",
-    "no_shared_roadmaps_description": "Cet utilisateur n'a pas encore partagé de feuille de route avec vous."
+    "no_shared_roadmaps_description": "Cet utilisateur n'a pas encore partagé de feuille de route avec vous.",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier"
   },
   "feedback": {
     "title": "Retour d'expérience",
