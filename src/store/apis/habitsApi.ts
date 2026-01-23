@@ -174,10 +174,12 @@ const onCompleteHabitQueryStarted: TypedMutationOnQueryStarted<
       ),
     );
 
+    // Invalidate tags to refetch fresh data
     dispatch(
       habitsApi.util.invalidateTags([
         { type: 'Habits', id: habit_id },
         { type: 'Habits', id: 'LIST' },
+        { type: 'Habits', id: 'TODAY' }, // Force refetch of today's habits
         { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
         { type: 'Habits', id: `STATS-${habit_id}` },
         ...(date ? [{ type: 'Habits' as const, id: `DATE-${date}` }] : []),
@@ -209,6 +211,7 @@ const onUncompleteHabitQueryStarted: TypedMutationOnQueryStarted<
       habitsApi.util.invalidateTags([
         { type: 'Habits', id: habit_id },
         { type: 'Habits', id: 'LIST' },
+        { type: 'Habits', id: 'TODAY' }, // Force refetch of today's habits
         { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
         { type: 'Habits', id: `STATS-${habit_id}` },
         ...(date ? [{ type: 'Habits' as const, id: `DATE-${date}` }] : []),
