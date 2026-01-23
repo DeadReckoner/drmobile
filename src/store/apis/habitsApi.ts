@@ -18,6 +18,7 @@ import {
   UpdateHabitRequestType,
   UpdateHabitResponseType,
 } from '@/store/apis/types/habitsApi.types';
+import { DateUtils } from '@/utils/date.utils';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateHabitStarted: TypedMutationOnQueryStarted<
@@ -37,9 +38,12 @@ const onCreateHabitStarted: TypedMutationOnQueryStarted<
       ),
     );
     dispatch(
-      habitsApi.endpoints.getTodayHabits.initiate(undefined, {
-        forceRefetch: true,
-      }),
+      habitsApi.endpoints.getTodayHabits.initiate(
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+        {
+          forceRefetch: true,
+        },
+      ),
     );
   } catch {}
 };
@@ -70,7 +74,7 @@ const onUpdateHabitQueryStarted: TypedMutationOnQueryStarted<
     dispatch(
       habitsApi.util.updateQueryData(
         'getTodayHabits',
-        undefined,
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
         (draft: GetTodayHabitsResponseType) => {
           const index = draft.findIndex((habit) => habit.habit_id === habit_id);
           if (index !== -1) {
@@ -104,7 +108,7 @@ const onDeleteHabitQueryStarted: TypedMutationOnQueryStarted<
     dispatch(
       habitsApi.util.updateQueryData(
         'getTodayHabits',
-        undefined,
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
         (draft: GetTodayHabitsResponseType) => {
           const index = draft.findIndex((habit) => habit.habit_id === habitId);
           if (index !== -1) {
@@ -138,7 +142,7 @@ const onArchiveHabitQueryStarted: TypedMutationOnQueryStarted<
     dispatch(
       habitsApi.util.updateQueryData(
         'getTodayHabits',
-        undefined,
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
         (draft: GetTodayHabitsResponseType) => {
           const index = draft.findIndex((habit) => habit.habit_id === habitId);
           if (index !== -1) {
@@ -160,7 +164,7 @@ const onCompleteHabitQueryStarted: TypedMutationOnQueryStarted<
     dispatch(
       habitsApi.util.updateQueryData(
         'getTodayHabits',
-        undefined,
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
         (draft: GetTodayHabitsResponseType) => {
           const habit = draft.find((h) => h.habit_id === habit_id);
           if (habit) {
@@ -192,7 +196,7 @@ const onUncompleteHabitQueryStarted: TypedMutationOnQueryStarted<
     dispatch(
       habitsApi.util.updateQueryData(
         'getTodayHabits',
-        undefined,
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
         (draft: GetTodayHabitsResponseType) => {
           const habit = draft.find((h) => h.habit_id === habit_id);
           if (habit) {
@@ -244,19 +248,23 @@ export const habitsApi = api.injectEndpoints({
           : [{ type: 'Habits', id: 'LIST' }],
     }),
 
-    getTodayHabits: builder.query<GetTodayHabitsResponseType, void>({
-      query: () => '/habits/today',
-      keepUnusedDataFor: 3600,
-      providesTags: (result) =>
-        result
+    getTodayHabits: builder.query<GetTodayHabitsResponseType, string>({
+      query: (date) => '/habits/today?date=' + date,
+      providesTags: (result, _error, _arg) => {
+        const today = DateUtils.formatDate(
+          DateUtils.createDate(),
+          'YYYY-MM-DD',
+        );
+        return result
           ? [
               ...result.map(({ habit_id }) => ({
                 type: 'Habits' as const,
-                id: `TODAY-${habit_id}`,
+                id: `TODAY-${today}-${habit_id}`,
               })),
-              { type: 'Habits', id: 'TODAY' },
+              { type: 'Habits', id: `TODAY-${today}` },
             ]
-          : [{ type: 'Habits', id: 'TODAY' }],
+          : [{ type: 'Habits', id: `TODAY-${today}` }];
+      },
     }),
 
     getHabitsForDate: builder.query<GetHabitsForDateResponseType, string>({
