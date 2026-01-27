@@ -7,6 +7,7 @@ import { AppList } from '@/components/AppList';
 import { AppModal } from '@/components/AppModal';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
+import { HabitInfoItem } from '@/components/HabitInfoItem';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
@@ -14,6 +15,7 @@ import { CreateHabitTaskForm } from '@/components/roadmap/CreateHabitTaskForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
+import { WeekdaySelector } from '@/components/WeekdaySelector';
 import { useGetFriendsQuery } from '@/hooks/friends';
 import { FriendResponse } from '@/hooks/friends/types/friends.types';
 import {
@@ -26,6 +28,7 @@ import { useToast } from '@/hooks/useToast';
 import { useGetHabitQuery } from '@/store/apis/habitsApi';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { DateUtils } from '@/utils/date.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -202,6 +205,76 @@ const AddEditHabitTask = () => {
 
   const isModalContentLoading = isLoadingFriends;
 
+  const HabitInfoCard = () => {
+    return (
+      <AppView
+        reanimated
+        entering={Animations.Entry.FadeInDownWithSpring()}
+        exiting={Animations.Exit.FadeOutDown()}>
+        <AppCard>
+          <AppText body1 textColor>
+            {selectedTask?.title}
+          </AppText>
+          <LineDivider marginV-12 />
+          {selectedTask?.description && (
+            <HabitInfoItem
+              translationKey="habits.description_label"
+              value={selectedTask.description}
+            />
+          )}
+
+          {selectedTask?.recurrence_type === 'weekly' &&
+            selectedTask?.days_of_week && (
+              <>
+                <WeekdaySelector disabled value={selectedTask.days_of_week} />
+                <Divider />
+              </>
+            )}
+
+          {selectedTask?.recurrence_type === 'monthly' &&
+            selectedTask?.day_of_month && (
+              <HabitInfoItem
+                translationKey="habits.day_of_month_label"
+                value={selectedTask.day_of_month}
+              />
+            )}
+
+          {selectedTask?.recurrence_type === 'none' &&
+            selectedTask?.due_date && (
+              <HabitInfoItem
+                translationKey="habits.due_date_label"
+                value={DateUtils.formatDate(
+                  selectedTask.due_date,
+                  'MMM DD, YYYY',
+                )}
+              />
+            )}
+
+          {selectedTask?.start_date && (
+            <HabitInfoItem
+              translationKey="habits.start_date_label"
+              value={DateUtils.formatDate(
+                selectedTask.start_date,
+                'MMM DD, YYYY',
+              )}
+            />
+          )}
+
+          {selectedTask?.end_date && (
+            <HabitInfoItem
+              translationKey="habits.end_date_label"
+              value={DateUtils.formatDate(
+                selectedTask.end_date,
+                'MMM DD, YYYY',
+              )}
+            />
+          )}
+        </AppCard>
+        <Divider margin-16 />
+      </AppView>
+    );
+  };
+
   return (
     <>
       <AppKeyboardController>
@@ -236,43 +309,31 @@ const AddEditHabitTask = () => {
         </AppView>
         <Divider margin-16 />
         <AppView reanimated paddingL-4 layout={Animations.Layout.Springify()}>
-          {!canEdit && (
-            <AppView
-              reanimated
-              entering={Animations.Entry.FadeInDown()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <ScreenHeader
-                title="tabs.create_tab.add_new_task_or_habit"
-                subtitle="tabs.create_tab.add_new_task_desc"
-                titleProps={{ body1: true }}
-                subtileProps={{ xsm: true }}
-                marginT-0
-              />
-              <Divider margin-16 />
-              <CreateHabitTaskForm
-                mode="create"
-                onSuccess={() => router.dismissTo('/(protected)/(tabs)')}
-              />
-            </AppView>
-          )}
+          {!canEdit ? (
+            mode === 'view' ? (
+              <HabitInfoCard />
+            ) : (
+              <AppView
+                reanimated
+                entering={Animations.Entry.FadeInDown()}
+                exiting={Animations.Exit.FadeOutDown()}>
+                <ScreenHeader
+                  title="tabs.create_tab.add_new_task_or_habit"
+                  subtitle="tabs.create_tab.add_new_task_desc"
+                  titleProps={{ body1: true }}
+                  subtileProps={{ xsm: true }}
+                  marginT-0
+                />
+                <Divider margin-16 />
+                <CreateHabitTaskForm
+                  mode="create"
+                  onSuccess={() => router.dismissTo('/(protected)/(tabs)')}
+                />
+              </AppView>
+            )
+          ) : null}
 
-          {selectedTask && canEdit && !isEditing && (
-            <AppView
-              reanimated
-              entering={Animations.Entry.FadeInDownWithSpring()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <AppCard>
-                <AppText body1 textColor>
-                  {selectedTask?.title}
-                </AppText>
-                <LineDivider marginV-12 />
-                <AppText captionLight textColor>
-                  {selectedTask?.description}
-                </AppText>
-              </AppCard>
-              <Divider margin-16 />
-            </AppView>
-          )}
+          {selectedTask && canEdit && !isEditing && <HabitInfoCard />}
 
           {isEditing && (
             <AppView

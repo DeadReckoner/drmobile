@@ -218,7 +218,7 @@ const Notifications = () => {
           router.navigate({
             pathname: '/habits/add-edit-habits-task',
             params: {
-              mode: 'edit',
+              mode: 'view',
               habitId: data.habit_id,
             },
           });
