@@ -17,6 +17,7 @@ export type HabitType = {
   archived?: boolean;
   created_at: string;
   updated_at: string;
+  anchor_id?: string;
 };
 
 export type CreateHabitRequestType = {

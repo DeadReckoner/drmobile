@@ -18,6 +18,7 @@ export type NotificationEventType =
   | 'friend_accepted'
   | 'friend_rejected'
   | 'anchor_request'
+  | 'habit_anchor_request'
   | 'anchor_accepted'
   | 'anchor_rejected'
   | 'message_new';
@@ -38,15 +39,18 @@ export type FriendRejectedData = {
 };
 export type AnchorRequestData = {
   request_id: string;
-  roadmap_id: string;
+  roadmap_id?: string;
+  habit_id?: string;
 };
 export type AnchorAcceptedData = {
   request_id: string;
-  roadmap_id: string;
+  roadmap_id?: string;
+  habit_id?: string;
 };
 export type AnchorRejectedData = {
   request_id: string;
-  roadmap_id: string;
+  roadmap_id?: string;
+  habit_id?: string;
 };
 export type MessageNewData = {
   message_id: string;
@@ -61,6 +65,7 @@ type NotificationTypeDataMap =
   | { type: 'friend_accepted'; data: FriendAcceptedData }
   | { type: 'friend_rejected'; data: FriendRejectedData }
   | { type: 'anchor_request'; data: AnchorRequestData }
+  | { type: 'habit_anchor_request'; data: AnchorRequestData }
   | { type: 'anchor_accepted'; data: AnchorAcceptedData }
   | { type: 'anchor_rejected'; data: AnchorRejectedData }
   | { type: 'message_new'; data: MessageNewData };

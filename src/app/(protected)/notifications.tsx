@@ -204,14 +204,25 @@ const Notifications = () => {
         notification.type === 'anchor_accepted' ||
         notification.type === 'anchor_rejected'
       ) {
-        router.navigate({
-          pathname: '/settings/readonly-roadmap-details',
-          params: {
-            roadmap: JSON.stringify({
-              roadmap_id: (notification.data as AnchorAcceptedData).roadmap_id,
-            }),
-          },
-        });
+        const data = notification.data as AnchorAcceptedData;
+        if (data.roadmap_id) {
+          router.navigate({
+            pathname: '/settings/readonly-roadmap-details',
+            params: {
+              roadmap: JSON.stringify({
+                roadmap_id: data.roadmap_id,
+              }),
+            },
+          });
+        } else if (data.habit_id) {
+          router.navigate({
+            pathname: '/habits/add-edit-habits-task',
+            params: {
+              mode: 'edit',
+              habitId: data.habit_id,
+            },
+          });
+        }
       }
 
       if (
@@ -247,7 +258,7 @@ const Notifications = () => {
         );
       }
 
-      if (type === 'anchor_request') {
+      if (type === 'anchor_request' || type === 'habit_anchor_request') {
         const anchorRequest = item.data as AnchorRequestData;
         const processingState = processingIds[anchorRequest.request_id];
         return (

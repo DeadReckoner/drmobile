@@ -4,6 +4,7 @@ import {
   MessageResponse,
 } from '@/hooks/friends/types/friends.types';
 import { api } from '@/store/apis/api';
+import { habitsApi } from '@/store/apis/habitsApi';
 import { notificationApi } from '@/store/apis/notificationsApi';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
@@ -12,6 +13,25 @@ import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 const onCreateAnchorRequestStarted: TypedMutationOnQueryStarted<
   AnchorRequest,
   { roadmapId: string; anchorId: string },
+  BaseQueryFunctionType
+> = async (_args, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+    dispatch(
+      anchorApi.util.updateQueryData(
+        'getMyAnchorRequests',
+        undefined,
+        (draft) => {
+          draft.push(data);
+        },
+      ),
+    );
+  } catch {}
+};
+
+const onCreateHabitAnchorRequestStarted: TypedMutationOnQueryStarted<
+  AnchorRequest,
+  { habitId: string; anchorId: string },
   BaseQueryFunctionType
 > = async (_args, { dispatch, queryFulfilled }) => {
   try {
@@ -119,7 +139,10 @@ const removeFromNotifications = (dispatch: any, requestId: string) => {
       undefined,
       (draft) => {
         const index = draft.findIndex(
-          (n) => n.type === 'anchor_request' && n.data.request_id === requestId,
+          (n) =>
+            (n.type === 'anchor_request' ||
+              n.type === 'habit_anchor_request') &&
+            n.data.request_id === requestId,
         );
         if (index === -1) return;
         //TODO: re-enable marking as read if backend needs it to remove it from list
@@ -186,6 +209,42 @@ export const anchorApi = api.injectEndpoints({
       ],
       onQueryStarted: onRemoveAnchorStarted,
     }),
+
+    createHabitAnchorRequest: builder.mutation<
+      AnchorRequest,
+      { habitId: string; anchorId: string }
+    >({
+      query: ({ habitId, anchorId }) => ({
+        url: `/habits/${habitId}/anchor-request`,
+        method: 'POST',
+        body: { anchor_id: anchorId },
+      }),
+      onQueryStarted: onCreateHabitAnchorRequestStarted,
+    }),
+
+    removeHabitAnchor: builder.mutation<MessageResponse, string>({
+      query: (habitId) => ({
+        url: `/habits/${habitId}/anchor`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, habitId) => [
+        'Habits',
+        { type: 'Habits', id: habitId },
+      ],
+      onQueryStarted: async (habitId, { dispatch, queryFulfilled }) => {
+        const patchResult = dispatch(
+          habitsApi.util.updateQueryData('getHabit', habitId, (draft) => {
+            draft.anchor_id = '';
+          }),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
   overrideExisting: true,
 });
@@ -196,4 +255,6 @@ export const {
   useAcceptAnchorRequestMutation,
   useRejectAnchorRequestMutation,
   useRemoveAnchorMutation,
+  useCreateHabitAnchorRequestMutation,
+  useRemoveHabitAnchorMutation,
 } = anchorApi;
