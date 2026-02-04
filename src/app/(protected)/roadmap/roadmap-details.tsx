@@ -117,10 +117,15 @@ const RoadmapDetailsPage = () => {
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
   const showDialog = () => setIsDeleteMilestoneDialogOpen(true);
 
-  const onAnchorPress = useCallback(() => {
-    refetch();
-    setIsAnchorSheetVisible(true);
-  }, [refetch]);
+  const onAnchorPress = useCallback(async () => {
+    try {
+      setIsAnchorSheetVisible(true);
+      const refetchedRoadmap = await refetch().unwrap();
+      dispatch(setDraftRoadmapAction(refetchedRoadmap));
+    } catch {
+    } finally {
+    }
+  }, [refetch, dispatch]);
 
   const onSelectAnchor = useCallback(
     async (friendId: string, friendName: string) => {
@@ -349,11 +354,7 @@ const RoadmapDetailsPage = () => {
           ) : (
             <AppIcon
               set="Ionicons"
-              name={
-                isAnchorAssigned && isCurrentAnchor
-                  ? 'remove-circle'
-                  : 'add-circle'
-              }
+              name={isCurrentAnchor ? 'remove-circle' : 'add-circle'}
               size={24}
             />
           )}

@@ -273,7 +273,13 @@
     "loading": "Chargement des notifications...",
     "error_loading": "Échec du chargement des notifications",
     "enable_notifications": "Activer les Notifications",
-    "notifications_disabled": "Activez les notifications dans les paramètres pour rester informé."
+    "notifications_disabled": "Activez les notifications dans les paramètres pour rester informé.",
+    "clear": "Effacer",
+    "clear_notifications_title": "Effacer Toutes les Notifications ?",
+    "clear_notifications_message": "Cela supprimera définitivement toutes les notifications. Cette action ne peut pas être annulée.",
+    "clearing": "Effacement des notifications...",
+    "clear_success": "Toutes les notifications effacées",
+    "clear_failure": "Échec de l'effacement des notifications"
   },
   "permissions": {
     "contacts_denied_title": "Permission de Contacts Refusée",
@@ -415,5 +421,27 @@
   "coming_soon": {
     "title": "Bientôt disponible",
     "description": "Nous travaillons dur pour vous apporter cette fonctionnalité. Restez à l'écoute pour les mises à jour !"
+  },
+  "app_feedback": {
+    "title": "Envoyer des Commentaires",
+    "subtitle": "Nous aimerions avoir votre avis",
+    "category_label": "Catégorie",
+    "category_placeholder": "Sélectionnez une catégorie",
+    "message_label": "Vos Commentaires",
+    "message_placeholder": "Dites-nous ce que vous pensez (minimum 10 caractères)",
+    "submit_button": "Envoyer des Commentaires",
+    "submitting": "Envoi en cours...",
+    "categories": {
+      "bug": "Rapport de Bug",
+      "feature": "Demande de Fonctionnalité",
+      "general": "Commentaires Généraux"
+    },
+    "validation": {
+      "category_required": "Veuillez sélectionner une catégorie",
+      "message_required": "Veuillez entrer vos commentaires",
+      "message_min_length": "Les commentaires doivent contenir au moins 10 caractères"
+    },
+    "success_message": "Merci ! Vos commentaires ont été soumis avec succès.",
+    "error_message": "Échec de l'envoi des commentaires. Veuillez réessayer."
   }
 }

@@ -192,7 +192,12 @@ const Today = () => {
               paddingV-4
               br100
               style={styles.habitChipContainer}>
-              <AppText textColor sm regular numberOfLines={2}>
+              <AppText
+                textColor
+                sm
+                regular
+                numberOfLines={2}
+                style={{ textTransform: 'capitalize' }}>
                 {item.recurrence_type === 'none'
                   ? t('habits.recurrence.none')
                   : item.recurrence_type}
@@ -237,12 +242,12 @@ const Today = () => {
         <Divider />
         <AppView row centerV spread>
           <TranslatedText h2 translationKey="tabs.today" />
-          <AppView center row gap-18>
+          <AppView center row>
             <AppButton onPress={onCalendarClick}>
               <AppIcon set="Feather" name="calendar" size={26} />
             </AppButton>
-            <AppButton onPress={onNotificationsClick}>
-              <AppIcon set="Feather" name="heart" size={24} />
+            <AppButton marginL-18 marginR-12 onPress={onNotificationsClick}>
+              <AppIcon name="notification" size={26} />
             </AppButton>
             <AppButton onPress={onUserProfileClick}>
               <AppIcon set="Feather" name="user" size={26} />

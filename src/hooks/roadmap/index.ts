@@ -22,4 +22,6 @@ export const {
   useAcceptAnchorRequestMutation,
   useRejectAnchorRequestMutation,
   useRemoveAnchorMutation,
+  useCreateHabitAnchorRequestMutation,
+  useRemoveHabitAnchorMutation,
 } = anchorApi;
