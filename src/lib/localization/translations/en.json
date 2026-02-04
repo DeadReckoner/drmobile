@@ -273,7 +273,13 @@
     "loading": "Loading notifications...",
     "error_loading": "Failed to load notifications",
     "enable_notifications": "Enable Notifications",
-    "notifications_disabled": "Enable notifications in the settings to stay updated."
+    "notifications_disabled": "Enable notifications in the settings to stay updated.",
+    "clear": "Clear",
+    "clear_notifications_title": "Clear All Notifications?",
+    "clear_notifications_message": "This will permanently remove all notifications. This action cannot be undone.",
+    "clearing": "Clearing notifications...",
+    "clear_success": "All notifications cleared",
+    "clear_failure": "Failed to clear notifications"
   },
   "permissions": {
     "contacts_denied_title": "Contacts Permission Denied",

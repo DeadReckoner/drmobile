@@ -30,12 +30,13 @@ export const notificationApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Notifications'],
     }),
+    clearNotifications: builder.mutation<void, void>({
+      query: () => ({
+        url: '/notifications/clear',
+        method: 'POST',
+      }),
+      invalidatesTags: ['Notifications'],
+    }),
   }),
   overrideExisting: false,
 });
-
-export const {
-  useAddNotificationTokenMutation,
-  useGetNotificationsQuery,
-  useMarkNotificationAsReadMutation,
-} = notificationApi;

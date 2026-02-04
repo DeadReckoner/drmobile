@@ -1,4 +1,5 @@
 import { AppView } from '@/components/ui';
+import { Animations } from '@/utils/animation.utils';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -18,6 +19,9 @@ export const Loader = ({
 }: LoaderProps) => {
   return (
     <AppView
+      reanimated
+      entering={Animations.Entry.FadeInDownWithSpring()}
+      exiting={Animations.Exit.FadeOutDown()}
       style={[
         StyleSheet.absoluteFillObject,
         styles.loader,

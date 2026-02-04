@@ -273,7 +273,13 @@
     "loading": "Chargement des notifications...",
     "error_loading": "Échec du chargement des notifications",
     "enable_notifications": "Activer les Notifications",
-    "notifications_disabled": "Activez les notifications dans les paramètres pour rester informé."
+    "notifications_disabled": "Activez les notifications dans les paramètres pour rester informé.",
+    "clear": "Effacer",
+    "clear_notifications_title": "Effacer Toutes les Notifications ?",
+    "clear_notifications_message": "Cela supprimera définitivement toutes les notifications. Cette action ne peut pas être annulée.",
+    "clearing": "Effacement des notifications...",
+    "clear_success": "Toutes les notifications effacées",
+    "clear_failure": "Échec de l'effacement des notifications"
   },
   "permissions": {
     "contacts_denied_title": "Permission de Contacts Refusée",
