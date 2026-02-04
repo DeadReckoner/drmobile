@@ -4,11 +4,15 @@ import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { Loader } from '@/components/Loader';
 import { AnchorRequestItem } from '@/components/notifications/AnchorRequestItem';
 import { FriendRequestItem } from '@/components/notifications/FriendRequestItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { useGetNotificationsQuery } from '@/hooks/notifications';
+import {
+  useClearNotificationsMutation,
+  useGetNotificationsQuery,
+} from '@/hooks/notifications';
 import {
   useAcceptAnchorRequestMutation,
   useRejectAnchorRequestMutation,
@@ -32,7 +36,7 @@ import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Linking, StyleSheet } from 'react-native';
+import { Alert, Linking, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
@@ -48,6 +52,8 @@ const Notifications = () => {
     useGetNotificationsQuery(undefined, {
       refetchOnMountOrArgChange: true,
     });
+  const [clearNotifications, { isLoading: isClearing }] =
+    useClearNotificationsMutation();
 
   const dispatch = useAppDispatch();
   const [refreshing, setRefreshing] = useState(false);
@@ -310,6 +316,37 @@ const Notifications = () => {
     ],
   );
 
+  const onClearNotificationPress = useCallback(async () => {
+    Alert.alert(
+      t('notifications.clear_notifications_title'),
+      t('notifications.clear_notifications_message'),
+      [
+        {
+          text: t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('notifications.clear'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await clearNotifications().unwrap();
+              showToast({
+                message: t('notifications.clear_success'),
+                type: 'success',
+              });
+            } catch {
+              showToast({
+                message: t('common.something_went_wrong'),
+                type: 'failure',
+              });
+            }
+          },
+        },
+      ],
+    );
+  }, [clearNotifications, showToast, t]);
+
   const onNotificationSettingsBannerPress = useCallback(async () => {
     try {
       if (permissionStatus === 'undetermined') {
@@ -349,8 +386,24 @@ const Notifications = () => {
 
   return (
     <AppScreen safeArea>
+      {isClearing && <Loader />}
       <AppView marginB-16>
-        <HeaderWithBack headerKey="notifications.title" />
+        <AppView row>
+          <AppView flex>
+            <HeaderWithBack headerKey="notifications.title" />
+          </AppView>
+          <AppView>
+            <AppButton flex onPress={onClearNotificationPress}>
+              <TranslatedText
+                marginR-6
+                caption
+                error
+                regular
+                translationKey="notifications.clear"
+              />
+            </AppButton>
+          </AppView>
+        </AppView>
         {permissionStatus != null && permissionStatus !== 'granted' && (
           <AppView
             reanimated
