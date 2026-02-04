@@ -12,7 +12,6 @@ import { LineDivider } from '@/components/LineDivider';
 import { SettingsItem } from '@/components/SettingsItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
-import { AppURLs } from '@/constants/AppURLs.constants';
 import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { useAppTheme } from '@/hooks/useAppTheme';
@@ -24,7 +23,7 @@ import { clearAuthAction, selectUser } from '@/store/slices/authSlice';
 import { selectSettings } from '@/store/slices/settingsSlice';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Linking, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const SUPPORTED_LANGUAGES: SupportedLanguagesType[] = [
@@ -68,12 +67,12 @@ const Settings = () => {
     setLanguage(language);
   };
 
-  const openURL = async (url: string) => {
-    const canOpen = await Linking.canOpenURL(url);
-    if (canOpen) {
-      await Linking.openURL(url);
-    }
-  };
+  // const openURL = async (url: string) => {
+  //   const canOpen = await Linking.canOpenURL(url);
+  //   if (canOpen) {
+  //     await Linking.openURL(url);
+  //   }
+  // };
 
   const SettingsItemDivider = () => <LineDivider marginV-0 />;
 
@@ -211,7 +210,8 @@ const Settings = () => {
             </AppButton>
             <SettingsItemDivider />
 
-            <AppButton onPress={() => openURL(AppURLs.HELP_SUPPORT)}>
+            <AppButton
+              onPress={() => router.navigate('/settings/send-feedback')}>
               <SettingsItem
                 translationKey="settings.help_support"
                 rightElement={<AppIcon name="customerservice" />}

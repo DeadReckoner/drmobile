@@ -415,5 +415,27 @@
   "coming_soon": {
     "title": "Próximamente",
     "description": "Estamos trabajando arduamente para traerte esta función. ¡Mantente atento a las actualizaciones!"
+  },
+  "app_feedback": {
+    "title": "Enviar Comentarios",
+    "subtitle": "Nos encantaría saber de ti",
+    "category_label": "Categoría",
+    "category_placeholder": "Selecciona una categoría",
+    "message_label": "Tus Comentarios",
+    "message_placeholder": "Cuéntanos qué piensas (mínimo 10 caracteres)",
+    "submit_button": "Enviar Comentarios",
+    "submitting": "Enviando...",
+    "categories": {
+      "bug": "Reporte de Error",
+      "feature": "Solicitud de Función",
+      "general": "Comentarios Generales"
+    },
+    "validation": {
+      "category_required": "Por favor selecciona una categoría",
+      "message_required": "Por favor ingresa tus comentarios",
+      "message_min_length": "Los comentarios deben tener al menos 10 caracteres"
+    },
+    "success_message": "¡Gracias! Tus comentarios han sido enviados con éxito.",
+    "error_message": "Error al enviar comentarios. Por favor, inténtalo de nuevo."
   }
 }

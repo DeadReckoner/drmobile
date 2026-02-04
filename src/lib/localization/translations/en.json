@@ -415,5 +415,27 @@
   "coming_soon": {
     "title": "Coming Soon",
     "description": "We're working hard to bring you this feature. Stay tuned for updates!"
+  },
+  "app_feedback": {
+    "title": "Send Feedback",
+    "subtitle": "We'd love to hear from you",
+    "category_label": "Category",
+    "category_placeholder": "Select a category",
+    "message_label": "Your Feedback",
+    "message_placeholder": "Tell us what's on your mind (minimum 10 characters)",
+    "submit_button": "Submit Feedback",
+    "submitting": "Submitting...",
+    "categories": {
+      "bug": "Bug Report",
+      "feature": "Feature Request",
+      "general": "General Feedback"
+    },
+    "validation": {
+      "category_required": "Please select a category",
+      "message_required": "Please enter your feedback",
+      "message_min_length": "Feedback must be at least 10 characters"
+    },
+    "success_message": "Thank you! Your feedback has been submitted successfully.",
+    "error_message": "Failed to submit feedback. Please try again."
   }
 }
