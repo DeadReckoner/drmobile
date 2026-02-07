@@ -106,7 +106,7 @@ const HabitMarkCompletion = () => {
                 <AppView row centerV>
                   <AppView bg-accent paddingH-10 paddingV-4 br100>
                     <AppText
-                      textColor
+                      white
                       xsm
                       regular
                       style={{ textTransform: 'capitalize' }}>
