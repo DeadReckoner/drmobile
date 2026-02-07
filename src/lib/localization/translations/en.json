@@ -368,7 +368,8 @@
     "scan_qr_code": "Scan this QR code to add me as your friend",
     "error_occurred": "An error occurred",
     "unknown_user": "Unknown User",
-    "unknown_roadmap": "Unknown Roadmap"
+    "unknown_roadmap": "Unknown Roadmap",
+    "return_to_app": "Return to app"
   },
   "roadmap": {
     "select_anchor": "Select an Anchor",

@@ -16,7 +16,7 @@ import {
 } from '@/store/apis/habitsApi';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
@@ -64,6 +64,7 @@ const HabitMarkCompletion = () => {
         });
       }
       setIsHabitCompleted(!isHabitCompleted);
+      router.back();
     } catch (error) {
       showToast({
         message: getApiErrorMessage(error),

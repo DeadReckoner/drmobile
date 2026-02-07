@@ -36,6 +36,21 @@ export const notificationApi = api.injectEndpoints({
         method: 'POST',
       }),
       invalidatesTags: ['Notifications'],
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        try {
+          await queryFulfilled;
+        } catch {
+          dispatch(notificationApi.util.invalidateTags(['Notifications']));
+        } finally {
+          dispatch(
+            notificationApi.util.updateQueryData(
+              'getNotifications',
+              undefined,
+              () => [],
+            ),
+          );
+        }
+      },
     }),
   }),
   overrideExisting: false,

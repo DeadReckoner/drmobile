@@ -12,6 +12,7 @@ interface HeaderWithBackProps extends ViewProps {
   onHeaderTitlePress?: () => void;
   headerText?: string; //For dynamic title strings
   goBackOnPress?: boolean;
+  arrowStyle?: ViewProps['style'];
 }
 
 export const HeaderWithBack = ({
@@ -20,6 +21,7 @@ export const HeaderWithBack = ({
   onBackPress,
   onHeaderTitlePress,
   goBackOnPress = true,
+  arrowStyle,
   ...containerStyles
 }: HeaderWithBackProps) => {
   const onBackArrowPress = () => {
@@ -35,7 +37,7 @@ export const HeaderWithBack = ({
 
   return (
     <AppView row gap-16 {...containerStyles}>
-      <AppButton onPress={onBackArrowPress}>
+      <AppButton onPress={onBackArrowPress} style={arrowStyle}>
         <AppIcon name="arrowleft" />
       </AppButton>
       {(headerKey || headerText) && (

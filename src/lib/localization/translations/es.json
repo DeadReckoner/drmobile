@@ -368,7 +368,8 @@
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
     "error_occurred": "Ocurrió un error",
     "unknown_user": "Usuario Desconocido",
-    "unknown_roadmap": "Hoja de Ruta Desconocida"
+    "unknown_roadmap": "Hoja de Ruta Desconocida",
+    "return_to_app": "Regresar a la aplicación"
   },
   "roadmap": {
     "select_anchor": "Seleccionar un ancla",

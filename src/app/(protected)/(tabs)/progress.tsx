@@ -88,7 +88,13 @@ const Progress = () => {
             selectedTab === 'roadmaps' ? Colors.primary : 'transparent',
         }}
         onPress={() => setSelectedTab('roadmaps')}>
-        <TranslatedText caption translationKey="settings.roadmaps" />
+        <TranslatedText
+          color={
+            selectedTab === 'roadmaps' ? Colors.textOnPrimary : Colors.textColor
+          }
+          caption
+          translationKey="settings.roadmaps"
+        />
       </AppButton>
       <AppView width={1} bg-primary />
       <AppButton
@@ -100,7 +106,11 @@ const Progress = () => {
             selectedTab === 'habits' ? Colors.primary : 'transparent',
         }}
         onPress={() => setSelectedTab('habits')}>
-        <AppText textColor caption>
+        <AppText
+          color={
+            selectedTab === 'habits' ? Colors.textOnPrimary : Colors.textColor
+          }
+          caption>
           {t('settings.habits')}/{t('common.tasks')}
         </AppText>
       </AppButton>

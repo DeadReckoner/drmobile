@@ -170,7 +170,7 @@ export const HabitsList = () => {
               </AppText>
               <AppView bg-accent paddingH-8 paddingV-4 br100>
                 <AppText
-                  textColor
+                  white
                   sm
                   regular
                   style={{ textTransform: 'capitalize' }}>

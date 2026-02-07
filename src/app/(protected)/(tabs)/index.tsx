@@ -193,7 +193,7 @@ const Today = () => {
               br100
               style={styles.habitChipContainer}>
               <AppText
-                textColor
+                white
                 sm
                 regular
                 numberOfLines={2}
@@ -291,6 +291,7 @@ const Today = () => {
             ItemSeparatorComponent={() => <Divider />}
           />
         </AppView>
+        <Divider />
         {(completedTasks?.length > 0 || completedHabits?.length > 0) && (
           <TranslatedText
             body2

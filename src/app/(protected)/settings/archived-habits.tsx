@@ -42,7 +42,7 @@ const ArchivedHabits = () => {
               {item.title}
             </AppText>
             <AppView bg-primary paddingH-8 paddingV-4 br100>
-              <AppText textColor sm regular>
+              <AppText white sm regular>
                 {item.recurrence_type === 'none'
                   ? t('habits.recurrence.none')
                   : item.recurrence_type}
