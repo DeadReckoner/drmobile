@@ -4,6 +4,7 @@ import { AppImage, AppProgressBar, AppText, AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
+import { getAllMilestones } from '@/utils/roadmap.utils';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Assets, Colors } from 'react-native-ui-lib';
@@ -16,9 +17,10 @@ interface RoadmapListItemProps {
 export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
   const { t } = useLocalization();
   const { theme } = useAppTheme();
+  const milestones = getAllMilestones(roadmap);
   const isRoadmapStarted =
     roadmap.start_date !== '0001-01-01T00:00:00Z' &&
-    roadmap.milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
+    milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
     roadmap.start_date !== null;
 
   return (
