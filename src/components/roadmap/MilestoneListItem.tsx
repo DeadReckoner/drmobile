@@ -20,7 +20,13 @@ import {
   NativeActionEvent,
 } from '@react-native-menu/menu';
 import { router } from 'expo-router';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { StyleSheet } from 'react-native';
 import Animated, {
   Easing,
@@ -37,7 +43,7 @@ interface MilestoneListItemProps {
   readonly?: boolean;
 }
 
-export const MilestoneListItem = ({
+const MilestoneListItemComponent = ({
   milestone,
   onMilestonePress,
   onTaskPress,
@@ -45,38 +51,44 @@ export const MilestoneListItem = ({
 }: MilestoneListItemProps) => {
   const theme = useAppTheme();
   const selectedMilestone = useAppSelector(selectSelectedMilestone);
-  const sharedHeight = useSharedValue(0);
+  const heightValue = useSharedValue(0);
   const chevronDeg = useSharedValue('0deg');
   const menuRef = useRef<MenuComponentRef>(null);
+  const [contentHeight, setContentHeight] = useState(0);
 
   const isExpanded = useMemo(
     () => milestone.milestone_id === selectedMilestone?.milestone_id,
     [milestone.milestone_id, selectedMilestone?.milestone_id],
   );
 
-  const onPress = () => {
+  const onPress = useCallback(() => {
     onMilestonePress(
       milestone.milestone_id === selectedMilestone?.milestone_id
         ? null
         : milestone,
     );
-  };
+  }, [milestone, selectedMilestone?.milestone_id, onMilestonePress]);
 
   useEffect(() => {
+    heightValue.value = withTiming(isExpanded ? contentHeight : 0, {
+      duration: 300,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    });
     chevronDeg.value = withTiming(isExpanded ? '180deg' : '0deg', {
       duration: 250,
     });
-  }, [isExpanded, chevronDeg]);
+  }, [isExpanded, contentHeight, heightValue, chevronDeg]);
 
-  const bodyStyle = useAnimatedStyle(
+  const animatedStyle = useAnimatedStyle(
     () => ({
-      height: withTiming(isExpanded ? sharedHeight.value : 0, {
-        duration: 300,
-        easing: Easing.inOut(Easing.ease),
+      height: heightValue.value,
+      opacity: withTiming(isExpanded ? 1 : 0, {
+        duration: 200,
       }),
     }),
     [isExpanded],
   );
+
   const chevronStyle = useAnimatedStyle(
     () => ({
       transform: [
@@ -85,27 +97,27 @@ export const MilestoneListItem = ({
         },
       ],
     }),
-    [selectedMilestone],
+    [],
   );
 
-  const handleOnAddNewTask = () => {
+  const handleOnAddNewTask = useCallback(() => {
     router.navigate('/(protected)/task/add-edit-task');
-  };
+  }, []);
 
-  const renderTaskItem = ({
-    item,
-    index,
-  }: LegendListRenderItemProps<TaskType>) => (
-    <MilestoneTaskItem
-      task={item}
-      onPress={() => onTaskPress(item, index)}
-      readonly={readonly}
-    />
+  const renderTaskItem = useCallback(
+    ({ item, index }: LegendListRenderItemProps<TaskType>) => (
+      <MilestoneTaskItem
+        task={item}
+        onPress={() => onTaskPress(item, index)}
+        readonly={readonly}
+      />
+    ),
+    [onTaskPress, readonly],
   );
 
-  const renderItemSeparator = () => <LineDivider marginV-0 />;
+  const renderItemSeparator = useCallback(() => <LineDivider marginV-0 />, []);
 
-  const renderFooterComponent = () => {
+  const renderFooterComponent = useCallback(() => {
     if (readonly) return null;
     return (
       <AppButton onPress={handleOnAddNewTask}>
@@ -116,28 +128,36 @@ export const MilestoneListItem = ({
         </AppView>
       </AppButton>
     );
-  };
+  }, [readonly, handleOnAddNewTask]);
 
-  const onMenuAction = ({ nativeEvent }: NativeActionEvent) => {
-    if (nativeEvent.event === 'open') {
-      onMilestonePress(milestone);
-      router.navigate({
-        pathname: '/roadmap/add-edit-milestone',
-        params: { mode: 'edit' },
-      });
-    }
-  };
+  const onMenuAction = useCallback(
+    ({ nativeEvent }: NativeActionEvent) => {
+      if (nativeEvent.event === 'open') {
+        onMilestonePress(milestone);
+        router.navigate({
+          pathname: '/roadmap/add-edit-milestone',
+          params: { mode: 'edit' },
+        });
+      }
+    },
+    [milestone, onMilestonePress],
+  );
+
+  const isMilestoneReached = useMemo(() => {
+    return (milestone.tasks?.length || 0) > 0 && milestone.reached;
+  }, [milestone.reached, milestone.tasks]);
 
   return (
     <AppView key={milestone.milestone_id}>
-      <AppButton onPress={onPress}>
+      <AppButton
+        onPress={(milestone.tasks?.length || 0) > 0 ? onPress : undefined}>
         {readonly ? (
           <AppView row padding-16 gap-16 center>
-            <AppCheckbox value={milestone.reached} />
+            <AppCheckbox value={isMilestoneReached} />
             <AppText flex textColor body2>
               {milestone.sub_goal}
             </AppText>
-            <AppButton onPress={onPress} style={{ pointerEvents: 'box-only' }}>
+            <AppButton style={{ pointerEvents: 'box-only' }}>
               <AppView reanimated style={chevronStyle}>
                 <AppIcon set="Feather" name={'chevron-down'} />
               </AppView>
@@ -151,26 +171,40 @@ export const MilestoneListItem = ({
             actions={MENU_ACTIONS}
             shouldOpenOnLongPress={true}>
             <AppView row padding-16 gap-16 center>
-              <AppCheckbox value={milestone.reached} />
+              <AppCheckbox value={isMilestoneReached} />
               <AppText flex textColor body2>
                 {milestone.sub_goal}
               </AppText>
-              <AppButton
-                onPress={onPress}
-                style={{ pointerEvents: 'box-only' }}>
-                <AppView reanimated style={chevronStyle}>
-                  <AppIcon set="Feather" name={'chevron-down'} />
-                </AppView>
+              <AppButton style={{ pointerEvents: 'box-only' }}>
+                {(milestone.tasks?.length || 0) > 0 ? (
+                  <AppView reanimated style={chevronStyle}>
+                    <AppIcon set="Feather" name={'chevron-down'} />
+                  </AppView>
+                ) : (
+                  <AppView bg-accent paddingH-8 br100>
+                    <TranslatedText
+                      sm
+                      regular
+                      translationKey="common.upcoming"
+                    />
+                  </AppView>
+                )}
               </AppButton>
             </AppView>
           </MenuView>
         )}
       </AppButton>
 
-      <AppView style={{ overflow: 'hidden' }}>
-        <Animated.View style={bodyStyle}>
-          <AppView
-            style={[styles.content, { backgroundColor: Colors.lightCardBG }]}>
+      <Animated.View style={[styles.contentContainer, animatedStyle]}>
+        <AppView
+          onLayout={(e) => {
+            const height = e.nativeEvent.layout.height;
+            if (height > 0 && height !== contentHeight) {
+              setContentHeight(height);
+            }
+          }}
+          style={styles.content}>
+          <AppView style={{ backgroundColor: Colors.lightCardBG }}>
             <AppList
               keyExtractor={(task) => task.task_id}
               scrollEnabled={false}
@@ -180,41 +214,23 @@ export const MilestoneListItem = ({
               renderItem={renderTaskItem}
             />
           </AppView>
-        </Animated.View>
-        <AppView
-          onLayout={({ nativeEvent }) => {
-            sharedHeight.value = nativeEvent.layout.height;
-          }}
-          style={[
-            styles.hiddenMeasurer,
-            { backgroundColor: Colors.lightCardBG },
-          ]}>
-          <AppList
-            keyExtractor={(task) => task.task_id}
-            scrollEnabled={false}
-            data={milestone.tasks || []}
-            ListFooterComponent={renderFooterComponent}
-            ItemSeparatorComponent={renderItemSeparator}
-            renderItem={renderTaskItem}
-          />
         </AppView>
-      </AppView>
+      </Animated.View>
     </AppView>
   );
 };
 
+export const MilestoneListItem = React.memo(MilestoneListItemComponent);
+
 const styles = StyleSheet.create({
-  content: {
-    width: '100%',
-    position: 'relative',
+  contentContainer: {
+    overflow: 'hidden',
   },
-  hiddenMeasurer: {
+  content: {
     position: 'absolute',
-    opacity: 0,
+    width: '100%',
     top: 0,
     left: 0,
-    right: 0,
-    zIndex: -1,
   },
 });
 

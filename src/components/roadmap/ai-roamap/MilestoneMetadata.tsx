@@ -1,15 +1,13 @@
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import type { MacroMilestone } from '@/hooks/roadmap/types/roadmap.types';
+import type { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
 import React from 'react';
 
-interface MacroMilestoneMetadataProps {
-  macroMilestone: MacroMilestone;
+interface MilestoneMetadataProps {
+  milestone: MilestoneType;
 }
 
-export const MacroMilestoneMetadata = ({
-  macroMilestone,
-}: MacroMilestoneMetadataProps) => {
+export const MilestoneMetadata = ({ milestone }: MilestoneMetadataProps) => {
   const {
     duration_days_min,
     duration_days_max,
@@ -17,7 +15,7 @@ export const MacroMilestoneMetadata = ({
     spikes,
     risks,
     acceptance_test,
-  } = macroMilestone;
+  } = milestone;
 
   const parseResourcesForecast = () => {
     try {
@@ -29,7 +27,7 @@ export const MacroMilestoneMetadata = ({
     }
   };
 
-  const formatResourceValue = (value: any): string => {
+  const formatResourceValue = (value: string | string[]): string => {
     if (Array.isArray(value)) {
       return value.join(', ');
     }
@@ -40,24 +38,32 @@ export const MacroMilestoneMetadata = ({
 
   return (
     <AppView padding-16 gap-12>
-      <AppView gap-4>
-        <TranslatedText
-          textColor
-          body2
-          translationKey="ai_roadmap.acceptance_test"
-        />
-        <AppText body2 light textColor>
-          {acceptance_test}
-        </AppText>
-      </AppView>
-      <AppView gap-4>
-        <TranslatedText textColor body2 translationKey="ai_roadmap.duration" />
-        <AppText body2 light textColor>
-          {duration_days_min === duration_days_max
-            ? `${duration_days_min} days`
-            : `${duration_days_min} - ${duration_days_max} days`}
-        </AppText>
-      </AppView>
+      {acceptance_test && (
+        <AppView gap-4>
+          <TranslatedText
+            textColor
+            body2
+            translationKey="ai_roadmap.acceptance_test"
+          />
+          <AppText body2 light textColor>
+            {acceptance_test}
+          </AppText>
+        </AppView>
+      )}
+      {duration_days_min != null && duration_days_max != null && (
+        <AppView gap-4>
+          <TranslatedText
+            textColor
+            body2
+            translationKey="ai_roadmap.duration"
+          />
+          <AppText body2 light textColor>
+            {duration_days_min === duration_days_max
+              ? `${duration_days_min} days`
+              : `${duration_days_min} - ${duration_days_max} days`}
+          </AppText>
+        </AppView>
+      )}
 
       {resourcesData && typeof resourcesData === 'object' && (
         <AppView gap-4>
@@ -76,7 +82,7 @@ export const MacroMilestoneMetadata = ({
                   style={{ textTransform: 'capitalize' }}>
                   {key}:{' '}
                 </AppText>
-                {formatResourceValue(value)}
+                {formatResourceValue(value as string | string[])}
               </AppText>
             </AppView>
           ))}
@@ -85,11 +91,7 @@ export const MacroMilestoneMetadata = ({
 
       {spikes && spikes.length > 0 && (
         <AppView gap-4>
-          <TranslatedText
-            textColor
-            caption
-            translationKey="ai_roadmap.spikes"
-          />
+          <TranslatedText textColor body2 translationKey="ai_roadmap.spikes" />
           {spikes.map((spike) => (
             <AppView key={spike.spike_id}>
               <AppText xsm textColor>
@@ -102,9 +104,7 @@ export const MacroMilestoneMetadata = ({
 
       {risks && risks.length > 0 && (
         <AppView gap-4>
-          <AppText textColor caption>
-            Risks
-          </AppText>
+          <TranslatedText textColor body2 translationKey="ai_roadmap.risks" />
           {risks.map((risk) => (
             <AppView key={risk.risk_id || risk.description}>
               <AppText xsm textColor flex>

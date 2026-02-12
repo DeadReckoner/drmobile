@@ -58,7 +58,6 @@ const aiRoadmapCreationSlice = createSlice({
   name: 'aiRoadmapCreation',
   initialState,
   reducers: {
-    // Start a new AI roadmap creation session
     startCreationSessionAction: (state) => {
       state.status = 'collecting';
       state.messages = [];
@@ -70,12 +69,10 @@ const aiRoadmapCreationSlice = createSlice({
       state.createdAt = Date.now();
     },
 
-    // Add a message to the conversation
     addMessageAction: (state, action: PayloadAction<MessageItem>) => {
       state.messages.push(action.payload);
     },
 
-    // Update a message (e.g., to stop typing animation)
     updateMessageAction: (
       state,
       action: PayloadAction<{ id: string; updates: Partial<MessageItem> }>,
@@ -91,22 +88,18 @@ const aiRoadmapCreationSlice = createSlice({
       }
     },
 
-    // Set typing state
     setIsTypingAction: (state, action: PayloadAction<boolean>) => {
       state.isTyping = action.payload;
     },
 
-    // Move to next prompt
     incrementPromptIndexAction: (state) => {
       state.currentPromptIndex += 1;
     },
 
-    // Stop conversation
     stopConversationAction: (state) => {
       state.isConversationRunning = false;
     },
 
-    // Update form data with user responses
     updateFormDataAction: (
       state,
       action: PayloadAction<{ key: string; value: string }>,
@@ -114,13 +107,11 @@ const aiRoadmapCreationSlice = createSlice({
       state.formData[action.payload.key] = action.payload.value;
     },
 
-    // Set status to creating when API call starts
     startRoadmapCreationAction: (state) => {
       state.status = 'creating';
       state.error = null;
     },
 
-    // Set status to completed when API call succeeds
     completeRoadmapCreationAction: (
       state,
       action: PayloadAction<RoadmapType>,
@@ -130,7 +121,6 @@ const aiRoadmapCreationSlice = createSlice({
       state.error = null;
     },
 
-    // Set error when API call fails
     setCreationErrorAction: (state, action: PayloadAction<string>) => {
       state.status = 'error';
       state.createdRoadmap = null;
@@ -231,7 +221,8 @@ export const selectShouldShowAIRoadmapBanner = createAppSelector((state) => {
   return (
     (status === 'completed' && createdRoadmap !== null) ||
     status === 'creating' ||
-    (status === 'collecting' && hasUserMessage)
+    (status === 'collecting' && hasUserMessage) ||
+    status === 'error'
   );
 });
 

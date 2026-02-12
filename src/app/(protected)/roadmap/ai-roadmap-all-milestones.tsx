@@ -9,29 +9,36 @@ import {
   setSelectedMilestoneAction,
   setSelectedTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { getAllMilestones } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
+import { useCallback } from 'react';
 import { ScrollView } from 'react-native';
 
 const AIRoadmapMilestoneDetails = () => {
   const roadmap = useAppSelector(selectDraftRoadmap);
   const dispatch = useAppDispatch();
-  const handleOnTaskPress = (task: TaskType, index: number) => {
-    dispatch(setSelectedTaskAction({ task, index }));
-    router.navigate({
-      pathname: '/task/add-edit-task',
-      params: { mode: 'edit' },
-    });
-  };
-  const handleMilestonePress = (
-    milestone: MilestoneType | null,
-    index: number,
-  ) => {
-    dispatch(setSelectedMilestoneAction({ milestone, index }));
-  };
 
-  const handleOnAddNewMilestone = () => {
+  const handleOnTaskPress = useCallback(
+    (task: TaskType, index: number) => {
+      dispatch(setSelectedTaskAction({ task, index }));
+      router.navigate({
+        pathname: '/task/add-edit-task',
+        params: { mode: 'edit' },
+      });
+    },
+    [dispatch],
+  );
+
+  const handleMilestonePress = useCallback(
+    (milestone: MilestoneType | null, index: number) => {
+      dispatch(setSelectedMilestoneAction({ milestone, index }));
+    },
+    [dispatch],
+  );
+
+  const handleOnAddNewMilestone = useCallback(() => {
     router.navigate('/(protected)/roadmap/add-edit-milestone');
-  };
+  }, []);
 
   return (
     <AppScreen>
@@ -41,7 +48,7 @@ const AIRoadmapMilestoneDetails = () => {
         <HeaderWithBack headerKey="common.milestones" />
         <Divider marginV-8 />
         <MilestonesList
-          milestones={roadmap?.milestones || []}
+          milestones={getAllMilestones(roadmap)}
           onMilestonePress={handleMilestonePress}
           onTaskPress={handleOnTaskPress}
           onAddNewMilestonePress={handleOnAddNewMilestone}

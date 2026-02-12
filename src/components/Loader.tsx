@@ -11,15 +11,17 @@ import { Colors, ViewProps } from 'react-native-ui-lib';
 interface LoaderProps extends ActivityIndicatorProps {
   transparent?: boolean;
   containerStyle?: ViewProps['style'];
+  shouldAnimate?: boolean;
 }
 export const Loader = ({
   transparent = false,
   containerStyle,
+  shouldAnimate = true,
   ...props
 }: LoaderProps) => {
   return (
     <AppView
-      reanimated
+      reanimated={shouldAnimate}
       entering={Animations.Entry.FadeInDownWithSpring()}
       exiting={Animations.Exit.FadeOutDown()}
       style={[

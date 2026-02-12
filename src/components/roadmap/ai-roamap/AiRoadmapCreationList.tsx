@@ -6,7 +6,7 @@ import { AiRoadmapCreationLoader } from '@/components/roadmap/ai-roamap/AiRoadma
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
+import { AppText, AppView } from '@/components/ui';
 import { useCreateAIRoadmapMutation } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -17,7 +17,7 @@ import {
   incrementPromptIndexAction,
   MessageItem,
   resetCreationStateAction,
-  selectAIRoadmapCreationStatus,
+  selectAIRoadmapCreationState,
   selectAIRoadmapFormData,
   selectCurrentPromptIndex,
   selectIsConversationRunning,
@@ -32,7 +32,6 @@ import {
   updateMessageAction,
 } from '@/store/slices/aiRoadmapCreationSlice';
 import { Animations } from '@/utils/animation.utils';
-import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Dimensions, FlatList, Keyboard, StyleSheet } from 'react-native';
@@ -81,6 +80,10 @@ const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
       id: 'currentSkillLevel',
       question: t('ai_roadmap.prompts.skill_level'),
     },
+    {
+      id: 'additionalContext',
+      question: t('ai_roadmap.prompts.additional_context'),
+    },
   ];
 };
 
@@ -89,7 +92,7 @@ export const AiRoadmapCreationList = () => {
   const SYSTEM_PROMPTS = getSystemPrompts(t);
   const dispatch = useAppDispatch();
 
-  const status = useAppSelector(selectAIRoadmapCreationStatus);
+  const { error, status } = useAppSelector(selectAIRoadmapCreationState);
   const messages = useAppSelector((state) => state.aiRoadmapCreation.messages);
   const currentPromptIndex = useAppSelector(selectCurrentPromptIndex);
   const isConversationRunning = useAppSelector(selectIsConversationRunning);
@@ -139,6 +142,21 @@ export const AiRoadmapCreationList = () => {
   }, [currentPromptIndex, status, isTyping]);
 
   useEffect(() => {
+    const timeout = null;
+    if (messages?.length >= 5) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 250);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [messages.length]);
+
+  useEffect(() => {
     if (messages.length === 0) return;
     flatListRef.current?.scrollToEnd({ animated: true });
 
@@ -169,9 +187,11 @@ export const AiRoadmapCreationList = () => {
     return () => {
       if (thankYouTimeout.current) {
         clearTimeout(thankYouTimeout.current);
+        thankYouTimeout.current = null;
       }
       if (createAIRoadmapApiTimeout.current) {
         clearTimeout(createAIRoadmapApiTimeout.current);
+        createAIRoadmapApiTimeout.current = null;
       }
       keyboardDidShow.remove();
     };
@@ -193,11 +213,16 @@ export const AiRoadmapCreationList = () => {
     dispatch(addMessageAction(systemMessage));
   };
 
-  const handleAiRoadmapCreation = (
+  const handleAiRoadmapCreation = async (
     formData: Record<string, string>,
     timeout: number = 5200,
   ) => {
-    createAIRoadmapApiTimeout.current = setTimeout(async () => {
+    if (createAIRoadmapApiTimeout.current) {
+      clearTimeout(createAIRoadmapApiTimeout.current);
+      createAIRoadmapApiTimeout.current = null;
+    }
+
+    const executeCreation = async () => {
       try {
         dispatch(startRoadmapCreationAction());
         const creationJobResponse = await createAIRoadmap(formData).unwrap();
@@ -206,18 +231,45 @@ export const AiRoadmapCreationList = () => {
           dispatch(setCreationErrorAction(t('common.something_went_wrong')));
           return;
         }
-      } catch (error) {
-        const errorMessage = getApiErrorMessage(error);
+      } catch (error: unknown) {
+        let errorMessage = t('common.something_went_wrong');
+
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (
+          typeof error === 'object' &&
+          error !== null &&
+          'error' in error
+        ) {
+          const errorObj = error as Record<string, unknown>;
+          if (typeof errorObj.error === 'string') {
+            errorMessage = errorObj.error;
+          }
+        }
+
         dispatch(setCreationErrorAction(errorMessage));
       } finally {
-        if (createAIRoadmapApiTimeout.current) {
-          clearTimeout(createAIRoadmapApiTimeout.current);
-        }
+        createAIRoadmapApiTimeout.current = null;
       }
-    }, timeout);
+    };
+
+    if (timeout === 0) {
+      await executeCreation();
+    } else {
+      createAIRoadmapApiTimeout.current = setTimeout(executeCreation, timeout);
+    }
   };
 
   const handleNavigateToRoadmap = () => {
+    if (thankYouTimeout.current) {
+      clearTimeout(thankYouTimeout.current);
+      thankYouTimeout.current = null;
+    }
+    if (createAIRoadmapApiTimeout.current) {
+      clearTimeout(createAIRoadmapApiTimeout.current);
+      createAIRoadmapApiTimeout.current = null;
+    }
+
     dispatch(
       roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
         forceRefetch: true,
@@ -317,7 +369,7 @@ export const AiRoadmapCreationList = () => {
             onPress={handleRetry}
             backgroundColor={Colors.error}
             paddingH-20
-            paddingV-16
+            paddingV-12
             br40
             row
             centerV
@@ -328,11 +380,18 @@ export const AiRoadmapCreationList = () => {
               size={16}
               color={Colors.white}
             />
-            <Divider margin-4 />
-            <TranslatedText
-              translationKey="ai_roadmap.retry_creation"
-              color={Colors.white}
-            />
+            <Divider />
+            <AppView flex>
+              <AppText body2 light lightregular white>
+                {error}
+              </AppText>
+              <TranslatedText
+                body2
+                light
+                translationKey="ai_roadmap.retry_creation"
+                color={Colors.white}
+              />
+            </AppView>
           </AppButton>
         </AppView>
       )}
@@ -375,6 +434,15 @@ export const AiRoadmapCreationList = () => {
                 exiting={Animations.Exit.FadeOut()}>
                 <AppButton
                   onPress={() => {
+                    // Clear any pending timeouts
+                    if (thankYouTimeout.current) {
+                      clearTimeout(thankYouTimeout.current);
+                      thankYouTimeout.current = null;
+                    }
+                    if (createAIRoadmapApiTimeout.current) {
+                      clearTimeout(createAIRoadmapApiTimeout.current);
+                      createAIRoadmapApiTimeout.current = null;
+                    }
                     hasStartedPrompt.current.clear();
                     dispatch(resetCreationStateAction());
                     // After reset, the status will become 'idle', and the useEffect will trigger

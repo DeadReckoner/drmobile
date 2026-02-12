@@ -84,7 +84,8 @@
       "skill_level": "Y a-t-il des limites, des conditions ou des préférences personnelles dont je devrais tenir compte ? Cela peut inclure des contraintes d’emploi du temps, de budget, des facteurs physiques, des outils que tu peux ou ne peux pas utiliser, ou tout ce que tu souhaites inclure ou éviter.",
       "anything_else": "Y a-t-il autre chose que je devrais savoir avant de construire ta feuille de route ? Ajoute tout détail ou contexte utile pour façonner le plan.",
       "thank_you": "Compris. Nous construisons ta feuille de route personnalisée. Cela peut prendre quelques minutes. Tu peux quitter l’application si tu le souhaites, il suffit de ne pas la fermer. Nous te notifierons quand elle sera prête.",
-      "composer_placeholder": "Saisis ta réponse"
+      "composer_placeholder": "Saisis ta réponse",
+      "additional_context": "Y a-t-il autre chose que je devrais savoir avant de construire ta feuille de route ? Ajoute tout détail ou contexte utile pour façonner le plan."
     },
     "in_progress_banner": {
       "title": "Création de ta feuille de route",
@@ -98,6 +99,10 @@
       "title": "Voir le brouillon de la feuille de route !",
       "description": "Votre feuille de route personnalisée est prête. Passez en revue le brouillon et soumettez-le pour commencer votre voyage."
     },
+    "error_banner": {
+      "title": "Échec de la création de la feuille de route",
+      "description": "Quelque chose s’est mal passé lors de la création de votre feuille de route."
+    },
     "draft_dialog": {
       "in_progress_title": "Feuille de Route IA en Cours",
       "in_progress_subtitle": "Vous avez une feuille de route IA en cours de création. Voulez-vous continuer ou recommencer?",
@@ -110,7 +115,7 @@
     "resuming_creation": "Reprise de la création de ta feuille de route...",
     "creation_in_progress": "Ta feuille de route est en cours de création. Cela peut prendre quelques minutes.",
     "creation_failed": "Échec de la création de la feuille de route. Veuillez réessayer.",
-    "retry_creation": "Réessayer",
+    "retry_creation": "Cliquez pour réessayer",
     "start_new": "Commencer Nouveau",
     "view_roadmap": "Voir Votre Feuille de Route",
     "acceptance_test": "Test d'acceptation",
@@ -335,6 +340,7 @@
     "or": "Ou",
     "milestones": "Jalons",
     "tasks": "Tâches",
+    "upcoming": "À venir",
     "upcoming_milestones": "Jalons à Venir",
     "roadmap_overview": "Aperçu de la Feuille de Route",
     "current_milestone": "Jalon Actuel",

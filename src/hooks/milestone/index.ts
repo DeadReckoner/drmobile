@@ -4,4 +4,5 @@ export const {
   useCreateMilestoneMutation,
   useUpdateMilestoneMutation,
   useDeleteMilestoneMutation,
+  useGenerateMilestoneTasksMutation,
 } = milestoneApi;

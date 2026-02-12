@@ -2,7 +2,7 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
-import { MacroMapListItem } from '@/components/roadmap/ai-roamap/MacroMapListItem';
+import { StrategicMilestoneListItem } from '@/components/roadmap/ai-roamap/StrategicMilestoneListItem';
 import { RoadmapOverview } from '@/components/roadmap/RoadmapOverview';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
@@ -35,7 +35,7 @@ export const AIRoadmapDetails = ({
 }: AIRoadmapDetailsProps) => {
   const dispatch = useAppDispatch();
 
-  const onViewMacroMap = () => {
+  const onViewStrategicMap = () => {
     dispatch(setDraftRoadmapAction(roadmap));
     router.navigate('/(protected)/roadmap/ai-roadmap-macromap');
   };
@@ -47,12 +47,13 @@ export const AIRoadmapDetails = ({
     return index === -1 ? 0 : index;
   }, [roadmap.milestones]);
 
-  const displayedMacroMap =
-    roadmap.macro_map?.phases?.[0]?.macro_milestones?.[
-      firstNonCompletedMilestoneIndex
-    ];
+  const currentMilestone = useMemo(() => {
+    const allMilestones =
+      roadmap.phases?.flatMap((p) => p.milestones || []) || [];
+    return allMilestones[firstNonCompletedMilestoneIndex];
+  }, [roadmap.phases, firstNonCompletedMilestoneIndex]);
 
-  const onMacroMilestonePress = () => {
+  const onMilestonePress = () => {
     if (roadmap.milestones?.[firstNonCompletedMilestoneIndex].tasks?.length) {
       dispatch(
         setSelectedMilestoneAction({
@@ -76,7 +77,7 @@ export const AIRoadmapDetails = ({
       <Divider marginT-16 />
       {isRoadmapLoading ? (
         <Loader transparent containerStyle={styles.loader} />
-      ) : roadmap.macro_map?.phases[0].macro_milestones[0] ? (
+      ) : currentMilestone ? (
         <AppView
           layout={FadingTransition}
           entering={FadeInDown}
@@ -84,7 +85,7 @@ export const AIRoadmapDetails = ({
           <AppView row centerV spread marginB-16>
             <TranslatedText body2 translationKey="common.current_milestone" />
             {!readonly && (
-              <AppButton onPress={onViewMacroMap}>
+              <AppButton onPress={onViewStrategicMap}>
                 <AppView right>
                   <AppView
                     row
@@ -100,10 +101,10 @@ export const AIRoadmapDetails = ({
               </AppButton>
             )}
           </AppView>
-          {displayedMacroMap && (
-            <MacroMapListItem
-              macroMilestone={displayedMacroMap}
-              onPress={readonly ? () => {} : onMacroMilestonePress}
+          {currentMilestone && (
+            <StrategicMilestoneListItem
+              milestone={currentMilestone}
+              onPress={readonly ? () => {} : onMilestonePress}
             />
           )}
           {!readonly && roadmap?.milestones?.length > 0 && (

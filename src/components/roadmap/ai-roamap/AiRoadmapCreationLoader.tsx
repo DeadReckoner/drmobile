@@ -104,13 +104,12 @@ export const AiRoadmapCreationLoader = () => {
           <AppView marginT-24>
             <AppButton
               row
-              bg-blue
+              bg-accent
               paddingV-8
               paddingL-16
               paddingR-20
               br100
               center
-              style={{ borderWidth: 1, borderColor: Colors.blue }}
               onPress={() => router.dismissTo('/')}>
               <AppIcon name="arrowleft" color={Colors.white} size={20} />
               <TranslatedText

@@ -84,7 +84,8 @@
       "skill_level": "¿Hay límites, condiciones o preferencias personales que deba tener en cuenta? Esto puede incluir restricciones de horario, presupuesto, factores físicos, herramientas que puedes o no usar, o cualquier cosa que quieras incluir o evitar.",
       "anything_else": "¿Hay algo más que deba saber antes de crear tu plan? Agrega cualquier detalle o contexto que ayude a darle forma.",
       "thank_you": "Entendido. Estamos creando tu hoja de ruta personalizada. Esto puede tomar unos minutos. Puedes salir de la aplicación si lo deseas, solo no la cierres. Te notificaremos cuando esté lista.",
-      "composer_placeholder": "Escribe tu respuesta"
+      "composer_placeholder": "Escribe tu respuesta",
+      "additional_context": "¿Hay algo más que deba saber antes de crear tu plan? Agrega cualquier detalle o contexto que ayude a darle forma."
     },
     "in_progress_banner": {
       "title": "Creando tu hoja de ruta",
@@ -98,6 +99,10 @@
       "title": "¡Ver borrador de hoja de ruta!",
       "description": "Tu hoja de ruta personalizada está lista. Revisa el borrador y envíalo para comenzar tu viaje."
     },
+    "error_banner": {
+      "title": "Error al crear la hoja de ruta",
+      "description": "Algo salió mal mientras se creaba tu hoja de ruta."
+    },
     "draft_dialog": {
       "in_progress_title": "Hoja de Ruta IA en Progreso",
       "in_progress_subtitle": "Tienes una hoja de ruta IA siendo creada. ¿Quieres continuar o empezar de nuevo?",
@@ -110,7 +115,7 @@
     "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
     "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
     "creation_failed": "Error al crear la hoja de ruta. Por favor, inténtalo de nuevo.",
-    "retry_creation": "Reintentar",
+    "retry_creation": "Haz clic para reintentar",
     "start_new": "Comenzar Nueva",
     "view_roadmap": "Ver Tu Hoja de Ruta",
     "acceptance_test": "Prueba de aceptación",
@@ -335,6 +340,7 @@
     "or": "O",
     "milestones": "Hitos",
     "tasks": "Tareas",
+    "upcoming": "Próximos",
     "upcoming_milestones": "Próximos Hitos",
     "roadmap_overview": "Resumen de Hoja de Ruta",
     "current_milestone": "Hito Actual",

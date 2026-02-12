@@ -190,6 +190,66 @@ export const milestoneApi = api.injectEndpoints({
       }),
       onQueryStarted: onDeleteMilestoneQueryStarted,
     }),
+    generateMilestoneTasks: builder.mutation<
+      MilestoneType,
+      { milestoneId: string; goal: string; description?: string }
+    >({
+      query: ({ milestoneId, ...body }) => ({
+        url: `/agent/generateMilestone/${milestoneId}`,
+        method: 'POST',
+        body,
+      }),
+      async onQueryStarted(
+        { milestoneId },
+        { queryFulfilled, dispatch, getState },
+      ) {
+        try {
+          const { data: milestoneWithTasks } = await queryFulfilled;
+          const state = getState() as unknown as RootStateType;
+          const { roadmap } = state.roadmapDraft;
+
+          dispatch(
+            roadmapApi.util.updateQueryData(
+              'getRoadmaps',
+              undefined,
+              (draft) => {
+                const roadmapIdx = draft.findIndex(
+                  (r) => r.roadmap_id === roadmap.roadmap_id,
+                );
+                if (roadmapIdx !== -1) {
+                  const milestoneIdx = draft[roadmapIdx].milestones.findIndex(
+                    (m) => m.milestone_id === milestoneId,
+                  );
+                  if (milestoneIdx !== -1) {
+                    draft[roadmapIdx].milestones[milestoneIdx] =
+                      milestoneWithTasks;
+                  }
+                }
+              },
+            ),
+          );
+
+          // Update the milestone in getRoadmapById cache
+          dispatch(
+            roadmapApi.util.updateQueryData(
+              'getRoadmapById',
+              roadmap.roadmap_id,
+              (draft) => {
+                if (!draft) return;
+                const milestoneIdx = draft.milestones.findIndex(
+                  (m) => m.milestone_id === milestoneId,
+                );
+                if (milestoneIdx !== -1) {
+                  draft.milestones[milestoneIdx] = milestoneWithTasks;
+                }
+              },
+            ),
+          );
+
+          dispatch(updateMilestoneAction(milestoneWithTasks));
+        } catch {}
+      },
+    }),
   }),
   overrideExisting: true,
 });

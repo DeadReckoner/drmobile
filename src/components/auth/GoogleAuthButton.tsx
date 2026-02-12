@@ -24,7 +24,7 @@ export const GoogleAuthButton = () => {
 
   return (
     <AppView>
-      {isLoading && <Loader />}
+      {isLoading && <Loader shouldAnimate={false} />}
       <AppButton
         row
         center

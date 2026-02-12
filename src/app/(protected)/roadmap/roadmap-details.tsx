@@ -212,7 +212,7 @@ const RoadmapDetailsPage = () => {
         days,
         completed,
         milestones,
-        macro_map,
+        phases,
         reason,
         type,
       } = roadmap;
@@ -223,7 +223,7 @@ const RoadmapDetailsPage = () => {
         days,
         completed,
         milestones,
-        macro_map,
+        phases,
         reason,
         type,
       }).unwrap();
@@ -246,7 +246,7 @@ const RoadmapDetailsPage = () => {
       dispatch(
         setDraftRoadmapAction({
           ...finalRoadmap,
-          macro_map: roadmap?.macro_map,
+          phases: roadmap?.phases,
         }),
       );
       showToast({
@@ -268,11 +268,8 @@ const RoadmapDetailsPage = () => {
 
   const hasMilestones =
     roadmap.type === 'ai_generated'
-      ? (
-          roadmap?.macro_map?.phases?.flatMap(
-            (phase) => phase.macro_milestones,
-          ) || []
-        ).length > 0
+      ? (roadmap?.phases?.flatMap((phase) => phase.milestones || []) || [])
+          .length > 0
       : (roadmap.milestones || []).length > 0;
 
   const CreateRoadmapButton = () => {

@@ -152,7 +152,8 @@
       "skill_level": "Are there any limits, conditions, or personal preferences I should keep in mind? This could be schedule constraints, budget considerations, physical factors, tools you can or cannot use, or anything you want included or avoided.",
       "anything_else": "Anything else you want me to know before I build your roadmap? Add any details or context that would help shape the plan.",
       "thank_you": "Got it. We’re building your personalized roadmap. This may take a few minutes. You can leave the app if you'd like, just don’t close it. We’ll notify you when it’s ready.",
-      "composer_placeholder": "Enter your answer"
+      "composer_placeholder": "Enter your answer",
+      "additional_context": "Anything else you want me to know before I build your roadmap? Add any details or context that would help shape the plan."
     },
     "in_progress_banner": {
       "title": "Creating your roadmap",
@@ -166,6 +167,10 @@
       "title": "View Draft Roadmap!",
       "description": "Your personalized roadmap is ready. Review & submit the draft to begin your journey."
     },
+    "error_banner": {
+      "title": "Roadmap creation failed",
+      "description": "Something went wrong while creating your roadmap."
+    },
     "draft_dialog": {
       "in_progress_title": "AI Roadmap in Progress",
       "in_progress_subtitle": "You have an AI roadmap being created. Do you want to continue or start fresh?",
@@ -178,7 +183,7 @@
     "resuming_creation": "Resuming your roadmap creation...",
     "creation_in_progress": "Your roadmap is being created. This may take a few minutes.",
     "creation_failed": "Failed to create roadmap. Please try again.",
-    "retry_creation": "Retry",
+    "retry_creation": "Click to retry",
     "start_new": "Start New",
     "view_roadmap": "View Your Roadmap",
     "acceptance_test": "Acceptance test",
@@ -335,6 +340,7 @@
     "or": "Or",
     "milestones": "Milestones",
     "tasks": "Tasks",
+    "upcoming": "Upcoming",
     "upcoming_milestones": "Upcoming Milestones",
     "roadmap_overview": "Roadmap Overview",
     "current_milestone": "Current Milestone",

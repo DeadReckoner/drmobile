@@ -12,6 +12,7 @@ import type {
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
 import { LegendListRenderItemProps } from '@legendapp/list';
+import React, { useCallback } from 'react';
 
 interface MilestonesListProps {
   milestones: MilestoneType[];
@@ -21,40 +22,43 @@ interface MilestonesListProps {
   readonly?: boolean;
 }
 
-export const MilestonesList = ({
+const MilestonesListComponent = ({
   milestones = [],
   onAddNewMilestonePress,
   onMilestonePress,
   onTaskPress,
   readonly = false,
 }: MilestonesListProps) => {
-  const renderMilestone = ({
-    item,
-    index,
-  }: LegendListRenderItemProps<MilestoneType>) => {
-    return (
-      <MilestoneListItem
-        key={item.milestone_id}
-        milestone={item}
-        onMilestonePress={(item) => onMilestonePress(item, index)}
-        onTaskPress={onTaskPress}
-        readonly={readonly}
-      />
-    );
-  };
-
-  const renderEmptyMilestoneComponent = () => (
-    <EmptyListItemPlaceholder
-      title="tabs.create_tab.no_milestones_yet"
-      subtitle="tabs.create_tab.add_new_milestone_desc"
-      btnText="tabs.create_tab.add_new_milestone"
-      onPress={readonly ? undefined : onAddNewMilestonePress}
-    />
+  const renderMilestone = useCallback(
+    ({ item, index }: LegendListRenderItemProps<MilestoneType>) => {
+      return (
+        <MilestoneListItem
+          key={item.milestone_id}
+          milestone={item}
+          onMilestonePress={(item) => onMilestonePress(item, index)}
+          onTaskPress={onTaskPress}
+          readonly={readonly}
+        />
+      );
+    },
+    [onMilestonePress, onTaskPress, readonly],
   );
 
-  const renderItemSeparator = () => <LineDivider marginV-0 />;
+  const renderEmptyMilestoneComponent = useCallback(
+    () => (
+      <EmptyListItemPlaceholder
+        title="tabs.create_tab.no_milestones_yet"
+        subtitle="tabs.create_tab.add_new_milestone_desc"
+        btnText="tabs.create_tab.add_new_milestone"
+        onPress={readonly ? undefined : onAddNewMilestonePress}
+      />
+    ),
+    [readonly, onAddNewMilestonePress],
+  );
 
-  const renderFooterComponent = () => {
+  const renderItemSeparator = useCallback(() => <LineDivider marginV-0 />, []);
+
+  const renderFooterComponent = useCallback(() => {
     if (milestones.length === 0 || readonly) return;
     return (
       <AppButton onPress={onAddNewMilestonePress}>
@@ -68,7 +72,7 @@ export const MilestonesList = ({
         </AppView>
       </AppButton>
     );
-  };
+  }, [milestones.length, readonly, onAddNewMilestonePress]);
 
   return (
     <AppCard padding-0>
@@ -84,3 +88,5 @@ export const MilestonesList = ({
     </AppCard>
   );
 };
+
+export const MilestonesList = React.memo(MilestonesListComponent);
