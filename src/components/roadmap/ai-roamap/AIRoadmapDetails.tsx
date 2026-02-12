@@ -12,6 +12,7 @@ import {
   setDraftRoadmapAction,
   setSelectedMilestoneAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { getAllMilestones } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
@@ -40,24 +41,22 @@ export const AIRoadmapDetails = ({
     router.navigate('/(protected)/roadmap/ai-roadmap-macromap');
   };
 
+  const allMilestones = useMemo(() => getAllMilestones(roadmap), [roadmap]);
+
   const firstNonCompletedMilestoneIndex = useMemo(() => {
-    const index = roadmap.milestones?.findIndex(
-      (milestone) => !milestone.reached,
-    );
+    const index = allMilestones.findIndex((milestone) => !milestone.reached);
     return index === -1 ? 0 : index;
-  }, [roadmap.milestones]);
+  }, [allMilestones]);
 
   const currentMilestone = useMemo(() => {
-    const allMilestones =
-      roadmap.phases?.flatMap((p) => p.milestones || []) || [];
     return allMilestones[firstNonCompletedMilestoneIndex];
-  }, [roadmap.phases, firstNonCompletedMilestoneIndex]);
+  }, [allMilestones, firstNonCompletedMilestoneIndex]);
 
   const onMilestonePress = () => {
-    if (roadmap.milestones?.[firstNonCompletedMilestoneIndex].tasks?.length) {
+    if (currentMilestone?.tasks?.length) {
       dispatch(
         setSelectedMilestoneAction({
-          milestone: roadmap.milestones[firstNonCompletedMilestoneIndex],
+          milestone: currentMilestone,
         }),
       );
       router.navigate({
@@ -107,7 +106,7 @@ export const AIRoadmapDetails = ({
               onPress={readonly ? () => {} : onMilestonePress}
             />
           )}
-          {!readonly && roadmap?.milestones?.length > 0 && (
+          {!readonly && allMilestones.length > 0 && (
             <AppButton
               onPress={() => {
                 router.navigate(

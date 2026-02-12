@@ -1,4 +1,21 @@
-import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import type {
+  MilestoneType,
+  RoadmapType,
+} from '@/hooks/roadmap/types/roadmap.types';
+
+/**
+ * Universal helper to get all milestones from a roadmap, regardless of type.
+ * - AI-generated roadmaps: milestones are in phases
+ * - Custom/manual roadmaps: milestones are in top-level array
+ */
+export const getAllMilestones = (roadmap: RoadmapType): MilestoneType[] => {
+  if (roadmap.phases && roadmap.phases.length > 0) {
+    // AI-generated: get from phases
+    return roadmap.phases.flatMap((phase) => phase.milestones || []);
+  }
+  // Custom/manual: use top-level array
+  return roadmap.milestones || [];
+};
 
 export const structureRoadmapApiPayload = (roadmap: Partial<RoadmapType>) => {
   return removeIds(roadmap);
@@ -22,10 +39,13 @@ const removeIds = <T>(obj: T): T => {
 };
 
 export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
-  if (!roadmap.milestones) {
-    return { ...roadmap, milestones: [] };
+  const milestones = getAllMilestones(roadmap);
+
+  if (milestones.length === 0) {
+    return { ...roadmap, milestones: roadmap.milestones || [] };
   }
-  const activeMilestone = roadmap.milestones?.find((m) => !m.reached);
+
+  const activeMilestone = milestones.find((m) => !m.reached);
   if (!activeMilestone) {
     return {
       ...roadmap,
@@ -33,7 +53,7 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
       daysRemainingTillNextMilestone: 0,
     };
   }
-  const allTasks = roadmap.milestones.flatMap((m) => m.tasks);
+  const allTasks = milestones.flatMap((m) => m.tasks);
   const completedTasks = allTasks.filter((t) => {
     return t.steps?.every((s) => s.completed) || false;
   });
