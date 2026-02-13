@@ -52,6 +52,7 @@ const setupAndroidChannel = async () => {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: Colors.primary,
+      showBadge: true,
     });
   }
 };
