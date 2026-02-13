@@ -15,12 +15,11 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSContactsUsageDescription": "Dead Reckoner needs access to your contacts to help you invite friends to use the app."
       },
-      "usesAppleSignIn": true,
-      "appleTeamId": "SKKNNT9KZZ"
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#2d3741"
       },
       "package": "com.deadreckoner.deadreckoner",
