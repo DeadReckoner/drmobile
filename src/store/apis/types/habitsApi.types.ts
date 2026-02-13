@@ -13,7 +13,6 @@ export type HabitType = {
   due_date?: string; // For one-time todos (recurrence_type: 'none')
   start_date: string;
   end_date?: string;
-  is_archived: boolean;
   archived?: boolean;
   created_at: string;
   updated_at: string;
@@ -43,7 +42,7 @@ export type UpdateHabitRequestType = {
   due_date?: string;
   start_date?: string;
   end_date?: string;
-  is_archived?: boolean;
+  archived?: boolean;
 };
 
 export type UpdateHabitResponseType = HabitType;

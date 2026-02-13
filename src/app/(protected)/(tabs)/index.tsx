@@ -46,12 +46,7 @@ const Today = () => {
     data: habitsData,
     isLoading: habitsLoading,
     refetch: refetchHabits,
-  } = useGetTodayHabitsQuery(
-    DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
-    {
-      refetchOnMountOrArgChange: true,
-    },
-  );
+  } = useGetTodayHabitsQuery();
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const dispatch = useAppDispatch();
