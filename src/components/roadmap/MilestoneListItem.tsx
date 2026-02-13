@@ -184,6 +184,7 @@ const MilestoneListItemComponent = ({
                   <AppView bg-accent paddingH-8 br100>
                     <TranslatedText
                       sm
+                      white
                       regular
                       translationKey="common.upcoming"
                     />

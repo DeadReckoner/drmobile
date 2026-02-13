@@ -94,7 +94,7 @@ export const MilestoneMetadata = ({ milestone }: MilestoneMetadataProps) => {
           <TranslatedText textColor body2 translationKey="ai_roadmap.spikes" />
           {spikes.map((spike) => (
             <AppView key={spike.spike_id}>
-              <AppText xsm textColor>
+              <AppText body2 light textColor>
                 • {spike.description} ({spike.timebox_days} days)
               </AppText>
             </AppView>
@@ -107,7 +107,7 @@ export const MilestoneMetadata = ({ milestone }: MilestoneMetadataProps) => {
           <TranslatedText textColor body2 translationKey="ai_roadmap.risks" />
           {risks.map((risk) => (
             <AppView key={risk.risk_id || risk.description}>
-              <AppText xsm textColor flex>
+              <AppText body2 light textColor flex>
                 • {risk.description}
               </AppText>
             </AppView>
