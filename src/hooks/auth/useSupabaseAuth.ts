@@ -73,6 +73,10 @@ export const useSupabaseAuth = (): IAuthService => {
           },
         });
 
+        if (data?.user?.identities?.length === 0) {
+          return getSupabaseAuthError(new AuthError('', 409, 'email_exists'));
+        }
+
         if (error) {
           return getSupabaseAuthError(error);
         }
@@ -234,11 +238,7 @@ export const useSupabaseAuth = (): IAuthService => {
       data: {
         id: user.id,
         email: user.email || '',
-        name:
-          user.user_metadata?.full_name ||
-          `${user.user_metadata?.firstName || ''} ${
-            user.user_metadata?.lastName || ''
-          }`.trim(),
+        name: user.user_metadata?.full_name || user.user_metadata?.name || '',
         avatar: user.user_metadata?.avatar_url,
         access_token: session.access_token,
       },
@@ -252,11 +252,7 @@ export const useSupabaseAuth = (): IAuthService => {
       data: {
         id: user.id,
         email: user.email || user.user_metadata?.email || '',
-        name:
-          user.user_metadata?.name ||
-          `${user.user_metadata?.firstName || ''} ${
-            user.user_metadata?.lastName || ''
-          }`.trim(),
+        name: user.user_metadata?.full_name || user.user_metadata?.name || '',
         avatar: user.user_metadata?.avatar_url,
       },
     };

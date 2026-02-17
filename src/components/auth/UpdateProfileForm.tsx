@@ -3,12 +3,10 @@ import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import { useAuth } from '@/hooks/auth/useAuth';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useUpdateUserMutation } from '@/hooks/user';
 import { useToast } from '@/hooks/useToast';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import { selectUser, setAuthUserAction } from '@/store/slices/authSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { useFormik } from 'formik';
+import { useState } from 'react';
 import * as Yup from 'yup';
 
 interface UpdateProfileFormProps {
@@ -22,9 +20,7 @@ export const UpdateProfileForm = ({
   initialFirstName = '',
   initialLastName = '',
 }: UpdateProfileFormProps) => {
-  const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUser);
-  const [updateUser, { isLoading }] = useUpdateUserMutation();
+  const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
   const { updateUserWithAuthProvider } = useAuth();
   const { t } = useLocalization();
@@ -48,45 +44,28 @@ export const UpdateProfileForm = ({
     validationSchema,
     enableReinitialize: true,
     onSubmit: async (values) => {
+      setIsLoading(true);
       try {
-        const [response, { error }] = await Promise.all([
-          updateUser({
-            first_name: values.first_name.trim(),
-            last_name: values.last_name.trim(),
-          }).unwrap(),
-          updateUserWithAuthProvider({
-            data: {
-              firstName: values.first_name.trim(),
-              lastName: values.last_name.trim(),
-            },
-          }),
-        ]);
-
+        const { error } = await updateUserWithAuthProvider({
+          data: {
+            full_name: `${values.first_name.trim()} ${values.last_name.trim()}`,
+          },
+        });
         if (error) {
           throw error;
         }
-
-        dispatch(
-          setAuthUserAction({
-            access_token: user.access_token,
-            email: user.email,
-            id: user.id,
-            name: `${response.first_name} ${response.last_name}`.trim(),
-            avatar: user.avatar || '',
-          }),
-        );
-
         showToast({
           message: t('authentication.update_profile.profile_updated_success'),
           type: 'success',
         });
-
         onSuccess?.();
-      } catch (error: any) {
+      } catch (error: unknown) {
         showToast({
           message: getApiErrorMessage(error),
           type: 'failure',
         });
+      } finally {
+        setIsLoading(false);
       }
     },
   });

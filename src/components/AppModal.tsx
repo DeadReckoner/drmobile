@@ -26,9 +26,11 @@ export const AppModal = ({
   dismissible = true,
   backgroundStyle,
   contentContainerStyle,
+  snapPoints = ['60%', '90%'],
   ...props
 }: AppModalProps) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const initialIndex = snapPoints.length - 1;
 
   const handleSheetChanges = useCallback(
     (index: number) => {
@@ -60,8 +62,8 @@ export const AppModal = ({
     <GestureHandlerRootView style={styles.container}>
       <BottomSheet
         ref={bottomSheetRef}
-        index={1}
-        snapPoints={['60%', '90%']}
+        index={initialIndex}
+        snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose={dismissible ? enablePanDownToClose : false}
         backdropComponent={renderBackdrop}

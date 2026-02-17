@@ -30,7 +30,7 @@
     "errors": {
       "same_password": "Cannot use the same password",
       "invalid_credentials": "Incorrect email or password.",
-      "email_exists": "This email is already registered.",
+      "email_exists": "This email is already registered. Login to continue.",
       "email_not_confirmed": "Please confirm your email before logging in.",
       "email_address_invalid": "Please enter a valid email address.",
       "weak_password": "Your password is too weak. Please choose a stronger one.",
@@ -247,7 +247,7 @@
     "invite_via_sms": "SMS",
     "invite_via_whatsapp": "WhatsApp",
     "invite_via_other": "Other",
-    "invite_message": "Join me on Dead Reckoner - the smart way to track your goals and achieve your dreams. Download now: {{appStoreUrl}}",
+    "invite_message": "It’s time to finish what you started and commit to what’s next. Join me on Dead Reckoner. Download now: {{appStoreUrl}}",
     "sms_not_available": "SMS is not available on this device",
     "whatsapp_not_available": "WhatsApp is not installed on this device",
     "share_not_available": "Sharing is not available on this device",

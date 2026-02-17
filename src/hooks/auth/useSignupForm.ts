@@ -50,8 +50,7 @@ interface SignupFormHookProps {
   onError?: (_error: AuthErrorType) => void;
 }
 
-export const useSignupForm = (pros: SignupFormHookProps) => {
-  const { onSuccess, onError } = pros;
+export const useSignupForm = ({ onSuccess, onError }: SignupFormHookProps) => {
   const { t } = useLocalization();
   const schema = createSignupValidationSchema(t);
 
@@ -68,8 +67,7 @@ export const useSignupForm = (pros: SignupFormHookProps) => {
     setIsLoading(true);
 
     const { data, error } = await signUpEmailWithAuthProvider(email, password, {
-      firstName,
-      lastName,
+      full_name: `${firstName} ${lastName}`.trim(),
     });
     setIsLoading(false);
 
