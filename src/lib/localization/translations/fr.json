@@ -247,7 +247,7 @@
     "invite_via_sms": "SMS",
     "invite_via_whatsapp": "WhatsApp",
     "invite_via_other": "Autre",
-    "invite_message": "Il est temps de finir ce que vous avez commencé et de vous engager pour la suite. Rejoignez-moi sur Dead Reckoner. Téléchargez maintenant : {{appStoreUrl}}",
+    "invite_message": "Rejoignez-moi sur Dead Reckoner.\nLes objectifs privés restent optionnels.\nRendez-les visibles. Terminez ce que vous avez commencé.\nMaintenons la ligne.\nTéléchargez maintenant : {{appStoreUrl}}",
     "sms_not_available": "SMS n'est pas disponible sur cet appareil",
     "whatsapp_not_available": "WhatsApp n'est pas installé sur cet appareil",
     "share_not_available": "Le partage n'est pas disponible sur cet appareil",
