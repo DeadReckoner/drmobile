@@ -426,7 +426,7 @@ const RoadmapDetailsPage = () => {
 
               {hasMilestones && (
                 <>
-                  {isRoadmapLoading ? (
+                  {isRoadmapLoading && roadmap.goal ? (
                     <Loader
                       marginT-16
                       transparent
