@@ -29,7 +29,7 @@ const createMilestoneValidationSchema = (
     milestoneDescription: Yup.string()
       .label(descLabel)
       .min(2, isInvalidMessage(descLabel, t))
-      .required(isRequiredMessage(descLabel, t)),
+      .optional(),
   });
 };
 
@@ -61,7 +61,7 @@ export const useMilestoneForm = ({
 
   const onMilestoneSubmit = async ({
     milestoneName,
-    milestoneDescription,
+    milestoneDescription = '',
   }: MilestoneSchemaType) => {
     if (selectedRoadmap?.shouldSyncWithServer) {
       try {

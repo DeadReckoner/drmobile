@@ -136,6 +136,8 @@ export const HabitsList = () => {
       <EmptyListItemPlaceholder
         title="tabs.today_tab.no_habits_yet"
         subtitle="tabs.today_tab.no_habits_description"
+        btnText="tabs.create_tab.add_new_habit"
+        onPress={() => router.navigate('/create')}
       />
     );
   };
