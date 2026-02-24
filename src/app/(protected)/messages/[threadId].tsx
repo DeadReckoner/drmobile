@@ -35,12 +35,15 @@ const ThreadDetailsScreen = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
 
-  const { data: messages = [], isLoading } = useGetThreadMessagesQuery(
-    threadId || '',
-    {
-      skip: !threadId,
-      refetchOnMountOrArgChange: true,
-    },
+  const { isLoading } = useGetThreadMessagesQuery(threadId || '', {
+    skip: !threadId,
+    refetchOnMountOrArgChange: true,
+  });
+
+  const messages = useAppSelector(
+    (state) =>
+      messagesApi.endpoints.getThreadMessages.select(threadId || '')(state)
+        ?.data ?? [],
   );
 
   const { wsSendMessage, isConnected, retryMessage } = useChatWebSocket({
@@ -74,7 +77,6 @@ const ThreadDetailsScreen = () => {
 
   const messagesWithSeparators = useMemo((): MessageListItem[] => {
     if (!messages || messages.length === 0) return [];
-
     const items: MessageListItem[] = [];
     let lastDate: string | null = null;
 
@@ -196,7 +198,7 @@ const ThreadDetailsScreen = () => {
               data={messagesWithSeparators || []}
               renderItem={renderItem}
               keyExtractor={(item) =>
-                item.type === 'message' ? item.data.message_id : item.id
+                `${item.type}-${item.type === 'message' ? item.data.message_id + item.data.content : item.id}`
               }
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}

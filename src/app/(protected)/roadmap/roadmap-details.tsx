@@ -287,14 +287,24 @@ const RoadmapDetailsPage = () => {
 
   const StartRoadmapButton = () => {
     if (!hasMilestones) return null;
-    if (isRoadmapStarted) return null;
+    if (isRoadmapLoading || isRoadmapStarted) return null;
+    if (isRoadmapFetching)
+      return (
+        <Loader
+          marginT-16
+          transparent
+          containerStyle={{ position: 'relative', marginTop: 16 }}
+        />
+      );
     return (
-      <PrimaryButton
-        label="common.start_roadmap"
-        shouldShowLoader
-        isLoading={isStartingRoadmap || isCreatingRoadmap}
-        onPress={onStartRoadmap}
-      />
+      <AppView reanimated entering={Animations.Entry.FadeInDownWithSpring()}>
+        <PrimaryButton
+          label="common.start_roadmap"
+          shouldShowLoader
+          isLoading={isStartingRoadmap || isCreatingRoadmap}
+          onPress={onStartRoadmap}
+        />
+      </AppView>
     );
   };
 
@@ -426,7 +436,9 @@ const RoadmapDetailsPage = () => {
 
               {hasMilestones && (
                 <>
-                  {isRoadmapLoading && roadmap.goal ? (
+                  {isRoadmapLoading &&
+                  roadmap.goal &&
+                  roadmap?.type !== 'ai_generated' ? (
                     <Loader
                       marginT-16
                       transparent
