@@ -107,8 +107,6 @@ const aiRoadmapCreationSlice = createSlice({
       state.formData[action.payload.key] = action.payload.value;
     },
 
-    // Clears stale job/websocket data so that on retry the old job_id
-    // does not re-trigger useGetJobStatusQuery or the WebSocket effect.
     startRoadmapCreationAction: (state) => {
       state.status = 'creating';
       state.error = null;
@@ -125,8 +123,6 @@ const aiRoadmapCreationSlice = createSlice({
       state.error = null;
     },
 
-    // Also clears job/websocket data so the stale job_id cannot
-    // re-trigger useGetJobStatusQuery or reconnect the WebSocket on retry.
     setCreationErrorAction: (state, action: PayloadAction<string>) => {
       state.status = 'error';
       state.createdRoadmap = null;
