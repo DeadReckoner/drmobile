@@ -21,6 +21,21 @@ export const messagesApi = api.injectEndpoints({
       providesTags: (_result, _error, threadId) => [
         { type: 'Threads', id: `MESSAGES-${threadId}` },
       ],
+      merge: (currentCache, newItems) => {
+        // Identify WebSocket messages in the current cache that are NOT
+        // in the server response (sent/received while the request was in-flight).
+        const serverMessageIds = new Set(newItems.map((m) => m.message_id));
+        const wsOnlyMessages = currentCache.filter(
+          (msg) => !serverMessageIds.has(msg.message_id),
+        );
+
+        // Replace cache with server data, then append the WS-only messages
+        currentCache.length = 0;
+        currentCache.push(...newItems);
+        if (wsOnlyMessages.length > 0) {
+          currentCache.push(...wsOnlyMessages);
+        }
+      },
     }),
     getAllUnreadMessagesCount: builder.query<number, void>({
       query: () => '/threads/unread',
