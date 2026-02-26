@@ -48,14 +48,29 @@ export const useChatWebSocket = ({
             );
 
             if (optimisticIndex !== -1) {
-              // Replace optimistic message with real one
-              draft[optimisticIndex] = {
-                ...message,
-                updated_at: message.created_at,
-                deleted_at: null,
-                isPending: false,
-                error: undefined,
-              };
+              // Check if the confirmed message already exists elsewhere
+              // (can happen when the API response arrives between the
+              //  optimistic insert and the WS confirmation)
+              const alreadyExists = draft.some(
+                (msg, idx) =>
+                  idx !== optimisticIndex &&
+                  msg.message_id === message.message_id,
+              );
+
+              if (alreadyExists) {
+                // The real message is already in the list (from merge),
+                // so just remove the optimistic placeholder.
+                draft.splice(optimisticIndex, 1);
+              } else {
+                // Replace optimistic message with the confirmed one
+                draft[optimisticIndex] = {
+                  ...message,
+                  updated_at: message.created_at,
+                  deleted_at: null,
+                  isPending: false,
+                  error: undefined,
+                };
+              }
             } else {
               const isDuplicate = draft.some(
                 (msg) => msg.message_id === message.message_id,

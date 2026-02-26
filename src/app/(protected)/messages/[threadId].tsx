@@ -198,12 +198,15 @@ const ThreadDetailsScreen = () => {
               data={messagesWithSeparators || []}
               renderItem={renderItem}
               keyExtractor={(item) =>
-                `${item.type}-${item.type === 'message' ? item.data.message_id + item.data.content : item.id}`
+                item.type === 'message'
+                  ? `msg-${item.data.message_id}`
+                  : `sep-${item.id}`
               }
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
               keyboardDismissMode="interactive"
+              recycleItems={false}
               alignItemsAtEnd
               initialScrollIndex={
                 messagesWithSeparators?.length > 0
@@ -211,7 +214,6 @@ const ThreadDetailsScreen = () => {
                   : 0
               }
               maintainScrollAtEnd
-              maintainScrollAtEndThreshold={0.1}
               ListEmptyComponent={renderEmptyComponent}
             />
             <MessageComposer
