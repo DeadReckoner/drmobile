@@ -1,12 +1,15 @@
+import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
-import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { AppScreen } from '@/components/AppScreen';
 import { SlideUpTextCarousel } from '@/components/roadmap/ai-roamap/SlideUpTextCarousel';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectJobStatusResponse } from '@/store/slices/aiRoadmapCreationSlice';
 import { Animations } from '@/utils/animation.utils';
+import { router } from 'expo-router';
 import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import {
@@ -54,48 +57,73 @@ export const AiRoadmapCreationLoader = () => {
   const jobStatusData = useAppSelector(selectJobStatusResponse);
 
   return (
-    <AppView
-      reanimated
-      entering={Animations.Entry.FadeInDownWithSpring().duration(1500)}
-      exiting={Animations.Exit.FadeOutDown().duration(1000)}
-      style={[
-        StyleSheet.absoluteFillObject,
-        styles.loader,
-        { backgroundColor: Colors.dialogOverlay },
-      ]}>
-      <AppView absT absH useSafeArea>
-        <HeaderWithBack marginH-16 />
-      </AppView>
-      <AppView marginB-20 flex center>
-        <AppView center>
-          <AppView
-            reanimated
-            center
-            style={[animationStyles, styles.imageContainer]}>
-            <AppImage
-              style={[StyleSheet.absoluteFillObject, styles.imageBackground]}
-              source={Assets.logo.aiRoadmapBG}
+    <AppScreen style={StyleSheet.absoluteFillObject}>
+      <AppView
+        flex
+        reanimated
+        entering={Animations.Entry.FadeInDownWithSpring().duration(1500)}
+        exiting={Animations.Exit.FadeOutDown().duration(1000)}
+        style={[
+          StyleSheet.absoluteFillObject,
+          styles.loader,
+          { backgroundColor: Colors.dialogOverlay },
+        ]}>
+        <AppView marginB-20 flex center>
+          <AppView center>
+            <AppView
+              reanimated
+              center
+              style={[animationStyles, styles.imageContainer]}>
+              <AppImage
+                style={[StyleSheet.absoluteFillObject, styles.imageBackground]}
+                source={Assets.logo.aiRoadmapBG}
+              />
+            </AppView>
+            <AppView absH absV center>
+              <AppIcon
+                set="Feather"
+                name="map"
+                color={Colors.white}
+                size={24}
+              />
+            </AppView>
+          </AppView>
+          <AppView marginT-40>
+            <SlideUpTextCarousel items={loadingTexts} />
+          </AppView>
+          <AppView row center gap-4 marginT-8 marginL-24>
+            <ProgressBar
+              fullWidth
+              progress={jobStatusData?.progress || 0}
+              style={{ width: 200 }}
             />
+            <AppText xsm textColor center style={{ width: 40 }}>
+              {jobStatusData?.progress || 0}%
+            </AppText>
           </AppView>
-          <AppView absH absV center>
-            <AppIcon set="Feather" name="map" color={Colors.white} size={24} />
+          <AppView marginT-24>
+            <AppButton
+              row
+              bg-accent
+              paddingV-8
+              paddingL-16
+              paddingR-20
+              br100
+              center
+              onPress={() => router.dismissTo('/')}>
+              <AppIcon name="arrowleft" color={Colors.white} size={20} />
+              <TranslatedText
+                marginL-8
+                xsm
+                regular
+                center
+                translationKey="common.return_to_app"
+              />
+            </AppButton>
           </AppView>
-        </AppView>
-        <AppView marginT-40>
-          <SlideUpTextCarousel items={loadingTexts} />
-        </AppView>
-        <AppView row center gap-4 marginT-12 marginL-24>
-          <ProgressBar
-            fullWidth
-            progress={jobStatusData?.progress || 0}
-            style={{ width: 180 }}
-          />
-          <AppText xsm textColor center style={{ width: 40 }}>
-            {jobStatusData?.progress || 0}%
-          </AppText>
         </AppView>
       </AppView>
-    </AppView>
+    </AppScreen>
   );
 };
 

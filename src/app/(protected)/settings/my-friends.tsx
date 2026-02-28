@@ -348,7 +348,7 @@ const MyFriends = () => {
                 <AppIcon name="qrcode" />
               </AppButton>
               <AppButton onPress={onInboxPress}>
-                <AppIcon set="Feather" name="inbox" />
+                <AppIcon set="Feather" name="user-plus" />
               </AppButton>
             </AppView>
           </AppView>

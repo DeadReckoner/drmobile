@@ -39,6 +39,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
+import { getAllMilestones } from '@/utils/roadmap.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -99,19 +100,14 @@ const RoadmapDetailsPage = () => {
 
   useEffect(() => {
     if (
-      roadmap?.roadmap_id &&
-      !!roadmap?.goal &&
-      roadmap.roadmap_id !== selectedRoadmap?.roadmap_id
+      data?.roadmap_id &&
+      data?.goal &&
+      selectedRoadmap?.roadmap_id === data.roadmap_id &&
+      !selectedRoadmap?.goal
     ) {
-      dispatch(setDraftRoadmapAction(roadmap));
+      dispatch(setDraftRoadmapAction(data));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    roadmap?.roadmap_id,
-    roadmap?.goal,
-    selectedRoadmap?.roadmap_id,
-    dispatch,
-  ]);
+  }, [data, selectedRoadmap?.roadmap_id, selectedRoadmap?.goal, dispatch]);
 
   const [isEditing, setIsEditing] = useState(false);
   const hideDialog = () => setIsDeleteMilestoneDialogOpen(false);
@@ -212,7 +208,7 @@ const RoadmapDetailsPage = () => {
         days,
         completed,
         milestones,
-        macro_map,
+        phases,
         reason,
         type,
       } = roadmap;
@@ -223,7 +219,7 @@ const RoadmapDetailsPage = () => {
         days,
         completed,
         milestones,
-        macro_map,
+        phases,
         reason,
         type,
       }).unwrap();
@@ -246,7 +242,7 @@ const RoadmapDetailsPage = () => {
       dispatch(
         setDraftRoadmapAction({
           ...finalRoadmap,
-          macro_map: roadmap?.macro_map,
+          phases: roadmap?.phases,
         }),
       );
       showToast({
@@ -261,19 +257,14 @@ const RoadmapDetailsPage = () => {
     }
   };
 
+  const milestones = getAllMilestones(roadmap);
+
   const isRoadmapStarted =
     roadmap.start_date !== '0001-01-01T00:00:00Z' &&
-    roadmap.milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
+    milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
     roadmap.start_date !== null;
 
-  const hasMilestones =
-    roadmap.type === 'ai_generated'
-      ? (
-          roadmap?.macro_map?.phases?.flatMap(
-            (phase) => phase.macro_milestones,
-          ) || []
-        ).length > 0
-      : (roadmap.milestones || []).length > 0;
+  const hasMilestones = milestones.length > 0;
 
   const CreateRoadmapButton = () => {
     if (
@@ -296,14 +287,24 @@ const RoadmapDetailsPage = () => {
 
   const StartRoadmapButton = () => {
     if (!hasMilestones) return null;
-    if (isRoadmapStarted) return null;
+    if (isRoadmapLoading || isRoadmapStarted) return null;
+    if (isRoadmapFetching)
+      return (
+        <Loader
+          marginT-16
+          transparent
+          containerStyle={{ position: 'relative', marginTop: 16 }}
+        />
+      );
     return (
-      <PrimaryButton
-        label="common.start_roadmap"
-        shouldShowLoader
-        isLoading={isStartingRoadmap || isCreatingRoadmap}
-        onPress={onStartRoadmap}
-      />
+      <AppView reanimated entering={Animations.Entry.FadeInDownWithSpring()}>
+        <PrimaryButton
+          label="common.start_roadmap"
+          shouldShowLoader
+          isLoading={isStartingRoadmap || isCreatingRoadmap}
+          onPress={onStartRoadmap}
+        />
+      </AppView>
     );
   };
 
@@ -435,7 +436,9 @@ const RoadmapDetailsPage = () => {
 
               {hasMilestones && (
                 <>
-                  {isRoadmapLoading ? (
+                  {isRoadmapLoading &&
+                  roadmap.goal &&
+                  roadmap?.type !== 'ai_generated' ? (
                     <Loader
                       marginT-16
                       transparent

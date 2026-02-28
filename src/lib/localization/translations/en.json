@@ -30,7 +30,7 @@
     "errors": {
       "same_password": "Cannot use the same password",
       "invalid_credentials": "Incorrect email or password.",
-      "email_exists": "This email is already registered.",
+      "email_exists": "This email is already registered. Login to continue.",
       "email_not_confirmed": "Please confirm your email before logging in.",
       "email_address_invalid": "Please enter a valid email address.",
       "weak_password": "Your password is too weak. Please choose a stronger one.",
@@ -92,6 +92,7 @@
       "add_new_task": "Add new task",
       "add_new_step": "Add new step",
       "add_new_roadmap": "Add new roadmap",
+      "add_new_habit": "Add new habit",
       "update_roadmap": "Update Roadmap",
       "update_task": "Update Task",
       "update_milestone": "Update Milestone",
@@ -151,8 +152,9 @@
       "constraints": "What potential obstacles could get in your way? And which ones feel like the biggest roadblocks? These can be internal or external (i.e., Internal: finding the willpower to wake up early, External: Work or family obligations.)",
       "skill_level": "Are there any limits, conditions, or personal preferences I should keep in mind? This could be schedule constraints, budget considerations, physical factors, tools you can or cannot use, or anything you want included or avoided.",
       "anything_else": "Anything else you want me to know before I build your roadmap? Add any details or context that would help shape the plan.",
-      "thank_you": "Got it. We’re building your personalized roadmap. This may take a few minutes. You can leave the app if you'd like, just don’t close it. We’ll notify you when it’s ready.",
-      "composer_placeholder": "Enter your answer"
+      "thank_you": "Perfect. I’ve got everything I need. I’m putting your roadmap together now, and it should take about 2 to 3 minutes. Sit tight, I’ll let you know the moment it’s ready.",
+      "composer_placeholder": "Enter your answer",
+      "additional_context": "Anything else you want me to know before I build your roadmap? Add any details or context that would help shape the plan."
     },
     "in_progress_banner": {
       "title": "Creating your roadmap",
@@ -166,6 +168,10 @@
       "title": "View Draft Roadmap!",
       "description": "Your personalized roadmap is ready. Review & submit the draft to begin your journey."
     },
+    "error_banner": {
+      "title": "Roadmap creation failed",
+      "description": "Something went wrong while creating your roadmap."
+    },
     "draft_dialog": {
       "in_progress_title": "AI Roadmap in Progress",
       "in_progress_subtitle": "You have an AI roadmap being created. Do you want to continue or start fresh?",
@@ -178,7 +184,7 @@
     "resuming_creation": "Resuming your roadmap creation...",
     "creation_in_progress": "Your roadmap is being created. This may take a few minutes.",
     "creation_failed": "Failed to create roadmap. Please try again.",
-    "retry_creation": "Retry",
+    "retry_creation": "Click to retry",
     "start_new": "Start New",
     "view_roadmap": "View Your Roadmap",
     "acceptance_test": "Acceptance test",
@@ -242,7 +248,7 @@
     "invite_via_sms": "SMS",
     "invite_via_whatsapp": "WhatsApp",
     "invite_via_other": "Other",
-    "invite_message": "Join me on Dead Reckoner - the smart way to track your goals and achieve your dreams. Download now: {{appStoreUrl}}",
+    "invite_message": "Join me on Dead Reckoner.\nPrivate goals stay optional.\nMake them visible. Finish what you started.\nLet's hold the line.\nDownload now: {{appStoreUrl}}",
     "sms_not_available": "SMS is not available on this device",
     "whatsapp_not_available": "WhatsApp is not installed on this device",
     "share_not_available": "Sharing is not available on this device",
@@ -335,6 +341,7 @@
     "or": "Or",
     "milestones": "Milestones",
     "tasks": "Tasks",
+    "upcoming": "Upcoming",
     "upcoming_milestones": "Upcoming Milestones",
     "roadmap_overview": "Roadmap Overview",
     "current_milestone": "Current Milestone",
@@ -368,7 +375,8 @@
     "scan_qr_code": "Scan this QR code to add me as your friend",
     "error_occurred": "An error occurred",
     "unknown_user": "Unknown User",
-    "unknown_roadmap": "Unknown Roadmap"
+    "unknown_roadmap": "Unknown Roadmap",
+    "return_to_app": "Return to app"
   },
   "roadmap": {
     "select_anchor": "Select an Anchor",

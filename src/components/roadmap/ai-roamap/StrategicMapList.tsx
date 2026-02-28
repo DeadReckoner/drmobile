@@ -2,34 +2,34 @@ import { AppList } from '@/components/AppList';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
-import { MacroMap } from '@/hooks/roadmap/types/roadmap.types';
+import type { MilestoneType, Phase } from '@/hooks/roadmap/types/roadmap.types';
 import React, { useState } from 'react';
-import { MacroMapListItem } from './MacroMapListItem';
+import { StrategicMilestoneListItem } from './StrategicMilestoneListItem';
 
-interface MacroMapListProps {
-  macroMap: MacroMap;
+interface StrategicMapListProps {
+  phases: Phase[];
 }
 
-export const MacroMapList = ({ macroMap }: MacroMapListProps) => {
+export const StrategicMapList = ({ phases }: StrategicMapListProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
     setExpandedId((prevId) => (prevId === id ? null : id));
   };
 
-  const renderMacroMilestone = ({
+  const renderMilestone = ({
     item,
   }: {
-    item: MacroMap['phases'][0]['macro_milestones'][0];
+    item: MilestoneType;
     index: number;
   }) => {
-    const isExpanded = expandedId === item.macro_milestone_id;
+    const isExpanded = expandedId === item.milestone_id;
     return (
-      <MacroMapListItem
-        key={item.macro_milestone_id}
-        macroMilestone={item}
+      <StrategicMilestoneListItem
+        key={item.milestone_id}
+        milestone={item}
         isExpanded={isExpanded}
-        onPress={() => handleToggle(item.macro_milestone_id)}
+        onPress={() => handleToggle(item.milestone_id)}
         isCollapsable={false}
       />
     );
@@ -48,10 +48,10 @@ export const MacroMapList = ({ macroMap }: MacroMapListProps) => {
 
   return (
     <AppList
-      data={macroMap.phases.flatMap((phase) => phase.macro_milestones)}
-      keyExtractor={(item) => item.macro_milestone_id || item.name}
+      data={phases.flatMap((phase) => phase.milestones || [])}
+      keyExtractor={(item) => item.milestone_id || item.sub_goal}
       extraData={expandedId}
-      renderItem={renderMacroMilestone}
+      renderItem={renderMilestone}
       ItemSeparatorComponent={renderItemSeparator}
       ListEmptyComponent={renderEmptyMilestoneComponent}
       contentContainerStyle={{ paddingBottom: 16 }}

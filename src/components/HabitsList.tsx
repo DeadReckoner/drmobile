@@ -115,13 +115,13 @@ export const HabitsList = () => {
       label: t('habits.update_habit'),
       onPress: handleEditHabit,
       disabled: isHabitOperationsInProgress,
-      icon: <AppIcon set="Feather" name="edit" size={20} />,
+      icon: <AppIcon set="Feather" name="edit" size={18} />,
     },
     {
       label: t('habits.archive_habit'),
       onPress: handleArchiveHabit,
       disabled: isHabitOperationsInProgress,
-      icon: <AppIcon set="Ionicons" name="archive" size={18} />,
+      icon: <AppIcon set="Ionicons" name="archive-outline" size={20} />,
     },
     {
       label: t('habits.delete_habit'),
@@ -136,6 +136,8 @@ export const HabitsList = () => {
       <EmptyListItemPlaceholder
         title="tabs.today_tab.no_habits_yet"
         subtitle="tabs.today_tab.no_habits_description"
+        btnText="tabs.create_tab.add_new_habit"
+        onPress={() => router.navigate('/create')}
       />
     );
   };
@@ -170,7 +172,7 @@ export const HabitsList = () => {
               </AppText>
               <AppView bg-accent paddingH-8 paddingV-4 br100>
                 <AppText
-                  textColor
+                  white
                   sm
                   regular
                   style={{ textTransform: 'capitalize' }}>

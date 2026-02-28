@@ -1,9 +1,10 @@
-import { useCreateUserMutation } from '@/hooks/user';
+import { useUpdateUserMutation } from '@/hooks/user';
+import { useToast } from '@/hooks/useToast';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setAuthUserAction } from '@/store/slices/authSlice';
 import { persistedStore } from '@/store/store';
-import { handleSignout } from '@/utils/apiErrors.utils';
+import { getApiErrorMessage, handleSignout } from '@/utils/apiErrors.utils';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useCallback, useEffect } from 'react';
 import { AppState } from 'react-native';
@@ -18,7 +19,8 @@ const AUTH_EVENTS: AuthChangeEvent[] = [
 
 export const useSupabaseAutoRefresh = () => {
   const dispatch = useAppDispatch();
-  const [createUser] = useCreateUserMutation();
+  const [updateUser] = useUpdateUserMutation();
+  const { showToast } = useToast();
 
   const handleAppStateChange = (state: string) => {
     if (state === 'active') {
@@ -28,54 +30,41 @@ export const useSupabaseAutoRefresh = () => {
     }
   };
 
-  const handleUserCreation = useCallback(
-    async (sessionUser: User, access_token: string) => {
-      if (!sessionUser) return;
+  const getFirstAndLastName = (sessionUser: User) => {
+    const metadata = sessionUser.user_metadata || {};
 
-      const metadata = sessionUser.user_metadata || {};
-      const email = sessionUser.email ?? '';
+    let first_name = metadata.first_name || '';
+    let last_name = metadata.last_name || '';
 
-      let first_name = metadata.firstName || '';
-      let last_name = metadata.lastName || '';
-
-      if (!first_name && metadata.full_name) {
-        const parts = String(metadata.full_name).trim().split(/\s+/);
+    if (!first_name) {
+      const fullName = metadata.full_name || metadata.name || '';
+      if (fullName) {
+        const parts = String(fullName).trim().split(/\s+/);
         first_name = parts[0] ?? '';
         last_name = parts.slice(1).join(' ') || '';
       }
+    }
+    return { first_name, last_name };
+  };
 
-      const payload = {
-        first_name,
-        last_name,
-        email,
-      };
-      try {
-        const createdUser = await createUser(payload).unwrap();
-        dispatch(
-          setAuthUserAction({
-            access_token: access_token,
-            email: createdUser.email,
-            id: createdUser.user_id,
-            name:
-              `${createdUser.first_name || ''} ${createdUser.last_name || ''}`.trim() ||
-              `${first_name || ''} ${last_name || ''}`,
-            avatar: '',
-          }),
-        );
-      } catch {}
+  const handleUserInformation = useCallback(
+    (sessionUser: User, access_token: string) => {
+      if (!sessionUser) return;
+      dispatch(
+        setAuthUserAction({
+          access_token: access_token,
+          email: sessionUser.user_metadata?.email || sessionUser.email || '',
+          id: sessionUser.id,
+          name:
+            sessionUser.user_metadata?.full_name ||
+            sessionUser.user_metadata?.name ||
+            '',
+          avatar: sessionUser.user_metadata?.avatar_url || '',
+        }),
+      );
     },
-    [createUser, dispatch],
+    [dispatch],
   );
-
-  const getUserName = useCallback((session: Session | null) => {
-    if (!session) return 'N/A';
-    const userMetadata = session.user.user_metadata;
-    return (
-      userMetadata?.name ||
-      userMetadata?.full_name ||
-      `${userMetadata.firstName || ''} ${userMetadata.lastName || ''}`.trim()
-    );
-  }, []);
 
   const onAuthStateChange = useCallback(
     async (event: AuthChangeEvent, session: Session | null) => {
@@ -85,23 +74,25 @@ export const useSupabaseAutoRefresh = () => {
           return;
         }
         if (session?.user && session?.access_token) {
-          if (event === 'SIGNED_IN') {
-            await handleUserCreation(session.user, session.access_token);
-          } else {
-            dispatch(
-              setAuthUserAction({
-                access_token: session.access_token,
-                email: session.user.email || '',
-                id: session.user.id,
-                name: getUserName(session),
-                avatar: session.user.user_metadata?.avatar_url || '',
-              }),
-            );
+          if (event === 'USER_UPDATED') {
+            const { first_name, last_name } = getFirstAndLastName(session.user);
+            try {
+              await updateUser({
+                first_name,
+                last_name,
+              }).unwrap();
+            } catch (error) {
+              showToast({
+                type: 'failure',
+                message: getApiErrorMessage(error),
+              });
+            }
           }
+          handleUserInformation(session.user, session.access_token);
         }
       }
     },
-    [dispatch, getUserName, handleUserCreation],
+    [dispatch, handleUserInformation, updateUser, showToast],
   );
 
   useEffect(() => {

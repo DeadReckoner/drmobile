@@ -26,7 +26,7 @@ export const AppleAuthButton = () => {
 
   return (
     <Pressable pointerEvents="auto" disabled={isLoading}>
-      {isLoading && <Loader />}
+      {isLoading && <Loader shouldAnimate={false} />}
       <AppleAuthentication.AppleAuthenticationButton
         buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
         buttonStyle={

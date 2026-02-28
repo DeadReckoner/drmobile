@@ -30,7 +30,7 @@
     "errors": {
       "same_password": "No puedes usar la misma contraseña",
       "invalid_credentials": "Correo o contraseña incorrectos.",
-      "email_exists": "Este correo ya está registrado.",
+      "email_exists": "Este correo ya está registrado. Inicia sesión para continuar.",
       "email_not_confirmed": "Por favor confirma tu correo antes de iniciar sesión.",
       "email_address_invalid": "Por favor introduce un correo válido.",
       "weak_password": "Tu contraseña es demasiado débil. Elige una más segura.",
@@ -83,8 +83,9 @@
       "constraints": "¿Qué posibles obstáculos podrían interponerse en tu camino? ¿Y cuáles sientes que son los mayores bloqueos? Pueden ser internos o externos (por ejemplo, Internos: encontrar la fuerza de voluntad para despertarte temprano; Externos: trabajo o compromisos familiares).",
       "skill_level": "¿Hay límites, condiciones o preferencias personales que deba tener en cuenta? Esto puede incluir restricciones de horario, presupuesto, factores físicos, herramientas que puedes o no usar, o cualquier cosa que quieras incluir o evitar.",
       "anything_else": "¿Hay algo más que deba saber antes de crear tu plan? Agrega cualquier detalle o contexto que ayude a darle forma.",
-      "thank_you": "Entendido. Estamos creando tu hoja de ruta personalizada. Esto puede tomar unos minutos. Puedes salir de la aplicación si lo deseas, solo no la cierres. Te notificaremos cuando esté lista.",
-      "composer_placeholder": "Escribe tu respuesta"
+      "thank_you": "Perfecto. Tengo todo lo que necesito. Estoy armando tu hoja de ruta ahora, y debería tomar alrededor de 2 a 3 minutos. Siéntate tranquilo, te avisaré en el momento en que esté lista.",
+      "composer_placeholder": "Escribe tu respuesta",
+      "additional_context": "¿Hay algo más que deba saber antes de crear tu plan? Agrega cualquier detalle o contexto que ayude a darle forma."
     },
     "in_progress_banner": {
       "title": "Creando tu hoja de ruta",
@@ -98,6 +99,10 @@
       "title": "¡Ver borrador de hoja de ruta!",
       "description": "Tu hoja de ruta personalizada está lista. Revisa el borrador y envíalo para comenzar tu viaje."
     },
+    "error_banner": {
+      "title": "Error al crear la hoja de ruta",
+      "description": "Algo salió mal mientras se creaba tu hoja de ruta."
+    },
     "draft_dialog": {
       "in_progress_title": "Hoja de Ruta IA en Progreso",
       "in_progress_subtitle": "Tienes una hoja de ruta IA siendo creada. ¿Quieres continuar o empezar de nuevo?",
@@ -110,7 +115,7 @@
     "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
     "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
     "creation_failed": "Error al crear la hoja de ruta. Por favor, inténtalo de nuevo.",
-    "retry_creation": "Reintentar",
+    "retry_creation": "Haz clic para reintentar",
     "start_new": "Comenzar Nueva",
     "view_roadmap": "Ver Tu Hoja de Ruta",
     "acceptance_test": "Prueba de aceptación",
@@ -143,6 +148,7 @@
       "add_new_task": "Añadir nueva tarea",
       "add_new_step": "Añadir nuevo paso",
       "add_new_roadmap": "Añadir nueva hoja de ruta",
+      "add_new_habit": "Añadir nuevo hábito",
       "update_roadmap": "Actualizar hoja de ruta",
       "update_task": "Actualizar tarea",
       "update_milestone": "Actualizar hito",
@@ -242,7 +248,7 @@
     "invite_via_sms": "SMS",
     "invite_via_whatsapp": "WhatsApp",
     "invite_via_other": "Otro",
-    "invite_message": "Únete a mí en Dead Reckoner - la forma inteligente de rastrear tus objetivos y alcanzar tus sueños. Descarga ahora: {{appStoreUrl}}",
+    "invite_message": "Únete a mí en Dead Reckoner.\nLos objetivos privados permanecen opcionales.\nHazlos visibles. Termina lo que comenzaste.\nMantengamos la línea.\nDescarga ahora: {{appStoreUrl}}",
     "sms_not_available": "SMS no está disponible en este dispositivo",
     "whatsapp_not_available": "WhatsApp no está instalado en este dispositivo",
     "share_not_available": "Compartir no está disponible en este dispositivo",
@@ -335,6 +341,7 @@
     "or": "O",
     "milestones": "Hitos",
     "tasks": "Tareas",
+    "upcoming": "Próximos",
     "upcoming_milestones": "Próximos Hitos",
     "roadmap_overview": "Resumen de Hoja de Ruta",
     "current_milestone": "Hito Actual",
@@ -368,7 +375,8 @@
     "scan_qr_code": "Escanea este código QR para agregarme como tu amigo",
     "error_occurred": "Ocurrió un error",
     "unknown_user": "Usuario Desconocido",
-    "unknown_roadmap": "Hoja de Ruta Desconocida"
+    "unknown_roadmap": "Hoja de Ruta Desconocida",
+    "return_to_app": "Regresar a la aplicación"
   },
   "roadmap": {
     "select_anchor": "Seleccionar un ancla",

@@ -36,7 +36,7 @@ const createCustomRoadmapValidationSchema = (
     goalDescription: Yup.string()
       .label(goalDescription)
       .min(2, isInvalidMessage(goalDescription, t))
-      .required(isRequiredMessage(goalDescription, t)),
+      .optional(),
     reason: Yup.string()
       .label(reason)
       .min(2, isInvalidMessage(reason, t))
@@ -65,7 +65,7 @@ export const useAddEditCustomRoadmapForm = ({
 
   const onCustomRoadmapSubmit = async ({
     goal,
-    goalDescription,
+    goalDescription = '',
     targetDate,
     reason,
   }: CustomRoadmapSchemaType) => {

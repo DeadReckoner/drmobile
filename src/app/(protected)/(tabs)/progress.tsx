@@ -19,6 +19,7 @@ import {
   setShouldSyncWithServerAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
+import { getAllMilestones } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
@@ -40,6 +41,8 @@ const Progress = () => {
   const [selectedTab, setSelectedTab] = useState('roadmaps');
 
   const onItemPress = (roadmap: RoadmapType, index: number) => {
+    const milestones = getAllMilestones(roadmap);
+
     dispatch(
       setDraftRoadmapAction({
         ...roadmap,
@@ -51,7 +54,7 @@ const Progress = () => {
 
     const isRoadmapStarted =
       roadmap.start_date !== '0001-01-01T00:00:00Z' &&
-      roadmap.milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
+      milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
       roadmap.start_date !== null;
 
     if (!isRoadmapStarted) {
@@ -88,7 +91,13 @@ const Progress = () => {
             selectedTab === 'roadmaps' ? Colors.primary : 'transparent',
         }}
         onPress={() => setSelectedTab('roadmaps')}>
-        <TranslatedText caption translationKey="settings.roadmaps" />
+        <TranslatedText
+          color={
+            selectedTab === 'roadmaps' ? Colors.textOnPrimary : Colors.textColor
+          }
+          caption
+          translationKey="settings.roadmaps"
+        />
       </AppButton>
       <AppView width={1} bg-primary />
       <AppButton
@@ -100,7 +109,11 @@ const Progress = () => {
             selectedTab === 'habits' ? Colors.primary : 'transparent',
         }}
         onPress={() => setSelectedTab('habits')}>
-        <AppText textColor caption>
+        <AppText
+          color={
+            selectedTab === 'habits' ? Colors.textOnPrimary : Colors.textColor
+          }
+          caption>
           {t('settings.habits')}/{t('common.tasks')}
         </AppText>
       </AppButton>
@@ -130,7 +143,9 @@ const Progress = () => {
         <AppView row spread>
           <TranslatedText h2 translationKey="tabs.progress" />
           {isFetching && !isLoading && !manualRefreshing && (
-            <Loader transparent containerStyle={style.scrollContainer} />
+            <AppView>
+              <Loader transparent containerStyle={style.scrollContainer} />
+            </AppView>
           )}
         </AppView>
         <Divider />

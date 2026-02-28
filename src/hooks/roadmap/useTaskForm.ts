@@ -25,7 +25,7 @@ const createTaskValidationSchema = (t: (_: TranslationKeysType) => string) => {
     taskDescription: Yup.string()
       .label(descLabel)
       .min(2, isInvalidMessage(descLabel, t))
-      .required(isRequiredMessage(descLabel, t)),
+      .optional(),
   });
 };
 
@@ -56,7 +56,7 @@ export const useTaskForm = ({
 
   const onTaskSubmit = async ({
     taskName,
-    taskDescription,
+    taskDescription = '',
   }: TaskSchemaType) => {
     if (selectedDraft?.shouldSyncWithServer) {
       try {

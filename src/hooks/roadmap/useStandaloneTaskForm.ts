@@ -95,7 +95,7 @@ export const useStandaloneTaskForm = ({
   const onStandaloneTaskSubmit = async (props: TaskSchemaType) => {
     const payload: CreateHabitRequestType = {
       title: props.title,
-      description: props.description || undefined,
+      description: props.description || '',
       recurrence_type: props.recurrenceType as RecurrenceType,
       start_date: props.startDate || props.dueDate || '',
     };

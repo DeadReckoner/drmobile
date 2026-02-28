@@ -1,6 +1,6 @@
 import { AppIcon } from '@/components/AppIcon';
 import { AppText, AppView } from '@/components/ui';
-import type { MacroMilestone } from '@/hooks/roadmap/types/roadmap.types';
+import type { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
 import { Animations } from '@/utils/animation.utils';
 import React, { useEffect } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
@@ -9,21 +9,21 @@ import {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { MacroMilestoneMetadata } from './MacroMilestoneMetadata';
+import { MilestoneMetadata } from './MilestoneMetadata';
 
-interface MacroMapListItemProps {
-  macroMilestone: MacroMilestone;
+interface StrategicMilestoneListItemProps {
+  milestone: MilestoneType;
   isExpanded?: boolean;
   onPress?: () => void;
   isCollapsable?: boolean;
 }
 
-export const MacroMapListItem = ({
-  macroMilestone,
+export const StrategicMilestoneListItem = ({
+  milestone,
   isExpanded = false,
   isCollapsable = true,
   onPress,
-}: MacroMapListItemProps) => {
+}: StrategicMilestoneListItemProps) => {
   const isItemExpanded = isCollapsable ? true : isExpanded;
   const chevronDeg = useSharedValue('0deg');
   useEffect(() => {
@@ -45,7 +45,7 @@ export const MacroMapListItem = ({
     <AppView
       reanimated
       layout={Animations.Layout.Springify().damping(30).stiffness(200)}
-      key={macroMilestone.macro_milestone_id}
+      key={milestone.milestone_id}
       bg-cardBG
       br30
       style={styles.container}>
@@ -56,7 +56,7 @@ export const MacroMapListItem = ({
         <AppView padding-16>
           <AppView row center gap-16 style={styles.header}>
             <AppText textColor body2 style={styles.text}>
-              {macroMilestone.name}
+              {milestone.sub_goal}
             </AppText>
             {!isCollapsable && (
               <AppView reanimated style={[styles.iconWrapper, chevronStyle]}>
@@ -68,7 +68,7 @@ export const MacroMapListItem = ({
       </TouchableOpacity>
       {isItemExpanded && (
         <AppView bg-lightCardBG>
-          <MacroMilestoneMetadata macroMilestone={macroMilestone} />
+          <MilestoneMetadata milestone={milestone} />
         </AppView>
       )}
     </AppView>

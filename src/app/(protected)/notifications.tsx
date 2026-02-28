@@ -170,7 +170,7 @@ const Notifications = () => {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.allSettled([refetchNotifications()]);
+      await refetchNotifications().unwrap();
     } catch {
     } finally {
       setRefreshing(false);
@@ -246,7 +246,7 @@ const Notifications = () => {
     [dispatch],
   );
 
-  const renderFriendRequestItem = useCallback(
+  const renderNotificationItem = useCallback(
     ({ item }: { item: NotificationType }) => {
       const type = item.type;
       if (type === 'friend_request') {
@@ -335,12 +335,7 @@ const Notifications = () => {
                 message: t('notifications.clear_success'),
                 type: 'success',
               });
-            } catch {
-              showToast({
-                message: t('common.something_went_wrong'),
-                type: 'failure',
-              });
-            }
+            } catch {}
           },
         },
       ],
@@ -365,18 +360,18 @@ const Notifications = () => {
 
   const renderEmptyComponent = () => {
     return (
-      <AppView style={styles.emptyContainer}>
-        <AppIcon name="notification" size={48} color={Colors.secondary} />
+      <AppView paddingH-24 style={styles.emptyContainer}>
+        <AppIcon name="notification" size={48} color={Colors.textColor} />
         <TranslatedText
           marginT-16
-          secondary
+          body1
           center
           translationKey="notifications.no_notifications"
         />
         <TranslatedText
           marginT-8
-          caption
-          secondary
+          body2
+          light
           center
           translationKey="notifications.no_notifications_description"
         />
@@ -443,7 +438,7 @@ const Notifications = () => {
       <Animated.FlatList
         data={notifications || []}
         contentInsetAdjustmentBehavior="always"
-        renderItem={renderFriendRequestItem}
+        renderItem={renderNotificationItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         refreshing={refreshing}

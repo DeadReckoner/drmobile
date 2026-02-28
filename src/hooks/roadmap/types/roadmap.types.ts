@@ -39,6 +39,18 @@ export interface MilestoneType {
   reached: boolean;
   tasks: TaskType[];
   date?: string;
+
+  // Strategic fields (from former MacroMilestone)
+  phase_id?: string;
+  acceptance_test?: string;
+  duration_days_min?: number;
+  duration_days_max?: number;
+  order_index?: number;
+  resources_forecast?: string; // JSON stringified object
+
+  // Related data (from former MacroMilestone)
+  spikes?: Spike[];
+  risks?: Risk[];
 }
 
 type RoadmapGenerationStatusType =
@@ -63,7 +75,7 @@ export interface RoadmapType {
   daysRemainingTillNextMilestone?: number;
 
   type?: 'custom_made' | 'ai_generated';
-  macro_map?: MacroMap;
+  phases?: Phase[];
 
   job_id?: string;
   generation_status?: RoadmapGenerationStatusType;
@@ -71,46 +83,26 @@ export interface RoadmapType {
   anchor_id?: string;
 }
 
-export interface MacroMap {
-  macro_map_id: string;
-  roadmap_id: string;
-  phases: Phase[];
-}
-
 export interface Phase {
   phase_id: string;
-  macro_map_id: string;
+  roadmap_id: string;
   name: string;
   description: string;
   order_index: number;
   duration_weeks: string;
-  macro_milestones: MacroMilestone[];
-}
-
-export interface MacroMilestone {
-  macro_milestone_id: string;
-  phase_id: string;
-  name: string;
-  acceptance_test: string;
-  duration_days_min: number;
-  duration_days_max: number;
-  order_index: number;
-  resources_forecast: string; // JSON stringified object
-  // resources_forecast: ResourcesForecast | string;
-  spikes: Spike[];
-  risks: Risk[];
+  milestones?: MilestoneType[];
 }
 
 export interface Spike {
   spike_id: string;
-  macro_milestone_id: string;
+  milestone_id: string;
   description: string;
   timebox_days: number;
 }
 
 export interface Risk {
   risk_id: string;
-  macro_milestone_id: string;
+  milestone_id: string;
   description: string;
   severity: 'low' | 'medium' | 'high';
 }
@@ -130,7 +122,6 @@ export interface RoadmapCreationJobStatusResponse {
   status: RoadmapGenerationStatusType;
 
   result?: {
-    macromap_id: string;
     roadmap_id: string;
   };
 }

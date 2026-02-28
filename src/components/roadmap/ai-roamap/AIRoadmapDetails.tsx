@@ -2,7 +2,7 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
-import { MacroMapListItem } from '@/components/roadmap/ai-roamap/MacroMapListItem';
+import { StrategicMilestoneListItem } from '@/components/roadmap/ai-roamap/StrategicMilestoneListItem';
 import { RoadmapOverview } from '@/components/roadmap/RoadmapOverview';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
@@ -12,6 +12,7 @@ import {
   setDraftRoadmapAction,
   setSelectedMilestoneAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { getAllMilestones } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
@@ -35,28 +36,27 @@ export const AIRoadmapDetails = ({
 }: AIRoadmapDetailsProps) => {
   const dispatch = useAppDispatch();
 
-  const onViewMacroMap = () => {
+  const onViewStrategicMap = () => {
     dispatch(setDraftRoadmapAction(roadmap));
     router.navigate('/(protected)/roadmap/ai-roadmap-macromap');
   };
 
+  const allMilestones = useMemo(() => getAllMilestones(roadmap), [roadmap]);
+
   const firstNonCompletedMilestoneIndex = useMemo(() => {
-    const index = roadmap.milestones?.findIndex(
-      (milestone) => !milestone.reached,
-    );
+    const index = allMilestones.findIndex((milestone) => !milestone.reached);
     return index === -1 ? 0 : index;
-  }, [roadmap.milestones]);
+  }, [allMilestones]);
 
-  const displayedMacroMap =
-    roadmap.macro_map?.phases?.[0]?.macro_milestones?.[
-      firstNonCompletedMilestoneIndex
-    ];
+  const currentMilestone = useMemo(() => {
+    return allMilestones[firstNonCompletedMilestoneIndex];
+  }, [allMilestones, firstNonCompletedMilestoneIndex]);
 
-  const onMacroMilestonePress = () => {
-    if (roadmap.milestones?.[firstNonCompletedMilestoneIndex].tasks?.length) {
+  const onMilestonePress = () => {
+    if (currentMilestone?.tasks?.length) {
       dispatch(
         setSelectedMilestoneAction({
-          milestone: roadmap.milestones[firstNonCompletedMilestoneIndex],
+          milestone: currentMilestone,
         }),
       );
       router.navigate({
@@ -76,7 +76,7 @@ export const AIRoadmapDetails = ({
       <Divider marginT-16 />
       {isRoadmapLoading ? (
         <Loader transparent containerStyle={styles.loader} />
-      ) : roadmap.macro_map?.phases[0].macro_milestones[0] ? (
+      ) : currentMilestone ? (
         <AppView
           layout={FadingTransition}
           entering={FadeInDown}
@@ -84,7 +84,7 @@ export const AIRoadmapDetails = ({
           <AppView row centerV spread marginB-16>
             <TranslatedText body2 translationKey="common.current_milestone" />
             {!readonly && (
-              <AppButton onPress={onViewMacroMap}>
+              <AppButton onPress={onViewStrategicMap}>
                 <AppView right>
                   <AppView
                     row
@@ -100,13 +100,13 @@ export const AIRoadmapDetails = ({
               </AppButton>
             )}
           </AppView>
-          {displayedMacroMap && (
-            <MacroMapListItem
-              macroMilestone={displayedMacroMap}
-              onPress={readonly ? () => {} : onMacroMilestonePress}
+          {currentMilestone && (
+            <StrategicMilestoneListItem
+              milestone={currentMilestone}
+              onPress={readonly ? () => {} : onMilestonePress}
             />
           )}
-          {!readonly && roadmap?.milestones?.length > 0 && (
+          {!readonly && allMilestones.length > 0 && (
             <AppButton
               onPress={() => {
                 router.navigate(

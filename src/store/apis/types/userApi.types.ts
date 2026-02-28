@@ -3,6 +3,7 @@ export type CreateUserParamsType = {
   last_name: string;
   email: string;
   phone_number?: string;
+  access_token: string;
 };
 
 export type CreateUserResponseType = CreateUserParamsType & {
