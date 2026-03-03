@@ -3,6 +3,7 @@ import { api } from '@/store/apis/api';
 import { ApiError } from '@/store/apis/types/api.types';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import { clearAuthAction } from '@/store/slices/authSlice';
+import { resetOnboardingAction } from '@/store/slices/onboardingSlice';
 import { resetDraftAction } from '@/store/slices/roadmapDraftSlice';
 import { resetSettingsSlice } from '@/store/slices/settingsSlice';
 import { AppDispatchType, RootStateType } from '@/store/types/store.types';
@@ -19,6 +20,7 @@ export const handleSignout = async (
     dispatch(resetCreationStateAction());
     dispatch(resetDraftAction());
     dispatch(resetSettingsSlice());
+    dispatch(resetOnboardingAction());
     dispatch(api.util.resetApiState());
 
     const appleUserName = await AsyncStorage.getItem('@apple_user_name');
@@ -31,9 +33,11 @@ export const handleSignout = async (
 };
 
 export const getApiErrorMessage = (error: unknown) => {
+  const apiError = error as ApiError;
   return (
-    (error as ApiError)?.message ||
-    (error as ApiError)?.data?.error ||
+    apiError?.message ||
+    apiError?.data?.message ||
+    apiError?.data?.error ||
     i18nConfig.t('common.something_went_wrong') ||
     'Something went wrong.'
   );

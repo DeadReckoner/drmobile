@@ -1,0 +1,15 @@
+interface OnboardingStepState {
+  reviewToday: boolean;
+  createOrReviewRoadmap: boolean;
+  inviteFriend: boolean;
+  addAnchor: boolean;
+  completeTask: boolean;
+}
+
+interface OnboardingStateType {
+  hasSeenIntroModal: boolean;
+  isSetupTaskCompleted: boolean;
+  setupSteps: OnboardingStepState;
+}
+
+export type { OnboardingStateType, OnboardingStepState };

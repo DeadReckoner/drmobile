@@ -426,6 +426,35 @@
     "change_requests_placeholder": "Eg. Adjust intensity, Swap running with Cycling",
     "submit_feedback": "Submit Feedback"
   },
+  "onboarding": {
+    "intro": {
+      "headline": "Dead Reckoner is built for execution.",
+      "body": "Most tools help you plan. Dead Reckoner helps you move.\nYou start with one goal. We turn it into a clear roadmap, show you exactly what to do each day, and give you the option to bring someone in to keep you accountable.",
+      "primary_cta": "Start My First Roadmap",
+      "primary_subtext": "Takes about 5 minutes",
+      "secondary_cta": "Take Me to the App"
+    },
+    "setup_task": {
+      "title": "Set up Dead Reckoner",
+      "description": "This takes under two minutes. Do this once to get oriented.",
+      "step_review_today": "Review Today",
+      "step_review_today_details": "This page always shows your next action. You do not need to plan your day here, just execute what appears.",
+      "step_create_review_roadmap": "Create or review your roadmap",
+      "step_create_review_roadmap_details": "Roadmaps create the tasks you see on Today. Once created, review the first milestone and start the roadmap if everything looks right. Roadmaps can be found under the Progress tab.",
+      "step_invite_friend": "Invite a friend to the app for accountability",
+      "step_invite_friend_details": "Go to your Profile, then My Friends. Search for a friend, or send them an invite if they are not on the app. \nWhy this matters: Having someone see your progress makes follow through far more likely.",
+      "step_add_anchor": "Add an Anchor to your roadmap",
+      "step_add_anchor_details": "Open your roadmap, tap the Anchor icon, and select a friend. Anchors can see your progress and get notified if you fall behind. \nWhy this matters: Anchors turn intention into commitment.",
+      "step_complete_task": "Complete this task",
+      "step_complete_task_details": "Once these steps are all checked off, this task will disappear and your real work begins.",
+      "completion_message": "You are set. Just do what shows up here."
+    },
+    "empty_state": {
+      "no_tasks_title": "No tasks yet",
+      "no_tasks_description": "No tasks yet. Create a roadmap or recurring habit to populate your day.",
+      "go_to_create": "Go to Create"
+    }
+  },
   "coming_soon": {
     "title": "Coming Soon",
     "description": "We're working hard to bring you this feature. Stay tuned for updates!"

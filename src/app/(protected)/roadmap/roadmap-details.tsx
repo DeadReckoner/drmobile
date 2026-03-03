@@ -64,8 +64,12 @@ const RoadmapDetailsPage = () => {
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
     useStartRoadmapMutation();
 
-  const { data: friendsData, isLoading: isLoadingFriends } =
-    useGetFriendsQuery();
+  const { data: friendsData, isLoading: isLoadingFriends } = useGetFriendsQuery(
+    undefined,
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const [createAnchorRequest, { isLoading: isCreatingAnchorRequest }] =
     useCreateAnchorRequestMutation();
   const [removeAnchor, { isLoading: isRemovingAnchor }] =

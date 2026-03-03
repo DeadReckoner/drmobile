@@ -150,7 +150,9 @@ const MilestoneListItemComponent = ({
   return (
     <AppView key={milestone.milestone_id}>
       <AppButton
-        onPress={(milestone.tasks?.length || 0) > 0 ? onPress : undefined}>
+        onPress={
+          !readonly || (milestone.tasks?.length || 0) > 0 ? onPress : undefined
+        }>
         {readonly ? (
           <AppView row padding-16 gap-16 center>
             <AppCheckbox value={isMilestoneReached} />
@@ -180,7 +182,7 @@ const MilestoneListItemComponent = ({
                   <AppView reanimated style={chevronStyle}>
                     <AppIcon set="Feather" name={'chevron-down'} />
                   </AppView>
-                ) : (
+                ) : readonly ? (
                   <AppView bg-accent paddingH-8 br100>
                     <TranslatedText
                       sm
@@ -188,6 +190,10 @@ const MilestoneListItemComponent = ({
                       regular
                       translationKey="common.upcoming"
                     />
+                  </AppView>
+                ) : (
+                  <AppView reanimated style={chevronStyle}>
+                    <AppIcon set="Feather" name={'chevron-down'} />
                   </AppView>
                 )}
               </AppButton>

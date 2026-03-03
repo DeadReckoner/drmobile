@@ -52,8 +52,12 @@ const AddEditHabitTask = () => {
   const { t } = useLocalization();
   const [isEditing, setIsEditing] = useState(isHabitEditing === 'true');
 
-  const { data: friendsData, isLoading: isLoadingFriends } =
-    useGetFriendsQuery();
+  const { data: friendsData, isLoading: isLoadingFriends } = useGetFriendsQuery(
+    undefined,
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const [createHabitAnchorRequest, { isLoading: isCreatingAnchorRequest }] =
     useCreateHabitAnchorRequestMutation();
   const [removeHabitAnchor, { isLoading: isRemovingAnchor }] =

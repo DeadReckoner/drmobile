@@ -1,6 +1,7 @@
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
+import { setSetupStepAction } from '@/store/slices/onboardingSlice';
 import {
   resetDraftAction,
   setDraftRoadmapAction,
@@ -23,6 +24,7 @@ const onCreateRoadmapQueryStarted: TypedMutationOnQueryStarted<
         draft.push(data);
       }),
     );
+    dispatch(setSetupStepAction({ key: 'createOrReviewRoadmap', value: true }));
   } catch {}
 };
 

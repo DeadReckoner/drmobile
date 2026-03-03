@@ -74,11 +74,11 @@ export const AppModal = ({
         ]}
         {...props}>
         <BottomSheetView
-          style={[
+          style={StyleSheet.flatten([
             styles.contentContainer,
             { backgroundColor: Colors.cardBG },
             contentContainerStyle,
-          ]}>
+          ])}>
           {children}
         </BottomSheetView>
       </BottomSheet>

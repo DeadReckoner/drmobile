@@ -426,6 +426,35 @@
     "change_requests_placeholder": "Ex. Ajuster l'intensité, Remplacer la course par le vélo",
     "submit_feedback": "Soumettre le Retour"
   },
+  "onboarding": {
+    "intro": {
+      "headline": "Dead Reckoner est conçu pour l'exécution.",
+      "body": "La plupart des outils vous aident à planifier. Dead Reckoner vous aide à avancer.\nVous commencez avec un objectif. Nous le transformons en une feuille de route claire, vous montrons exactement quoi faire chaque jour et vous donnons la possibilité d'inclure quelqu'un pour vous tenir responsable.",
+      "primary_cta": "Commencer Ma Première Feuille de Route",
+      "primary_subtext": "Prend environ 5 minutes",
+      "secondary_cta": "M'emmener à l'Application"
+    },
+    "setup_task": {
+      "title": "Configurer Dead Reckoner",
+      "description": "Cela prend moins de deux minutes. Faites-le une fois pour vous orienter.",
+      "step_review_today": "Consulter Aujourd'hui",
+      "step_review_today_details": "Cette page affiche toujours votre prochaine action. Vous n'avez pas besoin de planifier votre journée ici, exécutez simplement ce qui apparaît.",
+      "step_create_review_roadmap": "Créer ou consulter votre feuille de route",
+      "step_create_review_roadmap_details": "Les feuilles de route créent les tâches que vous voyez dans Aujourd'hui. Une fois créée, consultez le premier jalon et démarrez la feuille de route si tout semble correct. Les feuilles de route se trouvent sous l'onglet Progrès.",
+      "step_invite_friend": "Inviter un ami dans l'application pour la responsabilisation",
+      "step_invite_friend_details": "Allez dans votre Profil, puis Mes Amis. Cherchez un ami ou envoyez-lui une invitation s'il n'est pas sur l'application. \nPourquoi c'est important : Avoir quelqu'un qui voit vos progrès rend le suivi beaucoup plus probable.",
+      "step_add_anchor": "Ajouter une Ancre à votre feuille de route",
+      "step_add_anchor_details": "Ouvrez votre feuille de route, appuyez sur l'icône Ancre et sélectionnez un ami. Les Ancres peuvent voir vos progrès et être notifiées si vous prenez du retard. \nPourquoi c'est important : Les Ancres transforment l'intention en engagement.",
+      "step_complete_task": "Terminer cette tâche",
+      "step_complete_task_details": "Une fois toutes ces étapes cochées, cette tâche disparaîtra et votre vrai travail commencera.",
+      "completion_message": "Vous êtes prêt. Faites simplement ce qui apparaît ici."
+    },
+    "empty_state": {
+      "no_tasks_title": "Pas encore de tâches",
+      "no_tasks_description": "Pas encore de tâches. Créez une feuille de route ou une habitude récurrente pour remplir votre journée.",
+      "go_to_create": "Aller à Créer"
+    }
+  },
   "coming_soon": {
     "title": "Bientôt disponible",
     "description": "Nous travaillons dur pour vous apporter cette fonctionnalité. Restez à l'écoute pour les mises à jour !"

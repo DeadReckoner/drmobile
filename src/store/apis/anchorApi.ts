@@ -8,6 +8,7 @@ import { habitsApi } from '@/store/apis/habitsApi';
 import { notificationApi } from '@/store/apis/notificationsApi';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
+import { setSetupStepAction } from '@/store/slices/onboardingSlice';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
 const onCreateAnchorRequestStarted: TypedMutationOnQueryStarted<
@@ -26,6 +27,7 @@ const onCreateAnchorRequestStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
+    dispatch(setSetupStepAction({ key: 'addAnchor', value: true }));
   } catch {}
 };
 
@@ -45,6 +47,7 @@ const onCreateHabitAnchorRequestStarted: TypedMutationOnQueryStarted<
         },
       ),
     );
+    dispatch(setSetupStepAction({ key: 'addAnchor', value: true }));
   } catch {}
 };
 

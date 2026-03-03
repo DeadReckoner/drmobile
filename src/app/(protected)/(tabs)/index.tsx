@@ -5,18 +5,25 @@ import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
+import { OnboardingSetupTask } from '@/components/onboarding/OnboardingSetupTask';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
+import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useGetTodayHabitsQuery } from '@/store/apis/habitsApi';
 import { HabitWithStatusType } from '@/store/apis/types/habitsApi.types';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectIsSetupTaskCompleted,
+  selectSetupSteps,
+  setSetupStepAction,
+} from '@/store/slices/onboardingSlice';
 import {
   setSelectedTaskAction,
   setShouldSyncWithServerAction,
@@ -31,6 +38,9 @@ import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
   const { t } = useLocalization();
+  const isSetupTaskCompleted = useAppSelector(selectIsSetupTaskCompleted);
+  const setupSteps = useAppSelector(selectSetupSteps);
+  const showSetupTask = !isSetupTaskCompleted;
   const [currentDate] = useState(() =>
     DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
   );
@@ -58,14 +68,56 @@ const Today = () => {
     })();
   }, [requestPermissions]);
 
+  // Mark "review today" immediately on mount — user is always on the Today screen
+  useEffect(() => {
+    if (!isSetupTaskCompleted && !setupSteps.reviewToday) {
+      dispatch(setSetupStepAction({ key: 'reviewToday', value: true }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleTaskClick = (task: TaskType, index: number) => {
     dispatch(setShouldSyncWithServerAction(true));
     dispatch(setSelectedTaskAction({ task, index }));
     router.navigate(`/task/today-task-details`);
   };
 
-  useGetFriendsQuery();
+  const { data: friends } = useGetFriendsQuery(undefined, {
+    refetchOnMountOrArgChange: 3600 * 24, // 24 hours
+  });
+  const { data: roadmaps } = useGetRoadmapsQuery(undefined, {
+    refetchOnMountOrArgChange: 3600 * 24, // 24 hours
+  });
   useGetNotificationsQuery();
+
+  useEffect(() => {
+    if (isSetupTaskCompleted) return;
+
+    const hasRoadmap = (roadmaps?.length ?? 0) > 0;
+    const hasFriend = (friends?.length ?? 0) > 0;
+    const hasAnchor = roadmaps?.some((r) => !!r.anchor_id) ?? false;
+
+    if (hasRoadmap && !setupSteps.createOrReviewRoadmap) {
+      dispatch(
+        setSetupStepAction({ key: 'createOrReviewRoadmap', value: true }),
+      );
+    }
+    if (hasFriend && !setupSteps.inviteFriend) {
+      dispatch(setSetupStepAction({ key: 'inviteFriend', value: true }));
+    }
+    if (hasAnchor && !setupSteps.addAnchor) {
+      dispatch(setSetupStepAction({ key: 'addAnchor', value: true }));
+    }
+
+    const allOtherStepsDone =
+      setupSteps.reviewToday &&
+      setupSteps.createOrReviewRoadmap &&
+      setupSteps.inviteFriend &&
+      setupSteps.addAnchor;
+    if (allOtherStepsDone && !setupSteps.completeTask) {
+      dispatch(setSetupStepAction({ key: 'completeTask', value: true }));
+    }
+  }, [roadmaps, friends, setupSteps, isSetupTaskCompleted, dispatch]);
 
   const onCalendarClick = () => {
     // router.navigate('/calendar');
@@ -118,11 +170,19 @@ const Today = () => {
   };
 
   const renderEmptyComponent = () => {
+    if (showSetupTask) return null;
     return (
-      <EmptyListItemPlaceholder
-        title="tabs.create_tab.no_tasks_yet"
-        subtitle="tabs.create_tab.no_tasks_description"
-      />
+      <AppView
+        reanimated
+        entering={Animations.Entry.FadeInDownWithSpring()}
+        exiting={Animations.Exit.FadeOutDown()}>
+        <EmptyListItemPlaceholder
+          title="onboarding.empty_state.no_tasks_title"
+          subtitle="onboarding.empty_state.no_tasks_description"
+          btnText="onboarding.empty_state.go_to_create"
+          onPress={() => router.navigate('/create')}
+        />
+      </AppView>
     );
   };
 
@@ -253,6 +313,13 @@ const Today = () => {
         {(habitsLoading || isLoading) && (
           <AppView height={80}>
             <Loader transparent />
+          </AppView>
+        )}
+
+        {showSetupTask && (
+          <AppView>
+            <OnboardingSetupTask />
+            <Divider />
           </AppView>
         )}
 

@@ -195,24 +195,30 @@ export const HabitsList = () => {
 
   return (
     <>
-      <AppView
-        pointerEvents={isFetching ? 'none' : 'auto'}
-        reanimated
-        entering={Animations.Entry.FadeInDownWithSpring()}
-        exiting={Animations.Exit.FadeOutDown()}>
-        <AppList<HabitType>
-          scrollEnabled={false}
-          keyExtractor={(i) => i.habit_id}
-          data={data || []}
-          extraData={[selectedHabit, isArchivingHabit, isDeletingHabit]}
-          renderItem={renderHabitItem}
-          ListFooterComponent={() => <Divider />}
-          ItemSeparatorComponent={() => <Divider />}
-          ListEmptyComponent={() =>
-            !isLoading && !isFetching && renderEmptyComponent()
-          }
-        />
-      </AppView>
+      {isLoading ? (
+        <AppView height={100}>
+          <Loader transparent />
+        </AppView>
+      ) : (
+        <AppView
+          pointerEvents={isFetching ? 'none' : 'auto'}
+          reanimated
+          entering={Animations.Entry.FadeInDownWithSpring()}
+          exiting={Animations.Exit.FadeOutDown()}>
+          <AppList<HabitType>
+            scrollEnabled={false}
+            keyExtractor={(i) => i.habit_id}
+            data={data || []}
+            extraData={[selectedHabit, isArchivingHabit, isDeletingHabit]}
+            renderItem={renderHabitItem}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
+            ListEmptyComponent={() =>
+              !isLoading && !isFetching && renderEmptyComponent()
+            }
+          />
+        </AppView>
+      )}
 
       <AppActionSheetModal
         visible={isHabitModalVisible}

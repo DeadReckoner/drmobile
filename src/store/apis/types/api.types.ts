@@ -7,5 +7,6 @@ export type ApiError = {
 } & {
   data?: {
     error?: string;
+    message?: string;
   };
 };

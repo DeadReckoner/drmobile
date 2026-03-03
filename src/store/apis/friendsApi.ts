@@ -8,6 +8,7 @@ import {
 } from '@/hooks/friends/types/friends.types';
 import { api } from '@/store/apis/api';
 import { notificationApi } from '@/store/apis/notificationsApi';
+import { setSetupStepAction } from '@/store/slices/onboardingSlice';
 
 const removeFromNotifications = (dispatch: any, friendshipId: string) => {
   dispatch(
@@ -87,6 +88,7 @@ export const friendsApi = api.injectEndpoints({
 
         try {
           await queryFulfilled;
+          dispatch(setSetupStepAction({ key: 'inviteFriend', value: true }));
         } catch {
           searchUsersPatchResults.forEach((patchResult) => {
             patchResult.undo();
