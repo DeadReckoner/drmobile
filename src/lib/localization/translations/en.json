@@ -428,11 +428,18 @@
   },
   "onboarding": {
     "intro": {
-      "headline": "Dead Reckoner is built for execution.",
-      "body": "Most tools help you plan. Dead Reckoner helps you move.\nYou start with one goal. We turn it into a clear roadmap, show you exactly what to do each day, and give you the option to bring someone in to keep you accountable.",
-      "primary_cta": "Start My First Roadmap",
-      "primary_subtext": "Takes about 5 minutes",
-      "secondary_cta": "Take Me to the App"
+      "page1": {
+        "headline": "Dead Reckoner",
+        "body": "Most tools help you plan. We help you move.\nLong-term goals you've never started. Self-improvement you know you need. Habits you keep starting over.\n\nWe don't care what it is. We break it into daily steps and keep you moving until it's done.",
+        "next_cta": "Next"
+      },
+      "page2": {
+        "headline": "Accountability Changes Everything",
+        "body": "Private goals are easy to abandon. Make one visible to someone you trust and watch what happens.\n\nShare everything with one person, or choose someone different for each.They see what you share. They get notified when you stall.\n\nYou stop letting yourself off the hook.",
+        "primary_cta": "Start My First Roadmap",
+        "primary_subtext": "Takes about 5 minutes",
+        "secondary_cta": "Skip for now."
+      }
     },
     "setup_task": {
       "title": "Set up Dead Reckoner",

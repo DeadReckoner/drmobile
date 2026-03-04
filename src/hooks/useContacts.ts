@@ -137,6 +137,7 @@ export const useContacts = (): UseContactsReturn => {
   const presentAccessPickerAsync = async () => {
     try {
       await Contacts.presentAccessPickerAsync();
+      await refreshContacts();
     } catch {}
   };
 

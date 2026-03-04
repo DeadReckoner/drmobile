@@ -428,11 +428,18 @@
   },
   "onboarding": {
     "intro": {
-      "headline": "Dead Reckoner está diseñado para la ejecución.",
-      "body": "La mayoría de las herramientas te ayudan a planificar. Dead Reckoner te ayuda a avanzar.\nComienzas con un objetivo. Lo convertimos en una hoja de ruta clara, te mostramos exactamente qué hacer cada día y te damos la opción de incluir a alguien para que te mantenga responsable.",
-      "primary_cta": "Comenzar Mi Primera Hoja de Ruta",
-      "primary_subtext": "Toma unos 5 minutos",
-      "secondary_cta": "Llevarme a la App"
+      "page1": {
+        "headline": "Dead Reckoner",
+        "body": "La mayoría de las herramientas te ayudan a planificar. Nosotros te ayudamos a avanzar.\n\nMetas a largo plazo que nunca has comenzado. La superación personal que sabes que necesitas. Hábitos que sigues reiniciando.\n\nNo nos importa qué es. Lo dividimos en pasos diarios y te mantenemos en movimiento hasta que esté hecho.",
+        "next_cta": "Siguiente"
+      },
+      "page2": {
+        "headline": "La Responsabilidad Lo Cambia Todo",
+        "body": "Las metas privadas son fáciles de abandonar. Haz una visible para alguien en quien confíes y observa lo que pasa.\n\nComparte todo con una persona, o elige a alguien diferente para cada una.Ellos ven lo que compartes. Reciben una notificación cuando te estancas.\n\nDejas de disculparte a ti mismo.",
+        "primary_cta": "Comenzar Mi Primera Hoja de Ruta",
+        "primary_subtext": "Toma unos 5 minutos",
+        "secondary_cta": "Omitir por ahora."
+      }
     },
     "setup_task": {
       "title": "Configurar Dead Reckoner",

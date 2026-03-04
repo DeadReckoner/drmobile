@@ -7,7 +7,9 @@ import { AppScreen } from '@/components/AppScreen';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppTextField, AppView } from '@/components/ui';
+import { Env } from '@/constants/Env';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useToast } from '@/hooks/useToast';
 import {
   useGetFriendsQuery,
   useLazySearchUsersQuery,
@@ -28,6 +30,7 @@ import {
   Dimensions,
   RefreshControl,
   ScrollView,
+  Share,
   StyleSheet,
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -50,6 +53,7 @@ const MyFriends = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [apiSearchResults, setApiSearchResults] = useState<Friend[]>([]);
   const [isQRCodeModalVisible, setIsQRCodeModalVisible] = useState(false);
+  const { showToast } = useToast();
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -138,9 +142,26 @@ const MyFriends = () => {
     setIsQRCodeModalVisible(true);
   }, []);
 
+  const handleShare = useCallback(async () => {
+    try {
+      const message = t('settings.invite_message', {
+        appStoreUrl: Env.EXPO_PUBLIC_STORE_UNIVERSAL_LINK,
+      });
+
+      await Share.share({ message });
+    } catch (error) {
+      if ((error as { code?: string }).code !== 'CANCEL') {
+        showToast({
+          message: t('settings.invite_failed'),
+          type: 'failure',
+        });
+      }
+    }
+  }, [showToast, t]);
+
   const onInboxPress = useCallback(() => {
-    router.navigate('/settings/invite-friends');
-  }, []);
+    handleShare();
+  }, [handleShare]);
 
   const keyExtractor = useCallback((item: Friend) => item.id, []);
 
