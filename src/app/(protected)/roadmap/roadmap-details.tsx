@@ -246,13 +246,14 @@ const RoadmapDetailsPage = () => {
       dispatch(
         setDraftRoadmapAction({
           ...finalRoadmap,
-          phases: roadmap?.phases,
+          phases: finalRoadmap?.phases,
         }),
       );
       showToast({
         type: 'success',
         message: t('common.started_successfully'),
       });
+      router.replace(`/roadmap/roadmap-execution`);
     } catch (error) {
       showToast({
         type: 'failure',
@@ -438,27 +439,25 @@ const RoadmapDetailsPage = () => {
               )}
               <Divider margin-8 />
 
-              {hasMilestones && (
-                <>
-                  {isRoadmapLoading &&
-                  roadmap.goal &&
-                  roadmap?.type !== 'ai_generated' ? (
-                    <Loader
-                      marginT-16
-                      transparent
-                      containerStyle={{ position: 'relative', marginTop: 16 }}
-                    />
-                  ) : (
-                    <AppView
-                      reanimated
-                      entering={Animations.Entry.FadeInDownWithSpring()}
-                      exiting={Animations.Exit.FadeOutDown()}>
-                      <CreateRoadmapButton />
-                      <StartRoadmapButton />
-                    </AppView>
-                  )}
-                </>
-              )}
+              <>
+                {isRoadmapLoading &&
+                roadmap.goal &&
+                roadmap?.type !== 'ai_generated' ? (
+                  <Loader
+                    marginT-16
+                    transparent
+                    containerStyle={{ position: 'relative', marginTop: 16 }}
+                  />
+                ) : (
+                  <AppView
+                    reanimated
+                    entering={Animations.Entry.FadeInDownWithSpring()}
+                    exiting={Animations.Exit.FadeOutDown()}>
+                    <CreateRoadmapButton />
+                    <StartRoadmapButton />
+                  </AppView>
+                )}
+              </>
             </AppView>
           )}
         </AppView>
