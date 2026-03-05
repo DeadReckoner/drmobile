@@ -137,7 +137,7 @@ export const HabitsList = () => {
         title="tabs.today_tab.no_habits_yet"
         subtitle="tabs.today_tab.no_habits_description"
         btnText="tabs.create_tab.add_new_habit"
-        onPress={() => router.navigate('/create')}
+        onPress={() => router.navigate('/habits/add-edit-habits-task')}
       />
     );
   };
