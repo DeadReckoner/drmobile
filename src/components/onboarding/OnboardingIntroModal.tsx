@@ -18,9 +18,11 @@ import Animated, {
   AnimatedStyle,
   Extrapolation,
   interpolate,
+  runOnJS,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
+  withTiming,
 } from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
@@ -54,6 +56,11 @@ export const OnboardingIntroModal = () => {
   const [visible, setVisible] = useState(false);
   const scrollRef = useRef<Animated.ScrollView>(null);
   const scrollX = useSharedValue(0);
+  const fadeOpacity = useSharedValue(1);
+
+  const fadeStyle = useAnimatedStyle(() => ({
+    opacity: fadeOpacity.value,
+  }));
 
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -101,20 +108,37 @@ export const OnboardingIntroModal = () => {
 
   useEffect(() => {
     if (user?.id && !hasSeenIntroModal) {
+      fadeOpacity.value = 1;
       setVisible(true);
     }
-  }, [user?.id, hasSeenIntroModal]);
+  }, [user?.id, hasSeenIntroModal, fadeOpacity]);
 
-  const handleStartRoadmap = () => {
+  const completeStartRoadmap = () => {
     dispatch(markIntroModalSeenAction());
     dispatch(resetCreationStateAction());
     router.navigate('/roadmap/create-ai-roadmap');
     setTimeout(() => setVisible(false), 500);
   };
 
-  const handleSkipToApp = () => {
+  const completeSkipToApp = () => {
     dispatch(markIntroModalSeenAction());
     setVisible(false);
+  };
+
+  const handleStartRoadmap = () => {
+    fadeOpacity.value = withTiming(0, { duration: 300 }, (finished) => {
+      if (finished) {
+        runOnJS(completeStartRoadmap)();
+      }
+    });
+  };
+
+  const handleSkipToApp = () => {
+    fadeOpacity.value = withTiming(0, { duration: 300 }, (finished) => {
+      if (finished) {
+        runOnJS(completeSkipToApp)();
+      }
+    });
   };
 
   const handleNext = () => {
@@ -124,97 +148,101 @@ export const OnboardingIntroModal = () => {
   if (!visible) return null;
 
   return (
-    <AppView
-      flex
-      style={StyleSheet.absoluteFill}
-      bg-screenBG
+    <Animated.View
+      style={[StyleSheet.absoluteFill, fadeStyle]}
       pointerEvents="box-none">
-      <AppView style={StyleSheet.absoluteFill}>
-        <Image
-          source={require('assets/images/icon.png')}
-          contentFit="cover"
-          style={styles.backgroundImage}
-        />
-      </AppView>
+      <AppView
+        flex
+        style={StyleSheet.absoluteFill}
+        bg-screenBG
+        pointerEvents="box-none">
+        <AppView style={StyleSheet.absoluteFill}>
+          <Image
+            source={require('assets/images/icon.png')}
+            contentFit="cover"
+            style={styles.backgroundImage}
+          />
+        </AppView>
 
-      <AppView flex useSafeArea>
-        <Animated.ScrollView
-          ref={scrollRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          bounces={false}
-          scrollEventThrottle={16}
-          onScroll={onScroll}
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}>
-          {PAGES.map((page, index) => (
-            <AppView key={index} style={styles.page} paddingH-24 paddingT-24>
-              <AppText h2 bold textColor>
-                {index === 0
-                  ? t('onboarding.intro.page1.headline')
-                  : t('onboarding.intro.page2.headline')}
-              </AppText>
-              <AppView marginT-16>
-                <AppText body2 textColor light style={styles.bodyText}>
+        <AppView flex useSafeArea>
+          <Animated.ScrollView
+            ref={scrollRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            bounces={false}
+            scrollEventThrottle={16}
+            onScroll={onScroll}
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}>
+            {PAGES.map((page, index) => (
+              <AppView key={index} style={styles.page} paddingH-24 paddingT-24>
+                <AppText h2 bold textColor>
                   {index === 0
-                    ? t('onboarding.intro.page1.body')
-                    : t('onboarding.intro.page2.body')}
+                    ? t('onboarding.intro.page1.headline')
+                    : t('onboarding.intro.page2.headline')}
                 </AppText>
+                <AppView marginT-16>
+                  <AppText body2 textColor light style={styles.bodyText}>
+                    {index === 0
+                      ? t('onboarding.intro.page1.body')
+                      : t('onboarding.intro.page2.body')}
+                  </AppText>
+                </AppView>
+                <AppView flex center marginV-16>
+                  <Image
+                    source={page.image}
+                    contentFit="contain"
+                    transition={350}
+                    style={styles.image}
+                  />
+                </AppView>
               </AppView>
-              <AppView flex center marginV-16>
-                <Image
-                  source={page.image}
-                  contentFit="contain"
-                  transition={350}
-                  style={styles.image}
-                />
-              </AppView>
+            ))}
+          </Animated.ScrollView>
+
+          <AppView paddingH-24>
+            <AppView style={styles.ctaContainer} center>
+              <PageCta animatedStyle={page1CtaStyle}>
+                <PrimaryButtonContainer
+                  paddingV-18
+                  style={{ borderRadius: 40 }}
+                  onPress={handleNext}>
+                  <TranslatedText
+                    body2
+                    textOnPrimary
+                    bold
+                    translationKey="onboarding.intro.page1.next_cta"
+                  />
+                </PrimaryButtonContainer>
+              </PageCta>
+
+              <PageCta animatedStyle={page2CtaStyle}>
+                <PrimaryButtonContainer
+                  paddingV-12
+                  style={{ borderRadius: 40 }}
+                  onPress={handleStartRoadmap}>
+                  <TranslatedText
+                    body2
+                    textOnPrimary
+                    bold
+                    translationKey="onboarding.intro.page2.primary_cta"
+                  />
+                  <AppText sm light textColor>
+                    {t('onboarding.intro.page2.primary_subtext')}
+                  </AppText>
+                </PrimaryButtonContainer>
+                <AppButton center padding-16 onPress={handleSkipToApp}>
+                  <AppText body2 textColor underline>
+                    {t('onboarding.intro.page2.secondary_cta')}
+                  </AppText>
+                </AppButton>
+              </PageCta>
             </AppView>
-          ))}
-        </Animated.ScrollView>
-
-        <AppView paddingH-24>
-          <AppView style={styles.ctaContainer} center>
-            <PageCta animatedStyle={page1CtaStyle}>
-              <PrimaryButtonContainer
-                paddingV-18
-                style={{ borderRadius: 40 }}
-                onPress={handleNext}>
-                <TranslatedText
-                  body2
-                  textOnPrimary
-                  bold
-                  translationKey="onboarding.intro.page1.next_cta"
-                />
-              </PrimaryButtonContainer>
-            </PageCta>
-
-            <PageCta animatedStyle={page2CtaStyle}>
-              <PrimaryButtonContainer
-                paddingV-12
-                style={{ borderRadius: 40 }}
-                onPress={handleStartRoadmap}>
-                <TranslatedText
-                  body2
-                  textOnPrimary
-                  bold
-                  translationKey="onboarding.intro.page2.primary_cta"
-                />
-                <AppText sm light textColor>
-                  {t('onboarding.intro.page2.primary_subtext')}
-                </AppText>
-              </PrimaryButtonContainer>
-              <AppButton center padding-16 onPress={handleSkipToApp}>
-                <AppText body2 textColor underline>
-                  {t('onboarding.intro.page2.secondary_cta')}
-                </AppText>
-              </AppButton>
-            </PageCta>
           </AppView>
         </AppView>
       </AppView>
-    </AppView>
+    </Animated.View>
   );
 };
 
