@@ -85,7 +85,7 @@ export const OnboardingSetupTask = () => {
             row
             centerV
             spread>
-            <AppView row centerV flex>
+            <AppView row centerV flex height={'100%'}>
               <AppView
                 br40
                 style={[styles.indicator, { backgroundColor: Colors.primary }]}
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     minHeight: 100,
   },
   indicator: {
-    height: 40,
+    height: '100%',
     width: 4,
     borderRadius: 2,
   },
