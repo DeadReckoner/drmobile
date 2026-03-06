@@ -201,7 +201,6 @@ export const HabitsList = () => {
         </AppView>
       ) : (
         <AppView
-          pointerEvents={isFetching ? 'none' : 'auto'}
           reanimated
           entering={Animations.Entry.FadeInDownWithSpring()}
           exiting={Animations.Exit.FadeOutDown()}>

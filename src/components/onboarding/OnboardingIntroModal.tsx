@@ -194,7 +194,7 @@ export const OnboardingIntroModal = () => {
                     source={page.image}
                     contentFit="contain"
                     transition={350}
-                    style={styles.image}
+                    style={[styles.image, { height: 350 }]}
                   />
                 </AppView>
               </AppView>
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: '80%',
+    height: '100%',
   },
   backgroundImage: {
     width: '100%',

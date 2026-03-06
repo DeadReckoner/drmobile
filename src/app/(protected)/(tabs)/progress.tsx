@@ -160,7 +160,6 @@ const Progress = () => {
           {isRoadmapTabSelected && (
             <AppView
               flex-1
-              pointerEvents={isFetching ? 'none' : 'auto'}
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring().delay(250)}
               exiting={Animations.Exit.FadeOutDown()}>
