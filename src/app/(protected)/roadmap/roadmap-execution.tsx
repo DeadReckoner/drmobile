@@ -2,18 +2,15 @@ import { AppCard } from '@/components/AppCard';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
-import { PrimaryButton } from '@/components/PrimaryButton';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
+import { TasksList } from '@/components/roadmap/TasksList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import {
-  selectDraftRoadmap,
-  setSelectedTaskAction,
-} from '@/store/slices/roadmapDraftSlice';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { router } from 'expo-router';
@@ -24,7 +21,6 @@ import { Colors, SegmentedControl, Typography } from 'react-native-ui-lib';
 const RoadmapExecution = () => {
   const { theme } = useAppTheme();
   const { t } = useLocalization();
-  const dispatch = useAppDispatch();
   const draftRoadmap = useAppSelector(selectDraftRoadmap);
   const { data: roadmaps } = useGetRoadmapsQuery();
   const [firstTabSelected, setFirstTabSelected] = useState(true);
@@ -36,22 +32,12 @@ const RoadmapExecution = () => {
   );
 
   const totalTasks = currentMilestone?.tasks || [];
-  const completedTasks = totalTasks.filter((task) => task.completed);
-  const allTasksCompleted = completedTasks.length === totalTasks.length;
-
-  const handleTaskClick = () => {
-    const todayTask = totalTasks.find((task) => {
-      if (!task.date) return false;
-      return DateUtils.isSameDate(task.date, new Date());
-    });
-
-    const task = todayTask || totalTasks.find((t) => !t.completed);
-
-    if (!task) return;
-
-    dispatch(setSelectedTaskAction({ task }));
-    router.navigate(`/task/today-task-details`);
-  };
+  const todayTasks = totalTasks.filter(
+    (task) => task.date && DateUtils.isSameDate(task.date, new Date()),
+  );
+  const completedTasks = todayTasks.filter((task) => task.completed);
+  const allTasksCompleted =
+    todayTasks.length > 0 && completedTasks.length === todayTasks.length;
 
   return (
     <AppScreen safeArea>
@@ -96,7 +82,6 @@ const RoadmapExecution = () => {
             <AppView
               key="today-tab"
               flex
-              gap-12
               useSafeArea
               reanimated
               entering={Animations.Entry.FadeInDown()}
@@ -105,11 +90,11 @@ const RoadmapExecution = () => {
                 <AppView flex gap-12>
                   <AppView row centerV spread>
                     <AppText subtitle1 regular textColor>
-                      {t('roadmap.goal')}: {roadmap?.goal}
+                      {roadmap?.goal}
                     </AppText>
                   </AppView>
-                  <AppView row flex centerV gap-16 marginT-8>
-                    <AppText subtitle2 light textColor flex-0>
+                  <AppView row flex centerV gap-16>
+                    <AppText body1 light textColor flex-0>
                       {t('roadmap.progress')}:
                     </AppText>
                     <AppProgressBar
@@ -123,13 +108,13 @@ const RoadmapExecution = () => {
                         theme === 'dark' ? Colors.white : Colors.primary
                       }
                     />
-                    <AppText subtitle2 light textColor>
+                    <AppText body1 light textColor>
                       {roadmap?.progress || 0}%
                     </AppText>
                   </AppView>
                   {currentMilestone && (
-                    <AppView marginT-8 row centerV style={{ flexWrap: 'wrap' }}>
-                      <AppText subtitle2 light textColor flex-1>
+                    <AppView row centerV style={{ flexWrap: 'wrap' }}>
+                      <AppText body1 light textColor flex-1>
                         {t('common.current_milestone')}:{' '}
                         {currentMilestone.sub_goal}
                       </AppText>
@@ -154,20 +139,17 @@ const RoadmapExecution = () => {
                       br100
                       style={{ backgroundColor: Colors.success }}>
                       <AppText textColor xsm semibold>
-                        {completedTasks.length} / {totalTasks.length}
+                        {completedTasks.length} / {todayTasks.length}
                       </AppText>
                     </AppView>
                   </AppView>
                 </AppCard>
               )}
-              <AppView marginT-16 flex useSafeArea>
-                {!allTasksCompleted && currentMilestone && (
-                  <PrimaryButton
-                    label="roadmap.continue_current_task"
-                    onPress={handleTaskClick}
-                  />
-                )}
-              </AppView>
+              {!allTasksCompleted && currentMilestone && (
+                <AppView marginT-16>
+                  <TasksList tasks={todayTasks} />
+                </AppView>
+              )}
             </AppView>
           ) : (
             <AppView
@@ -181,20 +163,27 @@ const RoadmapExecution = () => {
               <RoadmapCurrentStateOverview
                 key={roadmap.roadmap_id}
                 roadmap={roadmap}
-                onRoadmapPress={() => {
-                  router.navigate('/roadmap/roadmap-details');
+                onOverviewPress={(phase) => {
+                  if (phase) {
+                    router.navigate({
+                      pathname: '/roadmap/phase-details',
+                      params: { phaseId: phase.phase_id },
+                    });
+                  }
                 }}
                 onPhasePress={(phase) => {
                   router.navigate({
-                    pathname: '/roadmap/phase-details',
-                    params: { phaseId: phase.phase_id },
-                  });
-                }}
-                onMilestonePress={() => {
-                  router.navigate({
                     pathname: '/roadmap/phase-milestones',
                     params: {
-                      milestones: JSON.stringify(roadmap.milestones || []),
+                      milestones: JSON.stringify(phase.milestones || []),
+                    },
+                  });
+                }}
+                onMilestonePress={(milestone) => {
+                  router.navigate({
+                    pathname: '/roadmap/phase-milestones-tasks',
+                    params: {
+                      tasks: JSON.stringify(milestone.tasks),
                     },
                   });
                 }}

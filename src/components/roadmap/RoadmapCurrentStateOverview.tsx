@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 
 interface RoadmapCurrentStateOverviewProps {
   roadmap: RoadmapType;
-  onRoadmapPress?: () => void;
+  onOverviewPress?: (_currentPhase: Phase | null) => void;
   onPhasePress?: (_phase: Phase) => void;
   onMilestonePress?: (_milestone: MilestoneType) => void;
 }
@@ -34,7 +34,7 @@ const calculateMilestoneProgress = (milestone: MilestoneType): number => {
 
 export const RoadmapCurrentStateOverview = ({
   roadmap,
-  onRoadmapPress,
+  onOverviewPress,
   onPhasePress,
   onMilestonePress,
 }: RoadmapCurrentStateOverviewProps) => {
@@ -79,7 +79,7 @@ export const RoadmapCurrentStateOverview = ({
         description={roadmap.description}
         progress={roadmap.progress ?? 0}
         tooltipText={t('common.overview_tooltip')}
-        onPress={onRoadmapPress}
+        onPress={() => onOverviewPress && onOverviewPress(currentPhase)}
       />
 
       {currentPhase && (

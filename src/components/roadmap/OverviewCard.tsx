@@ -54,7 +54,7 @@ export const OverviewCard = ({
         )}
       </AppView>
       {!!description && (
-        <AppText xsm secondary marginB-12 numberOfLines={3}>
+        <AppText xsm secondary marginB-12>
           {description}
         </AppText>
       )}
