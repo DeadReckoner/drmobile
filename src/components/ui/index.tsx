@@ -1,3 +1,4 @@
+import { SegmentedControl } from 'react-native-ui-lib';
 import ActionSheet from 'react-native-ui-lib/actionSheet';
 import Checkbox from 'react-native-ui-lib/checkbox';
 import ExpandableSection from 'react-native-ui-lib/expandableSection';
@@ -20,6 +21,7 @@ export {
   Modal as AppRNUIModal,
   Switch as AppRNUISwitch,
   Toast as AppRNUIToast,
+  SegmentedControl as AppSegmentedControl,
   Text as AppText,
   TextField as AppTextField,
   TouchableOpacity as AppTouchableOpacity,

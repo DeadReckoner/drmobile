@@ -19,7 +19,7 @@ import {
   MenuView,
   NativeActionEvent,
 } from '@react-native-menu/menu';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import React, {
   useCallback,
   useEffect,
@@ -55,11 +55,14 @@ const MilestoneListItemComponent = ({
   const chevronDeg = useSharedValue('0deg');
   const menuRef = useRef<MenuComponentRef>(null);
   const [contentHeight, setContentHeight] = useState(0);
+  const path = usePathname();
 
   const isExpanded = useMemo(
     () => milestone.milestone_id === selectedMilestone?.milestone_id,
     [milestone.milestone_id, selectedMilestone?.milestone_id],
   );
+
+  const isRoadmapDetailsPage = path.includes('/roadmap/roadmap-details');
 
   const onPress = useCallback(() => {
     onMilestonePress(
@@ -147,6 +150,11 @@ const MilestoneListItemComponent = ({
     return (milestone.tasks?.length || 0) > 0 && milestone.reached;
   }, [milestone.reached, milestone.tasks]);
 
+  const milestoneTasks = useMemo(
+    () => milestone.tasks || [],
+    [milestone.tasks],
+  );
+
   return (
     <AppView key={milestone.milestone_id}>
       <AppButton
@@ -178,11 +186,11 @@ const MilestoneListItemComponent = ({
                 {milestone.sub_goal}
               </AppText>
               <AppButton style={{ pointerEvents: 'box-only' }}>
-                {(milestone.tasks?.length || 0) > 0 ? (
+                {milestoneTasks.length > 0 || isRoadmapDetailsPage ? (
                   <AppView reanimated style={chevronStyle}>
                     <AppIcon set="Feather" name={'chevron-down'} />
                   </AppView>
-                ) : readonly ? (
+                ) : (
                   <AppView bg-accent paddingH-8 br100>
                     <TranslatedText
                       sm
@@ -190,10 +198,6 @@ const MilestoneListItemComponent = ({
                       regular
                       translationKey="common.upcoming"
                     />
-                  </AppView>
-                ) : (
-                  <AppView reanimated style={chevronStyle}>
-                    <AppIcon set="Feather" name={'chevron-down'} />
                   </AppView>
                 )}
               </AppButton>
@@ -215,7 +219,7 @@ const MilestoneListItemComponent = ({
             <AppList
               keyExtractor={(task) => task.task_id}
               scrollEnabled={false}
-              data={milestone.tasks || []}
+              data={milestoneTasks}
               ListFooterComponent={renderFooterComponent}
               ItemSeparatorComponent={renderItemSeparator}
               renderItem={renderTaskItem}
