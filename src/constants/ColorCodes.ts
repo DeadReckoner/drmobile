@@ -29,6 +29,11 @@ export const LightColorCodes = {
   dialogOverlay: '#d9d9d9ee',
   pickerBG: '#FFFFFF',
   hintBackdrop: '#FFFFFF80',
+
+  badgeCurrent: '#82B051',
+  badgeUpcoming: '#F7D840',
+  badgeOverdue: '#E63C3C',
+  badgeCompleted: '#5A86EE',
 };
 
 export const DarkColorCodes = {
@@ -64,4 +69,9 @@ export const DarkColorCodes = {
   dialogOverlay: '#22262af4',
   pickerBG: '#0f1217',
   hintBackdrop: 'rgba(18, 20, 20, 0.8)',
+
+  badgeCurrent: '#82B051',
+  badgeUpcoming: '#F7D840',
+  badgeOverdue: '#E63C3C',
+  badgeCompleted: '#5A86EE',
 };

@@ -3,87 +3,103 @@ import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
+import { LevelBadge } from '@/components/roadmap/LevelBadge';
 import { AppText, AppView } from '@/components/ui';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { setSelectedTaskAction } from '@/store/slices/roadmapDraftSlice';
+import { useScrollToCurrentIndex } from '@/hooks/useScrollToCurrentItem';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectMilestoneTasks,
+  setSelectedTaskAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
+import { buildBadgeLabel, findOngoingTask } from '@/utils/roadmap.utils';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useMemo, useRef } from 'react';
-import { Dimensions, ScrollView } from 'react-native';
+import React, { useMemo } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
-const WINDOW_HEIGHT = Dimensions.get('window').height;
-
 const PhaseMilestonesTasks = () => {
-  const params = useLocalSearchParams<{ tasks: string }>();
+  const params = useLocalSearchParams<{
+    milestoneId: string;
+    phaseId?: string;
+    phaseLabel?: string;
+    milestoneLabel?: string;
+  }>();
   const { t } = useLocalization();
-  const scrollViewRef = useRef<ScrollView>(null);
   const dispatch = useAppDispatch();
-  const tasks = useMemo(() => {
-    try {
-      return JSON.parse(params.tasks) as TaskType[];
-    } catch {
-      return [];
-    }
-  }, [params.tasks]);
+  const tasks = useAppSelector(selectMilestoneTasks(params.milestoneId));
 
-  const currentTask = tasks.find((m) => !m.completed);
+  const currentTask = findOngoingTask(tasks);
 
-  const scrollToCurrentTask = useCallback((y: number, height: number) => {
-    scrollViewRef.current?.scrollTo({
-      y: Math.max(0, y - 80 - WINDOW_HEIGHT / 2 + height / 2),
-      animated: true,
+  const currentTaskIndex = useMemo(() => {
+    if (!currentTask) return -1;
+    return tasks.findIndex((t) => t.task_id === currentTask.task_id);
+  }, [tasks, currentTask]);
+
+  const { listRef } = useScrollToCurrentIndex(currentTaskIndex);
+
+  const renderItem = ({ item, index }: { item: TaskType; index: number }) => {
+    const badgeLabel = buildBadgeLabel({
+      phase: params.phaseLabel,
+      milestone: params.milestoneLabel,
+      task: index + 1,
     });
-  }, []);
+    const isCurrentTask = item.task_id === currentTask?.task_id;
+    const badgeStatus = item.status;
+    return (
+      <AppCard
+        onPress={() => {
+          dispatch(setSelectedTaskAction({ task: item }));
+          router.navigate({
+            pathname: '/task/today-task-details',
+          });
+        }}
+        style={{
+          borderWidth: 3,
+          borderColor: isCurrentTask ? Colors.accent : 'transparent',
+        }}>
+        <AppView gap-4>
+          <AppView row>
+            <AppText body1 textColor flex>
+              {item.title}
+            </AppText>
+            <LevelBadge
+              label={badgeLabel}
+              status={isCurrentTask ? 'in_progress' : badgeStatus}
+            />
+          </AppView>
 
-  const renderItem = ({ item }: { item: TaskType }) => (
-    <AppCard
-      onPress={() => {
-        dispatch(setSelectedTaskAction({ task: item }));
-        router.navigate({
-          pathname: '/task/today-task-details',
-        });
-      }}
-      style={{
-        borderWidth: 3,
-        borderColor:
-          item.task_id === currentTask?.task_id ? Colors.accent : 'transparent',
-      }}>
-      <AppView gap-4>
-        <AppText body1 textColor>
-          {item.title}
-        </AppText>
-        <AppText xsm textColor>
-          {t('common.description')}: {item.description}
-        </AppText>
-        {item.date && (
           <AppText xsm textColor>
-            {t('common.date')}: {DateUtils.formatDate(item.date)}
+            {t('common.description')}: {item.description}
           </AppText>
-        )}
-      </AppView>
-    </AppCard>
-  );
+          {item.date && (
+            <AppText xsm textColor>
+              {t('common.date')}: {DateUtils.formatDate(item.date)}
+            </AppText>
+          )}
+        </AppView>
+      </AppCard>
+    );
+  };
 
   return (
     <AppScreen safeArea>
       <HeaderWithBack headerKey="common.tasks" />
       <Divider />
       <AppList
-        refScrollView={scrollViewRef}
+        keyExtractor={(i) => i.task_id}
+        ref={listRef}
         data={tasks}
         ItemSeparatorComponent={() => <Divider />}
-        onLayout={
-          currentTask
-            ? (e) => {
-                const { y, height } = e.nativeEvent.layout;
-                scrollToCurrentTask(y, height);
-              }
-            : undefined
-        }
         renderItem={renderItem}
+        ListEmptyComponent={() => (
+          <EmptyListItemPlaceholder
+            title="roadmap.no_tasks_today"
+            subtitle="roadmap.no_tasks_today_description"
+          />
+        )}
       />
     </AppScreen>
   );

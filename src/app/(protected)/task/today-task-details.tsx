@@ -3,17 +3,27 @@ import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { StepsList } from '@/components/roadmap/StepsList';
 import { UnorderedList } from '@/components/roadmap/UnorderedList';
 import { AppText, AppView } from '@/components/ui';
+import { useCompleteAllStepsMutation } from '@/hooks/step';
+import { useLocalization } from '@/hooks/useLocalization';
+import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectSelectedTask } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
-import React, { useMemo } from 'react';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import React, { useCallback, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 const TodayTaskDetails = () => {
   const task = useAppSelector(selectSelectedTask);
+  const { showToast } = useToast();
+  const { t } = useLocalization();
+  const [completeAllSteps, { isLoading: isCompletingAll }] =
+    useCompleteAllStepsMutation();
+
   const dependencies = useMemo(() => {
     if (!task?.dependencies) return 'N/A';
     try {
@@ -24,11 +34,28 @@ const TodayTaskDetails = () => {
     } catch {}
   }, [task?.dependencies]);
 
+  const handleCompleteAll = useCallback(async () => {
+    try {
+      if (!task?.task_id) return;
+      await completeAllSteps(task.task_id).unwrap();
+      showToast({
+        type: 'success',
+        message: t('roadmap.complete_all_steps_success'),
+      });
+    } catch (error) {
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(error),
+      });
+    }
+  }, [task, completeAllSteps, showToast, t]);
+
   return (
     <AppScreen>
       <ScrollView
         contentInsetAdjustmentBehavior="always"
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContainer}>
         <AppView row spread centerV>
           <HeaderWithBack />
         </AppView>
@@ -68,6 +95,15 @@ const TodayTaskDetails = () => {
           {!!task?.milestone_id && (
             <AppView reanimated entering={Animations.Entry.FadeInDown()}>
               <StepsList mode="view" />
+              <Divider />
+              {task?.status !== 'completed' && (
+                <PrimaryButton
+                  label="roadmap.complete_all_steps"
+                  onPress={handleCompleteAll}
+                  isLoading={isCompletingAll}
+                  shouldShowLoader
+                />
+              )}
             </AppView>
           )}
         </AppView>
@@ -82,4 +118,5 @@ const styles = StyleSheet.create({
   childContentContainer: {
     minHeight: 100,
   },
+  scrollContainer: { paddingBottom: 60 },
 });

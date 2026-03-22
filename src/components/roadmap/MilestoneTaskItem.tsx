@@ -46,10 +46,10 @@ const MilestoneTaskItemComponent = ({
   const isTaskCompleted = useMemo(
     () =>
       readonly
-        ? task?.completed
+        ? task?.status === 'completed'
         : task?.steps?.length > 0 &&
           task.steps?.every((step) => step.completed),
-    [readonly, task?.completed, task?.steps],
+    [readonly, task?.status, task?.steps],
   );
 
   const formattedDate = useMemo(
@@ -88,5 +88,5 @@ export const MilestoneTaskItem = React.memo(
   (prevProps, nextProps) =>
     prevProps.task.task_id === nextProps.task.task_id &&
     prevProps.readonly === nextProps.readonly &&
-    prevProps.task.completed === nextProps.task.completed,
+    prevProps.task.status === nextProps.task.status,
 );

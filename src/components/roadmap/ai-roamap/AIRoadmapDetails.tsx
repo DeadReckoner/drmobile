@@ -44,7 +44,9 @@ export const AIRoadmapDetails = ({
   const allMilestones = useMemo(() => getAllMilestones(roadmap), [roadmap]);
 
   const firstNonCompletedMilestoneIndex = useMemo(() => {
-    const index = allMilestones.findIndex((milestone) => !milestone.reached);
+    const index = allMilestones.findIndex(
+      (milestone) => milestone.status !== 'completed',
+    );
     return index === -1 ? 0 : index;
   }, [allMilestones]);
 

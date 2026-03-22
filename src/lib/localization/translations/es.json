@@ -170,8 +170,8 @@
       "create_roadmap_button": "Crear Hoja de Ruta",
       "no_milestones_yet": "¡Aún no hay hitos!",
       "no_roadmaps_yet": "¡Aún no hay hojas de ruta!",
-      "no_tasks_yet": "¡Aún no hay tareas o hábitos!",
-      "no_tasks_description": "Ya estás al día por hoy. Nuevas tareas/hábitos aparecerán aquí.",
+      "no_tasks_or_habits_yet": "¡Aún no hay tareas o hábitos!",
+      "no_tasks_or_habits_description": "Ya estás al día por hoy. Nuevas tareas/hábitos aparecerán aquí.",
       "add_new_milestone_desc": "Crea un hito para dividir tu hoja de ruta en fases manejables.",
       "add_new_roadmap_desc": "Crea una hoja de ruta para estructurar tus objetivos con hitos.",
       "no_steps_yet": "¡Aún no hay pasos!",
@@ -395,7 +395,12 @@
     "all_tasks_completed": "¡Todas las tareas completadas!",
     "goal": "Objetivo",
     "progress": "Progreso",
-    "view_full_plan": "Ver plan completo"
+    "view_full_plan": "Ver plan completo",
+    "complete_all_steps": "Completar todos los pasos",
+    "complete_all_steps_success": "¡Todos los pasos completados con éxito!",
+    "complete_all_steps_failure": "No se pudieron completar todos los pasos",
+    "no_tasks_today": "¡No hay tareas disponibles!",
+    "no_tasks_today_description": "Este hito no tiene tareas debido a hitos anteriores incompletos."
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",

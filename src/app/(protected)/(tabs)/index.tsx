@@ -131,26 +131,43 @@ const Today = () => {
     router.navigate('/settings');
   };
 
-  const nonCompletedTasks = useMemo(
-    () => data?.filter((task) => !task.steps?.every((step) => step.completed)),
+  const completedTasks = useMemo(
+    () =>
+      data?.filter(
+        (task) =>
+          task.status === 'completed' ||
+          (!!task.steps?.length && task.steps.every((step) => step.completed)),
+      ) ?? [],
     [data],
   );
 
-  const completedTasks = useMemo(
+  const nonCompletedTasks = useMemo(
     () =>
-      data?.filter((task) => task.steps?.every((step) => step.completed)) || [],
+      data?.filter(
+        (task) =>
+          task.status !== 'completed' &&
+          !(task.steps?.length && task.steps.every((step) => step.completed)),
+      ) ?? [],
     [data],
   );
 
   const nonCompletedHabits = useMemo(
-    () => habitsData?.filter((habit) => !habit.is_completed) || [],
+    () => habitsData?.filter((habit) => !habit.is_completed) ?? [],
     [habitsData],
   );
 
   const completedHabits = useMemo(
-    () => habitsData?.filter((habit) => habit.is_completed) || [],
+    () => habitsData?.filter((habit) => habit.is_completed) ?? [],
     [habitsData],
   );
+
+  const shouldShowEmptyState =
+    nonCompletedTasks.length === 0 &&
+    completedTasks.length === 0 &&
+    nonCompletedHabits.length === 0 &&
+    completedHabits.length === 0 &&
+    !isLoading &&
+    !habitsLoading;
 
   const handleRefresh = async () => {
     try {
@@ -199,7 +216,8 @@ const Today = () => {
           style={[
             styles.indicator,
             {
-              backgroundColor: item.completed ? Colors.success : Colors.primary,
+              backgroundColor:
+                item.status === 'completed' ? Colors.success : Colors.primary,
             },
           ]}
         />
@@ -316,18 +334,16 @@ const Today = () => {
           </AppView>
         )}
 
-        {showSetupTask && !isLoading && !habitsLoading ? (
+        {showSetupTask && !isLoading && !habitsLoading && (
           <AppView>
             <OnboardingSetupTask />
             <Divider />
           </AppView>
-        ) : (
+        )}
+
+        {!isLoading && !habitsLoading && (
           <>
-            {(!data || data?.length === 0) &&
-              !isLoading &&
-              (!habitsData || habitsData?.length === 0) &&
-              !habitsLoading &&
-              renderEmptyComponent()}
+            {shouldShowEmptyState && renderEmptyComponent()}
 
             <AppView
               reanimated
@@ -337,7 +353,9 @@ const Today = () => {
                 keyExtractor={(i) => i.habit_id}
                 data={nonCompletedHabits || []}
                 renderItem={renderHabitItem}
-                ListFooterComponent={() => <Divider />}
+                ListFooterComponent={() =>
+                  nonCompletedHabits.length > 0 && <Divider />
+                }
                 ItemSeparatorComponent={() => <Divider />}
               />
             </AppView>
@@ -353,12 +371,11 @@ const Today = () => {
                 ItemSeparatorComponent={() => <Divider />}
               />
             </AppView>
-            <Divider />
             {(completedTasks?.length > 0 || completedHabits?.length > 0) && (
               <TranslatedText
                 body2
                 translationKey="common.completed_tasks"
-                marginB-8
+                marginV-8
               />
             )}
             {completedTasks?.length > 0 && (

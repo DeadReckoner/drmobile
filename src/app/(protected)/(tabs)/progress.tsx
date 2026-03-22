@@ -19,7 +19,6 @@ import {
   setShouldSyncWithServerAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
-import { getAllMilestones } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
@@ -41,8 +40,6 @@ const Progress = () => {
   const [selectedTab, setSelectedTab] = useState('roadmaps');
 
   const onItemPress = (roadmap: RoadmapType, index: number) => {
-    const milestones = getAllMilestones(roadmap);
-
     dispatch(
       setDraftRoadmapAction({
         ...roadmap,
@@ -52,16 +49,12 @@ const Progress = () => {
     dispatch(setSelectedRoadmapIndex(index));
     dispatch(setShouldSyncWithServerAction(true));
 
-    const isRoadmapStarted =
-      roadmap.start_date !== '0001-01-01T00:00:00Z' &&
-      milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
-      roadmap.start_date !== null;
-
-    if (!isRoadmapStarted) {
-      router.navigate('/roadmap/roadmap-details');
-    } else {
-      router.navigate('/roadmap/roadmap-execution');
-    }
+    // if (!isRoadmapStarted(roadmap)) {
+    //   router.navigate('/roadmap/roadmap-details');
+    // } else {
+    //   router.navigate('/roadmap/roadmap-execution');
+    // }
+    router.navigate('/roadmap/roadmap-execution');
   };
 
   const handleRefresh = useCallback(async () => {

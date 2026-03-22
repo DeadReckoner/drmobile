@@ -60,56 +60,60 @@ export const OnboardingSetupTask = () => {
       layout={Animations.Layout.Springify()}
       entering={Animations.Entry.FadeInDownWithSpring()}
       exiting={Animations.Exit.FadeOutDown()}>
-      <AppCard paddingH-16 style={styles.card} onPress={handlePress}>
-        <AppView flex>
-          {(phase === 'message' || phase === 'progress') && (
-            <AppView row flex center>
-              <AppText flex body2 textColor center>
-                {t('onboarding.setup_task.completion_message')}
-              </AppText>
-              <AppView>
-                {phase === 'progress' && (
-                  <SetupCompletionProgress
-                    onComplete={handleProgressComplete}
+      <AppCard padding-0 style={styles.card} onPress={handlePress}>
+        <AppView
+          absL
+          absR
+          br40
+          style={[styles.indicator, { backgroundColor: Colors.primary }]}
+        />
+        <AppView padding-16>
+          <AppView flex>
+            {(phase === 'message' || phase === 'progress') && (
+              <AppView row flex center>
+                <AppText flex body2 textColor center>
+                  {t('onboarding.setup_task.completion_message')}
+                </AppText>
+                <AppView>
+                  {phase === 'progress' && (
+                    <SetupCompletionProgress
+                      onComplete={handleProgressComplete}
+                    />
+                  )}
+                </AppView>
+              </AppView>
+            )}
+          </AppView>
+          {phase === 'idle' && (
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}
+              row
+              centerV
+              spread>
+              <AppView row centerV flex height={'100%'}>
+                <AppView flex marginL-12>
+                  <TranslatedText
+                    subtitle2
+                    translationKey="onboarding.setup_task.title"
                   />
-                )}
+                  <Divider margin-2 />
+                  <TranslatedText
+                    xsm
+                    secondary
+                    translationKey="onboarding.setup_task.description"
+                  />
+                </AppView>
+              </AppView>
+              <AppView marginL-8>
+                <AppText xsm secondary>
+                  {completedCount}/{totalCount}
+                </AppText>
               </AppView>
             </AppView>
           )}
         </AppView>
-        {phase === 'idle' && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}
-            row
-            centerV
-            spread>
-            <AppView row centerV flex height={'100%'}>
-              <AppView
-                br40
-                style={[styles.indicator, { backgroundColor: Colors.primary }]}
-              />
-              <AppView flex marginL-12>
-                <TranslatedText
-                  subtitle2
-                  translationKey="onboarding.setup_task.title"
-                />
-                <Divider margin-2 />
-                <TranslatedText
-                  xsm
-                  secondary
-                  translationKey="onboarding.setup_task.description"
-                />
-              </AppView>
-            </AppView>
-            <AppView marginL-8>
-              <AppText xsm secondary>
-                {completedCount}/{totalCount}
-              </AppText>
-            </AppView>
-          </AppView>
-        )}
       </AppCard>
     </AppView>
   );

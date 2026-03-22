@@ -24,9 +24,15 @@ import { useDispatch } from 'react-redux';
 
 interface StepsListProps {
   mode?: FormEditModeType;
+  steps?: StepType[];
+  showTitle?: boolean;
 }
 
-export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
+export const StepsList = ({
+  mode = 'edit',
+  steps = [],
+  showTitle = true,
+}: StepsListProps) => {
   const task = useAppSelector(selectSelectedTask);
   const dispatch = useDispatch();
 
@@ -64,13 +70,15 @@ export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
         title="tabs.create_tab.no_steps_yet"
         subtitle="tabs.create_tab.add_new_step_desc"
         btnText="tabs.create_tab.add_new_step"
-        onPress={mode === 'view' ? undefined : onAddNewStepPress}
+        onPress={
+          mode === 'view' || mode === 'readonly' ? undefined : onAddNewStepPress
+        }
       />
     );
   };
 
   const renderFooterComponent = () => {
-    if (mode === 'view') return;
+    if (mode === 'view' || mode === 'readonly') return;
     if (!task?.steps || task?.steps?.length === 0) return;
     return (
       <AppButton onPress={onAddNewStepPress}>
@@ -85,11 +93,15 @@ export const StepsList = ({ mode = 'edit' }: StepsListProps) => {
 
   return (
     <>
-      <TranslatedText body1 translationKey="common.steps" />
-      <Divider marginV-8 />
+      {showTitle && (
+        <>
+          <TranslatedText body1 translationKey="common.steps" />
+          <Divider marginV-8 />
+        </>
+      )}
       <AppCard padding-0>
         <AppList
-          data={task?.steps || []}
+          data={(steps?.length > 0 ? steps : task?.steps) || []}
           keyExtractor={(s) => s.step_id}
           renderItem={renderItem}
           ListEmptyComponent={renderEmptyItem}

@@ -7,7 +7,7 @@ export type CreateTaskParamsType = Pick<TaskType, 'title' | 'description'> & {
 export type CreateTaskResponseType = TaskType;
 
 export type UpdateTaskParamsType = Partial<
-  Pick<TaskType, 'title' | 'description' | 'completed'>
+  Pick<TaskType, 'title' | 'description' | 'status'>
 > & {
   task_id: string;
   milestone_id: string;
