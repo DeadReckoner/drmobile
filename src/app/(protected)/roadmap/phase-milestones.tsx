@@ -47,7 +47,13 @@ const PhaseMilestones = () => {
     });
   }, []);
 
-  const renderMilestoneItem = ({ item }: { item: MilestoneType }) => (
+  const renderMilestoneItem = ({
+    item,
+    index,
+  }: {
+    item: MilestoneType;
+    index: number;
+  }) => (
     <AppCard
       onPress={() => {
         router.navigate({
@@ -66,7 +72,7 @@ const PhaseMilestones = () => {
       }}>
       <AppView gap-8>
         <AppText body1 textColor>
-          {item.sub_goal}
+          {t('common.milestone')} {index + 1}: {item.sub_goal}
         </AppText>
         <AppText xsm textColor>
           {t('common.description')}: {item.description}

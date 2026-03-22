@@ -49,17 +49,32 @@ export const RoadmapCurrentStateOverview = ({
     );
   }, [roadmap.phases]);
 
-  const currentMilestone = useMemo<MilestoneType | null>(() => {
+  const currentMilestoneData = useMemo<{
+    milestone: MilestoneType | null;
+    index: number;
+  }>(() => {
     if (currentPhase) {
-      return (
-        (currentPhase.milestones ?? []).find((m) => !m.reached) ??
-        currentPhase.milestones?.[0] ??
-        null
-      );
+      const milestones = currentPhase.milestones ?? [];
+      const index = milestones.findIndex((m) => !m.reached);
+      if (index !== -1) {
+        return { milestone: milestones[index], index: index + 1 };
+      }
+      return milestones[0]
+        ? { milestone: milestones[0], index: 1 }
+        : { milestone: null, index: 0 };
     }
     const milestones = roadmap.milestones ?? [];
-    return milestones.find((m) => !m.reached) ?? milestones[0] ?? null;
+    const index = milestones.findIndex((m) => !m.reached);
+    if (index !== -1) {
+      return { milestone: milestones[index], index: index + 1 };
+    }
+    return milestones[0]
+      ? { milestone: milestones[0], index: 1 }
+      : { milestone: null, index: 0 };
   }, [currentPhase, roadmap.milestones]);
+
+  const currentMilestone = currentMilestoneData.milestone;
+  const currentMilestoneIndex = currentMilestoneData.index;
 
   const phaseProgress = useMemo(
     () => (currentPhase ? calculatePhaseProgress(currentPhase) : 0),
@@ -101,7 +116,7 @@ export const RoadmapCurrentStateOverview = ({
         <>
           <SectionHeader label={t('common.current_milestone')} />
           <OverviewCard
-            title={currentMilestone.sub_goal}
+            title={`${t('common.milestone')} ${currentMilestoneIndex}: ${currentMilestone.sub_goal}`}
             description={currentMilestone.description}
             progress={milestoneProgress}
             tooltipText={t('common.milestone_tooltip')}

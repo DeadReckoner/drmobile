@@ -38,7 +38,7 @@ const PhaseMilestonesTasks = () => {
     });
   }, []);
 
-  const renderItem = ({ item }: { item: TaskType }) => (
+  const renderItem = ({ item, index }: { item: TaskType; index: number }) => (
     <AppCard
       onPress={() => {
         dispatch(setSelectedTaskAction({ task: item }));
@@ -53,7 +53,7 @@ const PhaseMilestonesTasks = () => {
       }}>
       <AppView gap-4>
         <AppText body1 textColor>
-          {item.title}
+          {t('common.task')} {index + 1}: {item.title}
         </AppText>
         <AppText xsm textColor>
           {t('common.description')}: {item.description}
