@@ -38,7 +38,10 @@ export const structureRoadmapApiPayload = (roadmap: Partial<RoadmapType>) => {
 export const calculatePhaseProgress = (phase: Phase): number => {
   const milestones = phase.milestones ?? [];
   if (milestones.length === 0) return 0;
-  const reached = milestones.filter((m) => m.status === 'completed').length;
+  // Support both new status field and legacy reached field
+  const reached = milestones.filter(
+    (m) => m.status === 'completed' || m.reached,
+  ).length;
   return Math.floor((reached / milestones.length) * 100);
 };
 
@@ -47,8 +50,9 @@ export const calculateMilestoneProgress = (
 ): number => {
   const tasks = milestone.tasks ?? [];
   if (tasks.length === 0) return 0;
+  // Support both new status field and legacy completed field
   const completed = tasks.filter(
-    (t: TaskType) => t.status === 'completed',
+    (t: TaskType) => t.status === 'completed' || t.completed,
   ).length;
   return Math.floor((completed / tasks.length) * 100);
 };
@@ -73,18 +77,34 @@ export const buildBadgeLabel = ({
 
 /**
  * Centralised "ongoing" finders.
- * An item is ongoing if and only if its backend-provided status is 'in_progress'.
+ * Prefers items with status 'in_progress', but falls back to first non-completed item
+ * for backwards compatibility with data that may not have status field set.
  */
-export const findOngoingPhase = (phases: Phase[]): Phase | undefined =>
-  phases.find((p) => p.status === 'in_progress');
+export const findOngoingPhase = (phases: Phase[]): Phase | undefined => {
+  // First try to find one explicitly marked as in_progress
+  const inProgress = phases.find((p) => p.status === 'in_progress');
+  if (inProgress) return inProgress;
+  // Fall back to first non-completed phase
+  return phases.find((p) => p.status !== 'completed');
+};
 
 export const findOngoingMilestone = (
   milestones: MilestoneType[],
-): MilestoneType | undefined =>
-  milestones.find((m) => m.status === 'in_progress');
+): MilestoneType | undefined => {
+  // First try to find one explicitly marked as in_progress
+  const inProgress = milestones.find((m) => m.status === 'in_progress');
+  if (inProgress) return inProgress;
+  // Fall back to first non-completed/non-reached milestone
+  return milestones.find((m) => m.status !== 'completed' && !m.reached);
+};
 
-export const findOngoingTask = (tasks: TaskType[]): TaskType | undefined =>
-  tasks.find((t) => t.status === 'in_progress');
+export const findOngoingTask = (tasks: TaskType[]): TaskType | undefined => {
+  // First try to find one explicitly marked as in_progress
+  const inProgress = tasks.find((t) => t.status === 'in_progress');
+  if (inProgress) return inProgress;
+  // Fall back to first non-completed task
+  return tasks.find((t) => t.status !== 'completed' && !t.completed);
+};
 
 const ensureIds = (
   milestones: MilestoneType[],
@@ -141,7 +161,10 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
     return { ...roadmap, milestones: roadmap.milestones || [] };
   }
 
-  const activeMilestone = milestones.find((m) => m.status !== 'completed');
+  // Support both new status field and legacy reached field
+  const activeMilestone = milestones.find(
+    (m) => m.status !== 'completed' && !m.reached,
+  );
   if (!activeMilestone) {
     return {
       ...roadmap,
@@ -150,13 +173,17 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
     };
   }
   const allTasks = milestones.flatMap((m) => m.tasks);
-  const completedTasks = allTasks.filter((t) => t.status === 'completed');
+  // Support both new status field and legacy completed field
+  const completedTasks = allTasks.filter(
+    (t) => t.status === 'completed' || t.completed,
+  );
 
   return {
     ...roadmap,
     progress: Math.floor((completedTasks.length / allTasks.length) * 100),
     daysRemainingTillNextMilestone:
-      activeMilestone?.tasks.filter((t) => t.status !== 'completed').length ||
-      0,
+      activeMilestone?.tasks.filter(
+        (t) => t.status !== 'completed' && !t.completed,
+      ).length || 0,
   };
 };
