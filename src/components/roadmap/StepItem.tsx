@@ -15,6 +15,7 @@ import {
   selectSelectedTask,
   setSelectedTaskAction,
   updateStepAction,
+  updateStepByIdAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import React from 'react';
@@ -53,27 +54,22 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
   const handleCompleteStep = async (value: boolean) => {
     if (selectedDraft.shouldSyncWithServer && step.step_id) {
       try {
+        // Optimistic update: always patch the step in the roadmap tree by ID
         dispatch(
-          updateStepAction({
-            completed: value,
-            index,
-          }),
+          updateStepByIdAction({ step_id: step.step_id, completed: value }),
         );
-        if (!task) return;
-
-        const updatedTask = {
-          ...task,
-          steps:
-            task.steps.map((s, i) =>
-              i === index ? { ...s, completed: value } : s,
-            ) || [],
-        } as TaskType;
-        if (!updatedTask) return;
-        dispatch(
-          setSelectedTaskAction({
-            task: updatedTask,
-          }),
-        );
+        // Additionally sync the selected-task slice when a task is selected
+        if (task) {
+          dispatch(updateStepAction({ completed: value, index }));
+          const updatedTask = {
+            ...task,
+            steps:
+              task.steps.map((s, i) =>
+                i === index ? { ...s, completed: value } : s,
+              ) || [],
+          } as TaskType;
+          dispatch(setSelectedTaskAction({ task: updatedTask }));
+        }
 
         await updateStep({
           description: step.description,
@@ -82,11 +78,19 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
           task_id: step.task_id,
           completed: value,
         }).unwrap();
-        dispatch(
-          roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
-            forceRefetch: true,
-          }),
-        );
+
+        // Refetch the full single-roadmap data so TodayTab (and any other
+        // consumer) receives rich nested data (phases→milestones→tasks→steps).
+        // Using getRoadmapById avoids overwriting the store with the sparse
+        // list-endpoint payload that getRoadmaps returns.
+        const roadmapId = selectedDraft.roadmap?.roadmap_id;
+        if (roadmapId) {
+          dispatch(
+            roadmapApi.endpoints.getRoadmapById.initiate(roadmapId, {
+              forceRefetch: true,
+            }),
+          );
+        }
       } catch (error) {
         showToast({
           type: 'failure',
@@ -94,12 +98,7 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
         });
       }
     } else {
-      dispatch(
-        updateStepAction({
-          completed: value,
-          index,
-        }),
-      );
+      dispatch(updateStepAction({ completed: value, index }));
     }
   };
 
@@ -113,6 +112,7 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
             </AppView>
           ) : (
             <AppCheckbox
+              disabled={mode === 'readonly'}
               value={step.completed}
               onValueChange={handleCompleteStep}
             />
@@ -121,7 +121,7 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
         <AppText textColor body2 flex>
           {step.description}
         </AppText>
-        {mode !== 'view' && (
+        {mode !== 'view' && mode !== 'readonly' && (
           <AppButton
             onPress={() => onStepPress(step)}
             onPressIn={onPressIn}

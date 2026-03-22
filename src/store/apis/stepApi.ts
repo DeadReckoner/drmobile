@@ -1,4 +1,4 @@
-import { StepType } from '@/hooks/roadmap/types/roadmap.types';
+import { StepType, TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { taskApi } from '@/store/apis/taskApi';
@@ -6,6 +6,7 @@ import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   addStepAction,
   removeStepAction,
+  setSelectedTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { RootStateType } from '@/store/types/store.types';
 import { DateUtils } from '@/utils/date.utils';
@@ -68,7 +69,6 @@ const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
           if (taskIdx !== -1) {
             const task = tasks[taskIdx];
             task.steps.push(data);
-            task.completed = task.steps?.every((s) => s.completed) || false;
           }
         },
       ),
@@ -102,7 +102,6 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
             );
             if (stepIdx !== -1) {
               task.steps[stepIdx] = data;
-              task.completed = task.steps?.every((s) => s.completed) || false;
             }
           }
         },
@@ -121,9 +120,6 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
           const stepIdx = steps.findIndex((s) => s.step_id === data.step_id);
           if (stepIdx !== -1) {
             steps[stepIdx] = data;
-            const task =
-              roadmaps[roadmapIdx].milestones[milestoneIdx].tasks[taskIdx];
-            task.completed = task.steps?.every((s) => s.completed) || false;
           }
         }
       }),
@@ -142,8 +138,6 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
               );
               if (stepIdx !== -1) {
                 steps[stepIdx] = data;
-                const task = draft.milestones[milestoneIdx].tasks[taskIdx];
-                task.completed = task.steps?.every((s) => s.completed) || false;
               }
             }
           },
@@ -217,12 +211,65 @@ const onDeleteStepQueryStarted: TypedMutationOnQueryStarted<
             );
             if (stepIdx !== -1) {
               task.steps.splice(stepIdx, 1);
-              task.completed = task.steps?.every((s) => s.completed) || false;
             }
           }
         },
       ),
     );
+  } catch {}
+};
+
+interface CompleteAllStepsResponse {
+  message: string;
+  steps_completed: number;
+  task_id: string;
+}
+
+const onCompleteAllStepsQueryStarted: TypedMutationOnQueryStarted<
+  CompleteAllStepsResponse,
+  string,
+  BaseQueryFunctionType
+> = async (taskId, { dispatch, queryFulfilled, getState }) => {
+  try {
+    await queryFulfilled;
+    const state = getState() as unknown as RootStateType;
+    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
+    const selectedTask = state.roadmapDraft.selectedTask;
+
+    if (selectedTask) {
+      const updatedTask: TaskType = {
+        ...selectedTask,
+        status: 'completed',
+        steps:
+          selectedTask.steps?.map((s) => ({ ...s, completed: true })) ?? [],
+      };
+      dispatch(setSelectedTaskAction({ task: updatedTask }));
+    }
+
+    dispatch(
+      taskApi.util.updateQueryData(
+        'getUserTasksByStartDate',
+        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+        (tasks) => {
+          const idx = tasks.findIndex((t) => t.task_id === taskId);
+          if (idx !== -1) {
+            tasks[idx].status = 'completed';
+            tasks[idx].steps = tasks[idx].steps?.map((s) => ({
+              ...s,
+              completed: true,
+            }));
+          }
+        },
+      ),
+    );
+
+    if (roadmapId) {
+      dispatch(
+        roadmapApi.endpoints.getRoadmapById.initiate(roadmapId, {
+          forceRefetch: true,
+        }),
+      );
+    }
   } catch {}
 };
 
@@ -265,6 +312,13 @@ export const stepApi = api.injectEndpoints({
         onQueryStarted: onDeleteStepQueryStarted,
       },
     ),
+    completeAllSteps: builder.mutation<CompleteAllStepsResponse, string>({
+      query: (taskId) => ({
+        url: `/tasks/${taskId}/steps/complete-all`,
+        method: 'POST',
+      }),
+      onQueryStarted: onCompleteAllStepsQueryStarted,
+    }),
   }),
   overrideExisting: true,
 });

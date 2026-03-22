@@ -1,47 +1,134 @@
-import { AppCard } from '@/components/AppCard';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
-import { TasksList } from '@/components/roadmap/TasksList';
-import { TranslatedText } from '@/components/TranslatedText';
-import { AppProgressBar, AppText, AppView } from '@/components/ui';
-import { useGetRoadmapsQuery } from '@/hooks/roadmap';
-import { useAppTheme } from '@/hooks/useAppTheme';
+import { TodayTab } from '@/components/roadmap/TodayTab';
+import { AppView } from '@/components/ui';
+import { useGetRoadmapByIdQuery } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectCurrentMilestone,
+  selectDraftRoadmap,
+  setDraftRoadmapAction,
+} from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Colors, SegmentedControl, Typography } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
-  const { theme } = useAppTheme();
   const { t } = useLocalization();
+  const dispatch = useAppDispatch();
   const draftRoadmap = useAppSelector(selectDraftRoadmap);
-  const { data: roadmaps } = useGetRoadmapsQuery();
+  const currentMilestone = useAppSelector(selectCurrentMilestone);
+  const { data, isFetching } = useGetRoadmapByIdQuery(
+    draftRoadmap?.roadmap_id ?? '',
+    {
+      skip: !draftRoadmap?.roadmap_id,
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const roadmap = data ?? draftRoadmap;
+
   const [firstTabSelected, setFirstTabSelected] = useState(true);
-  const roadmap =
-    roadmaps?.find((r) => r.roadmap_id === draftRoadmap?.roadmap_id) ||
-    draftRoadmap;
-  const currentMilestone = roadmap?.milestones?.find(
-    (milestone) => !milestone.reached,
+
+  const todayTasks = useMemo(
+    () =>
+      (currentMilestone?.tasks || []).filter(
+        (task) => task.date && DateUtils.isSameDate(task.date, new Date()),
+      ),
+    [currentMilestone],
   );
 
-  const totalTasks = currentMilestone?.tasks || [];
-  const todayTasks = totalTasks.filter(
-    (task) => task.date && DateUtils.isSameDate(task.date, new Date()),
+  useEffect(() => {
+    if (data) {
+      dispatch(setDraftRoadmapAction(data));
+    }
+  }, [data, dispatch]);
+
+  const handleOverviewPress = useCallback(
+    (
+      phase: Parameters<
+        NonNullable<
+          React.ComponentProps<
+            typeof RoadmapCurrentStateOverview
+          >['onOverviewPress']
+        >
+      >[0],
+    ) => {
+      if (phase) {
+        router.navigate({
+          pathname: '/roadmap/phase-details',
+          params: { phaseId: phase.phase_id },
+        });
+      }
+    },
+    [],
   );
-  const completedTasks = todayTasks.filter((task) => task.completed);
-  const allTasksCompleted =
-    todayTasks.length > 0 && completedTasks.length === todayTasks.length;
+
+  const handlePhasePress = useCallback(
+    (
+      phase: Parameters<
+        NonNullable<
+          React.ComponentProps<
+            typeof RoadmapCurrentStateOverview
+          >['onPhasePress']
+        >
+      >[0],
+    ) => {
+      router.navigate({
+        pathname: '/roadmap/phase-milestones',
+        params: {
+          phaseId: phase.phase_id,
+          phaseLabel: String(phase.order_index),
+        },
+      });
+    },
+    [],
+  );
+
+  const handleMilestonePress = useCallback(
+    (
+      milestone: Parameters<
+        NonNullable<
+          React.ComponentProps<
+            typeof RoadmapCurrentStateOverview
+          >['onMilestonePress']
+        >
+      >[0],
+      phase: Parameters<
+        NonNullable<
+          React.ComponentProps<
+            typeof RoadmapCurrentStateOverview
+          >['onMilestonePress']
+        >
+      >[1],
+    ) => {
+      const phaseLabel = phase?.order_index ? String(phase.order_index) : '';
+      const milestoneNumber =
+        milestone.order_index != null ? milestone.order_index : 1;
+      router.navigate({
+        pathname: '/roadmap/phase-milestones-tasks',
+        params: {
+          milestoneId: milestone.milestone_id,
+          phaseId: phase?.phase_id ?? '',
+          phaseLabel,
+          milestoneLabel: String(milestoneNumber),
+        },
+      });
+    },
+    [],
+  );
 
   return (
     <AppScreen safeArea>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView
+        contentInsetAdjustmentBehavior="always"
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}>
         <AppView row spread centerV>
           <HeaderWithBack />
           <SegmentedControl
@@ -79,78 +166,12 @@ const RoadmapExecution = () => {
 
         <AppView reanimated layout={Animations.Layout.Springify()}>
           {firstTabSelected ? (
-            <AppView
-              key="today-tab"
-              flex
-              useSafeArea
-              reanimated
-              entering={Animations.Entry.FadeInDown()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <AppCard>
-                <AppView flex gap-12>
-                  <AppView row centerV spread>
-                    <AppText subtitle1 regular textColor>
-                      {roadmap?.goal}
-                    </AppText>
-                  </AppView>
-                  <AppView row flex centerV gap-16>
-                    <AppText body1 light textColor flex-0>
-                      {t('roadmap.progress')}:
-                    </AppText>
-                    <AppProgressBar
-                      style={[
-                        styles.progressBar,
-                        { backgroundColor: Colors.outline },
-                      ]}
-                      fullWidth={true}
-                      progress={roadmap?.progress || 0}
-                      progressColor={
-                        theme === 'dark' ? Colors.white : Colors.primary
-                      }
-                    />
-                    <AppText body1 light textColor>
-                      {roadmap?.progress || 0}%
-                    </AppText>
-                  </AppView>
-                  {currentMilestone && (
-                    <AppView row centerV style={{ flexWrap: 'wrap' }}>
-                      <AppText body1 light textColor flex-1>
-                        {t('common.current_milestone')}:{' '}
-                        {currentMilestone.sub_goal}
-                      </AppText>
-                    </AppView>
-                  )}
-                </AppView>
-              </AppCard>
-              {allTasksCompleted && currentMilestone && (
-                <AppCard marginT-16>
-                  <AppView row centerV spread>
-                    <TranslatedText
-                      subtitle2
-                      light
-                      textColor
-                      translationKey="roadmap.all_tasks_completed"
-                    />
-                    <AppView
-                      row
-                      centerV
-                      paddingH-12
-                      paddingV-4
-                      br100
-                      style={{ backgroundColor: Colors.success }}>
-                      <AppText textColor xsm semibold>
-                        {completedTasks.length} / {todayTasks.length}
-                      </AppText>
-                    </AppView>
-                  </AppView>
-                </AppCard>
-              )}
-              {!allTasksCompleted && currentMilestone && (
-                <AppView marginT-16>
-                  <TasksList tasks={todayTasks} />
-                </AppView>
-              )}
-            </AppView>
+            <TodayTab
+              roadmap={roadmap}
+              currentMilestone={currentMilestone}
+              todayTasks={todayTasks}
+              isRoadmapFeching={isFetching}
+            />
           ) : (
             <AppView
               key="overview-tab"
@@ -163,30 +184,9 @@ const RoadmapExecution = () => {
               <RoadmapCurrentStateOverview
                 key={roadmap.roadmap_id}
                 roadmap={roadmap}
-                onOverviewPress={(phase) => {
-                  if (phase) {
-                    router.navigate({
-                      pathname: '/roadmap/phase-details',
-                      params: { phaseId: phase.phase_id },
-                    });
-                  }
-                }}
-                onPhasePress={(phase) => {
-                  router.navigate({
-                    pathname: '/roadmap/phase-milestones',
-                    params: {
-                      milestones: JSON.stringify(phase.milestones || []),
-                    },
-                  });
-                }}
-                onMilestonePress={(milestone) => {
-                  router.navigate({
-                    pathname: '/roadmap/phase-milestones-tasks',
-                    params: {
-                      tasks: JSON.stringify(milestone.tasks),
-                    },
-                  });
-                }}
+                onOverviewPress={handleOverviewPress}
+                onPhasePress={handlePhasePress}
+                onMilestonePress={handleMilestonePress}
               />
             </AppView>
           )}
@@ -199,9 +199,8 @@ const RoadmapExecution = () => {
 export default RoadmapExecution;
 
 const styles = StyleSheet.create({
-  progressBar: {
-    height: 6,
-    borderRadius: 3,
-    width: '50%',
+  scrollContainer: {
+    flexGrow: 1,
+    paddingBottom: 100,
   },
 });
