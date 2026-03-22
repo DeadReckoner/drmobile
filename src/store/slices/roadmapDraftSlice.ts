@@ -1,22 +1,31 @@
 import type {
   MilestoneType,
+  Phase,
+  RoadmapExecutionStatusType,
   RoadmapType,
   StepType,
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
 import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
-import { transformRoadmap } from '@/utils/roadmap.utils';
+import {
+  assignRoadmapIds,
+  findOngoingMilestone,
+  findOngoingPhase,
+  transformRoadmap,
+} from '@/utils/roadmap.utils';
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 
 type DraftState = {
   roadmap: RoadmapType;
+  selectedPhase?: Phase | null;
   selectedMilestone?: MilestoneType | null;
   selectedTask?: TaskType | null;
   selectedHabit?: HabitType | null;
   selectedStep?: StepType | null;
 
   selectedRoadmapIndex: number;
+  selectedPhaseIndex: number;
   selectedMilestoneIndex: number;
   selectedTaskIndex: number;
   selectedStepIndex: number;
@@ -25,6 +34,16 @@ type DraftState = {
 
 const getId = (type: 'roadmap' | 'milestone' | 'task') =>
   `${type}-${Date.now().toString()}`;
+
+const deriveTaskStatus = (task: TaskType): RoadmapExecutionStatusType => {
+  return task.status ?? 'not_started';
+};
+
+const deriveMilestoneStatus = (
+  milestone: MilestoneType,
+): RoadmapExecutionStatusType => {
+  return milestone.status ?? 'not_started';
+};
 
 const initialState: DraftState = {
   roadmap: {
@@ -38,12 +57,14 @@ const initialState: DraftState = {
     milestones: [],
     reason: '',
   },
+  selectedPhase: null,
   selectedMilestone: null,
   selectedTask: null,
   selectedStep: null,
   selectedHabit: null,
 
   selectedRoadmapIndex: -1,
+  selectedPhaseIndex: -1,
   selectedMilestoneIndex: -1,
   selectedTaskIndex: -1,
   selectedStepIndex: -1,
@@ -81,10 +102,12 @@ const roadmapDraftSlice = createSlice({
 
     resetDraftAction: (state) => {
       state.roadmap = { ...initialState.roadmap };
+      state.selectedPhase = null;
       state.selectedMilestone = null;
       state.selectedTask = null;
       state.selectedStep = null;
       state.selectedRoadmapIndex = -1;
+      state.selectedPhaseIndex = -1;
       state.selectedMilestoneIndex = -1;
       state.selectedTaskIndex = -1;
       state.selectedStepIndex = -1;
@@ -148,8 +171,8 @@ const roadmapDraftSlice = createSlice({
         task_id: action.payload.task_id ?? getId('task'),
         milestone_id: milestone.milestone_id,
         steps: [],
-        completed: false,
         day: 0,
+        status: 'not_started',
       });
     },
 
@@ -216,25 +239,10 @@ const roadmapDraftSlice = createSlice({
         step.completed = action.payload.completed;
       }
       step.number = action.payload.number ?? step.number;
-      if (!task) return;
-      if (task) {
-        if (
-          task.steps?.every((s) => s.completed) ||
-          !task.steps ||
-          task.steps?.length === 0
-        ) {
-          task.completed = true;
-        } else {
-          task.completed = false;
-        }
-      }
+      task.status = deriveTaskStatus(task);
       const milestone = findSelectedMilestone(state);
       if (milestone) {
-        if (milestone?.tasks?.every((t) => t.completed)) {
-          milestone.reached = true;
-        } else {
-          milestone.reached = false;
-        }
+        milestone.status = deriveMilestoneStatus(milestone);
       }
 
       syncSelectedTask(state);
@@ -254,6 +262,18 @@ const roadmapDraftSlice = createSlice({
       state.selectedStepIndex = -1;
       state.selectedStep = null;
     },
+    setSelectedPhaseAction(
+      state,
+      action: PayloadAction<{ phase: Phase | null; index?: number }>,
+    ) {
+      state.selectedPhase = action.payload.phase;
+      if (action.payload.index !== undefined) {
+        state.selectedPhaseIndex = action.payload.phase
+          ? action.payload.index
+          : -1;
+      }
+    },
+
     setSelectedMilestoneAction(
       state,
       action: PayloadAction<{
@@ -294,33 +314,7 @@ const roadmapDraftSlice = createSlice({
     },
 
     setDraftRoadmapAction(state, action: PayloadAction<RoadmapType>) {
-      const roadmap: RoadmapType = {
-        ...action.payload,
-        milestones: action.payload.milestones.map((milestone) => {
-          const milestoneId = nanoid();
-          return {
-            ...milestone,
-            milestone_id: milestone.milestone_id || milestoneId,
-            tasks:
-              milestone.tasks?.map((task) => {
-                const taskId = nanoid();
-                return {
-                  ...task,
-                  task_id: task.task_id || taskId,
-                  steps:
-                    task.steps?.map((step) => {
-                      const stepId = nanoid();
-                      return {
-                        ...step,
-                        step_id: step.step_id || stepId,
-                      };
-                    }) || [],
-                };
-              }) || [],
-          };
-        }),
-      };
-      state.roadmap = roadmap;
+      state.roadmap = assignRoadmapIds(action.payload, nanoid);
     },
 
     setShouldSyncWithServerAction(state, action: PayloadAction<boolean>) {
@@ -347,6 +341,41 @@ const roadmapDraftSlice = createSlice({
     setSelectedHabit(state, action: PayloadAction<HabitType | null>) {
       state.selectedHabit = action.payload;
     },
+
+    updateStepByIdAction(
+      state,
+      action: PayloadAction<Pick<StepType, 'step_id' | 'completed'>>,
+    ) {
+      const { step_id, completed } = action.payload;
+
+      // Helper that patches the step inside a milestones array
+      const patchInMilestones = (milestones: MilestoneType[]) => {
+        for (const milestone of milestones) {
+          for (const task of milestone.tasks ?? []) {
+            const step = task.steps?.find((s) => s.step_id === step_id);
+            if (step) {
+              step.completed = completed;
+              task.status = deriveTaskStatus(task);
+              milestone.status = deriveMilestoneStatus(milestone);
+              return true;
+            }
+          }
+        }
+        return false;
+      };
+
+      // AI-generated roadmaps: search in phases
+      for (const phase of state.roadmap.phases ?? []) {
+        if (patchInMilestones(phase.milestones ?? [])) {
+          state.roadmap = transformRoadmap(state.roadmap);
+          return;
+        }
+      }
+      // Custom roadmaps: search top-level milestones
+      if (patchInMilestones(state.roadmap.milestones ?? [])) {
+        state.roadmap = transformRoadmap(state.roadmap);
+      }
+    },
   },
 });
 
@@ -362,6 +391,7 @@ export const {
   addStepAction,
   updateStepAction,
   removeStepAction,
+  setSelectedPhaseAction,
   setSelectedMilestoneAction,
   setSelectedTaskAction,
   setSelectedStepAction,
@@ -372,6 +402,7 @@ export const {
   setSelectedTaskIndex,
   setSelectedStepIndex,
   setSelectedHabit,
+  updateStepByIdAction,
 } = roadmapDraftSlice.actions;
 
 export const selectDraftSlice = createAppSelector(
@@ -390,9 +421,59 @@ export const selectSelectedTask = createAppSelector(
 export const selectSelectedHabit = createAppSelector(
   (state) => state.roadmapDraft.selectedHabit,
 );
+export const selectSelectedPhase = createAppSelector(
+  (state) => state.roadmapDraft.selectedPhase,
+);
 export const selectSelectedStep = createAppSelector(
   (state) => state.roadmapDraft.selectedStep,
 );
+
+export const selectCurrentPhase = createAppSelector((state) => {
+  const phases = state.roadmapDraft.roadmap.phases ?? [];
+  return findOngoingPhase(phases);
+});
+
+export const selectCurrentMilestone = createAppSelector((state) => {
+  const roadmap = state.roadmapDraft.roadmap;
+  const phases = roadmap.phases ?? [];
+
+  // AI-generated roadmaps: search milestones inside phases
+  if (phases.length > 0) {
+    for (const phase of phases) {
+      const milestone = findOngoingMilestone(phase.milestones ?? []);
+      if (milestone) return milestone;
+    }
+    return null;
+  }
+
+  // Custom roadmaps: top-level milestones
+  return findOngoingMilestone(roadmap.milestones ?? []);
+});
+
+export const selectPhaseMilestones = (phaseId: string) =>
+  createAppSelector((state) => {
+    const phase = (state.roadmapDraft.roadmap.phases ?? []).find(
+      (p) => p.phase_id === phaseId,
+    );
+    return phase?.milestones ?? [];
+  });
+
+export const selectMilestoneTasks = (milestoneId: string) =>
+  createAppSelector((state) => {
+    const roadmap = state.roadmapDraft.roadmap;
+    // Search in phases first
+    for (const phase of roadmap.phases ?? []) {
+      const milestone = (phase.milestones ?? []).find(
+        (m) => m.milestone_id === milestoneId,
+      );
+      if (milestone) return milestone.tasks ?? [];
+    }
+    // Fallback to top-level milestones
+    const milestone = (roadmap.milestones ?? []).find(
+      (m) => m.milestone_id === milestoneId,
+    );
+    return milestone?.tasks ?? [];
+  });
 
 export const draftRoadmapReducer = roadmapDraftSlice.reducer;
 export const roadmapDraftSlicePath = roadmapDraftSlice.reducerPath;

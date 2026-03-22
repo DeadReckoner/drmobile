@@ -4,4 +4,5 @@ export const {
   useCreateStepMutation,
   useUpdateStepMutation,
   useDeleteStepMutation,
+  useCompleteAllStepsMutation,
 } = stepApi;

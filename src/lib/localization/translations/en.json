@@ -114,8 +114,8 @@
       "create_roadmap_button": "Create Roadmap",
       "no_milestones_yet": "No milestones yet!",
       "no_roadmaps_yet": "No roadmaps yet!",
-      "no_tasks_yet": "No tasks or habits!",
-      "no_tasks_description": "You’re all caught up for today. New tasks/habits will appear here.",
+      "no_tasks_or_habits_yet": "No tasks or habits!",
+      "no_tasks_or_habits_description": "You’re all caught up for today. New tasks/habits will appear here.",
       "add_new_milestone_desc": "Create a milestone to break your roadmap into manageable phases.",
       "add_new_roadmap_desc": "Create a roadmap to structure your goals with milestones.",
       "no_steps_yet": "No steps yet!",
@@ -395,7 +395,12 @@
     "all_tasks_completed": "All tasks completed!",
     "goal": "Goal",
     "progress": "Progress",
-    "view_full_plan": "View Full Plan"
+    "view_full_plan": "View Full Plan",
+    "complete_all_steps": "Complete All Steps",
+    "complete_all_steps_success": "All steps completed successfully!",
+    "complete_all_steps_failure": "Failed to complete all steps",
+    "no_tasks_today": "No tasks available!",
+    "no_tasks_today_description": "This milestone has no tasks due to incompleted previous milestones."
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

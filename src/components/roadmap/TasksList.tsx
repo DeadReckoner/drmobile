@@ -40,8 +40,8 @@ export const TasksList = ({ tasks, onTaskClick }: TasksListProps) => {
   const renderEmptyComponent = () => {
     return (
       <EmptyListItemPlaceholder
-        title="tabs.create_tab.no_tasks_yet"
-        subtitle="tabs.create_tab.no_tasks_description"
+        title="tabs.create_tab.no_tasks_or_habits_yet"
+        subtitle="tabs.create_tab.no_tasks_or_habits_description"
       />
     );
   };

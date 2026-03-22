@@ -147,8 +147,10 @@ const MilestoneListItemComponent = ({
   );
 
   const isMilestoneReached = useMemo(() => {
-    return (milestone.tasks?.length || 0) > 0 && milestone.reached;
-  }, [milestone.reached, milestone.tasks]);
+    return (
+      (milestone.tasks?.length || 0) > 0 && milestone.status === 'completed'
+    );
+  }, [milestone.status, milestone.tasks]);
 
   const milestoneTasks = useMemo(
     () => milestone.tasks || [],

@@ -39,7 +39,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
-import { getAllMilestones } from '@/utils/roadmap.utils';
+import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -264,11 +264,6 @@ const RoadmapDetailsPage = () => {
 
   const milestones = getAllMilestones(roadmap);
 
-  const isRoadmapStarted =
-    roadmap.start_date !== '0001-01-01T00:00:00Z' &&
-    milestones?.[0]?.date !== '0001-01-01T00:00:00Z' &&
-    roadmap.start_date !== null;
-
   const hasMilestones = milestones.length > 0;
 
   const CreateRoadmapButton = () => {
@@ -292,7 +287,7 @@ const RoadmapDetailsPage = () => {
 
   const StartRoadmapButton = () => {
     if (!hasMilestones) return null;
-    if (isRoadmapLoading || isRoadmapStarted) return null;
+    if (isRoadmapLoading || isRoadmapStarted(roadmap)) return null;
     if (isRoadmapFetching)
       return (
         <Loader

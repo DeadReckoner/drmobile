@@ -3,7 +3,13 @@ export type FormRoadmapType = Pick<
   'goal' | 'description' | 'days' | 'reason'
 >;
 
-export type FormEditModeType = 'edit' | 'create' | 'view';
+export type FormEditModeType = 'edit' | 'create' | 'view' | 'readonly';
+
+export type RoadmapExecutionStatusType =
+  | 'not_started'
+  | 'in_progress'
+  | 'completed'
+  | 'overdue';
 
 export interface StepType {
   step_id: string;
@@ -20,13 +26,16 @@ export interface TaskType {
   title: string;
   description: string;
   day: number;
-  completed: boolean;
+  /** @deprecated Use `status` instead. Will be removed in a future API version. */
+  completed?: boolean;
   steps: StepType[];
   date?: string;
   rationale?: string;
   est_minutes?: number;
   dependencies?: string; // Parse string to get array
   confidence?: string;
+
+  status: RoadmapExecutionStatusType;
 }
 
 export interface MilestoneType {
@@ -36,7 +45,8 @@ export interface MilestoneType {
   sub_goal: string;
   description: string;
   day: number;
-  reached: boolean;
+  /** @deprecated Use `status` instead. Will be removed in a future API version. */
+  reached?: boolean;
   tasks: TaskType[];
   date?: string;
 
@@ -51,6 +61,8 @@ export interface MilestoneType {
   // Related data (from former MacroMilestone)
   spikes?: Spike[];
   risks?: Risk[];
+
+  status: RoadmapExecutionStatusType;
 }
 
 type RoadmapGenerationStatusType =
@@ -91,6 +103,7 @@ export interface Phase {
   order_index: number;
   duration_weeks: string;
   milestones?: MilestoneType[];
+  status: RoadmapExecutionStatusType;
 }
 
 export interface Spike {

@@ -6,6 +6,7 @@ import {
   resetDraftAction,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
+import { RootStateType } from '@/store/types/store.types';
 import {
   structureRoadmapApiPayload,
   transformRoadmap,
@@ -127,6 +128,21 @@ export const roadmapApi = api.injectEndpoints({
         } catch {
           return roadmaps;
         }
+      },
+      onQueryStarted: async (_arg, { dispatch, queryFulfilled, getState }) => {
+        try {
+          const { data } = await queryFulfilled;
+          if (data.length > 0) {
+            const currentDraftRoadmap = (getState() as RootStateType)
+              .roadmapDraft.roadmap;
+            const roadmap = data.find(
+              (r) => r.roadmap_id === currentDraftRoadmap?.roadmap_id,
+            );
+            if (roadmap) {
+              dispatch(setDraftRoadmapAction(roadmap));
+            }
+          }
+        } catch {}
       },
     }),
     createRoadmap: builder.mutation<RoadmapType, Partial<RoadmapType>>({

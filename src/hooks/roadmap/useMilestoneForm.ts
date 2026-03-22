@@ -96,8 +96,8 @@ export const useMilestoneForm = ({
           addMilestoneAction({
             day: 0,
             description: milestoneDescription,
-            reached: false,
             sub_goal: milestoneName,
+            status: 'not_started',
           }),
         );
       }
