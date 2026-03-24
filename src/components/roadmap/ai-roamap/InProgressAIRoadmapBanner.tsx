@@ -209,7 +209,7 @@ export const InProgressAIRoadmapBanner = () => {
       );
       dispatch(setDraftRoadmapAction(createdRoadmap));
       dispatch(resetCreationStateAction());
-      router.navigate('/roadmap/roadmap-details');
+      router.navigate('/roadmap/roadmap-execution');
     } else {
       router.navigate('/roadmap/create-ai-roadmap');
     }

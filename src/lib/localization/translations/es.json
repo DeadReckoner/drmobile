@@ -402,7 +402,9 @@
     "complete_all_steps_success": "¡Todos los pasos completados con éxito!",
     "complete_all_steps_failure": "No se pudieron completar todos los pasos",
     "no_tasks_today": "¡No hay tareas disponibles!",
-    "no_tasks_today_description": "Este hito no tiene tareas debido a hitos anteriores incompletos."
+    "no_tasks_today_description": "Este hito no tiene tareas debido a hitos anteriores incompletos.",
+    "delete_roadmap_label": "Eliminar Hoja de Ruta",
+    "options": "Opciones"
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",

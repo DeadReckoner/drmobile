@@ -5,9 +5,16 @@ import React, { ComponentProps } from 'react';
 import { StyleSheet } from 'react-native';
 import { ButtonProps, Colors } from 'react-native-ui-lib';
 
-export const AppActionSheetModal = (
-  props: ComponentProps<typeof AppActionSheet>,
-) => {
+type ActionSheetOption = Omit<ButtonProps, 'icon'> & { icon?: React.ReactNode };
+
+type AppActionSheetModalProps = Omit<
+  ComponentProps<typeof AppActionSheet>,
+  'options'
+> & {
+  options?: ActionSheetOption[];
+};
+
+export const AppActionSheetModal = (props: AppActionSheetModalProps) => {
   const renderTitle = () => (
     <AppView row centerV spread paddingH-16>
       <AppText textColor body1 style={styles.title}>
@@ -19,7 +26,7 @@ export const AppActionSheetModal = (
     </AppView>
   );
   const renderOption = (
-    option: ButtonProps & { icon?: React.ReactNode },
+    option: ActionSheetOption,
     index: number,
     onOptionPress: (_index: number) => void,
   ) => {

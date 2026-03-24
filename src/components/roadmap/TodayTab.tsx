@@ -66,7 +66,7 @@ export const TodayTab = ({
         </AppView>
       </AppCard>
       {isRoadmapFeching && todayTasks.length === 0 && (
-        <AppView height={30}>
+        <AppView height={30} marginT-16>
           <Loader transparent />
         </AppView>
       )}

@@ -9,7 +9,10 @@ import { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useScrollToCurrentItem } from '@/hooks/useScrollToCurrentItem';
 import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectPhaseMilestones } from '@/store/slices/roadmapDraftSlice';
+import {
+  selectDraftRoadmap,
+  selectPhaseMilestones,
+} from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import {
   buildBadgeLabel,
@@ -27,12 +30,20 @@ const PhaseMilestones = () => {
     phaseLabel?: string;
   }>();
   const { t } = useLocalization();
-
+  const roadmap = useAppSelector(selectDraftRoadmap);
   const selector = useMemo(
     () => selectPhaseMilestones(params.phaseId),
     [params.phaseId],
   );
-  const milestones = useAppSelector(selector);
+  const phaseMilestonesFromSelector = useAppSelector(selector);
+
+  const milestones = useMemo(
+    () =>
+      roadmap.type === 'custom_made'
+        ? roadmap.milestones || []
+        : phaseMilestonesFromSelector,
+    [roadmap.type, roadmap.milestones, phaseMilestonesFromSelector],
+  );
 
   const currentMilestone = useMemo(
     () => findOngoingMilestone(milestones),
@@ -44,13 +55,11 @@ const PhaseMilestones = () => {
 
   const renderMilestoneItem = ({
     item,
-    index,
   }: {
     item: MilestoneType;
     index: number;
   }) => {
-    const milestoneNumber =
-      item.order_index != null ? item.order_index : index + 1;
+    const milestoneNumber = item.order_index;
     const badgeLabel = buildBadgeLabel({
       phase: params.phaseLabel,
       milestone: milestoneNumber,
@@ -67,8 +76,8 @@ const PhaseMilestones = () => {
             params: {
               milestoneId: item.milestone_id,
               phaseId: params.phaseId,
-              phaseLabel: params.phaseLabel ?? '',
-              milestoneLabel: String(milestoneNumber),
+              phaseLabel: params.phaseLabel,
+              milestoneLabel: milestoneNumber,
             },
           });
         }}
@@ -79,7 +88,7 @@ const PhaseMilestones = () => {
         <AppView gap-8>
           <AppView row top>
             <AppText body1 textColor flex>
-              {t('common.milestone')} {milestoneNumber}: {item.sub_goal}
+              {item.sub_goal}
             </AppText>
             <LevelBadge
               label={badgeLabel}

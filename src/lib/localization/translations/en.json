@@ -402,7 +402,9 @@
     "complete_all_steps_success": "All steps completed successfully!",
     "complete_all_steps_failure": "Failed to complete all steps",
     "no_tasks_today": "No tasks available!",
-    "no_tasks_today_description": "This milestone has no tasks due to incompleted previous milestones."
+    "no_tasks_today_description": "This milestone has no tasks due to incompleted previous milestones.",
+    "delete_roadmap_label": "Delete Roadmap",
+    "options": "Options"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

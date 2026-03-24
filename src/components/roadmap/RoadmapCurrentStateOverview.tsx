@@ -14,10 +14,11 @@ import {
   findOngoingMilestone,
   findOngoingPhase,
 } from '@/utils/roadmap.utils';
-import { useMemo } from 'react';
+import { JSX, useMemo } from 'react';
 
 interface RoadmapCurrentStateOverviewProps {
   roadmap: RoadmapType;
+  roadmapCreateStartControls: JSX.Element | null;
   onOverviewPress?: (_currentPhase?: Phase) => void;
   onPhasePress?: (_phase: Phase) => void;
   onMilestonePress?: (_milestone: MilestoneType, _currentPhase?: Phase) => void;
@@ -25,6 +26,7 @@ interface RoadmapCurrentStateOverviewProps {
 
 export const RoadmapCurrentStateOverview = ({
   roadmap,
+  roadmapCreateStartControls,
   onOverviewPress,
   onPhasePress,
   onMilestonePress,
@@ -36,28 +38,12 @@ export const RoadmapCurrentStateOverview = ({
     [roadmap.phases],
   );
 
-  const currentMilestone = useMemo<MilestoneType | undefined>(
-    () =>
-      currentPhase
-        ? findOngoingMilestone(currentPhase.milestones ?? [])
-        : undefined,
-    [currentPhase],
-  );
-
-  const currentMilestoneIndex = useMemo(() => {
-    if (!currentMilestone) return 0;
-    if (currentMilestone.order_index != null) {
-      return currentMilestone.order_index;
+  const currentMilestone = useMemo<MilestoneType | undefined>(() => {
+    if (roadmap.type === 'custom_made') {
+      return findOngoingMilestone(roadmap.milestones ?? []);
     }
-    if (currentPhase) {
-      const milestones = currentPhase.milestones ?? [];
-      const index = milestones.findIndex(
-        (m) => m.milestone_id === currentMilestone.milestone_id,
-      );
-      return index !== -1 ? index + 1 : 1;
-    }
-    return 1;
-  }, [currentMilestone, currentPhase]);
+    return currentPhase && findOngoingMilestone(currentPhase.milestones ?? []);
+  }, [currentPhase, roadmap.type, roadmap.milestones]);
 
   const phaseProgress = useMemo(
     () => (currentPhase ? calculatePhaseProgress(currentPhase) : 0),
@@ -79,7 +65,9 @@ export const RoadmapCurrentStateOverview = ({
         tooltipText={t('common.overview_tooltip')}
         onPress={() => onOverviewPress && onOverviewPress(currentPhase)}
       />
-
+      {roadmapCreateStartControls && (
+        <AppView marginV-8>{roadmapCreateStartControls}</AppView>
+      )}
       {currentPhase && (
         <>
           <SectionHeader label={t('common.current_phase')} />
@@ -101,7 +89,7 @@ export const RoadmapCurrentStateOverview = ({
         <>
           <SectionHeader label={t('common.current_milestone')} />
           <OverviewCard
-            title={`${t('common.milestone')} ${currentMilestoneIndex}: ${currentMilestone.sub_goal}`}
+            title={`${currentMilestone.sub_goal}`}
             description={currentMilestone.description}
             progress={milestoneProgress}
             tooltipText={t('common.milestone_tooltip')}

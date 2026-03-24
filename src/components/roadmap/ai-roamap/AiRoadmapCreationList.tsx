@@ -276,7 +276,7 @@ export const AiRoadmapCreationList = () => {
       }),
     );
     dispatch(resetCreationStateAction());
-    router.replace('/roadmap/roadmap-details');
+    router.replace('/roadmap/roadmap-execution');
   };
 
   const handleRetry = () => {
