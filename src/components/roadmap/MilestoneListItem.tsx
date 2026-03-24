@@ -62,7 +62,7 @@ const MilestoneListItemComponent = ({
     [milestone.milestone_id, selectedMilestone?.milestone_id],
   );
 
-  const isRoadmapDetailsPage = path.includes('/roadmap/roadmap-details');
+  const isRoadmapDetailsPage = path.includes('/roadmap/roadmap-execution');
 
   const onPress = useCallback(() => {
     onMilestonePress(

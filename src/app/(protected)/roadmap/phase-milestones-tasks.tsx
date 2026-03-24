@@ -63,7 +63,7 @@ const PhaseMilestonesTasks = () => {
         <AppView gap-4>
           <AppView row>
             <AppText body1 textColor flex>
-              {t('common.task')} {index + 1}: {item.title}
+              {item.title}
             </AppText>
             <LevelBadge
               label={badgeLabel}

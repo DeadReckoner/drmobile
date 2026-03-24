@@ -193,7 +193,7 @@ const Notifications = () => {
             reason: '',
           }),
         );
-        router.navigate('/roadmap/roadmap-details');
+        router.navigate('/roadmap/roadmap-execution');
       }
 
       if (notification.type === 'message_new') {

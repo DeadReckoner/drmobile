@@ -63,15 +63,18 @@ interface BadgeLabelParts {
   task?: number | string;
 }
 
+const isValidValue = (value: number | string | undefined): boolean =>
+  value !== undefined && value !== null && value !== '';
+
 export const buildBadgeLabel = ({
   phase,
   milestone,
   task,
 }: BadgeLabelParts): string => {
   const parts: string[] = [];
-  if (phase != null) parts.push(`P${phase}`);
-  if (milestone != null) parts.push(`M${milestone}`);
-  if (task != null) parts.push(`T${task}`);
+  if (isValidValue(phase)) parts.push(`P${phase}`);
+  if (isValidValue(milestone)) parts.push(`M${milestone}`);
+  if (isValidValue(task)) parts.push(`T${task}`);
   return parts.join('-');
 };
 
