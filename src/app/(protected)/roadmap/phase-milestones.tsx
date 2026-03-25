@@ -21,7 +21,7 @@ import {
 } from '@/utils/roadmap.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { LayoutChangeEvent, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const PhaseMilestones = () => {
@@ -68,19 +68,22 @@ const PhaseMilestones = () => {
       item.milestone_id === currentMilestone?.milestone_id;
     const badgeStatus = item.status;
     const itemProgress = calculateMilestoneProgress(item);
+
+    const onMilestonePress = () => {
+      router.navigate({
+        pathname: '/roadmap/phase-milestones-tasks',
+        params: {
+          milestoneId: item.milestone_id,
+          phaseId: params.phaseId,
+          phaseLabel: params.phaseLabel,
+          milestoneLabel: milestoneNumber,
+        },
+      });
+    };
+
     return (
       <AppCard
-        onPress={() => {
-          router.navigate({
-            pathname: '/roadmap/phase-milestones-tasks',
-            params: {
-              milestoneId: item.milestone_id,
-              phaseId: params.phaseId,
-              phaseLabel: params.phaseLabel,
-              milestoneLabel: milestoneNumber,
-            },
-          });
-        }}
+        onPress={onMilestonePress}
         style={{
           borderWidth: 3,
           borderColor: isCurrentMilestone ? Colors.accent : 'transparent',
@@ -119,6 +122,14 @@ const PhaseMilestones = () => {
     );
   };
 
+  const onLayout: ((_event: LayoutChangeEvent) => void) | undefined =
+    currentMilestone
+      ? (e) => {
+          const { y, height } = e.nativeEvent.layout;
+          onCurrentItemLayout(y, height);
+        }
+      : undefined;
+
   return (
     <AppScreen safeArea>
       <HeaderWithBack headerKey="common.milestones" />
@@ -128,14 +139,7 @@ const PhaseMilestones = () => {
         refScrollView={scrollViewRef}
         data={milestones}
         ItemSeparatorComponent={() => <Divider />}
-        onLayout={
-          currentMilestone
-            ? (e) => {
-                const { y, height } = e.nativeEvent.layout;
-                onCurrentItemLayout(y, height);
-              }
-            : undefined
-        }
+        onLayout={onLayout}
         renderItem={renderMilestoneItem}
       />
     </AppScreen>
