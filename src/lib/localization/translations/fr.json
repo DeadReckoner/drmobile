@@ -224,8 +224,8 @@
     "website": "Site Web",
     "no_friends_found": "Aucun ami trouvé",
     "friends": "Amis",
-    "remove_friend": "Supprimer",
-    "add_friend": "Ajouter",
+    "remove_friend": "Supprimer l'Ami",
+    "add_friend": "Ajouter un Ami",
     "friend_request_sent": "Demande d'ami envoyée avec succès",
     "remove_friend_confirmation": "Êtes-vous sûr de vouloir supprimer cet ami ?",
     "friend_removed": "Ami supprimé avec succès",
@@ -390,6 +390,7 @@
   },
   "roadmap": {
     "select_anchor": "Sélectionner une ancre",
+    "add_anchor": "Ajouter une ancre",
     "manage_anchor": "Gérer l'ancre",
     "manage_anchors": "Gérer les ancres",
     "anchor_removed_successfully": "Ancre supprimée avec succès",

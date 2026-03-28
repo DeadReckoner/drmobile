@@ -82,7 +82,6 @@ const MilestoneTaskItemComponent = ({
   );
 };
 
-// Memoize to prevent unnecessary re-renders
 export const MilestoneTaskItem = React.memo(
   MilestoneTaskItemComponent,
   (prevProps, nextProps) =>
