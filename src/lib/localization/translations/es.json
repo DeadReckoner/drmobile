@@ -224,8 +224,8 @@
     "website": "Sitio Web",
     "no_friends_found": "No se encontraron amigos",
     "friends": "Amigos",
-    "remove_friend": "Eliminar",
-    "add_friend": "Agregar",
+    "remove_friend": "Eliminar Amigo",
+    "add_friend": "Agregar Amigo",
     "friend_request_sent": "Solicitud de amistad enviada con éxito",
     "remove_friend_confirmation": "¿Estás seguro de que deseas eliminar a este amigo?",
     "friend_removed": "Amigo eliminado con éxito",
@@ -390,6 +390,7 @@
   },
   "roadmap": {
     "select_anchor": "Seleccionar un ancla",
+    "add_anchor": "Agregar ancla",
     "manage_anchor": "Gestionar ancla",
     "manage_anchors": "Gestionar anclas",
     "anchor_removed_successfully": "Ancla eliminada con éxito",

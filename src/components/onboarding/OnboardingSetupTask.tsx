@@ -67,7 +67,7 @@ export const OnboardingSetupTask = () => {
           br40
           style={[styles.indicator, { backgroundColor: Colors.primary }]}
         />
-        <AppView padding-16>
+        <AppView paddingV-16 paddingL-8 paddingR-16>
           <AppView flex>
             {(phase === 'message' || phase === 'progress') && (
               <AppView row flex center>

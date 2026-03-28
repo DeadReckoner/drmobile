@@ -196,6 +196,12 @@ export const roadmapApi = api.injectEndpoints({
           return roadmap;
         }
       },
+      onQueryStarted: async (_roadmap_id, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setDraftRoadmapAction(data));
+        } catch {}
+      },
       providesTags: (_result, _error, roadmap_id) => [
         { type: 'Roadmaps', id: roadmap_id },
       ],

@@ -93,6 +93,11 @@ export interface RoadmapType {
   generation_status?: RoadmapGenerationStatusType;
 
   anchor_id?: string;
+  anchor?: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }
 
 export interface Phase {

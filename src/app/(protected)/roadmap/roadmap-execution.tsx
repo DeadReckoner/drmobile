@@ -7,6 +7,8 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { AnchorCard } from '@/components/roadmap/AnchorCard';
+import { AnchorSelectionModal } from '@/components/roadmap/AnchorSelectionModal';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
 import { TodayTab } from '@/components/roadmap/TodayTab';
 import { AppView } from '@/components/ui';
@@ -31,7 +33,7 @@ import { DateUtils } from '@/utils/date.utils';
 import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors, SegmentedControl, Typography } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
@@ -43,6 +45,7 @@ const RoadmapExecution = () => {
     data,
     isLoading: isRoadmapLoading,
     isFetching: isRoadmapFetching,
+    refetch,
   } = useGetRoadmapByIdQuery(draftRoadmap?.roadmap_id ?? '', {
     skip: !draftRoadmap?.roadmap_id,
     refetchOnMountOrArgChange: true,
@@ -59,6 +62,8 @@ const RoadmapExecution = () => {
   const [firstTabSelected, setFirstTabSelected] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isAnchorModalVisible, setIsAnchorModalVisible] = useState(false);
 
   const todayTasks = useMemo(
     () =>
@@ -73,6 +78,16 @@ const RoadmapExecution = () => {
       dispatch(setDraftRoadmapAction(data));
     }
   }, [data, dispatch]);
+
+  const onManuallyRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      await refetch().unwrap();
+    } catch {
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [refetch]);
 
   const handleOverviewPress = useCallback(
     (
@@ -242,12 +257,14 @@ const RoadmapExecution = () => {
     }
 
     return (
-      <PrimaryButton
-        label="tabs.create_tab.submit_roadmap"
-        onPress={onCreateRoadmap}
-        shouldShowLoader
-        isLoading={isCreatingRoadmap || isStartingRoadmap}
-      />
+      <AppView marginT-16>
+        <PrimaryButton
+          label="tabs.create_tab.submit_roadmap"
+          onPress={onCreateRoadmap}
+          shouldShowLoader
+          isLoading={isCreatingRoadmap || isStartingRoadmap}
+        />
+      </AppView>
     );
   };
 
@@ -263,7 +280,10 @@ const RoadmapExecution = () => {
         />
       );
     return (
-      <AppView reanimated entering={Animations.Entry.FadeInDownWithSpring()}>
+      <AppView
+        marginT-16
+        reanimated
+        entering={Animations.Entry.FadeInDownWithSpring()}>
         <PrimaryButton
           label="common.start_roadmap"
           shouldShowLoader
@@ -279,7 +299,13 @@ const RoadmapExecution = () => {
       <ScrollView
         contentInsetAdjustmentBehavior="always"
         contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onManuallyRefresh}
+          />
+        }>
         <AppView row spread centerV>
           <HeaderWithBack />
           <AppView>
@@ -359,6 +385,12 @@ const RoadmapExecution = () => {
                         <StartRoadmapButton />
                       </AppView>
                     )}
+                    <Divider />
+                    <AnchorCard
+                      onAddAnchor={() => setIsAnchorModalVisible(true)}
+                      onManageAnchor={() => setIsAnchorModalVisible(true)}
+                      anchorName={roadmap?.anchor?.name}
+                    />
                   </>
                 }
                 onOverviewPress={handleOverviewPress}
@@ -396,6 +428,12 @@ const RoadmapExecution = () => {
         positiveButtonIcon={
           <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
         }
+      />
+      <AnchorSelectionModal
+        isLoading={isRoadmapLoading || isRoadmapFetching}
+        roadmapId={roadmap?.roadmap_id || draftRoadmap?.roadmap_id}
+        isAnchorSheetVisible={isAnchorModalVisible}
+        setIsAnchorSheetVisible={setIsAnchorModalVisible}
       />
     </AppScreen>
   );
