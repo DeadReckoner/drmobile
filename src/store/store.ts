@@ -2,6 +2,7 @@ import { api } from '@/store/apis/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import { AppState } from 'react-native';
 import reduxDevToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 import {
   FLUSH,
@@ -43,6 +44,15 @@ const store = configureStore({
 
 const persistedStore = persistStore(store);
 
-setupListeners(store.dispatch);
+setupListeners(store.dispatch, (dispatch, { onFocus, onFocusLost }) => {
+  const subscription = AppState.addEventListener('change', (nextState) => {
+    if (nextState === 'active') {
+      dispatch(onFocus());
+    } else {
+      dispatch(onFocusLost());
+    }
+  });
+  return () => subscription.remove();
+});
 
 export { persistedStore, store };

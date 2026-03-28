@@ -224,8 +224,8 @@
     "website": "Website",
     "no_friends_found": "No friends found",
     "friends": "Friends",
-    "remove_friend": "Remove",
-    "add_friend": "Add",
+    "remove_friend": "Remove Friend",
+    "add_friend": "Add Friend",
     "friend_request_sent": "Friend request sent successfully",
     "remove_friend_confirmation": "Are you sure you want to remove this friend?",
     "friend_removed": "Friend removed successfully",
@@ -390,6 +390,7 @@
   },
   "roadmap": {
     "select_anchor": "Select an Anchor",
+    "add_anchor": "Add Anchor",
     "manage_anchor": "Manage Anchor",
     "manage_anchors": "Manage Anchors",
     "anchor_removed_successfully": "Anchor removed successfully",

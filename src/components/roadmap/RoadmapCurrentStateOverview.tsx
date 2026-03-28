@@ -65,9 +65,7 @@ export const RoadmapCurrentStateOverview = ({
         tooltipText={t('common.overview_tooltip')}
         onPress={() => onOverviewPress && onOverviewPress(currentPhase)}
       />
-      {roadmapCreateStartControls && (
-        <AppView marginV-8>{roadmapCreateStartControls}</AppView>
-      )}
+      {roadmapCreateStartControls}
       {currentPhase && (
         <>
           <SectionHeader label={t('common.current_phase')} />
