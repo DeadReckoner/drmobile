@@ -83,7 +83,7 @@ const RoadmapDetailsPage = () => {
     refetch,
   } = useGetRoadmapByIdQuery(selectedRoadmap?.roadmap_id, {
     skip: !selectedRoadmap?.roadmap_id,
-    refetchOnMountOrArgChange: 20,
+    refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
   });
 
