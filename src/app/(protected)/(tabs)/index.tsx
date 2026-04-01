@@ -56,7 +56,9 @@ const Today = () => {
     data: habitsData,
     isLoading: habitsLoading,
     refetch: refetchHabits,
-  } = useGetTodayHabitsQuery();
+  } = useGetTodayHabitsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const dispatch = useAppDispatch();
