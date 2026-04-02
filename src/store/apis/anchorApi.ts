@@ -8,8 +8,25 @@ import { habitsApi } from '@/store/apis/habitsApi';
 import { notificationApi } from '@/store/apis/notificationsApi';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
+import { setRequestBadgeAction } from '@/store/slices/notificationsSlice';
 import { setSetupStepAction } from '@/store/slices/onboardingSlice';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
+
+const REQUEST_TYPES = [
+  'friend_request',
+  'anchor_request',
+  'habit_anchor_request',
+] as const;
+
+const updateRequestBadge = (dispatch: any, getState: () => unknown) => {
+  const updatedNotifications =
+    notificationApi.endpoints.getNotifications.select()(getState() as any);
+  const hasRemaining =
+    updatedNotifications.data?.some((n) =>
+      (REQUEST_TYPES as readonly string[]).includes(n.type),
+    ) ?? false;
+  dispatch(setRequestBadgeAction(hasRemaining));
+};
 
 const onCreateAnchorRequestStarted: TypedMutationOnQueryStarted<
   AnchorRequest,
@@ -79,6 +96,7 @@ const onAcceptAnchorRequestStarted: TypedMutationOnQueryStarted<
     );
 
     removeFromNotifications(dispatch, requestId);
+    updateRequestBadge(dispatch, getState);
 
     if (request?.roadmap_id && request?.requester?.user_id) {
       dispatch(
@@ -98,7 +116,7 @@ const onRejectAnchorRequestStarted: TypedMutationOnQueryStarted<
   AnchorRequestResponse,
   string,
   BaseQueryFunctionType
-> = async (requestId, { dispatch, queryFulfilled }) => {
+> = async (requestId, { dispatch, queryFulfilled, getState }) => {
   try {
     await queryFulfilled;
     dispatch(
@@ -114,6 +132,7 @@ const onRejectAnchorRequestStarted: TypedMutationOnQueryStarted<
       ),
     );
     removeFromNotifications(dispatch, requestId);
+    updateRequestBadge(dispatch, getState);
   } catch {}
 };
 
