@@ -2,6 +2,7 @@ import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
+import { AppSegmentControl } from '@/components/AppSegmentControl';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
@@ -34,7 +35,7 @@ import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
-import { Colors, SegmentedControl, Typography } from 'react-native-ui-lib';
+import { Colors } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
   const { t } = useLocalization();
@@ -88,6 +89,10 @@ const RoadmapExecution = () => {
       setIsRefreshing(false);
     }
   }, [refetch]);
+
+  const onRoadmapOverviewCardPress = useCallback(() => {
+    setFirstTabSelected(false);
+  }, []);
 
   const handleOverviewPress = useCallback(
     (
@@ -309,38 +314,6 @@ const RoadmapExecution = () => {
         <AppView row spread centerV>
           <HeaderWithBack />
           <AppView>
-            <SegmentedControl
-              style={{
-                borderWidth: 0,
-              }}
-              segments={[
-                {
-                  label: t('tabs.today'),
-                },
-                {
-                  label: t('common.overview'),
-                },
-              ]}
-              segmentsStyle={{
-                minWidth: 70,
-                paddingVertical: 6,
-              }}
-              segmentLabelStyle={[
-                Typography.sm,
-                Typography.regular,
-                {
-                  fontWeight: '400',
-                },
-              ]}
-              outlineWidth={0}
-              backgroundColor={Colors.lightCardBG}
-              activeColor={Colors.textColor}
-              inactiveColor={Colors.textColor}
-              activeBackgroundColor={Colors.accent}
-              onChangeIndex={(index) => setFirstTabSelected(index === 0)}
-            />
-          </AppView>
-          <AppView>
             {!!roadmap?.roadmap_id && (
               <AppButton onPress={() => setIsMenuVisible(true)}>
                 <AppIcon set="Feather" name="more-vertical" size={22} />
@@ -349,15 +322,24 @@ const RoadmapExecution = () => {
           </AppView>
         </AppView>
         <Divider />
+        <AppSegmentControl
+          segments={[t('tabs.today'), t('common.overview')]}
+          selectedIndex={firstTabSelected ? 0 : 1}
+          onSegmentChange={(index) => setFirstTabSelected(index === 0)}
+        />
 
         <AppView reanimated layout={Animations.Layout.Springify()}>
           {firstTabSelected ? (
-            <TodayTab
-              roadmap={roadmap}
-              currentMilestone={currentMilestone}
-              todayTasks={todayTasks}
-              isRoadmapFeching={isRoadmapFetching}
-            />
+            <>
+              <Divider />
+              <TodayTab
+                roadmap={roadmap}
+                currentMilestone={currentMilestone}
+                todayTasks={todayTasks}
+                isRoadmapFeching={isRoadmapFetching}
+                onRoadmapOverviewCardPress={onRoadmapOverviewCardPress}
+              />
+            </>
           ) : (
             <AppView
               key="overview-tab"

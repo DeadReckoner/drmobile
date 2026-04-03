@@ -8,7 +8,24 @@ import {
 } from '@/hooks/friends/types/friends.types';
 import { api } from '@/store/apis/api';
 import { notificationApi } from '@/store/apis/notificationsApi';
+import { setRequestBadgeAction } from '@/store/slices/notificationsSlice';
 import { setSetupStepAction } from '@/store/slices/onboardingSlice';
+
+const REQUEST_TYPES = [
+  'friend_request',
+  'anchor_request',
+  'habit_anchor_request',
+] as const;
+
+const updateRequestBadge = (dispatch: any, getState: () => unknown) => {
+  const updatedNotifications =
+    notificationApi.endpoints.getNotifications.select()(getState() as any);
+  const hasRemaining =
+    updatedNotifications.data?.some((n) =>
+      (REQUEST_TYPES as readonly string[]).includes(n.type),
+    ) ?? false;
+  dispatch(setRequestBadgeAction(hasRemaining));
+};
 
 const removeFromNotifications = (dispatch: any, friendshipId: string) => {
   dispatch(
@@ -115,7 +132,10 @@ export const friendsApi = api.injectEndpoints({
         body: { status: 'accepted' },
       }),
       invalidatesTags: ['Friends', 'Threads'],
-      async onQueryStarted(friendshipId, { dispatch, queryFulfilled }) {
+      async onQueryStarted(
+        friendshipId,
+        { dispatch, queryFulfilled, getState },
+      ) {
         try {
           await queryFulfilled;
           dispatch(
@@ -133,6 +153,7 @@ export const friendsApi = api.injectEndpoints({
             ),
           );
           removeFromNotifications(dispatch, friendshipId);
+          updateRequestBadge(dispatch, getState);
         } catch {}
       },
     }),
@@ -143,7 +164,10 @@ export const friendsApi = api.injectEndpoints({
         method: 'PATCH',
         body: { status: 'rejected' },
       }),
-      async onQueryStarted(friendshipId, { dispatch, queryFulfilled }) {
+      async onQueryStarted(
+        friendshipId,
+        { dispatch, queryFulfilled, getState },
+      ) {
         try {
           await queryFulfilled;
           dispatch(
@@ -161,6 +185,7 @@ export const friendsApi = api.injectEndpoints({
             ),
           );
           removeFromNotifications(dispatch, friendshipId);
+          updateRequestBadge(dispatch, getState);
         } catch {}
       },
     }),

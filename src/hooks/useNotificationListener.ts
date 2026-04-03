@@ -1,5 +1,6 @@
 import { messagesApi } from '@/store/apis/messagesApi';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setRequestBadgeAction } from '@/store/slices/notificationsSlice';
 import { notificationsUtils } from '@/utils/notifications.utils';
 import * as Notifications from 'expo-notifications';
 import { router, usePathname } from 'expo-router';
@@ -47,11 +48,16 @@ export const useNotificationListener = () => {
         case 'message_new':
           handleNewMessages(data.thread_id as string, content.body || '');
           break;
+        case 'friend_request':
+        case 'anchor_request':
+        case 'habit_anchor_request':
+          dispatch(setRequestBadgeAction(true));
+          break;
         default:
           break;
       }
     },
-    [handleNewMessages],
+    [dispatch, handleNewMessages],
   );
   const redirect = useCallback(
     (notification: Notifications.Notification) => {

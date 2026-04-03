@@ -42,12 +42,11 @@ export const isTokenError = (status: number, errors: unknown): boolean => {
       msg?: string;
       code?: number;
     };
-    return (
+    return !!(
       errorData?.error_code === 'bad_jwt' ||
       errorData?.msg?.includes('token is expired') ||
       errorData?.msg?.includes('invalid JWT') ||
-      errorData?.msg?.includes('unable to parse or verify signature') ||
-      errorData?.code === 403
+      errorData?.msg?.includes('unable to parse or verify signature')
     );
   }
 

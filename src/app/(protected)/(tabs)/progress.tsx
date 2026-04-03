@@ -1,12 +1,12 @@
-import { AppButton } from '@/components/AppButton';
 import { AppScreen } from '@/components/AppScreen';
+import { AppSegmentControl } from '@/components/AppSegmentControl';
 import { Divider } from '@/components/Divider';
 import { HabitsList } from '@/components/HabitsList';
 import { Loader } from '@/components/Loader';
 import { InProgressAIRoadmapBanner } from '@/components/roadmap/ai-roamap/InProgressAIRoadmapBanner';
 import { RoadmapList } from '@/components/roadmap/RoadmapList';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppText, AppView } from '@/components/ui';
+import { AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -67,52 +67,6 @@ const Progress = () => {
     }
   }, [refetch, refetchHabits]);
 
-  const HeaderSegment = () => (
-    <AppView
-      row
-      br20
-      style={{
-        borderWidth: 1,
-        borderColor: Colors.primary,
-      }}>
-      <AppButton
-        center
-        flex
-        paddingV-8
-        style={{
-          backgroundColor:
-            selectedTab === 'roadmaps' ? Colors.primary : 'transparent',
-        }}
-        onPress={() => setSelectedTab('roadmaps')}>
-        <TranslatedText
-          color={
-            selectedTab === 'roadmaps' ? Colors.textOnPrimary : Colors.textColor
-          }
-          caption
-          translationKey="settings.roadmaps"
-        />
-      </AppButton>
-      <AppView width={1} bg-primary />
-      <AppButton
-        center
-        flex
-        paddingV-8
-        style={{
-          backgroundColor:
-            selectedTab === 'habits' ? Colors.primary : 'transparent',
-        }}
-        onPress={() => setSelectedTab('habits')}>
-        <AppText
-          color={
-            selectedTab === 'habits' ? Colors.textOnPrimary : Colors.textColor
-          }
-          caption>
-          {t('settings.habits')}/{t('common.tasks')}
-        </AppText>
-      </AppButton>
-    </AppView>
-  );
-
   const visibleRoadmaps = data.filter(
     (roadmap) => roadmap.generation_status !== 'failed',
   );
@@ -147,7 +101,16 @@ const Progress = () => {
           <InProgressAIRoadmapBanner />
           <Divider />
         </AppView>
-        <HeaderSegment />
+        <AppSegmentControl
+          segments={[
+            t('settings.roadmaps'),
+            `${t('settings.habits')}/${t('common.tasks')}`,
+          ]}
+          selectedIndex={selectedTab === 'roadmaps' ? 0 : 1}
+          onSegmentChange={(index) =>
+            setSelectedTab(index === 0 ? 'roadmaps' : 'habits')
+          }
+        />
         <Divider />
         <AppView flex-1>
           {isRoadmapTabSelected && (
