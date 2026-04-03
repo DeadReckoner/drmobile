@@ -17,6 +17,7 @@ interface TodayTabProps {
   currentMilestone: ReturnType<typeof selectCurrentMilestone>;
   todayTasks: TaskType[];
   isRoadmapFeching?: boolean;
+  onRoadmapOverviewCardPress?: () => void;
 }
 
 export const TodayTab = ({
@@ -24,6 +25,7 @@ export const TodayTab = ({
   currentMilestone,
   todayTasks = [],
   isRoadmapFeching,
+  onRoadmapOverviewCardPress,
 }: TodayTabProps) => {
   const { t } = useLocalization();
   const { theme } = useAppTheme();
@@ -35,7 +37,7 @@ export const TodayTab = ({
       reanimated
       entering={Animations.Entry.FadeInDown()}
       exiting={Animations.Exit.FadeOutDown()}>
-      <AppCard>
+      <AppCard onPress={onRoadmapOverviewCardPress}>
         <AppView flex gap-12>
           <AppView row centerV spread>
             <AppText subtitle1 regular textColor>

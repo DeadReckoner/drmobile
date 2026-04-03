@@ -20,6 +20,10 @@ import { useGetTodayHabitsQuery } from '@/store/apis/habitsApi';
 import { HabitWithStatusType } from '@/store/apis/types/habitsApi.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
+  selectHasRequestBadge,
+  setRequestBadgeAction,
+} from '@/store/slices/notificationsSlice';
+import {
   selectIsSetupTaskCompleted,
   selectSetupSteps,
   setSetupStepAction,
@@ -56,7 +60,9 @@ const Today = () => {
     data: habitsData,
     isLoading: habitsLoading,
     refetch: refetchHabits,
-  } = useGetTodayHabitsQuery();
+  } = useGetTodayHabitsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const dispatch = useAppDispatch();
@@ -88,7 +94,10 @@ const Today = () => {
   const { data: roadmaps } = useGetRoadmapsQuery(undefined, {
     refetchOnMountOrArgChange: 3600 * 24, // 24 hours
   });
-  useGetNotificationsQuery();
+  const { data: notificationsData, refetch: refetchNotifications } =
+    useGetNotificationsQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    });
 
   useEffect(() => {
     if (isSetupTaskCompleted) return;
@@ -131,6 +140,20 @@ const Today = () => {
     router.navigate('/settings');
   };
 
+  const hasUnreadNotifications = useAppSelector(selectHasRequestBadge);
+
+  useEffect(() => {
+    if (notificationsData !== undefined) {
+      const hasRequests = notificationsData.some(
+        (n) =>
+          n.type === 'friend_request' ||
+          n.type === 'anchor_request' ||
+          n.type === 'habit_anchor_request',
+      );
+      dispatch(setRequestBadgeAction(hasRequests));
+    }
+  }, [notificationsData, dispatch]);
+
   const completedTasks = useMemo(
     () =>
       data?.filter(
@@ -172,7 +195,11 @@ const Today = () => {
   const handleRefresh = async () => {
     try {
       setManualRefreshing(true);
-      await Promise.allSettled([refetch().unwrap(), refetchHabits().unwrap()]);
+      await Promise.allSettled([
+        refetch().unwrap(),
+        refetchHabits().unwrap(),
+        refetchNotifications().unwrap(),
+      ]);
     } catch {
     } finally {
       setManualRefreshing(false);
@@ -320,7 +347,12 @@ const Today = () => {
               <AppIcon set="Feather" name="calendar" size={26} />
             </AppButton>
             <AppButton marginL-18 marginR-12 onPress={onNotificationsClick}>
-              <AppIcon name="notification" size={26} />
+              <AppView>
+                <AppIcon name="notification" size={26} />
+                {hasUnreadNotifications && (
+                  <AppView style={styles.customBadge} />
+                )}
+              </AppView>
             </AppButton>
             <AppButton onPress={onUserProfileClick}>
               <AppIcon set="Feather" name="user" size={26} />

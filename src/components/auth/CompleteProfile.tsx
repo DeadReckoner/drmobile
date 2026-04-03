@@ -1,6 +1,7 @@
 import { AppModal } from '@/components/AppModal';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { useGetMyProfileQuery } from '@/hooks/user';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { useRouter } from 'expo-router';
@@ -11,11 +12,13 @@ export const CompleteProfile = () => {
   const router = useRouter();
   const user = useAppSelector(selectUser);
   const [isVisible, setIsVisible] = useState(false);
+  const { isLoading, isFetching } = useGetMyProfileQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    skip: !user,
+  });
 
   useEffect(() => {
-    if (!user.name) {
-      setIsVisible(true);
-    }
+    setIsVisible(!user?.name);
   }, [user.name]);
 
   const handleSuccess = () => {
@@ -27,7 +30,7 @@ export const CompleteProfile = () => {
 
   return (
     <AppModal
-      visible={isVisible}
+      visible={!(isLoading || isFetching) && isVisible}
       enablePanDownToClose={false}
       dismissible={false}
       snapPoints={['90%']}
