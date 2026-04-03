@@ -79,7 +79,12 @@ export const SearchFriends = ({ onClose }: SearchFriendsProps) => {
       contentContainerStyle={{ paddingHorizontal: 16 }}
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="always">
-      <AppView flex row paddingH-12 centerV style={styles.searchContainer}>
+      <AppView
+        flex
+        row
+        paddingH-12
+        centerV
+        style={[styles.searchContainer, { borderColor: Colors.primary }]}>
         <AppView flex row centerV gap-8>
           <AppIcon set="Feather" name="search" size={22} />
           <AppTextField
@@ -140,6 +145,5 @@ const styles = StyleSheet.create({
   searchContainer: {
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: Colors.primary,
   },
 });

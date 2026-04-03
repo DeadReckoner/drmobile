@@ -5,6 +5,7 @@ import {
   UpdateUserParamsType,
   UpdateUserResponseType,
 } from '@/store/apis/types/userApi.types';
+import { setAuthUserAction } from '@/store/slices/authSlice';
 import { RootStateType } from '@/store/types/store.types';
 
 export const userApi = api.injectEndpoints({
@@ -37,6 +38,25 @@ export const userApi = api.injectEndpoints({
         }
 
         return { data: result.data as UpdateUserResponseType };
+      },
+    }),
+    getMyProfile: builder.query<CreateUserResponseType, void>({
+      query: () => ({
+        url: `/users`,
+        method: 'GET',
+      }),
+      onQueryStarted: async (_arg, { dispatch, queryFulfilled, getState }) => {
+        const currentUser = (getState() as RootStateType).auth.user;
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(
+            setAuthUserAction({
+              ...currentUser,
+              name: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
+              email: data.email,
+            }),
+          );
+        } catch {}
       },
     }),
   }),
