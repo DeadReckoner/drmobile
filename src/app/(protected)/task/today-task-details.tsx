@@ -14,6 +14,7 @@ import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectSelectedTask } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { router } from 'expo-router';
 import React, { useCallback, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
@@ -42,6 +43,7 @@ const TodayTaskDetails = () => {
         type: 'success',
         message: t('roadmap.complete_all_steps_success'),
       });
+      router.back();
     } catch (error) {
       showToast({
         type: 'failure',
