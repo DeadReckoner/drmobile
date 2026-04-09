@@ -199,6 +199,10 @@
   "settings": {
     "profile": "Profil",
     "edit_profile": "Modifier le Profil",
+    "friends_accountability": "Amis et Responsabilité",
+    "settings_preferences": "Paramètres et Préférences",
+    "streaks": "Rachas",
+    "performance": "Rendimiento",
     "settings": "Paramètres",
     "dark_mode": "Mode Sombre",
     "language": "Langue",
@@ -336,7 +340,11 @@
     "archived_habits": "Habitudes archivées",
     "delete_habit": "Supprimer l'habitude",
     "no_archived_habits": "Aucune habitude archivée",
-    "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici"
+    "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici",
+    "archive": "Archiver",
+    "archived_roadmap": "Feuilles de route archivées",
+    "no_archived_roadmaps": "Aucune feuille de route archivée",
+    "no_archived_roadmaps_description": "Vos feuilles de route archivées apparaîtront ici"
   },
   "common": {
     "or": "Ou",
