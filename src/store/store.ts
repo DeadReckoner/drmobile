@@ -42,7 +42,15 @@ const store = configureStore({
     getDefaultEnhancers().concat(reduxDevToolsEnhancer()),
 });
 
-const persistedStore = persistStore(store);
+const persistedStore = persistStore(store, null, () => {
+  const queries = store.getState()[api.reducerPath]?.queries ?? {};
+  const hasPendingQueries = Object.values(queries).some(
+    (query) => (query as { status: string } | undefined)?.status === 'pending',
+  );
+  if (hasPendingQueries) {
+    store.dispatch(api.util.resetApiState());
+  }
+});
 
 setupListeners(store.dispatch, (dispatch, { onFocus, onFocusLost }) => {
   const subscription = AppState.addEventListener('change', (nextState) => {

@@ -89,6 +89,6 @@ export const api = createApi({
   baseQuery: createBaseQueryWithReauth(),
   tagTypes: [...Object.values(ApiCacheTags)],
   endpoints: () => ({}),
-  keepUnusedDataFor: 86400,
+  keepUnusedDataFor: 3600,
   refetchOnReconnect: true,
 });
