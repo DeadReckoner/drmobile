@@ -74,10 +74,10 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
-    "baseline-browser-mapping": "^2.10.10",
+    "baseline-browser-mapping": "^2.10.17",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
-    "expo-dev-client": "~5.2.4",
+    "expo-dev-client": "^55.0.24",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
     "prettier": "^3.6.2",
