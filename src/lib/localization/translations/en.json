@@ -275,6 +275,7 @@
   },
   "notifications": {
     "title": "Notifications",
+    "updating_settings": "Updating settings...",
     "no_notifications": "No notifications",
     "no_notifications_description": "You're all caught up! New notifications will appear here.",
     "friend_request": "sent you a friend request",
@@ -291,6 +292,7 @@
     "enable_notifications": "Enable Notifications",
     "notifications_disabled": "Enable notifications in the settings to stay updated.",
     "disabled_title": "Notifications Disabled",
+    "enabled_title": "Notifications Enabled",
     "disabled_message": "Please enable them in your device settings to stay updated.",
     "open_settings": "Open Settings",
     "clear": "Clear",

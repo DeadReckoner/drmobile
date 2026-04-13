@@ -275,6 +275,7 @@
   },
   "notifications": {
     "title": "Notificaciones",
+    "updating_settings": "Actualizando configuraciones...",
     "no_notifications": "No hay notificaciones",
     "no_notifications_description": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",
     "friend_request": "te envió una solicitud de amistad",
@@ -291,6 +292,7 @@
     "enable_notifications": "Habilitar Notificaciones",
     "notifications_disabled": "Activa las notificaciones en la configuración para mantenerte actualizado.",
     "disabled_title": "Notificaciones desactivadas",
+    "enabled_title": "Notificaciones activadas",
     "disabled_message": "Por favor, actívalas en la configuración de tu dispositivo para mantenerte actualizado.",
     "open_settings": "Abrir Configuración",
     "clear": "Borrar",

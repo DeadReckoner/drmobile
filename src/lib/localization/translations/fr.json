@@ -275,6 +275,7 @@
   },
   "notifications": {
     "title": "Notifications",
+    "updating_settings": "Mise à jour des paramètres...",
     "no_notifications": "Aucune notification",
     "no_notifications_description": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici.",
     "friend_request": "vous a envoyé une demande d'ami",
@@ -291,6 +292,7 @@
     "enable_notifications": "Activer les Notifications",
     "notifications_disabled": "Activez les notifications dans les paramètres pour rester informé.",
     "disabled_title": "Notifications désactivées",
+    "enabled_title": "Notifications activées",
     "disabled_message": "Veuillez les activer dans les paramètres de votre appareil pour rester informé.",
     "open_settings": "Ouvrir les Paramètres",
     "clear": "Effacer",
