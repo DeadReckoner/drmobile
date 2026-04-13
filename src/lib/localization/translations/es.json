@@ -60,6 +60,7 @@
       "subtitle": "Por favor proporciona tu nombre para continuar",
       "first_name_placeholder": "Introduce tu nombre",
       "last_name_placeholder": "Introduce tu apellido",
+      "email_placeholder": "Introduce tu correo electrónico",
       "submit_button": "Actualizar perfil",
       "updating": "Actualizando perfil..."
     },
@@ -197,6 +198,7 @@
     }
   },
   "settings": {
+    "account": "Cuenta",
     "profile": "Perfil",
     "edit_profile": "Editar Perfil",
     "friends_accountability": "Amigos y Responsabilidad",
@@ -205,6 +207,7 @@
     "settings_preferences": "Configuraciones y Preferencias",
     "streaks": "Rachas",
     "performance": "Rendimiento",
+    "contact_support": "Contactar Soporte",
     "settings": "Configuraciones",
     "dark_mode": "Modo Oscuro",
     "language": "Idioma",
@@ -287,6 +290,9 @@
     "error_loading": "Error al cargar notificaciones",
     "enable_notifications": "Habilitar Notificaciones",
     "notifications_disabled": "Activa las notificaciones en la configuración para mantenerte actualizado.",
+    "disabled_title": "Notificaciones desactivadas",
+    "disabled_message": "Por favor, actívalas en la configuración de tu dispositivo para mantenerte actualizado.",
+    "open_settings": "Abrir Configuración",
     "clear": "Borrar",
     "clear_notifications_title": "¿Borrar Todas las Notificaciones?",
     "clear_notifications_message": "Esto eliminará permanentemente todas las notificaciones. Esta acción no se puede deshacer.",

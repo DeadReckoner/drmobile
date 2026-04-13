@@ -60,6 +60,7 @@
       "subtitle": "Please provide your name to continue",
       "first_name_placeholder": "Enter your first name",
       "last_name_placeholder": "Enter your last name",
+      "email_placeholder": "Enter your email",
       "submit_button": "Update Profile",
       "updating": "Updating profile..."
     },
@@ -198,6 +199,7 @@
   },
   "settings": {
     "profile": "Profile",
+    "account": "Account",
     "edit_profile": "Edit Profile",
     "friends_accountability": "Friends & Accountability",
     "accountability": "Accountability",
@@ -205,7 +207,7 @@
     "settings_preferences": "Settings & Preferences",
     "streaks": "Streaks",
     "performance": "Performance",
-
+    "contact_support": "Contact Support",
     "settings": "Settings",
     "dark_mode": "Dark Mode",
     "language": "Language",
@@ -288,6 +290,9 @@
     "error_loading": "Failed to load notifications",
     "enable_notifications": "Enable Notifications",
     "notifications_disabled": "Enable notifications in the settings to stay updated.",
+    "disabled_title": "Notifications Disabled",
+    "disabled_message": "Please enable them in your device settings to stay updated.",
+    "open_settings": "Open Settings",
     "clear": "Clear",
     "clear_notifications_title": "Clear All Notifications?",
     "clear_notifications_message": "This will permanently remove all notifications. This action cannot be undone.",
