@@ -62,3 +62,9 @@ export const getExpoPushTokenStorage = async (): Promise<string | null> => {
     return null;
   }
 };
+
+export const clearExpoPushTokenStorage = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEYS.EXPO_PUSH_TOKEN);
+  } catch {}
+};

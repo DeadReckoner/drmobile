@@ -22,7 +22,7 @@ import { selectDraftRoadmap } from '@/store/slices/roadmapDraftSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router } from 'expo-router';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -60,13 +60,6 @@ export const AnchorSelectionModal = ({
 
   const anchorID = roadmap?.anchor_id || selectedRoadmap?.anchor_id;
   const isAnchorAssigned = !!anchorID;
-
-  const filteredFriends = useMemo(() => {
-    return isAnchorAssigned
-      ? friendsData?.filter((friend) => friend.friend.user_id === anchorID) ||
-          []
-      : friendsData || [];
-  }, [isAnchorAssigned, friendsData, anchorID]);
 
   const onSelectAnchor = useCallback(
     async (friendId: string, friendName: string) => {
@@ -181,7 +174,7 @@ export const AnchorSelectionModal = ({
             </AppView>
           )}
           <AppList
-            data={filteredFriends}
+            data={friendsData || []}
             keyExtractor={(item, index) => item.friendship_id + index}
             showsVerticalScrollIndicator={false}
             bounces={false}

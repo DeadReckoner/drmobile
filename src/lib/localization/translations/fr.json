@@ -60,6 +60,7 @@
       "subtitle": "Veuillez fournir votre nom pour continuer",
       "first_name_placeholder": "Entrez votre prénom",
       "last_name_placeholder": "Entrez votre nom",
+      "email_placeholder": "Entrez votre e-mail",
       "submit_button": "Mettre à jour le profil",
       "updating": "Mise à jour du profil..."
     },
@@ -197,8 +198,16 @@
     }
   },
   "settings": {
+    "account": "Compte",
     "profile": "Profil",
     "edit_profile": "Modifier le Profil",
+    "friends_accountability": "Amis et Responsabilité",
+    "accountability": "Responsabilité",
+    "useful_links": "Liens Utiles",
+    "settings_preferences": "Paramètres et Préférences",
+    "streaks": "Rachas",
+    "performance": "Rendimiento",
+    "contact_support": "Contacter le Support",
     "settings": "Paramètres",
     "dark_mode": "Mode Sombre",
     "language": "Langue",
@@ -266,6 +275,7 @@
   },
   "notifications": {
     "title": "Notifications",
+    "updating_settings": "Mise à jour des paramètres...",
     "no_notifications": "Aucune notification",
     "no_notifications_description": "Vous êtes à jour ! Les nouvelles notifications apparaîtront ici.",
     "friend_request": "vous a envoyé une demande d'ami",
@@ -281,6 +291,10 @@
     "error_loading": "Échec du chargement des notifications",
     "enable_notifications": "Activer les Notifications",
     "notifications_disabled": "Activez les notifications dans les paramètres pour rester informé.",
+    "disabled_title": "Notifications désactivées",
+    "enabled_title": "Notifications activées",
+    "disabled_message": "Veuillez les activer dans les paramètres de votre appareil pour rester informé.",
+    "open_settings": "Ouvrir les Paramètres",
     "clear": "Effacer",
     "clear_notifications_title": "Effacer Toutes les Notifications ?",
     "clear_notifications_message": "Cela supprimera définitivement toutes les notifications. Cette action ne peut pas être annulée.",
@@ -336,7 +350,11 @@
     "archived_habits": "Habitudes archivées",
     "delete_habit": "Supprimer l'habitude",
     "no_archived_habits": "Aucune habitude archivée",
-    "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici"
+    "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici",
+    "archive": "Archiver",
+    "archived_roadmap": "Feuilles de route archivées",
+    "no_archived_roadmaps": "Aucune feuille de route archivée",
+    "no_archived_roadmaps_description": "Vos feuilles de route archivées apparaîtront ici"
   },
   "common": {
     "or": "Ou",
@@ -488,6 +506,13 @@
   "app_feedback": {
     "title": "Envoyer des Commentaires",
     "subtitle": "Nous aimerions avoir votre avis",
+    "subject_label": "Sujet",
+    "subject_placeholder": "Entrez le sujet de vos commentaires",
+    "email_body_label": "Message",
+    "email_body_placeholder": "Entrez le message de votre message ici",
+    "review_and_send": "Revoir et Envoyer",
+    "email_composer_not_available": "Le composeur d'email n'est pas disponible sur cet appareil.",
+    "fill_subject_message": "Veuillez remplir le sujet et le message de vos commentaires",
     "category_label": "Catégorie",
     "category_placeholder": "Sélectionnez une catégorie",
     "message_label": "Vos Commentaires",

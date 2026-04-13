@@ -4,6 +4,10 @@ export type AddNotificationTokenPayload = {
   device_id: string;
 };
 
+export type RemoveNotificationTokenPayload = {
+  expo_token: string;
+};
+
 export type AddNotificationTokenResponse = {
   message: string;
   token_id: string;

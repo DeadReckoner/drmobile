@@ -60,6 +60,7 @@
       "subtitle": "Por favor proporciona tu nombre para continuar",
       "first_name_placeholder": "Introduce tu nombre",
       "last_name_placeholder": "Introduce tu apellido",
+      "email_placeholder": "Introduce tu correo electrónico",
       "submit_button": "Actualizar perfil",
       "updating": "Actualizando perfil..."
     },
@@ -197,8 +198,16 @@
     }
   },
   "settings": {
+    "account": "Cuenta",
     "profile": "Perfil",
     "edit_profile": "Editar Perfil",
+    "friends_accountability": "Amigos y Responsabilidad",
+    "accountability": "Responsabilidad",
+    "useful_links": "Enlaces Útiles",
+    "settings_preferences": "Configuraciones y Preferencias",
+    "streaks": "Rachas",
+    "performance": "Rendimiento",
+    "contact_support": "Contactar Soporte",
     "settings": "Configuraciones",
     "dark_mode": "Modo Oscuro",
     "language": "Idioma",
@@ -266,6 +275,7 @@
   },
   "notifications": {
     "title": "Notificaciones",
+    "updating_settings": "Actualizando configuraciones...",
     "no_notifications": "No hay notificaciones",
     "no_notifications_description": "¡Estás al día! Las nuevas notificaciones aparecerán aquí.",
     "friend_request": "te envió una solicitud de amistad",
@@ -281,6 +291,10 @@
     "error_loading": "Error al cargar notificaciones",
     "enable_notifications": "Habilitar Notificaciones",
     "notifications_disabled": "Activa las notificaciones en la configuración para mantenerte actualizado.",
+    "disabled_title": "Notificaciones desactivadas",
+    "enabled_title": "Notificaciones activadas",
+    "disabled_message": "Por favor, actívalas en la configuración de tu dispositivo para mantenerte actualizado.",
+    "open_settings": "Abrir Configuración",
     "clear": "Borrar",
     "clear_notifications_title": "¿Borrar Todas las Notificaciones?",
     "clear_notifications_message": "Esto eliminará permanentemente todas las notificaciones. Esta acción no se puede deshacer.",
@@ -336,7 +350,11 @@
     "delete_habit": "Eliminar hábito",
     "archived_habits": "Hábitos archivados",
     "no_archived_habits": "No hay hábitos archivados",
-    "no_archived_habits_description": "Tus hábitos archivados aparecerán aquí"
+    "no_archived_habits_description": "Tus hábitos archivados aparecerán aquí",
+    "archive": "Archivar",
+    "archived_roadmap": "Hojas de ruta archivadas",
+    "no_archived_roadmaps": "No hay hojas de ruta archivadas",
+    "no_archived_roadmaps_description": "Tus hojas de ruta archivadas aparecerán aquí"
   },
   "common": {
     "or": "O",
@@ -488,6 +506,13 @@
   "app_feedback": {
     "title": "Enviar Comentarios",
     "subtitle": "Nos encantaría saber de ti",
+    "subject_label": "Asunto",
+    "subject_placeholder": "Ingresa el asunto de tus comentarios",
+    "email_body_label": "Mensaje",
+    "email_body_placeholder": "Ingresa tu mensaje aquí",
+    "review_and_send": "Revisar y Enviar",
+    "email_composer_not_available": "El compositor de correo electrónico no está disponible en este dispositivo.",
+    "fill_subject_message": "Por favor, completa el asunto y el mensaje para enviar tus comentarios.",
     "category_label": "Categoría",
     "category_placeholder": "Selecciona una categoría",
     "message_label": "Tus Comentarios",

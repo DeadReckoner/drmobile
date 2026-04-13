@@ -11,6 +11,8 @@ export const {
   useDeleteRoadmapMutation,
 
   useStartRoadmapMutation,
+
+  useGetAnchorRoadmapsQuery,
 } = roadmapApi;
 
 export const { useCreateAIRoadmapMutation, useGetJobStatusQuery } =

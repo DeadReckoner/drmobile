@@ -1,3 +1,4 @@
+import { Loader } from '@/components/Loader';
 import { AppRNUIToast } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
 import { ToastType } from '@/store/types/settingsSlice.types';
@@ -9,7 +10,10 @@ export const AppToast = () => {
   const { isVisible, toastProps, hideToast } = useToast();
   const toastTypeMap: Record<
     ToastType,
-    Pick<ToastProps, 'preset' | 'backgroundColor' | 'messageStyle'>
+    Pick<
+      ToastProps,
+      'preset' | 'backgroundColor' | 'messageStyle' | 'showLoader'
+    >
   > = {
     success: {
       preset: 'success',
@@ -30,7 +34,7 @@ export const AppToast = () => {
     },
     general: {
       preset: 'general',
-      backgroundColor: Colors.primary,
+      backgroundColor: Colors.accent,
     },
   };
   const toastConfig = toastTypeMap[toastProps?.type ?? 'general'];
@@ -49,6 +53,8 @@ export const AppToast = () => {
       messageStyle={[Typography.caption, { color: Colors.textOnPrimary }]}
       enableHapticFeedback
       style={[style.toast, { shadowColor: toastConfig.backgroundColor }]}
+      loaderElement={<Loader transparent />}
+      showLoader={toastConfig.showLoader}
       {...toastProps}
     />
   );

@@ -90,7 +90,8 @@
           "photosPermission": "Dead Reckoner needs access to your photos to upload images.",
           "cameraPermission": "Dead Reckoner needs access to your camera to take photos."
         }
-      ]
+      ],
+      "expo-mail-composer"
     ],
     "experiments": {
       "typedRoutes": true

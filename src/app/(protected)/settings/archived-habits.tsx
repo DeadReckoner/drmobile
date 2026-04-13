@@ -1,8 +1,6 @@
 import { AppCard } from '@/components/AppCard';
 import { AppList } from '@/components/AppList';
-import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
-import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { AppText, AppView } from '@/components/ui';
@@ -60,42 +58,38 @@ const ArchivedHabits = () => {
   };
 
   return (
-    <AppScreen safeArea>
-      <HeaderWithBack headerKey="habits.archived_habits" />
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={isFetching && !isLoading}
+          onRefresh={refetch}
+          tintColor={Colors.secondary}
+        />
+      }>
       <Divider />
-
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={isFetching && !isLoading}
-            onRefresh={refetch}
-            tintColor={Colors.secondary}
+      {isLoading ? (
+        <AppView height={200} center>
+          <Loader transparent />
+        </AppView>
+      ) : (
+        <AppView
+          reanimated
+          entering={Animations.Entry.FadeInDownWithSpring()}
+          exiting={Animations.Exit.FadeOutDown()}>
+          <AppList<HabitType>
+            keyExtractor={(i) => i.habit_id}
+            data={archivedHabits || []}
+            renderItem={renderHabitItem}
+            ListEmptyComponent={renderEmptyComponent}
+            ListFooterComponent={() => <Divider />}
+            ItemSeparatorComponent={() => <Divider />}
           />
-        }>
-        {isLoading ? (
-          <AppView height={200} center>
-            <Loader transparent />
-          </AppView>
-        ) : (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <AppList<HabitType>
-              keyExtractor={(i) => i.habit_id}
-              data={archivedHabits || []}
-              renderItem={renderHabitItem}
-              ListEmptyComponent={renderEmptyComponent}
-              ListFooterComponent={() => <Divider />}
-              ItemSeparatorComponent={() => <Divider />}
-            />
-          </AppView>
-        )}
-      </ScrollView>
-    </AppScreen>
+        </AppView>
+      )}
+    </ScrollView>
   );
 };
 
