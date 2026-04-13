@@ -505,6 +505,13 @@
   },
   "app_feedback": {
     "title": "Send Feedback",
+    "subject_label": "Subject",
+    "subject_placeholder": "Enter feedback subject",
+    "email_body_label": "Message",
+    "email_body_placeholder": "Enter your message here",
+    "fill_subject_message": "Please fill in both subject and message",
+    "review_and_send": "Review and Send",
+    "email_composer_not_available": "Email composer is not available on this device.",
     "subtitle": "We'd love to hear from you",
     "category_label": "Category",
     "category_placeholder": "Select a category",

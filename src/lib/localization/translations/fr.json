@@ -506,6 +506,13 @@
   "app_feedback": {
     "title": "Envoyer des Commentaires",
     "subtitle": "Nous aimerions avoir votre avis",
+    "subject_label": "Sujet",
+    "subject_placeholder": "Entrez le sujet de vos commentaires",
+    "email_body_label": "Message",
+    "email_body_placeholder": "Entrez le message de votre message ici",
+    "review_and_send": "Revoir et Envoyer",
+    "email_composer_not_available": "Le composeur d'email n'est pas disponible sur cet appareil.",
+    "fill_subject_message": "Veuillez remplir le sujet et le message de vos commentaires",
     "category_label": "Catégorie",
     "category_placeholder": "Sélectionnez une catégorie",
     "message_label": "Vos Commentaires",
