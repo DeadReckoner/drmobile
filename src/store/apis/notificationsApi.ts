@@ -3,6 +3,7 @@ import {
   AddNotificationTokenPayload,
   AddNotificationTokenResponse,
   NotificationType,
+  RemoveNotificationTokenPayload,
 } from '@/store/apis/types/notificationsApi.types';
 
 export const notificationApi = api.injectEndpoints({
@@ -16,6 +17,17 @@ export const notificationApi = api.injectEndpoints({
           url: `/push/tokens`,
           method: 'POST',
           body: tokenPayload,
+        };
+      },
+    }),
+    removeNotificationToken: builder.mutation<
+      void,
+      RemoveNotificationTokenPayload
+    >({
+      query: (tokenPayload) => {
+        return {
+          url: `/push/tokens/${tokenPayload.expo_token}`,
+          method: 'DELETE',
         };
       },
     }),

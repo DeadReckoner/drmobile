@@ -24,9 +24,7 @@
       },
       "package": "com.deadreckoner.deadreckoner",
       "edgeToEdgeEnabled": true,
-      "permissions": [
-        "android.permission.READ_CONTACTS"
-      ]
+      "permissions": ["android.permission.READ_CONTACTS"]
     },
     "web": {
       "bundler": "metro",
@@ -54,16 +52,8 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": [
-              "en",
-              "es",
-              "fr"
-            ],
-            "android": [
-              "en",
-              "es",
-              "fr"
-            ]
+            "ios": ["en", "es", "fr"],
+            "android": ["en", "es", "fr"]
           }
         }
       ],

@@ -76,7 +76,7 @@ export const SearchFriends = ({ onClose }: SearchFriendsProps) => {
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingHorizontal: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 0 }}
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="always">
       <AppView
@@ -97,7 +97,6 @@ export const SearchFriends = ({ onClose }: SearchFriendsProps) => {
             autoCapitalize="none"
             returnKeyType="search"
             body2
-            multiline
           />
         </AppView>
         <AppButton onPress={onClose}>

@@ -128,6 +128,7 @@ const Progress = () => {
                   <RoadmapList
                     data={visibleRoadmaps}
                     onItemPress={onItemPress}
+                    showProgress={true}
                   />
                 </AppView>
               )}

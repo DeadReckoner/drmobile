@@ -10,9 +10,14 @@ import { router } from 'expo-router';
 interface RoadmapListProps extends LegendListProps<RoadmapType> {
   data: RoadmapType[];
   onItemPress: (_roadmap: RoadmapType, _index: number) => void;
+  showProgress?: boolean;
 }
 
-export const RoadmapList = ({ data = [], onItemPress }: RoadmapListProps) => {
+export const RoadmapList = ({
+  data = [],
+  onItemPress,
+  showProgress = true,
+}: RoadmapListProps) => {
   const renderItem = ({
     item,
     index,
@@ -21,6 +26,7 @@ export const RoadmapList = ({ data = [], onItemPress }: RoadmapListProps) => {
       <RoadmapListItem
         roadmap={item}
         onPress={() => onItemPress(item, index)}
+        showProgress={showProgress}
       />
     );
   };

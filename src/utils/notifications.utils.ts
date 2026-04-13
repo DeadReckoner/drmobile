@@ -106,6 +106,12 @@ const setupNotificationHandler = () => {
   });
 };
 
+const disableNotifications = async () => {
+  try {
+    await Notifications.unregisterForNotificationsAsync();
+  } catch {}
+};
+
 export const notificationsUtils = {
   checkPermissions,
   requestPermissions,
@@ -117,5 +123,6 @@ export const notificationsUtils = {
   setBadgeCount,
   updateBadgeCount,
   setupNotificationHandler,
+  disableNotifications,
   onPushTokenChange: Notifications.addPushTokenListener,
 };

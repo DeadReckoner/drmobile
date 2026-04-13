@@ -205,6 +205,13 @@ export const roadmapApi = api.injectEndpoints({
         { type: 'Roadmaps', id: roadmap_id },
       ],
     }),
+
+    //TODO: This is a temporary endpoint to fetch anchor roadmaps.
+    // We should remove this once we have a proper implementation for anchor roadmaps.
+    getAnchorRoadmaps: builder.query<RoadmapType[], void>({
+      query: () => '/roadmaps/anchored',
+      providesTags: ['Roadmaps'],
+    }),
   }),
   overrideExisting: true,
 });

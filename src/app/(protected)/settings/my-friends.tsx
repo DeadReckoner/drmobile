@@ -1,6 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
+import { Divider } from '@/components/Divider';
 import {
   FriendQRCodeModal,
   FriendsList,
@@ -54,7 +55,7 @@ const MyFriends = () => {
     router.canGoBack() ? router.back() : router.replace('/(protected)/(tabs)');
 
   return (
-    <AppScreen paddingH-0 safeArea>
+    <AppScreen paddingH-16 safeArea>
       <AppView style={styles.container}>
         <AppView flex reanimated layout={Animations.Layout.Springify()}>
           {isSearchMode ? (
@@ -73,7 +74,7 @@ const MyFriends = () => {
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring(300)}
               exiting={Animations.Exit.FadeOutDown()}>
-              <AppView row spread paddingH-16 gap-8 style={styles.header}>
+              <AppView row spread gap-8 style={styles.header}>
                 <AppButton onPress={onBackPress}>
                   <AppIcon name="arrowleft" />
                 </AppButton>
@@ -94,6 +95,7 @@ const MyFriends = () => {
                   </AppView>
                 </AppView>
               </AppView>
+              <Divider />
               <FriendsList friendsData={friendsData} />
             </AppView>
           )}

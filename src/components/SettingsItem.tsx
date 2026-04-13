@@ -7,10 +7,12 @@ import { StyleSheet } from 'react-native';
 interface SettingsItemProps {
   translationKey: TranslationKeysType;
   rightElement?: React.ReactNode;
+  leftElement?: React.ReactNode;
 }
 
 export const SettingsItem = ({
   translationKey,
+  leftElement,
   rightElement,
 }: SettingsItemProps) => {
   return (
@@ -20,9 +22,11 @@ export const SettingsItem = ({
       spread
       paddingH-16
       paddingV-16
+      gap-16
       style={styles.container}>
-      <TranslatedText body2 translationKey={translationKey} />
-      <AppView right>{rightElement}</AppView>
+      {leftElement && <AppView left>{leftElement}</AppView>}
+      <TranslatedText flex body2 translationKey={translationKey} />
+      {rightElement && <AppView right>{rightElement}</AppView>}
     </AppView>
   );
 };

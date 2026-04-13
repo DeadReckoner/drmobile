@@ -15,6 +15,7 @@ const initialState: SettingsStateType = {
     languageCode: 'en',
     languageName: 'English',
   },
+  notificationsEnabled: false,
   toast: {
     isVisible: false,
     toastProps: { type: 'general' },
@@ -36,7 +37,9 @@ const settingsSlice = createSlice({
     setLanguageAction(state, action: PayloadAction<SupportedLanguagesType>) {
       state.language = action.payload;
     },
-
+    setNotificationMode(state, action: PayloadAction<boolean>) {
+      state.notificationsEnabled = action.payload;
+    },
     showToastAction(
       state,
       action: PayloadAction<Pick<ToastStateType, 'toastProps'>>,
@@ -61,6 +64,7 @@ export const {
   showToastAction,
   hideToastAction,
   setLastRoadmapListCacheDay,
+  setNotificationMode,
   resetSettingsSlice,
 } = settingsSlice.actions;
 
@@ -72,6 +76,9 @@ export const selectToastSettings = createAppSelector(
   (state) => state.settings.toast,
 );
 export const selectSettings = createAppSelector((state) => state.settings);
+export const selectNotificationsEnabled = createAppSelector(
+  (state) => state.settings.notificationsEnabled,
+);
 
 export const settingsReducer = persistReducer(
   {

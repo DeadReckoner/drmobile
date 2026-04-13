@@ -12,9 +12,14 @@ import { Assets, Colors } from 'react-native-ui-lib';
 interface RoadmapListItemProps {
   onPress: (_roadmap: RoadmapType) => void;
   roadmap: RoadmapType;
+  showProgress?: boolean;
 }
 
-export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
+export const RoadmapListItem = ({
+  onPress,
+  roadmap,
+  showProgress,
+}: RoadmapListItemProps) => {
   const { t } = useLocalization();
   const { theme } = useAppTheme();
 
@@ -39,20 +44,25 @@ export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
             {roadmap.daysRemainingTillNextMilestone || 0} {t('common.days')}
           </AppText>
           <AppView row centerV>
-            <AppView row gap-8 centerV flex-1>
-              <AppProgressBar
-                style={[
-                  styles.roadmapProgressBar,
-                  { backgroundColor: Colors.outline },
-                ]}
-                fullWidth={true}
-                progress={roadmap.progress}
-                progressColor={theme === 'dark' ? Colors.white : Colors.primary}
-              />
-              <AppText xsm textColor>
-                {roadmap.progress || 0}%
-              </AppText>
-            </AppView>
+            {showProgress && (
+              <AppView row gap-8 centerV flex-1>
+                <AppProgressBar
+                  style={[
+                    styles.roadmapProgressBar,
+                    { backgroundColor: Colors.outline },
+                  ]}
+                  fullWidth={true}
+                  progress={roadmap.progress}
+                  progressColor={
+                    theme === 'dark' ? Colors.white : Colors.primary
+                  }
+                />
+
+                <AppText xsm textColor>
+                  {roadmap.progress || 0}%
+                </AppText>
+              </AppView>
+            )}
             {!isRoadmapStarted(roadmap) && (
               <AppIcon name="clockcircleo" size={20} />
             )}

@@ -5,4 +5,5 @@ export const {
   useGetNotificationsQuery,
   useMarkNotificationAsReadMutation,
   useClearNotificationsMutation,
+  useRemoveNotificationTokenMutation,
 } = notificationApi;

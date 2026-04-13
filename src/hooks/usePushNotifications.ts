@@ -1,12 +1,19 @@
-import { useAddNotificationTokenMutation } from '@/hooks/notifications';
+import {
+  useAddNotificationTokenMutation,
+  useRemoveNotificationTokenMutation,
+} from '@/hooks/notifications';
+import { useLocalization } from '@/hooks/useLocalization';
+import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { setNotificationMode } from '@/store/slices/settingsSlice';
 import { notificationsUtils } from '@/utils/notifications.utils';
 import {
+  clearExpoPushTokenStorage,
   getExpoPushTokenStorage,
   saveExpoPushTokenStorage,
 } from '@/utils/storage.utils';
 import * as Device from 'expo-device';
 import { useCallback, useEffect, useState } from 'react';
-import { AppState, Platform } from 'react-native';
+import { Alert, AppState, Linking, Platform } from 'react-native';
 
 interface NotificationData {
   [key: string]: any;
@@ -19,6 +26,9 @@ export const usePushNotifications = () => {
   >(null);
   const [isLoading, setIsLoading] = useState(false);
   const [addNotificationToken] = useAddNotificationTokenMutation();
+  const [removeNotificationToken] = useRemoveNotificationTokenMutation();
+  const dispatch = useAppDispatch();
+  const { t } = useLocalization();
 
   const submitTokenToBackend = useCallback(
     async (token: string) => {
@@ -32,9 +42,10 @@ export const usePushNotifications = () => {
           device_id: deviceId,
         }).unwrap();
         await saveExpoPushTokenStorage(token);
+        dispatch(setNotificationMode(true));
       } catch {}
     },
-    [addNotificationToken],
+    [addNotificationToken, dispatch],
   );
 
   const checkPermissions = useCallback(async () => {
@@ -61,7 +72,7 @@ export const usePushNotifications = () => {
     return () => {
       appEventListener.remove();
     };
-  }, [checkPermissions, submitTokenToBackend]);
+  }, [checkPermissions]);
 
   const requestPermissions = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
@@ -82,6 +93,23 @@ export const usePushNotifications = () => {
         if (!token) return granted;
         setExpoPushToken(token);
         await submitTokenToBackend(token);
+      } else {
+        Alert.alert(
+          t('notifications.disabled_title'),
+          t('notifications.disabled_message'),
+          [
+            {
+              text: t('common.cancel'),
+              style: 'destructive',
+            },
+            {
+              text: t('notifications.open_settings'),
+              onPress: () => {
+                Linking.openSettings();
+              },
+            },
+          ],
+        );
       }
       return granted;
     } catch {
@@ -90,7 +118,7 @@ export const usePushNotifications = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [submitTokenToBackend, checkPermissions]);
+  }, [submitTokenToBackend, checkPermissions, t]);
 
   const scheduleNotification = useCallback(
     async (
@@ -133,11 +161,34 @@ export const usePushNotifications = () => {
     }
   }, []);
 
+  const disableNotifications = useCallback(async (): Promise<void> => {
+    setIsLoading(true);
+    try {
+      let token = await getExpoPushTokenStorage();
+      if (!token) {
+        token = await notificationsUtils.getExpoPushToken();
+      }
+      if (token) {
+        await removeNotificationToken({ expo_token: token }).unwrap();
+      }
+
+      await notificationsUtils.disableNotifications();
+      await clearExpoPushTokenStorage();
+      setExpoPushToken(null);
+      dispatch(setNotificationMode(false));
+    } catch {
+      dispatch(setNotificationMode(false));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [removeNotificationToken, dispatch]);
+
   return {
     expoPushToken,
     permissionStatus,
     isLoading,
     requestPermissions,
+    disableNotifications,
     scheduleNotification,
     cancelAllNotifications,
     setBadgeCount,

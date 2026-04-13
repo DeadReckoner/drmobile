@@ -1,57 +1,34 @@
 import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
-import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
-import { AppSwitch } from '@/components/AppSwitch';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
-import { FollowOnSocialMedia } from '@/components/FollowOnSocialMedia';
+import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
+import UsefulLinks from '@/components/settings/UsefulLinks';
+import { UserStats } from '@/components/settings/UserStats';
 import { SettingsItem } from '@/components/SettingsItem';
-import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
-import { useGetFriendsQuery } from '@/hooks/friends';
-import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
-import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { clearAuthAction, selectUser } from '@/store/slices/authSlice';
-import { selectSettings } from '@/store/slices/settingsSlice';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-const SUPPORTED_LANGUAGES: SupportedLanguagesType[] = [
-  { languageName: 'English', languageCode: 'en' },
-  { languageName: 'Español', languageCode: 'es' },
-  { languageName: 'Français', languageCode: 'fr' },
-];
-
 const Settings = () => {
   const user = useAppSelector(selectUser);
-  const settings = useAppSelector(selectSettings);
   const dispatch = useAppDispatch();
-  const { t, setLanguage } = useLocalization();
-  const { toggleTheme, theme } = useAppTheme();
-  const { data = [] } = useGetRoadmapsQuery();
+  const { theme } = useAppTheme();
+  const { t } = useLocalization();
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
-  const [isLanguageDialogVisible, setIsLanguageDialogVisible] = useState(false);
-  const [isSocialMediaDialogVisible, setIsSocialMediaDialogVisible] =
-    useState(false);
-
-  const { data: friendsData } = useGetFriendsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
-
-  const onDarkModeToggle = () => {
-    toggleTheme();
-  };
 
   const hideLogoutDialog = () => setIsLogoutDialogVisible(false);
   const showLogoutDialog = () => setIsLogoutDialogVisible(true);
@@ -60,11 +37,6 @@ const Settings = () => {
     hideLogoutDialog();
     dispatch(clearAuthAction());
     await supabaseClient.auth.signOut();
-  };
-
-  const handleLanguageSelection = (language: SupportedLanguagesType) => {
-    setIsLanguageDialogVisible(false);
-    setLanguage(language);
   };
 
   // const openURL = async (url: string) => {
@@ -83,12 +55,10 @@ const Settings = () => {
         contentContainerStyle={styles.scrollContainer}>
         <AppView paddingH-16 row center spread>
           <AppView flex-1>
-            <HeaderWithBack headerKey="settings.profile" />
+            <HeaderWithBack headerKey="settings.account" />
           </AppView>
-          <AppButton onPress={() => router.navigate('/settings/edit-profile')}>
-            <AppIcon set="Feather" name="settings" size={20} />
-          </AppButton>
         </AppView>
+        <Divider marginT-24 />
         <AppView style={styles.content} key={theme}>
           <AppView gap-16 center paddingH-16>
             <AppButton>
@@ -107,116 +77,74 @@ const Settings = () => {
               <AppText body1 textColor>
                 {user.name}
               </AppText>
-              <AppText captionLight textColor>
-                {user.email}
-              </AppText>
             </AppView>
           </AppView>
-          <AppView center>
-            <AppCard row center style={{ maxWidth: '80%' }}>
-              <AppButton
-                onPress={() =>
-                  router.dismissTo('/(protected)/(tabs)/progress')
-                }>
-                <AppView center paddingH-16 gap-8>
-                  <TranslatedText xsm translationKey="settings.roadmaps" />
-                  <AppText textColor body1>
-                    {data?.length}
-                  </AppText>
-                </AppView>
-              </AppButton>
-              <AppButton
-                onPress={() => router.navigate('/settings/my-friends')}>
-                <AppView center paddingH-16 gap-8>
-                  <TranslatedText xsm translationKey="settings.my_friends" />
-                  <AppText textColor body1>
-                    {friendsData?.length || 0}
-                  </AppText>
-                </AppView>
-              </AppButton>
-            </AppCard>
-          </AppView>
+
+          <Divider />
+          <UserStats />
+          <Divider margin-16 />
 
           <AppView>
-            <TranslatedText
-              marginH-16
-              marginB-16
-              subtitle1
-              translationKey="settings.settings"
-            />
             <LineDivider marginT-0 marginV-0 />
-            <AppButton
-              onPress={() => router.navigate('/settings/archived-habits')}>
+            <AppButton bg-accent br20 onPress={() => setIsMenuVisible(true)}>
               <SettingsItem
-                translationKey="habits.archived_habits"
-                rightElement={
-                  <AppIcon set="Ionicons" name="archive-outline" size={22} />
-                }
+                translationKey="settings.friends_accountability"
+                rightElement={<AppIcon set="Feather" name="users" size={22} />}
               />
             </AppButton>
             <LineDivider marginT-0 marginV-0 />
-            <SettingsItem
-              translationKey="settings.dark_mode"
-              rightElement={
-                <AppSwitch
-                  value={settings.theme === 'dark'}
-                  onValueChange={onDarkModeToggle}
-                />
-              }
-            />
-            <SettingsItemDivider />
-            <AppButton onPress={() => setIsLanguageDialogVisible(true)}>
+            <AppButton
+              onPress={() => router.navigate('/settings/edit-profile')}>
               <SettingsItem
-                translationKey="settings.language"
+                translationKey="settings.edit_profile"
+                rightElement={<AppIcon set="Feather" name="edit-2" size={20} />}
+              />
+            </AppButton>
+            <SettingsItemDivider />
+            <AppButton
+              onPress={() => router.navigate('/settings/settings-preferences')}>
+              <SettingsItem
+                translationKey="settings.settings_preferences"
                 rightElement={
-                  <AppText textColor caption key={theme}>
-                    {settings.language.languageName}
-                  </AppText>
+                  <AppIcon set="Feather" name="settings" size={22} />
                 }
               />
             </AppButton>
-            <SettingsItemDivider />
 
-            <AppButton
-              gap-8
-              onPress={() => setIsSocialMediaDialogVisible(true)}>
-              <SettingsItem
-                translationKey="settings.follow_us"
-                rightElement={
-                  <FollowOnSocialMedia
-                    isVisible={isSocialMediaDialogVisible}
-                    setIsVisible={setIsSocialMediaDialogVisible}
-                  />
-                }
-              />
-            </AppButton>
             <SettingsItemDivider />
-
-            <AppButton
-              onPress={() => router.navigate('/settings/terms-and-services')}>
-              <SettingsItem
-                translationKey="settings.terms_of_service"
-                rightElement={<AppIcon set="Feather" name="file-text" />}
-              />
-            </AppButton>
-            <SettingsItemDivider />
-
-            <AppButton
-              onPress={() => router.navigate('/settings/privacy-policy')}>
-              <SettingsItem
-                translationKey="settings.privacy_policy"
-                rightElement={<AppIcon set="Feather" name="help-circle" />}
-              />
-            </AppButton>
-            <SettingsItemDivider />
-
             <AppButton
               onPress={() => router.navigate('/settings/send-feedback')}>
               <SettingsItem
-                translationKey="settings.help_support"
-                rightElement={<AppIcon name="customerservice" />}
+                translationKey="feedback.submit_feedback"
+                rightElement={
+                  <AppIcon set="Feather" name="message-square" size={22} />
+                }
               />
             </AppButton>
+            <SettingsItemDivider />
+
+            <AppButton onPress={() => router.navigate('/settings/archieved')}>
+              <SettingsItem
+                translationKey="habits.archive"
+                rightElement={
+                  <AppIcon set="Feather" name="archive" size={20} />
+                }
+              />
+            </AppButton>
+            <SettingsItemDivider />
+
+            <AppButton
+              onPress={() => router.navigate('/settings/contact-support')}>
+              <SettingsItem
+                translationKey="settings.contact_support"
+                rightElement={
+                  <AppIcon set="Feather" name="help-circle" size={22} />
+                }
+              />
+            </AppButton>
+            <SettingsItemDivider />
+
+            <UsefulLinks />
             <SettingsItemDivider />
 
             <AppButton onPress={showLogoutDialog}>
@@ -252,16 +180,33 @@ const Settings = () => {
         }
       />
       <AppActionSheetModal
-        options={SUPPORTED_LANGUAGES.map((option) => ({
-          label: option.languageName,
-          onPress: () => handleLanguageSelection(option),
-          icon: settings.language.languageName === option.languageName && (
-            <AppIcon name="checkcircle" size={20} color={Colors.success} />
-          ),
-        }))}
-        title={t('settings.select_language')}
-        visible={isLanguageDialogVisible}
-        onDismiss={() => setIsLanguageDialogVisible(false)}
+        options={[
+          {
+            label: t('settings.friends'),
+            onPress: () => {
+              setIsMenuVisible(false);
+              router.navigate('/settings/my-friends');
+            },
+            icon: <AppIcon set="Ionicons" name="people-outline" size={20} />,
+          },
+          {
+            label: t('settings.accountability'),
+            onPress: () => {
+              setIsMenuVisible(false);
+              router.navigate('/settings/accountability');
+            },
+            icon: (
+              <AppIcon
+                set="MaterialCommunityIcons"
+                name="account-eye-outline"
+                size={22}
+              />
+            ),
+          },
+        ]}
+        title={t('settings.friends_accountability')}
+        visible={isMenuVisible}
+        onDismiss={() => setIsMenuVisible(false)}
       />
     </AppScreen>
   );
@@ -279,7 +224,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
   },
-  content: { flex: 1, justifyContent: 'space-evenly' },
+  content: { flex: 1 },
   editIcon: {
     position: 'absolute',
     bottom: 0,

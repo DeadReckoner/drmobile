@@ -77,10 +77,19 @@ export const useSupabaseAutoRefresh = () => {
           if (event === 'USER_UPDATED') {
             const { first_name, last_name } = getFirstAndLastName(session.user);
             try {
-              await updateUser({
+              const payload: {
+                first_name: string;
+                last_name: string;
+                email?: string;
+              } = {
                 first_name,
                 last_name,
-              }).unwrap();
+              };
+              if (session.user.user_metadata?.email) {
+                payload['email'] =
+                  session.user.user_metadata?.email || session.user.email || '';
+              }
+              await updateUser(payload).unwrap();
             } catch (error) {
               showToast({
                 type: 'failure',
