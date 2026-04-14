@@ -223,6 +223,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flexGrow: 1,
+    paddingBottom: 48,
   },
   content: { flex: 1 },
   editIcon: {

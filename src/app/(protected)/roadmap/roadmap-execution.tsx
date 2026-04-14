@@ -329,6 +329,11 @@ const RoadmapExecution = () => {
         />
 
         <AppView reanimated layout={Animations.Layout.Springify()}>
+          {isRoadmapFetching && (
+            <AppView height={24} marginT-16>
+              <Loader transparent />
+            </AppView>
+          )}
           {firstTabSelected ? (
             <>
               <Divider />
@@ -336,7 +341,6 @@ const RoadmapExecution = () => {
                 roadmap={roadmap}
                 currentMilestone={currentMilestone}
                 todayTasks={todayTasks}
-                isRoadmapFeching={isRoadmapFetching}
                 onRoadmapOverviewCardPress={onRoadmapOverviewCardPress}
               />
             </>
@@ -354,27 +358,19 @@ const RoadmapExecution = () => {
                 roadmap={roadmap}
                 roadmapCreateStartControls={
                   <>
-                    {!isRefreshing &&
-                    isRoadmapFetching &&
-                    roadmap.goal &&
-                    roadmap?.type !== 'ai_generated' ? (
-                      <AppView height={24} marginT-16 marginB-0>
-                        <Loader transparent />
-                      </AppView>
-                    ) : (
-                      <AppView
-                        reanimated
-                        entering={Animations.Entry.FadeInDownWithSpring()}
-                        exiting={Animations.Exit.FadeOutDown()}>
-                        <CreateRoadmapButton />
-                        <StartRoadmapButton />
-                      </AppView>
-                    )}
+                    <AppView
+                      reanimated
+                      entering={Animations.Entry.FadeInDownWithSpring()}
+                      exiting={Animations.Exit.FadeOutDown()}>
+                      <CreateRoadmapButton />
+                      <StartRoadmapButton />
+                    </AppView>
                     <Divider />
                     <AnchorCard
                       onAddAnchor={() => setIsAnchorModalVisible(true)}
                       onManageAnchor={() => setIsAnchorModalVisible(true)}
                       anchorName={roadmap?.anchor?.name}
+                      isLoading={isRoadmapLoading}
                     />
                   </>
                 }
