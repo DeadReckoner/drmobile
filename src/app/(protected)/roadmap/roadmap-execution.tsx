@@ -354,10 +354,13 @@ const RoadmapExecution = () => {
                 roadmap={roadmap}
                 roadmapCreateStartControls={
                   <>
-                    {isRoadmapFetching &&
+                    {!isRefreshing &&
+                    isRoadmapFetching &&
                     roadmap.goal &&
                     roadmap?.type !== 'ai_generated' ? (
-                      <Loader marginV-16 transparent />
+                      <AppView height={24} marginT-16 marginB-0>
+                        <Loader transparent />
+                      </AppView>
                     ) : (
                       <AppView
                         reanimated
