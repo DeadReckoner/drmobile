@@ -2,7 +2,6 @@ import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
-import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import React from 'react';
@@ -12,14 +11,12 @@ interface AnchorCardProps {
   anchorName?: string;
   onManageAnchor: () => void;
   onAddAnchor: () => void;
-  isLoading?: boolean;
 }
 
 export const AnchorCard = ({
   anchorName,
   onManageAnchor,
   onAddAnchor,
-  isLoading = false,
 }: AnchorCardProps) => {
   const isAnchorAssigned = !!anchorName;
 
@@ -50,11 +47,7 @@ export const AnchorCard = ({
   return (
     <AppCard row centerV spread>
       <AppIcon set="Feather" name="anchor" size={20} color={Colors.textColor} />
-      {isLoading ? (
-        <Loader shouldAnimate={false} paddingV-16 transparent />
-      ) : (
-        <TranslatedText body2 textColor translationKey="roadmap.add_anchor" />
-      )}
+      <TranslatedText body2 textColor translationKey="roadmap.add_anchor" />
       <AppButton onPress={onAddAnchor}>
         <AppIcon set="Feather" name="plus" size={22} />
       </AppButton>

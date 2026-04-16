@@ -114,7 +114,7 @@ const FriendDetails = () => {
 
   const handleRemoveFriend = useCallback(() => {
     Alert.alert(
-      t('settings.remove_friend'),
+      t('settings.remove'),
       t('settings.remove_friend_confirmation'),
       [
         {
@@ -295,7 +295,7 @@ const FriendDetails = () => {
                         textColor
                         translationKey={
                           friendshipStatus === 'accepted'
-                            ? 'settings.remove_friend'
+                            ? 'settings.remove'
                             : friendshipStatus === 'pending'
                               ? 'settings.pending_request'
                               : 'settings.send_friend_request'
@@ -441,7 +441,7 @@ const FriendDetails = () => {
                       textColor
                       translationKey={
                         friendshipStatus === 'accepted'
-                          ? 'settings.remove_friend'
+                          ? 'settings.remove'
                           : friendshipStatus === 'pending'
                             ? 'settings.pending_request'
                             : 'settings.send_friend_request'
