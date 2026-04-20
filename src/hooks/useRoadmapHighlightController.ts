@@ -3,8 +3,8 @@ import { useRoadmapFeatureHighlight } from '@/hooks/useRoadmapFeatureHighlight';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
-export const useRoadmapHighlightController = () => {
-  const highlight = useRoadmapFeatureHighlight();
+export const useRoadmapHighlightController = (isCustomRoadmap?: boolean) => {
+  const highlight = useRoadmapFeatureHighlight(isCustomRoadmap);
   const { isVisible, currentStep, getTarget, setTargetRef } = highlight;
 
   const scrollViewRef = useRef<ScrollView>(null);

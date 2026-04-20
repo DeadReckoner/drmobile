@@ -8,6 +8,7 @@ import { useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
 
 const TOTAL_STEPS = 5;
+const TOTAL_STEPS_CUSTOM = 4;
 
 // Maps each onboarding step index to the registered target ref index.
 // null means no element is highlighted for that step.
@@ -19,12 +20,20 @@ const STEP_TARGET_INDEX: Record<number, number | null> = {
   4: 1, // anchor card
 };
 
+// For custom roadmaps: phase step is omitted
+const STEP_TARGET_INDEX_CUSTOM: Record<number, number | null> = {
+  0: null, // intro – full-screen overlay, nothing highlighted
+  1: 0, // overview card
+  2: 3, // milestone card
+  3: 1, // anchor card
+};
+
 interface HighlightStep {
   title: string;
   message: string;
 }
 
-export const useRoadmapFeatureHighlight = () => {
+export const useRoadmapFeatureHighlight = (isCustomRoadmap?: boolean) => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const hasSeenHighlight = useAppSelector(selectHasSeenRoadmapHighlight);
@@ -34,17 +43,22 @@ export const useRoadmapFeatureHighlight = () => {
 
   const targets = useRef<Record<number, View | null>>({});
 
+  const stepTargetIndex = isCustomRoadmap
+    ? STEP_TARGET_INDEX_CUSTOM
+    : STEP_TARGET_INDEX;
+  const totalSteps = isCustomRoadmap ? TOTAL_STEPS_CUSTOM : TOTAL_STEPS;
+
   const setTargetRef = useCallback((index: number, ref: View | null) => {
     targets.current[index] = ref;
   }, []);
 
   const getTarget = useCallback(() => {
-    const targetIndex = STEP_TARGET_INDEX[currentStep];
+    const targetIndex = stepTargetIndex[currentStep];
     if (targetIndex === null || targetIndex === undefined) return undefined;
     return targets.current[targetIndex] ?? undefined;
-  }, [currentStep]);
+  }, [currentStep, stepTargetIndex]);
 
-  const steps: HighlightStep[] = [
+  const allSteps: HighlightStep[] = [
     {
       title: t('feature_highlight.roadmap_intro_title'),
       message: t('feature_highlight.roadmap_intro_message'),
@@ -67,6 +81,10 @@ export const useRoadmapFeatureHighlight = () => {
     },
   ];
 
+  const steps = isCustomRoadmap
+    ? allSteps.filter((_, i) => i !== 2) // remove phase step
+    : allSteps;
+
   const startHighlight = useCallback(() => {
     if (!hasSeenHighlight) {
       setCurrentStep(0);
@@ -81,18 +99,18 @@ export const useRoadmapFeatureHighlight = () => {
 
   const moveNext = useCallback(() => {
     const nextStep = currentStep + 1;
-    if (nextStep < TOTAL_STEPS) {
+    if (nextStep < totalSteps) {
       setCurrentStep(nextStep);
     } else {
       closeHighlight();
     }
-  }, [currentStep, closeHighlight]);
+  }, [currentStep, totalSteps, closeHighlight]);
 
   return {
     isVisible,
     currentStep,
     steps,
-    totalSteps: TOTAL_STEPS,
+    totalSteps,
     hasSeenHighlight,
     setTargetRef,
     getTarget,
