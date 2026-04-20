@@ -46,12 +46,10 @@ export const AnchorSelectionModal = ({
   const { t } = useLocalization();
   const { showToast } = useToast();
 
-  const { data: friendsData, isLoading: isLoadingFriends } = useGetFriendsQuery(
-    undefined,
-    {
+  const { data: friendsData = [], isLoading: isLoadingFriends } =
+    useGetFriendsQuery(undefined, {
       refetchOnMountOrArgChange: true,
-    },
-  );
+    });
 
   const [createAnchorRequest, { isLoading: isCreatingAnchorRequest }] =
     useCreateAnchorRequestMutation();
@@ -158,14 +156,34 @@ export const AnchorSelectionModal = ({
       visible={isAnchorSheetVisible}
       setIsVisible={setIsAnchorSheetVisible}>
       <AppView paddingB-24 flex-1>
-        <TranslatedText
-          body1
-          semibold
-          textColor
-          translationKey={
-            isAnchorAssigned ? 'roadmap.manage_anchor' : 'roadmap.select_anchor'
-          }
-        />
+        <AppView row centerV spread>
+          <TranslatedText
+            body2
+            semibold
+            textColor
+            translationKey={
+              isAnchorAssigned
+                ? 'roadmap.manage_anchor'
+                : 'roadmap.select_anchor'
+            }
+          />
+          {friendsData?.length !== 0 && (
+            <AppButton
+              br20
+              bg-accent
+              paddingV-4
+              paddingH-8
+              onPress={() => {
+                router.navigate('/settings/my-friends');
+              }}>
+              <AppView row spread gap-4 centerV>
+                <AppIcon set="Ionicons" name="person-add-outline" size={16} />
+                <TranslatedText xsm regular translationKey="settings.invite" />
+                <AppView />
+              </AppView>
+            </AppButton>
+          )}
+        </AppView>
         <LineDivider />
         <AppView flex-1>
           {(isLoading || isLoadingFriends) && (
@@ -174,7 +192,7 @@ export const AnchorSelectionModal = ({
             </AppView>
           )}
           <AppList
-            data={friendsData || []}
+            data={friendsData}
             keyExtractor={(item, index) => item.friendship_id + index}
             showsVerticalScrollIndicator={false}
             bounces={false}
@@ -198,7 +216,7 @@ export const AnchorSelectionModal = ({
                   onPress={() => {
                     router.navigate('/settings/my-friends');
                   }}>
-                  <AppView row spread gap-16 centerV>
+                  <AppView row spread gap-8 centerV>
                     <AppIcon
                       set="Ionicons"
                       name="person-add-outline"
@@ -207,7 +225,7 @@ export const AnchorSelectionModal = ({
                     />
                     <TranslatedText
                       body2
-                      translationKey="settings.add_friend"
+                      translationKey="settings.add_friends"
                     />
                     <AppView />
                   </AppView>

@@ -10,7 +10,10 @@ import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { AnchorCard } from '@/components/roadmap/AnchorCard';
 import { AnchorSelectionModal } from '@/components/roadmap/AnchorSelectionModal';
+import { BadgeInfoContent } from '@/components/roadmap/BadgeInfoContent';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
+import { RoadmapHighlightOverlay } from '@/components/roadmap/RoadmapHighlightOverlay';
+import { RoadmapIntroContent } from '@/components/roadmap/RoadmapIntroContent';
 import { TodayTab } from '@/components/roadmap/TodayTab';
 import { AppView } from '@/components/ui';
 import {
@@ -20,6 +23,7 @@ import {
   useStartRoadmapMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useRoadmapHighlightController } from '@/hooks/useRoadmapHighlightController';
 import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -34,7 +38,7 @@ import { DateUtils } from '@/utils/date.utils';
 import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
@@ -42,6 +46,21 @@ const RoadmapExecution = () => {
   const dispatch = useAppDispatch();
   const draftRoadmap = useAppSelector(selectDraftRoadmap);
   const currentMilestone = useAppSelector(selectCurrentMilestone);
+  const isCustomRoadmap = draftRoadmap?.type === 'custom_made';
+  const {
+    isVisible: isHighlightVisible,
+    currentStep,
+    steps: highlightSteps,
+    totalSteps,
+    hasSeenHighlight,
+    startHighlight,
+    moveNext,
+    scrollViewRef,
+    scrollContentRef,
+    highlightFrame,
+    handleTargetLayout,
+    onScrollEnd,
+  } = useRoadmapHighlightController(isCustomRoadmap);
   const {
     data,
     isLoading: isRoadmapLoading,
@@ -65,6 +84,33 @@ const RoadmapExecution = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isAnchorModalVisible, setIsAnchorModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (!hasSeenHighlight) {
+      setFirstTabSelected(false);
+    }
+  }, [hasSeenHighlight, startHighlight]);
+
+  useEffect(() => {
+    if (!isHighlightVisible) {
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+    }
+  }, [isHighlightVisible, scrollViewRef]);
+
+  const stepContentOverrides = useMemo<Record<number, React.ReactNode>>(
+    () =>
+      isCustomRoadmap
+        ? {
+            0: <RoadmapIntroContent />,
+            2: <BadgeInfoContent />,
+          }
+        : {
+            0: <RoadmapIntroContent />,
+            2: <BadgeInfoContent showPhase />,
+            3: <BadgeInfoContent />,
+          },
+    [isCustomRoadmap],
+  );
 
   const todayTasks = useMemo(
     () =>
@@ -302,63 +348,69 @@ const RoadmapExecution = () => {
   return (
     <AppScreen safeArea>
       <ScrollView
+        ref={scrollViewRef}
         contentInsetAdjustmentBehavior="always"
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.scrollContainer,
+          { paddingBottom: isHighlightVisible ? 400 : 60 },
+        ]}
         showsVerticalScrollIndicator={false}
+        onMomentumScrollEnd={onScrollEnd}
+        onScrollEndDrag={onScrollEnd}
         refreshControl={
           <RefreshControl
-            refreshing={isRefreshing}
+            refreshing={
+              hasSeenHighlight ? isRoadmapFetching || isRefreshing : false
+            }
             onRefresh={onManuallyRefresh}
           />
         }>
-        <AppView row spread centerV>
-          <HeaderWithBack />
-          <AppView>
-            {!!roadmap?.roadmap_id && (
-              <AppButton onPress={() => setIsMenuVisible(true)}>
-                <AppIcon set="Feather" name="more-vertical" size={22} />
-              </AppButton>
-            )}
+        <View ref={scrollContentRef} collapsable={false}>
+          <AppView row spread centerV>
+            <HeaderWithBack />
+            <AppView>
+              {!!roadmap?.roadmap_id && (
+                <AppButton onPress={() => setIsMenuVisible(true)}>
+                  <AppIcon set="Feather" name="more-vertical" size={22} />
+                </AppButton>
+              )}
+            </AppView>
           </AppView>
-        </AppView>
-        <Divider />
-        <AppSegmentControl
-          segments={[t('tabs.today'), t('common.overview')]}
-          selectedIndex={firstTabSelected ? 0 : 1}
-          onSegmentChange={(index) => setFirstTabSelected(index === 0)}
-        />
+          <Divider />
+          <AppSegmentControl
+            segments={[t('tabs.today'), t('settings.roadmaps').slice(0, 7)]}
+            selectedIndex={firstTabSelected ? 0 : 1}
+            onSegmentChange={(index) => setFirstTabSelected(index === 0)}
+          />
 
-        <AppView reanimated layout={Animations.Layout.Springify()}>
-          {firstTabSelected ? (
-            <>
-              <Divider />
-              <TodayTab
-                roadmap={roadmap}
-                currentMilestone={currentMilestone}
-                todayTasks={todayTasks}
-                isRoadmapFeching={isRoadmapFetching}
-                onRoadmapOverviewCardPress={onRoadmapOverviewCardPress}
-              />
-            </>
-          ) : (
-            <AppView
-              key="overview-tab"
-              flex
-              gap-12
-              useSafeArea
-              reanimated
-              entering={Animations.Entry.FadeInDown()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <RoadmapCurrentStateOverview
-                key={roadmap.roadmap_id}
-                roadmap={roadmap}
-                roadmapCreateStartControls={
-                  <>
-                    {isRoadmapFetching &&
-                    roadmap.goal &&
-                    roadmap?.type !== 'ai_generated' ? (
-                      <Loader marginV-16 transparent />
-                    ) : (
+          <AppView reanimated layout={Animations.Layout.Springify()}>
+            {firstTabSelected ? (
+              <>
+                <Divider />
+                <TodayTab
+                  roadmap={roadmap}
+                  currentMilestone={currentMilestone}
+                  todayTasks={todayTasks}
+                  onRoadmapOverviewCardPress={onRoadmapOverviewCardPress}
+                />
+              </>
+            ) : (
+              <AppView
+                key="overview-tab"
+                flex
+                gap-12
+                useSafeArea
+                reanimated
+                entering={Animations.Entry.FadeInDown()}
+                exiting={Animations.Exit.FadeOutDown()}>
+                <RoadmapCurrentStateOverview
+                  key={roadmap.roadmap_id}
+                  roadmap={roadmap}
+                  onOverviewCardRef={(ref) => handleTargetLayout(0, ref)}
+                  onPhaseCardRef={(ref) => handleTargetLayout(2, ref)}
+                  onMilestoneCardRef={(ref) => handleTargetLayout(3, ref)}
+                  roadmapCreateStartControls={
+                    <>
                       <AppView
                         reanimated
                         entering={Animations.Entry.FadeInDownWithSpring()}
@@ -366,23 +418,40 @@ const RoadmapExecution = () => {
                         <CreateRoadmapButton />
                         <StartRoadmapButton />
                       </AppView>
-                    )}
-                    <Divider />
-                    <AnchorCard
-                      onAddAnchor={() => setIsAnchorModalVisible(true)}
-                      onManageAnchor={() => setIsAnchorModalVisible(true)}
-                      anchorName={roadmap?.anchor?.name}
-                    />
-                  </>
-                }
-                onOverviewPress={handleOverviewPress}
-                onPhasePress={handlePhasePress}
-                onMilestonePress={handleMilestonePress}
-              />
-            </AppView>
-          )}
-        </AppView>
+                      <Divider />
+                      <View
+                        onLayout={() => startHighlight()}
+                        ref={(ref) => handleTargetLayout(1, ref)}>
+                        <AnchorCard
+                          onAddAnchor={() => setIsAnchorModalVisible(true)}
+                          onManageAnchor={() => setIsAnchorModalVisible(true)}
+                          anchorName={roadmap?.anchor?.name}
+                        />
+                      </View>
+                    </>
+                  }
+                  onOverviewPress={handleOverviewPress}
+                  onPhasePress={handlePhasePress}
+                  onMilestonePress={handleMilestonePress}
+                />
+              </AppView>
+            )}
+          </AppView>
+        </View>
       </ScrollView>
+
+      <RoadmapHighlightOverlay
+        visible={isHighlightVisible}
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        steps={highlightSteps}
+        contentOverrides={stepContentOverrides}
+        highlightFrame={highlightFrame}
+        nextLabel={t('feature_highlight.next')}
+        doneLabel={t('feature_highlight.got_it')}
+        onNext={moveNext}
+      />
+
       <AppActionSheetModal
         options={[
           {

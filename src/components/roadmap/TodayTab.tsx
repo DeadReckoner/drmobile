@@ -1,6 +1,5 @@
 import { AppCard } from '@/components/AppCard';
 import { Divider } from '@/components/Divider';
-import { Loader } from '@/components/Loader';
 import { TasksList } from '@/components/roadmap/TasksList';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
 import { RoadmapType, TaskType } from '@/hooks/roadmap/types/roadmap.types';
@@ -16,7 +15,6 @@ interface TodayTabProps {
   roadmap: RoadmapType;
   currentMilestone: ReturnType<typeof selectCurrentMilestone>;
   todayTasks: TaskType[];
-  isRoadmapFeching?: boolean;
   onRoadmapOverviewCardPress?: () => void;
 }
 
@@ -24,7 +22,6 @@ export const TodayTab = ({
   roadmap,
   currentMilestone,
   todayTasks = [],
-  isRoadmapFeching,
   onRoadmapOverviewCardPress,
 }: TodayTabProps) => {
   const { t } = useLocalization();
@@ -67,11 +64,6 @@ export const TodayTab = ({
           )}
         </AppView>
       </AppCard>
-      {isRoadmapFeching && todayTasks.length === 0 && (
-        <AppView height={30} marginT-16>
-          <Loader transparent />
-        </AppView>
-      )}
       <Divider />
       <TasksList tasks={todayTasks} />
     </AppView>

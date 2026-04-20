@@ -15,6 +15,7 @@ import {
   findOngoingPhase,
 } from '@/utils/roadmap.utils';
 import { JSX, useMemo } from 'react';
+import { View } from 'react-native';
 
 interface RoadmapCurrentStateOverviewProps {
   roadmap: RoadmapType;
@@ -22,6 +23,9 @@ interface RoadmapCurrentStateOverviewProps {
   onOverviewPress?: (_currentPhase?: Phase) => void;
   onPhasePress?: (_phase: Phase) => void;
   onMilestonePress?: (_milestone: MilestoneType, _currentPhase?: Phase) => void;
+  onOverviewCardRef?: (_ref: View | null) => void;
+  onPhaseCardRef?: (_ref: View | null) => void;
+  onMilestoneCardRef?: (_ref: View | null) => void;
 }
 
 export const RoadmapCurrentStateOverview = ({
@@ -30,6 +34,9 @@ export const RoadmapCurrentStateOverview = ({
   onOverviewPress,
   onPhasePress,
   onMilestonePress,
+  onOverviewCardRef,
+  onPhaseCardRef,
+  onMilestoneCardRef,
 }: RoadmapCurrentStateOverviewProps) => {
   const { t } = useLocalization();
 
@@ -57,17 +64,19 @@ export const RoadmapCurrentStateOverview = ({
 
   return (
     <AppView>
-      <SectionHeader label={t('common.overview')} />
-      <OverviewCard
-        title={roadmap.goal}
-        description={roadmap.description}
-        progress={roadmap.progress ?? 0}
-        tooltipText={t('common.overview_tooltip')}
-        onPress={() => onOverviewPress && onOverviewPress(currentPhase)}
-      />
+      <View ref={onOverviewCardRef}>
+        <SectionHeader label={t('common.overview')} />
+        <OverviewCard
+          title={roadmap.goal}
+          description={roadmap.description}
+          progress={roadmap.progress ?? 0}
+          tooltipText={t('common.overview_tooltip')}
+          onPress={() => onOverviewPress && onOverviewPress(currentPhase)}
+        />
+      </View>
       {roadmapCreateStartControls}
       {currentPhase && (
-        <>
+        <View ref={onPhaseCardRef}>
           <SectionHeader label={t('common.current_phase')} />
           <OverviewCard
             title={currentPhase.name}
@@ -80,11 +89,11 @@ export const RoadmapCurrentStateOverview = ({
               onPhasePress ? () => onPhasePress(currentPhase) : undefined
             }
           />
-        </>
+        </View>
       )}
 
       {currentMilestone && (
-        <>
+        <View ref={onMilestoneCardRef}>
           <SectionHeader label={t('common.current_milestone')} />
           <OverviewCard
             title={`${currentMilestone.sub_goal}`}
@@ -102,7 +111,7 @@ export const RoadmapCurrentStateOverview = ({
                 : undefined
             }
           />
-        </>
+        </View>
       )}
     </AppView>
   );
