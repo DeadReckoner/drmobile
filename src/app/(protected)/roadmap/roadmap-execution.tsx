@@ -46,6 +46,7 @@ const RoadmapExecution = () => {
   const dispatch = useAppDispatch();
   const draftRoadmap = useAppSelector(selectDraftRoadmap);
   const currentMilestone = useAppSelector(selectCurrentMilestone);
+  const isCustomRoadmap = draftRoadmap?.type === 'custom_made';
   const {
     isVisible: isHighlightVisible,
     currentStep,
@@ -59,7 +60,7 @@ const RoadmapExecution = () => {
     highlightFrame,
     handleTargetLayout,
     onScrollEnd,
-  } = useRoadmapHighlightController();
+  } = useRoadmapHighlightController(isCustomRoadmap);
   const {
     data,
     isLoading: isRoadmapLoading,
@@ -97,12 +98,18 @@ const RoadmapExecution = () => {
   }, [isHighlightVisible, scrollViewRef]);
 
   const stepContentOverrides = useMemo<Record<number, React.ReactNode>>(
-    () => ({
-      0: <RoadmapIntroContent />,
-      2: <BadgeInfoContent showPhase />,
-      3: <BadgeInfoContent />,
-    }),
-    [],
+    () =>
+      isCustomRoadmap
+        ? {
+            0: <RoadmapIntroContent />,
+            2: <BadgeInfoContent />,
+          }
+        : {
+            0: <RoadmapIntroContent />,
+            2: <BadgeInfoContent showPhase />,
+            3: <BadgeInfoContent />,
+          },
+    [isCustomRoadmap],
   );
 
   const todayTasks = useMemo(
