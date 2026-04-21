@@ -58,11 +58,18 @@ const SettingsPreferences = () => {
 
   const onNotificationToggle = async (isEnabled: boolean) => {
     if (isEnabled) {
-      await requestPermissions();
-      showToast({
-        type: 'success',
-        message: t('notifications.enabled_title'),
-      });
+      const granted = await requestPermissions();
+      if (granted) {
+        showToast({
+          type: 'success',
+          message: t('notifications.enabled_title'),
+        });
+      } else {
+        showToast({
+          type: 'failure',
+          message: t('common.something_went_wrong'),
+        });
+      }
     } else {
       await disableNotifications();
       showToast({
