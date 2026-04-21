@@ -16,6 +16,7 @@ type SettingsStateType = {
   toast: ToastStateType;
   roadmapListCache?: string;
   notificationsEnabled: boolean;
+  hapticsEnabled: boolean;
 };
 
 export type { SettingsStateType, ThemeModeType, ToastStateType, ToastType };

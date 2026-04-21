@@ -13,8 +13,12 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useToast } from '@/hooks/useToast';
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectSettings } from '@/store/slices/settingsSlice';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  selectHapticsEnabled,
+  selectSettings,
+  setHapticsEnabled,
+} from '@/store/slices/settingsSlice';
 import { Animations } from '@/utils/animation.utils';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView } from 'react-native';
@@ -29,6 +33,9 @@ const SUPPORTED_LANGUAGES: SupportedLanguagesType[] = [
 const SettingsPreferences = () => {
   const SettingsItemDivider = () => <LineDivider marginV-0 />;
   const settings = useAppSelector(selectSettings);
+  const hapticsEnabled = useAppSelector(selectHapticsEnabled);
+  const dispatch = useAppDispatch();
+
   const { toggleTheme, theme } = useAppTheme();
   const { t, setLanguage } = useLocalization();
   const { showToast } = useToast();
@@ -38,6 +45,10 @@ const SettingsPreferences = () => {
 
   const onDarkModeToggle = () => {
     toggleTheme();
+  };
+
+  const onHapticsToggle = (isEnabled: boolean) => {
+    dispatch(setHapticsEnabled(isEnabled));
   };
 
   const handleLanguageSelection = (language: SupportedLanguagesType) => {
@@ -99,6 +110,17 @@ const SettingsPreferences = () => {
               onValueChange={onNotificationToggle}
               disabled={isLoading}
             />
+          }
+        />
+        <SettingsItemDivider />
+
+        <SettingsItem
+          leftElement={
+            <AppIcon set="MaterialCommunityIcons" name="vibrate" size={22} />
+          }
+          translationKey={'settings.haptics' as any}
+          rightElement={
+            <AppSwitch value={hapticsEnabled} onValueChange={onHapticsToggle} />
           }
         />
         <SettingsItemDivider />

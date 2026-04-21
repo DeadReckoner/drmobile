@@ -16,6 +16,7 @@ const initialState: SettingsStateType = {
     languageName: 'English',
   },
   notificationsEnabled: false,
+  hapticsEnabled: true,
   toast: {
     isVisible: false,
     toastProps: { type: 'general' },
@@ -47,6 +48,9 @@ const settingsSlice = createSlice({
       state.toast.isVisible = true;
       state.toast.toastProps = action.payload.toastProps;
     },
+    setHapticsEnabled(state, action: PayloadAction<boolean>) {
+      state.hapticsEnabled = action.payload;
+    },
     hideToastAction(state) {
       state.toast.isVisible = false;
     },
@@ -65,8 +69,12 @@ export const {
   hideToastAction,
   setLastRoadmapListCacheDay,
   setNotificationMode,
+  setHapticsEnabled,
   resetSettingsSlice,
 } = settingsSlice.actions;
+export const selectHapticsEnabled = createAppSelector(
+  (state) => state.settings.hapticsEnabled,
+);
 
 export const selectTheme = createAppSelector((state) => state.settings.theme);
 export const selectLanguage = createAppSelector(
