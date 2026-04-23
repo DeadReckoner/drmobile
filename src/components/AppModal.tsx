@@ -3,7 +3,7 @@ import BottomSheet, {
   BottomSheetProps,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Colors } from 'react-native-ui-lib';
@@ -32,6 +32,14 @@ export const AppModal = ({
   const bottomSheetRef = useRef<BottomSheet>(null);
   const initialIndex = snapPoints.length - 1;
 
+  useEffect(() => {
+    if (visible) {
+      bottomSheetRef.current?.expand();
+    } else {
+      bottomSheetRef.current?.close();
+    }
+  }, [visible]);
+
   const handleSheetChanges = useCallback(
     (index: number) => {
       if (index === -1 && dismissible) {
@@ -54,15 +62,11 @@ export const AppModal = ({
     [dismissible],
   );
 
-  if (!visible) {
-    return null;
-  }
-
   return (
     <GestureHandlerRootView style={styles.container}>
       <BottomSheet
         ref={bottomSheetRef}
-        index={initialIndex}
+        index={visible ? initialIndex : -1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose={dismissible ? enablePanDownToClose : false}
