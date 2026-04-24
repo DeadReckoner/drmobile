@@ -38,18 +38,21 @@ const AllowedRoadmaps = () => {
         });
       }}>
       <AppView row gap-16>
-        <AppView bg-primary br30 center style={styles.iconContainer}>
+        <AppView marginT-4 bg-primary br30 center style={styles.iconContainer}>
           {roadmap.type === 'ai_generated' && (
             <AppImage
               style={[StyleSheet.absoluteFillObject]}
               source={Assets.logo.aiRoadmapBG}
             />
           )}
-          <AppIcon set="Feather" name="map" color={Colors.white} size={18} />
+          <AppIcon set="Feather" name="map" color={Colors.white} size={20} />
         </AppView>
-        <AppView flex gap-8 centerV>
+        <AppView flex gap-4 centerV>
           <AppText body1 textColor>
             {roadmap.goal}
+          </AppText>
+          <AppText xsm light textColor numberOfLines={2}>
+            {roadmap.description}
           </AppText>
         </AppView>
       </AppView>
@@ -106,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  iconContainer: { width: 36, height: 36 },
+  iconContainer: { width: 40, height: 40 },
   roadmapProgressBar: {
     height: 5,
     width: '60%',
