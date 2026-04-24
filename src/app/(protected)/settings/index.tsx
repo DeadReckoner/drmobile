@@ -88,8 +88,16 @@ const Settings = () => {
             <LineDivider marginT-0 marginV-0 />
             <AppButton bg-accent br20 onPress={() => setIsMenuVisible(true)}>
               <SettingsItem
+                textColor={Colors.textOnPrimary}
                 translationKey="settings.friends_accountability"
-                rightElement={<AppIcon set="Feather" name="users" size={22} />}
+                rightElement={
+                  <AppIcon
+                    set="Feather"
+                    name="users"
+                    size={22}
+                    color={Colors.textOnPrimary}
+                  />
+                }
               />
             </AppButton>
             <LineDivider marginT-0 marginV-0 />
