@@ -252,6 +252,8 @@
     "error_loading_friend": "Error al cargar el perfil del amigo",
     "no_roadmaps_shared": "No hay hojas de ruta compartidas",
     "no_roadmaps_shared_description": "Este usuario aún no ha compartido ninguna hoja de ruta. Las hojas de ruta compartidas aparecerán aquí.",
+    "no_habits_shared": "No hay hábitos compartidos",
+    "no_habits_shared_description": "Este usuario aún no ha compartido ningún hábito. Los hábitos compartidos aparecerán aquí.",
     "search_results": "Resultados de la búsqueda",
     "search_friends_hint": "Busca amigos por nombre o correo electrónico",
     "cancel_request": "Cancelar Solicitud",

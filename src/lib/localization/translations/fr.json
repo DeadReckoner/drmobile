@@ -252,6 +252,8 @@
     "error_loading_friend": "Erreur lors du chargement du profil de l'ami",
     "no_roadmaps_shared": "Aucune feuille de route partagée",
     "no_roadmaps_shared_description": "Cet utilisateur n'a pas encore partagé de feuille de route. Les feuilles de route partagées apparaîtront ici.",
+    "no_habits_shared": "Aucune habitude partagée",
+    "no_habits_shared_description": "Cet utilisateur n'a pas encore partagé d'habitudes. Les habitudes partagées apparaîtront ici.",
     "search_results": "Résultats de la recherche",
     "search_friends_hint": "Recherchez des amis par nom ou email",
     "cancel_request": "Annuler la Demande",

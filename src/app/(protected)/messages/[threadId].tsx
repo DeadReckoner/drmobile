@@ -40,11 +40,12 @@ const ThreadDetailsScreen = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const messages = useAppSelector(
+  const messagesData = useAppSelector(
     (state) =>
       messagesApi.endpoints.getThreadMessages.select(threadId || '')(state)
-        ?.data ?? [],
+        ?.data,
   );
+  const messages = useMemo(() => messagesData ?? [], [messagesData]);
 
   const { wsSendMessage, isConnected, retryMessage } = useChatWebSocket({
     threadId: threadId || '',
