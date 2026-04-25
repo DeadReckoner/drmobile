@@ -212,6 +212,13 @@ export const roadmapApi = api.injectEndpoints({
       query: () => '/roadmaps/anchored',
       providesTags: ['Roadmaps'],
     }),
+
+    nudgeRoadmap: builder.mutation<unknown, { roadmapId: string }>({
+      query: ({ roadmapId }) => ({
+        url: `/roadmaps/${roadmapId}/nudge`,
+        method: 'POST',
+      }),
+    }),
   }),
   overrideExisting: true,
 });

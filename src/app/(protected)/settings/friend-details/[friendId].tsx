@@ -197,7 +197,7 @@ const FriendDetails = () => {
             <AppView bg-primary br30 center style={styles.roadmapIcon}>
               <AppIcon set="Feather" name="map" color={Colors.white} />
             </AppView>
-            <AppView flex gap-8>
+            <AppView flex gap-4>
               <AppText body2 textColor numberOfLines={2}>
                 {roadmap.goal}
               </AppText>

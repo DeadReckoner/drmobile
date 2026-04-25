@@ -238,10 +238,12 @@ export const AnchorSelectionModal = ({
                       set="Ionicons"
                       name="person-add-outline"
                       size={16}
+                      color={Colors.textOnPrimary}
                     />
                     <TranslatedText
                       xsm
                       regular
+                      textOnPrimary
                       translationKey="settings.invite"
                     />
                     <AppView />
@@ -341,10 +343,15 @@ export const AnchorSelectionModal = ({
                 paddingV-12
                 onPress={handleInviteOther}>
                 <AppView row centerV spread gap-12>
-                  <AppText body1 textColor>
+                  <AppText body1 textOnPrimary>
                     {t('settings.share_via')}
                   </AppText>
-                  <AppIcon set="AntDesign" name="sharealt" size={20} />
+                  <AppIcon
+                    set="AntDesign"
+                    name="sharealt"
+                    size={20}
+                    color={Colors.textOnPrimary}
+                  />
                 </AppView>
               </AppButton>
             </AppView>

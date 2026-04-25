@@ -13,6 +13,7 @@ export const {
   useStartRoadmapMutation,
 
   useGetAnchorRoadmapsQuery,
+  useNudgeRoadmapMutation,
 } = roadmapApi;
 
 export const { useCreateAIRoadmapMutation, useGetJobStatusQuery } =

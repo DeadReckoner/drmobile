@@ -151,7 +151,7 @@ const SettingsPreferences = () => {
               <AppIcon set="Ionicons" name="language-outline" size={22} />
             }
             rightElement={
-              <AppText textColor caption key={theme}>
+              <AppText textColor xsm semibold key={theme}>
                 {settings.language.languageName}
               </AppText>
             }
