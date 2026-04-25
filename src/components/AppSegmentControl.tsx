@@ -83,8 +83,6 @@ export const AppSegmentControl = ({
   );
 };
 
-export default AppSegmentControl;
-
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,

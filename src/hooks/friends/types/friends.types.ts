@@ -1,4 +1,5 @@
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { HabitType } from '@/store/apis/types/habitsApi.types';
 
 export interface User {
   user_id: string;
@@ -44,6 +45,7 @@ export interface FriendResponse {
 export interface FriendProfileResponse {
   user: User;
   allowed_roadmaps: RoadmapType[];
+  allowed_habits: HabitType[];
   thread_id: string;
 }
 
