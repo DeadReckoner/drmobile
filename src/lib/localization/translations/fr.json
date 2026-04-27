@@ -111,7 +111,8 @@
       "completed_subtitle": "Vous avez une feuille de route IA complétée. Voulez-vous la voir ou en créer une nouvelle?",
       "reset_button": "Réinitialiser",
       "continue_button": "Continuer",
-      "view_button": "Voir la Feuille de Route"
+      "view_button": "Voir la Feuille de Route",
+      "generate_next_milestone": "Générer le Prochain Jalon"
     },
     "resuming_creation": "Reprise de la création de ta feuille de route...",
     "creation_in_progress": "Ta feuille de route est en cours de création. Cela peut prendre quelques minutes.",

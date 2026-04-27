@@ -4,6 +4,7 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { AiRoadmapCreationLoader } from '@/components/roadmap/ai-roamap/AiRoadmapCreationLoader';
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
+import { GradientBackdrop } from '@/components/roadmap/ai-roamap/GradientRoadmap';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
@@ -34,12 +35,11 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
-import { Dimensions, FlatList, Keyboard, StyleSheet } from 'react-native';
+import { FlatList, Keyboard, StyleSheet } from 'react-native';
 import {
   KeyboardAvoidingView,
   KeyboardGestureArea,
 } from 'react-native-keyboard-controller';
-import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { Colors } from 'react-native-ui-lib';
 
 const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
@@ -397,24 +397,6 @@ export const AiRoadmapCreationList = () => {
       )}
       <AppView width={10} height={24} />
     </>
-  );
-  const GradientBackdrop = () => (
-    <Svg
-      height="250"
-      width={Dimensions.get('window').width}
-      style={{
-        position: 'absolute',
-        bottom: 0,
-      }}
-      pointerEvents="none">
-      <Defs>
-        <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-          <Stop offset="0" stopColor={Colors.black} stopOpacity="0" />
-          <Stop offset="1" stopColor={Colors.black} stopOpacity="1" />
-        </LinearGradient>
-      </Defs>
-      <Rect width="100%" height="100%" fill="url(#grad)" />
-    </Svg>
   );
 
   return (
