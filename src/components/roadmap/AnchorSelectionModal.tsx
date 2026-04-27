@@ -193,6 +193,7 @@ export const AnchorSelectionModal = ({
 
   return (
     <AppModal
+      snapPoints={['50%']}
       visible={isAnchorSheetVisible}
       setIsVisible={(visible) => {
         if (!visible) setShowInviteView(false);

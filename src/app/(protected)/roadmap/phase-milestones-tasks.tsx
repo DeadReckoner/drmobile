@@ -53,7 +53,7 @@ const PhaseMilestonesTasks = () => {
   const { listRef } = useScrollToCurrentIndex(currentTaskIndex);
 
   const allTasksCompleted = useMemo(() => {
-    return tasks.every((t) => t.status === 'completed');
+    return tasks.length > 0 && tasks.every((t) => t.status === 'completed');
   }, [tasks]);
 
   const renderItem = ({ item, index }: { item: TaskType; index: number }) => {
