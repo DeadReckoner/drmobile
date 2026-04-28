@@ -180,9 +180,10 @@
       "completed_subtitle": "You have a completed AI roadmap. Do you want to view it or create a new one?",
       "reset_button": "Reset",
       "continue_button": "Continue",
-      "view_button": "View Roadmap",
-      "generate_next_milestone": "Generate Next Milestone"
+      "view_button": "View Roadmap"
     },
+    "generate_next_milestone": "Generate Next Milestone",
+    "no_active_phase_description": "No active phase found for this roadmap.",
     "resuming_creation": "Resuming your roadmap creation...",
     "creation_in_progress": "Your roadmap is being created. This may take a few minutes.",
     "creation_failed": "Failed to create roadmap. Please try again.",

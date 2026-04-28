@@ -137,7 +137,7 @@ const PhaseMilestonesTasks = () => {
                 }}>
                 <TranslatedText
                   body2
-                  translationKey="ai_roadmap.draft_dialog.generate_next_milestone"
+                  translationKey="ai_roadmap.generate_next_milestone"
                 />
                 <AppIcon
                   set="Ionicons"

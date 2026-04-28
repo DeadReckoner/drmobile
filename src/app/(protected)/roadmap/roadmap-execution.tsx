@@ -161,9 +161,14 @@ const RoadmapExecution = () => {
           pathname: '/roadmap/phase-details',
           params: { phaseId: phase.phase_id },
         });
+      } else {
+        showToast({
+          type: 'warning',
+          message: t('ai_roadmap.no_active_phase_description'),
+        });
       }
     },
-    [roadmap.type],
+    [roadmap.type, showToast, t],
   );
 
   const handlePhasePress = useCallback(

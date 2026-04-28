@@ -111,9 +111,10 @@
       "completed_subtitle": "Tienes una hoja de ruta IA completada. ¿Quieres verla o crear una nueva?",
       "reset_button": "Reiniciar",
       "continue_button": "Continuar",
-      "view_button": "Ver Hoja de Ruta",
-      "generate_next_milestone": "Generar Próximo Hito"
+      "view_button": "Ver Hoja de Ruta"
     },
+    "generate_next_milestone": "Generar Próximo Hito",
+    "no_active_phase_description": "No se encontró una fase activa para esta hoja de ruta.",
     "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
     "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
     "creation_failed": "Error al crear la hoja de ruta. Por favor, inténtalo de nuevo.",
