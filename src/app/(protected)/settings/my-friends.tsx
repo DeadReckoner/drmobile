@@ -76,7 +76,7 @@ const MyFriends = () => {
               exiting={Animations.Exit.FadeOutDown()}>
               <AppView row spread gap-8 style={styles.header}>
                 <AppButton onPress={onBackPress}>
-                  <AppIcon name="arrowleft" />
+                  <AppIcon name="arrow-left" />
                 </AppButton>
 
                 <AppView

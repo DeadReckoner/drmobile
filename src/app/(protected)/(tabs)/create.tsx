@@ -105,7 +105,7 @@ const Create = () => {
             type="task"
             titleKey="tabs.create_tab.add_new_task_or_habit"
             descriptionKey="tabs.create_tab.add_new_task_desc"
-            icon={<AppIcon name="addfile" color={Colors.white} />}
+            icon={<AppIcon name="file-add" color={Colors.white} />}
             onPress={onAddNewHabitPress}
           />
           <CreateTabListItem

@@ -165,7 +165,7 @@ const SettingsPreferences = () => {
           label: option.languageName,
           onPress: () => handleLanguageSelection(option),
           icon: settings.language.languageName === option.languageName && (
-            <AppIcon name="checkcircle" size={20} color={Colors.success} />
+            <AppIcon name="check-circle" size={20} color={Colors.success} />
           ),
         }))}
         title={t('settings.select_language')}

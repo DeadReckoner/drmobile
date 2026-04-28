@@ -270,7 +270,7 @@ const FriendDetails = () => {
               </AppView>
               {friendshipStatus === '' && (
                 <AppView>
-                  <AppIcon name="message1" />
+                  <AppIcon name="message" />
                 </AppView>
               )}
               <AppView centerH flex centerV>
@@ -357,7 +357,7 @@ const FriendDetails = () => {
       <AppScreen paddingH-0 paddingT-60>
         <HeaderWithBack marginH-16 marginT-8 />
         <AppView flex center paddingH-32>
-          <AppIcon name="exclamationcircleo" size={48} color={Colors.error} />
+          <AppIcon name="exclamation-circle" size={48} color={Colors.error} />
           <TranslatedText
             body2
             textColor
@@ -413,7 +413,7 @@ const FriendDetails = () => {
                     marginB-8
                   />
 
-                  <AppIcon name="message1" size={20} />
+                  <AppIcon name="message" size={20} />
                 </AppView>
               </AppButton>
             )}

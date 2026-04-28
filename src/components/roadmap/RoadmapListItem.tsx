@@ -64,7 +64,7 @@ export const RoadmapListItem = ({
               </AppView>
             )}
             {!isRoadmapStarted(roadmap) && (
-              <AppIcon name="clockcircleo" size={20} />
+              <AppIcon name="clock-circle" size={20} />
             )}
           </AppView>
         </AppView>

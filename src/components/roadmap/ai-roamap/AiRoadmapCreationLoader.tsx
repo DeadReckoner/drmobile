@@ -111,7 +111,7 @@ export const AiRoadmapCreationLoader = () => {
               br100
               center
               onPress={() => router.dismissTo('/')}>
-              <AppIcon name="arrowleft" color={Colors.white} size={20} />
+              <AppIcon name="arrow-left" color={Colors.white} size={20} />
               <TranslatedText
                 marginL-8
                 xsm

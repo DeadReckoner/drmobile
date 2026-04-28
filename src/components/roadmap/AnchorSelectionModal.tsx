@@ -348,7 +348,7 @@ export const AnchorSelectionModal = ({
                   </AppText>
                   <AppIcon
                     set="AntDesign"
-                    name="sharealt"
+                    name="share-alt"
                     size={20}
                     color={Colors.textOnPrimary}
                   />
