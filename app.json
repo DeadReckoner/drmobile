@@ -13,7 +13,8 @@
       "bundleIdentifier": "com.deadreckoner.deadreckoner",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSContactsUsageDescription": "Dead Reckoner needs access to your contacts to help you invite friends to use the app."
+        "NSContactsUsageDescription": "Dead Reckoner needs access to your contacts to help you invite friends to use the app.",
+        "CFBundleLocalizations": ["en", "es", "fr"]
       },
       "usesAppleSignIn": true
     },
