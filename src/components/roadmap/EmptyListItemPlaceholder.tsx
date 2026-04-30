@@ -12,7 +12,7 @@ interface EmptyListItemPlaceholderProps {
   title: TranslationKeysType;
   subtitle?: TranslationKeysType;
   btnText?: TranslationKeysType;
-  btnIcon?: JSX.Element;
+  btnIcon?: JSX.Element | null;
 }
 
 export const EmptyListItemPlaceholder = ({

@@ -77,6 +77,7 @@ const PhaseMilestones = () => {
           phaseId: params.phaseId,
           phaseLabel: params.phaseLabel,
           milestoneLabel: milestoneNumber,
+          milestone: JSON.stringify(item),
         },
       });
     };
