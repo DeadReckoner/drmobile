@@ -143,3 +143,54 @@ export interface RoadmapCreationJobStatusResponse {
     roadmap_id: string;
   };
 }
+
+// ─── Next Milestone Generation ────────────────────────────────────────────────
+
+export interface MilestoneReviewAnswers {
+  completionStatus?: string;
+  whatWorked?: string;
+  whatDidntWork?: string;
+  obstacles?: string;
+  paceFeedback?: string;
+  clarityFeedback?: string;
+  goingForward?: string;
+}
+
+export interface GenerateNextMilestoneRequest {
+  goalName: string;
+  goalDescription: string;
+  goalImportance: string;
+  targetCompletionDate: string;
+  weeklyTimeCommitment: string;
+  workFrequency: string;
+  constraints: string;
+  currentSkillLevel: string;
+  additionalContext: string;
+  review: MilestoneReviewAnswers;
+}
+
+export interface NextMilestoneJobResponse {
+  job_id: string;
+  milestone_id: string;
+  roadmap_id: string;
+  status: RoadmapGenerationStatusType;
+  message: string;
+  ws_url: string;
+}
+
+export interface MilestoneJobProgressData {
+  adjusted?: boolean;
+  rationale?: string;
+  milestone_id?: string;
+  roadmap_id?: string;
+  error?: string;
+}
+
+export interface MilestoneJobStatusFrameType {
+  type: 'status' | 'progress' | 'complete' | 'error' | 'pong';
+  job_id: string;
+  status: RoadmapGenerationStatusType | 'failed';
+  progress: number;
+  message: string;
+  data?: MilestoneJobProgressData;
+}

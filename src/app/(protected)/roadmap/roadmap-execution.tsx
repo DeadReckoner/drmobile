@@ -218,6 +218,7 @@ const RoadmapExecution = () => {
           phaseId: phase?.phase_id,
           phaseLabel,
           milestoneLabel: String(milestoneNumber),
+          milestone: JSON.stringify(milestone),
         },
       });
     },

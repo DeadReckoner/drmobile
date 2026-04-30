@@ -114,6 +114,7 @@
       "view_button": "Voir la Feuille de Route"
     },
     "generate_next_milestone": "Générer le Prochain Jalon",
+    "generate_milestone": "Générer le Jalon",
     "no_active_phase_description": "Aucune phase active trouvée pour cette feuille de route.",
     "resuming_creation": "Reprise de la création de ta feuille de route...",
     "creation_in_progress": "Ta feuille de route est en cours de création. Cela peut prendre quelques minutes.",
@@ -128,7 +129,34 @@
     "spikes": "Pics",
     "see_all_milestones": "Voir Tous les Jalons",
     "processing": "Traitement...",
-    "loading_texts": "Analyse de vos objectifs…|Identification des étapes clés…|Découpage en étapes…|Personnalisation de votre feuille de route…|Cartographie de vos points de repère…|Alignement de votre trajectoire…|Préparation de votre feuille de route…"
+    "loading_texts": "Analyse de vos objectifs…|Identification des étapes clés…|Découpage en étapes…|Personnalisation de votre feuille de route…|Cartographie de vos points de repère…|Alignement de votre trajectoire…|Préparation de votre feuille de route…",
+    "milestone_loading_texts": "Examen de vos retours sur le jalon…|Analyse de ce qu'il faut ajuster…|Jalon examiné — génération des tâches…|Sauvegarde des tâches…|Finalisation…",
+    "milestone_review": {
+      "title": "Comment ça s'est passé ?",
+      "subtitle": "Vos réponses nous aident à façonner le prochain jalon. Toutes les questions sont facultatives.",
+      "q1_label": "Comment s'est passé ce jalon ?",
+      "q1_placeholder": "Avez-vous tout complété, ou seulement certaines étapes ?",
+      "q2_label": "Qu'est-ce qui a bien fonctionné ?",
+      "q2_placeholder": "Les parties qui semblaient fluides, efficaces ou motivantes…",
+      "q3_label": "Qu'est-ce qui n'a pas fonctionné ?",
+      "q3_placeholder": "Les parties qui semblaient confuses, difficiles ou désalignées…",
+      "q4_label": "Qu'est-ce qui s'est mis en travers de votre chemin ?",
+      "q4_placeholder": "Tout obstacle, pratique ou personnel…",
+      "q5_label": "Comment avez-vous ressenti la charge de travail et le rythme ?",
+      "q5_placeholder": "Correspondait-il à votre emploi du temps et à votre énergie ?",
+      "q6_label": "Les instructions étaient-elles claires ?",
+      "q6_placeholder": "Des parties qui nécessitaient plus d'explications ?",
+      "q7_label": "Que faut-il changer pour la suite ?",
+      "q7_placeholder": "Préférences pour le prochain jalon, ou changements dans vos priorités…",
+      "submit_button": "Générer le Prochain Jalon",
+      "thank_you": "Merci pour vos retours. Génération de votre prochain jalon en cours, cela prend généralement une à deux minutes."
+    },
+    "milestone_generation": {
+      "adjusted_message": "Nous avons ajusté votre plan en fonction de vos retours",
+      "ready_title": "Le prochain jalon est prêt !",
+      "error_title": "Échec de la génération",
+      "error_description": "Quelque chose s'est mal passé. Veuillez réessayer."
+    }
   },
   "tabs": {
     "today": "Aujourd’hui",

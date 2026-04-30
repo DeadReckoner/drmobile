@@ -7,15 +7,21 @@ import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { GradientBackdrop } from '@/components/roadmap/ai-roamap/GradientRoadmap';
+import { NextMilestoneGenerationLoader } from '@/components/roadmap/ai-roamap/NextMilestoneGenerationLoader';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { LevelBadge } from '@/components/roadmap/LevelBadge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
+import { MilestoneType, TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useScrollToCurrentIndex } from '@/hooks/useScrollToCurrentItem';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import {
+  resetMilestoneGenerationAction,
+  selectIsNextMilestoneCompleted,
+  selectIsNextMilestoneGenerating,
+} from '@/store/slices/nextMilestoneGenerationSlice';
 import {
   selectMilestoneTasks,
   setSelectedTaskAction,
@@ -23,7 +29,7 @@ import {
 import { DateUtils } from '@/utils/date.utils';
 import { buildBadgeLabel, findOngoingTask } from '@/utils/roadmap.utils';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -33,9 +39,13 @@ const PhaseMilestonesTasks = () => {
     phaseId?: string;
     phaseLabel?: string;
     milestoneLabel?: string;
+    milestone?: string;
   }>();
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
+  const [currentMilestone, setCurrentMilestone] = useState<MilestoneType>(() =>
+    JSON.parse(params.milestone || '{}'),
+  );
   const roadmapId = useAppSelector(
     (state) => state.roadmapDraft.roadmap.roadmap_id,
   );
@@ -52,9 +62,27 @@ const PhaseMilestonesTasks = () => {
 
   const { listRef } = useScrollToCurrentIndex(currentTaskIndex);
 
-  const allTasksCompleted = useMemo(() => {
-    return tasks.length > 0 && tasks.every((t) => t.status === 'completed');
-  }, [tasks]);
+  const isGeneratingForThisMilestone = useAppSelector(
+    selectIsNextMilestoneGenerating(params.milestoneId),
+  );
+  const isCompletedForThisMilestone = useAppSelector(
+    selectIsNextMilestoneCompleted(params.milestoneId),
+  );
+
+  const shouldShowGenerateNextMilestone =
+    !isGeneratingForThisMilestone &&
+    currentMilestone?.status === 'in_progress' &&
+    (!tasks || tasks.length === 0);
+
+  useEffect(() => {
+    setCurrentMilestone(JSON.parse(params.milestone || '{}'));
+  }, [params.milestone]);
+
+  useEffect(() => {
+    if (isCompletedForThisMilestone) {
+      dispatch(resetMilestoneGenerationAction());
+    }
+  }, [isCompletedForThisMilestone, dispatch]);
 
   const renderItem = ({ item, index }: { item: TaskType; index: number }) => {
     const badgeLabel = buildBadgeLabel({
@@ -101,34 +129,44 @@ const PhaseMilestonesTasks = () => {
   };
 
   return (
-    <AppScreen safeArea>
-      <HeaderWithBack headerKey="common.tasks" />
-      <Divider />
+    <AppScreen safeArea paddingH-0>
       {isRoadmapRefetching && <Loader />}
-      <AppList
-        keyExtractor={(i) => i.task_id}
-        ref={listRef}
-        data={tasks}
-        ItemSeparatorComponent={() => <Divider />}
-        renderItem={renderItem}
-        ListEmptyComponent={() => (
-          <EmptyListItemPlaceholder
-            title="roadmap.no_tasks_today"
-            subtitle="roadmap.no_tasks_today_description"
-          />
-        )}
-      />
-
-      {allTasksCompleted && (
+      {isGeneratingForThisMilestone && <NextMilestoneGenerationLoader />}
+      <AppView flex paddingH-16>
+        <HeaderWithBack headerKey="common.tasks" />
+        <Divider />
+        <AppList
+          keyExtractor={(i) => i.task_id}
+          ref={listRef}
+          data={tasks}
+          ItemSeparatorComponent={() => <Divider />}
+          renderItem={renderItem}
+          ListEmptyComponent={() => (
+            <EmptyListItemPlaceholder
+              title="roadmap.no_tasks_today"
+              subtitle="roadmap.no_tasks_today_description"
+            />
+          )}
+        />
+      </AppView>
+      {shouldShowGenerateNextMilestone && (
         <AppView bg-transparent pointerEvents="box-none">
           <GradientBackdrop />
           <AppView center style={styles.bottomBannerContainer}>
-            <AppButton onPress={() => {}}>
+            <AppButton
+              onPress={() => {
+                router.navigate({
+                  pathname: '/roadmap/generate-next-milestone',
+                  params: {
+                    milestoneId: params.milestoneId,
+                  },
+                });
+              }}>
               <AppView
                 row
                 gap-8
                 center
-                bg-success
+                bg-accent
                 br100
                 padding-12
                 paddingH-24
@@ -137,7 +175,7 @@ const PhaseMilestonesTasks = () => {
                 }}>
                 <TranslatedText
                   body2
-                  translationKey="ai_roadmap.generate_next_milestone"
+                  translationKey="ai_roadmap.generate_milestone"
                 />
                 <AppIcon
                   set="Ionicons"

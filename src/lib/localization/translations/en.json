@@ -183,6 +183,7 @@
       "view_button": "View Roadmap"
     },
     "generate_next_milestone": "Generate Next Milestone",
+    "generate_milestone": "Generate Milestone",
     "no_active_phase_description": "No active phase found for this roadmap.",
     "resuming_creation": "Resuming your roadmap creation...",
     "creation_in_progress": "Your roadmap is being created. This may take a few minutes.",
@@ -197,7 +198,34 @@
     "spikes": "Spikes",
     "see_all_milestones": "See All Milestones",
     "processing": "In Process",
-    "loading_texts": "Analyzing your goals…|Identifying key milestones…|Breaking it down into steps…|Personalizing your roadmap…|Mapping out your waypoints…|Aligning your course…|Preparing your roadmap…"
+    "loading_texts": "Analyzing your goals…|Identifying key milestones…|Breaking it down into steps…|Personalizing your roadmap…|Mapping out your waypoints…|Aligning your course…|Preparing your roadmap…",
+    "milestone_loading_texts": "Reviewing your milestone feedback…|Analyzing what to adjust…|Milestone reviewed — generating tasks…|Saving tasks…|Finalizing…",
+    "milestone_review": {
+      "title": "How did it go?",
+      "subtitle": "Your answers help us shape the next milestone. All questions are optional.",
+      "q1_label": "How did things go with this milestone?",
+      "q1_placeholder": "Did you complete everything, or just some steps?",
+      "q2_label": "What worked well?",
+      "q2_placeholder": "Parts that felt smooth, effective, or motivating…",
+      "q3_label": "What didn't work?",
+      "q3_placeholder": "Parts that felt confusing, difficult, or out of alignment…",
+      "q4_label": "What got in your way?",
+      "q4_placeholder": "Any obstacles, practical or personal…",
+      "q5_label": "How did the workload and pace feel?",
+      "q5_placeholder": "Did it fit your schedule and energy?",
+      "q6_label": "Were the instructions clear?",
+      "q6_placeholder": "Any parts that needed more explanation?",
+      "q7_label": "What should change moving forward?",
+      "q7_placeholder": "Preferences for the next milestone, or changes in your priorities…",
+      "submit_button": "Generate Next Milestone",
+      "thank_you": "Thanks for the feedback. Generating your next milestone now — this usually takes a minute or two."
+    },
+    "milestone_generation": {
+      "adjusted_message": "We adjusted your plan based on your feedback",
+      "ready_title": "Next milestone is ready!",
+      "error_title": "Generation failed",
+      "error_description": "Something went wrong. Please try again."
+    }
   },
   "settings": {
     "profile": "Profile",

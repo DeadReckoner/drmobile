@@ -1,4 +1,6 @@
 import {
+  GenerateNextMilestoneRequest,
+  NextMilestoneJobResponse,
   RoadmapCreationJobResponse,
   RoadmapCreationJobStatusResponse,
   RoadmapType,
@@ -29,6 +31,16 @@ export const aiRoadmapApi = api.injectEndpoints({
           method: 'GET',
         };
       },
+    }),
+    generateNextMilestone: builder.mutation<
+      NextMilestoneJobResponse,
+      { milestoneId: string; body: GenerateNextMilestoneRequest }
+    >({
+      query: ({ milestoneId, body }) => ({
+        url: `/agent/generate-next-milestone-async/${milestoneId}`,
+        method: 'POST',
+        body,
+      }),
     }),
   }),
   overrideExisting: false,

@@ -16,8 +16,11 @@ export const {
   useNudgeRoadmapMutation,
 } = roadmapApi;
 
-export const { useCreateAIRoadmapMutation, useGetJobStatusQuery } =
-  aiRoadmapApi;
+export const {
+  useCreateAIRoadmapMutation,
+  useGetJobStatusQuery,
+  useGenerateNextMilestoneMutation,
+} = aiRoadmapApi;
 
 export const {
   useCreateAnchorRequestMutation,

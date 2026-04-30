@@ -114,6 +114,7 @@
       "view_button": "Ver Hoja de Ruta"
     },
     "generate_next_milestone": "Generar Próximo Hito",
+    "generate_milestone": "Generar Hito",
     "no_active_phase_description": "No se encontró una fase activa para esta hoja de ruta.",
     "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
     "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
@@ -128,7 +129,34 @@
     "spikes": "Picos",
     "see_all_milestones": "Ver Todos los Hitos",
     "processing": "Procesando...",
-    "loading_texts": "Analizando tus objetivos…|Identificando hitos clave…|Dividiéndolo en pasos…|Personalizando tu hoja de ruta…|Trazando tus puntos de referencia…|Alineando tu rumbo…|Preparando tu hoja de ruta…"
+    "loading_texts": "Analizando tus objetivos…|Identificando hitos clave…|Dividiéndolo en pasos…|Personalizando tu hoja de ruta…|Trazando tus puntos de referencia…|Alineando tu rumbo…|Preparando tu hoja de ruta…",
+    "milestone_loading_texts": "Revisando tus comentarios del hito…|Analizando qué ajustar…|Hito revisado — generando tareas…|Guardando tareas…|Finalizando…",
+    "milestone_review": {
+      "title": "¿Cómo te fue?",
+      "subtitle": "Tus respuestas nos ayudan a dar forma al próximo hito. Todas las preguntas son opcionales.",
+      "q1_label": "¿Cómo fue este hito?",
+      "q1_placeholder": "¿Completaste todo o solo algunos pasos?",
+      "q2_label": "¿Qué funcionó bien?",
+      "q2_placeholder": "Partes que se sintieron fluidas, efectivas o motivadoras…",
+      "q3_label": "¿Qué no funcionó?",
+      "q3_placeholder": "Partes que se sintieron confusas, difíciles o desalineadas…",
+      "q4_label": "¿Qué se interpuso en tu camino?",
+      "q4_placeholder": "Cualquier obstáculo, práctico o personal…",
+      "q5_label": "¿Cómo se sintió la carga de trabajo y el ritmo?",
+      "q5_placeholder": "¿Se ajustó a tu horario y energía?",
+      "q6_label": "¿Fueron claras las instrucciones?",
+      "q6_placeholder": "¿Alguna parte que necesitó más explicación?",
+      "q7_label": "¿Qué debería cambiar en adelante?",
+      "q7_placeholder": "Preferencias para el próximo hito, o cambios en tus prioridades…",
+      "submit_button": "Generar Próximo Hito",
+      "thank_you": "Gracias por el feedback. Generando tu próximo hito ahora, esto suele tardar uno o dos minutos."
+    },
+    "milestone_generation": {
+      "adjusted_message": "Ajustamos tu plan según tus comentarios",
+      "ready_title": "¡El próximo hito está listo!",
+      "error_title": "Error en la generación",
+      "error_description": "Algo salió mal. Por favor, inténtalo de nuevo."
+    }
   },
   "tabs": {
     "today": "Hoy",
