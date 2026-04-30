@@ -38,7 +38,7 @@ export const HeaderWithBack = ({
   return (
     <AppView row gap-16 {...containerStyles}>
       <AppButton onPress={onBackArrowPress} style={arrowStyle}>
-        <AppIcon name="arrowleft" />
+        <AppIcon name="arrow-left" />
       </AppButton>
       {(headerKey || headerText) && (
         <AppButton

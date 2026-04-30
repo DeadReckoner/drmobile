@@ -44,6 +44,7 @@ export const useNotificationListener = () => {
   const handleNotificationProcessing = useCallback(
     (content: Notifications.NotificationContent) => {
       const data = content.data;
+      if (!data) return;
       switch (data.type) {
         case 'message_new':
           handleNewMessages(data.thread_id as string, content.body || '');

@@ -25,7 +25,7 @@ export const FriendSearchBar = ({
     <AppCard style={styles.searchCard} padding-8 paddingH-16>
       <AppView row centerV spread>
         <AppView row centerV gap-12 flex>
-          <AppIcon name="search1" size={20} color={Colors.textColor} />
+          <AppIcon name="search" size={20} color={Colors.textColor} />
           <AppTextField
             paddingV-8
             color={Colors.textColor}
