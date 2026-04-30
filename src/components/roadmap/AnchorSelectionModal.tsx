@@ -317,7 +317,7 @@ export const AnchorSelectionModal = ({
             flex-1>
             <AppView row centerV>
               <AppButton marginR-8 onPress={() => setShowInviteView(false)}>
-                <AppIcon set="Ionicons" name="arrow-back" size={24} />
+                <AppIcon set="Ionicons" name="arrow-back-outline" size={24} />
               </AppButton>
             </AppView>
             <AppView flex-1 centerH gap-24 paddingT-16>
