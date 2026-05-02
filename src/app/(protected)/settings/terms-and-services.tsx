@@ -4,7 +4,7 @@ import { Loader } from '@/components/Loader';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import { File } from 'expo-file-system';
 import { useCallback, useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
@@ -30,7 +30,7 @@ const TermsAndServices = () => {
       assetMap[selectedLanguage.languageCode] || assetMap.en,
     );
     await asset.downloadAsync();
-    const rawHtml = await FileSystem.readAsStringAsync(asset.localUri!);
+    const rawHtml = await new File(asset.localUri!).text();
     const themedHtml = `
       <style>
         body {
@@ -80,24 +80,22 @@ const TermsAndServices = () => {
   };
 
   return (
-    <>
+    <AppScreen safeArea>
       {isLoading && <Loader transparent />}
-      <AppScreen safeArea>
-        <AppView paddingB-16>
-          <HeaderWithBack headerKey="settings.terms_of_service" />
-        </AppView>
-        <WebView
-          source={htmlContent ? { html: htmlContent } : undefined}
-          showsVerticalScrollIndicator={false}
-          originWhitelist={['*']}
-          onLoadEnd={onLoadEnd}
-          onError={onLoadEnd}
-          onLoadProgress={onLoadProgress}
-          onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-          style={{ backgroundColor: Colors.screenBG }}
-        />
-      </AppScreen>
-    </>
+      <AppView paddingB-16>
+        <HeaderWithBack headerKey="settings.terms_of_service" />
+      </AppView>
+      <WebView
+        source={htmlContent ? { html: htmlContent } : undefined}
+        showsVerticalScrollIndicator={false}
+        originWhitelist={['*']}
+        onLoadEnd={onLoadEnd}
+        onError={onLoadEnd}
+        onLoadProgress={onLoadProgress}
+        onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+        style={{ backgroundColor: Colors.screenBG }}
+      />
+    </AppScreen>
   );
 };
 

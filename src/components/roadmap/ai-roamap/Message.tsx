@@ -67,10 +67,11 @@ export const Message = ({
         padding-16>
         <AppText
           body2
+          light
           style={[
             styles.messageText,
             isSystem
-              ? { color: Colors.textColor, fontWeight: '300' }
+              ? { color: Colors.textColor }
               : { color: Colors.textOnPrimary },
           ]}>
           {displayContent}
@@ -101,7 +102,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   messageText: {
-    fontWeight: '300',
     lineHeight: 24,
   },
   typingIndicator: {

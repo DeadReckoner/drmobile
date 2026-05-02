@@ -19,9 +19,13 @@ import {
   selectSettings,
   setHapticsEnabled,
 } from '@/store/slices/settingsSlice';
-import { Animations } from '@/utils/animation.utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView } from 'react-native';
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { Colors } from 'react-native-ui-lib';
 
 const SUPPORTED_LANGUAGES: SupportedLanguagesType[] = [
@@ -42,6 +46,22 @@ const SettingsPreferences = () => {
   const [isLanguageDialogVisible, setIsLanguageDialogVisible] = useState(false);
   const { requestPermissions, disableNotifications, isLoading } =
     usePushNotifications();
+  const loadingHeight = useSharedValue(0);
+  const loadingOpacity = useSharedValue(0);
+  const loadingMargin = useSharedValue(0);
+
+  useEffect(() => {
+    loadingHeight.value = withTiming(isLoading ? 24 : 0, { duration: 350 });
+    loadingOpacity.value = withTiming(isLoading ? 1 : 0, { duration: 180 });
+    loadingMargin.value = withTiming(isLoading ? 16 : 0, { duration: 220 });
+  }, [isLoading, loadingHeight, loadingMargin, loadingOpacity]);
+
+  const loadingContainerStyle = useAnimatedStyle(() => ({
+    height: loadingHeight.value,
+    opacity: loadingOpacity.value,
+    marginVertical: loadingMargin.value,
+    overflow: 'hidden',
+  }));
 
   const onDarkModeToggle = () => {
     toggleTheme();
@@ -87,22 +107,14 @@ const SettingsPreferences = () => {
         <AppView paddingH-12 marginB-8>
           <HeaderWithBack headerKey="settings.settings_preferences" />
         </AppView>
-        {isLoading && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDown()}
-            exiting={Animations.Exit.FadeOut().duration(50)}
-            flex
-            center
-            gap-16
-            marginV-16
-            row>
+        <AppView reanimated style={loadingContainerStyle}>
+          <AppView flex center gap-16 row>
             <ActivityIndicator />
             <AppText xsm textColor regular>
               {t('notifications.updating_settings')}
             </AppText>
           </AppView>
-        )}
+        </AppView>
         <Divider />
         <SettingsItemDivider />
 

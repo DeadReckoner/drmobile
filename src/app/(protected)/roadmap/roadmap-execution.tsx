@@ -48,20 +48,6 @@ const RoadmapExecution = () => {
   const currentMilestone = useAppSelector(selectCurrentMilestone);
   const isCustomRoadmap = draftRoadmap?.type === 'custom_made';
   const {
-    isVisible: isHighlightVisible,
-    currentStep,
-    steps: highlightSteps,
-    totalSteps,
-    hasSeenHighlight,
-    startHighlight,
-    moveNext,
-    scrollViewRef,
-    scrollContentRef,
-    highlightFrame,
-    handleTargetLayout,
-    onScrollEnd,
-  } = useRoadmapHighlightController(isCustomRoadmap);
-  const {
     data,
     isLoading: isRoadmapLoading,
     isFetching: isRoadmapFetching,
@@ -70,6 +56,24 @@ const RoadmapExecution = () => {
     skip: !draftRoadmap?.roadmap_id,
     refetchOnMountOrArgChange: true,
   });
+  const {
+    isVisible: isHighlightVisible,
+    currentStep,
+    steps: highlightSteps,
+    totalSteps,
+    hasSeenHighlight,
+    isPendingHighlightStart,
+    startHighlight,
+    moveNext,
+    scrollViewRef,
+    scrollContentRef,
+    highlightFrame,
+    handleTargetLayout,
+    onScrollEnd,
+  } = useRoadmapHighlightController(
+    isCustomRoadmap,
+    isRoadmapLoading || isRoadmapFetching,
+  );
   const roadmap = data ?? draftRoadmap;
   const { showToast } = useToast();
   const [deleteRoadmap] = useDeleteRoadmapMutation();
@@ -84,12 +88,6 @@ const RoadmapExecution = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isAnchorModalVisible, setIsAnchorModalVisible] = useState(false);
-
-  useEffect(() => {
-    if (!hasSeenHighlight) {
-      setFirstTabSelected(false);
-    }
-  }, [hasSeenHighlight, startHighlight]);
 
   useEffect(() => {
     if (!isHighlightVisible) {
@@ -353,7 +351,12 @@ const RoadmapExecution = () => {
 
   return (
     <AppScreen safeArea>
+      {!hasSeenHighlight && isPendingHighlightStart && <Loader />}
+
       <ScrollView
+        pointerEvents={
+          !(!hasSeenHighlight && isPendingHighlightStart) ? 'auto' : 'none'
+        }
         ref={scrollViewRef}
         contentInsetAdjustmentBehavior="always"
         contentContainerStyle={[
@@ -405,7 +408,6 @@ const RoadmapExecution = () => {
                 key="overview-tab"
                 flex
                 gap-12
-                useSafeArea
                 reanimated
                 entering={Animations.Entry.FadeInDown()}
                 exiting={Animations.Exit.FadeOutDown()}>
@@ -502,5 +504,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 100,
+  },
+  highlightLoader: {
+    ...StyleSheet.absoluteFill,
+    zIndex: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

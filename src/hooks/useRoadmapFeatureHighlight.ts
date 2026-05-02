@@ -4,7 +4,7 @@ import {
   markRoadmapHighlightSeenAction,
   selectHasSeenRoadmapHighlight,
 } from '@/store/slices/onboardingSlice';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
 const TOTAL_STEPS = 5;
@@ -33,13 +33,17 @@ interface HighlightStep {
   message: string;
 }
 
-export const useRoadmapFeatureHighlight = (isCustomRoadmap?: boolean) => {
+export const useRoadmapFeatureHighlight = (
+  isCustomRoadmap?: boolean,
+  isLoading?: boolean,
+) => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const hasSeenHighlight = useAppSelector(selectHasSeenRoadmapHighlight);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [isPendingHighlightStart, setIsPendingHighlightStart] = useState(false);
 
   const targets = useRef<Record<number, View | null>>({});
 
@@ -88,9 +92,20 @@ export const useRoadmapFeatureHighlight = (isCustomRoadmap?: boolean) => {
   const startHighlight = useCallback(() => {
     if (!hasSeenHighlight) {
       setCurrentStep(0);
+      if (isLoading) {
+        setIsPendingHighlightStart(true);
+      } else {
+        setIsVisible(true);
+      }
+    }
+  }, [hasSeenHighlight, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading && isPendingHighlightStart) {
+      setIsPendingHighlightStart(false);
       setIsVisible(true);
     }
-  }, [hasSeenHighlight]);
+  }, [isLoading, isPendingHighlightStart]);
 
   const closeHighlight = useCallback(() => {
     setIsVisible(false);
@@ -112,6 +127,7 @@ export const useRoadmapFeatureHighlight = (isCustomRoadmap?: boolean) => {
     steps,
     totalSteps,
     hasSeenHighlight,
+    isPendingHighlightStart,
     setTargetRef,
     getTarget,
     startHighlight,

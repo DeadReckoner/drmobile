@@ -30,7 +30,6 @@ export const TodayTab = ({
     <AppView
       key="today-tab"
       flex
-      useSafeArea
       reanimated
       entering={Animations.Entry.FadeInDown()}
       exiting={Animations.Exit.FadeOutDown()}>

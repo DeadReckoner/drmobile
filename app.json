@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "deadreckoner",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.deadreckoner.deadreckoner",
@@ -24,7 +23,6 @@
         "backgroundColor": "#2d3741"
       },
       "package": "com.deadreckoner.deadreckoner",
-      "edgeToEdgeEnabled": true,
       "permissions": ["android.permission.READ_CONTACTS"]
     },
     "web": {
