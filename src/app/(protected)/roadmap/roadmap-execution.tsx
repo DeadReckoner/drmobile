@@ -3,7 +3,6 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { AppSegmentControl } from '@/components/AppSegmentControl';
-import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
@@ -18,16 +17,15 @@ import { TodayTab } from '@/components/roadmap/TodayTab';
 import { AppView } from '@/components/ui';
 import {
   useCreateRoadmapMutation,
-  useDeleteRoadmapMutation,
   useGetRoadmapByIdQuery,
   useStartRoadmapMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useRoadmapHighlightController } from '@/hooks/useRoadmapHighlightController';
+import { useRoadmapMenuOptions } from '@/hooks/useRoadmapMenuOptions';
 import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
-  resetDraftAction,
   selectCurrentMilestone,
   selectDraftRoadmap,
   setDraftRoadmapAction,
@@ -39,7 +37,6 @@ import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import { Colors } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
   const { t } = useLocalization();
@@ -76,17 +73,19 @@ const RoadmapExecution = () => {
   );
   const roadmap = data ?? draftRoadmap;
   const { showToast } = useToast();
-  const [deleteRoadmap] = useDeleteRoadmapMutation();
   const [createRoadmap, { isLoading: isCreatingRoadmap }] =
     useCreateRoadmapMutation();
-
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
     useStartRoadmapMutation();
 
   const [firstTabSelected, setFirstTabSelected] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const { menuOptions, menuDialogs } = useRoadmapMenuOptions({
+    roadmap,
+    onMenuClose: () => setIsMenuVisible(false),
+  });
   const [isAnchorModalVisible, setIsAnchorModalVisible] = useState(false);
 
   useEffect(() => {
@@ -280,25 +279,6 @@ const RoadmapExecution = () => {
     }
   };
 
-  const onDeleteRoadmap = async () => {
-    try {
-      await deleteRoadmap(roadmap.roadmap_id).unwrap();
-      dispatch(resetDraftAction());
-      showToast({
-        type: 'success',
-        message: t('common.deleted_successfully'),
-      });
-      router.replace('/progress');
-    } catch (error) {
-      showToast({
-        type: 'failure',
-        message: getApiErrorMessage(error),
-      });
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
-  };
-
   const milestones = getAllMilestones(roadmap);
   const hasMilestones = milestones.length > 0;
 
@@ -461,33 +441,12 @@ const RoadmapExecution = () => {
       />
 
       <AppActionSheetModal
-        options={[
-          {
-            label: t('roadmap.delete_roadmap_label'),
-            onPress: () => {
-              setIsMenuVisible(false);
-              setTimeout(() => setIsDeleteDialogOpen(true), 400);
-            },
-            icon: <AppIcon name="delete" color={Colors.error} size={20} />,
-          },
-        ]}
+        options={menuOptions}
         title={t('roadmap.options')}
         visible={isMenuVisible}
         onDismiss={() => setIsMenuVisible(false)}
       />
-      <ConfirmationDialog
-        isDialogOpen={isDeleteDialogOpen}
-        title="common.are_you_sure"
-        subtitle="common.delete_roadmap"
-        onPositivePress={onDeleteRoadmap}
-        onNegativePress={() => setIsDeleteDialogOpen(false)}
-        onDismiss={() => setIsDeleteDialogOpen(false)}
-        negativeText="common.cancel"
-        positiveText="common.remove"
-        positiveButtonIcon={
-          <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
-        }
-      />
+      {menuDialogs}
       <AnchorSelectionModal
         isLoading={isRoadmapLoading || isRoadmapFetching}
         roadmapId={roadmap?.roadmap_id || draftRoadmap?.roadmap_id}

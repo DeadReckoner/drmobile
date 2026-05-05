@@ -491,6 +491,7 @@
     },
     "restore": {
       "label": "Restaurer la Feuille de Route",
+      "description": "Remettre cette feuille de route dans votre liste active.",
       "continue_label": "Continuer où j'en étais",
       "restart_label": "Repartir d'aujourd'hui",
       "success": "Feuille de route restaurée",

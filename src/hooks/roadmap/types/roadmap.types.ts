@@ -98,6 +98,8 @@ export interface RoadmapType {
     name: string;
     email: string;
   };
+
+  archived?: boolean;
 }
 
 export interface Phase {

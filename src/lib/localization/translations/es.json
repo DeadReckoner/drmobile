@@ -491,6 +491,7 @@
     },
     "restore": {
       "label": "Restaurar Hoja de Ruta",
+      "description": "Mover esta hoja de ruta de nuevo a tu lista activa.",
       "continue_label": "Continuar donde lo dejé",
       "restart_label": "Reiniciar desde hoy",
       "success": "Hoja de ruta restaurada",

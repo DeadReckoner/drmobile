@@ -491,6 +491,7 @@
     },
     "restore": {
       "label": "Restore Roadmap",
+      "description": "Move this roadmap back to your active list.",
       "continue_label": "Continue Where I Left Off",
       "restart_label": "Restart from Today",
       "success": "Roadmap restored",
