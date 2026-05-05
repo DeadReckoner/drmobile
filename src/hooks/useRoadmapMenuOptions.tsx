@@ -259,7 +259,7 @@ export const useRoadmapMenuOptions = ({
               disabled={isLoading}
               br20
               center
-              style={styles.btnContinue}
+              style={[styles.btnContinue, { borderColor: Colors.accent }]}
               padding-12
               onPress={() => {
                 setActiveRestoreButton('continue');
@@ -293,7 +293,7 @@ export const useRoadmapMenuOptions = ({
               bg-accent
               br20
               center
-              style={[styles.btnContinue, { borderColor: Colors.accent }]}
+              style={styles.btnContinue}
               padding-12
               onPress={() => {
                 setActiveRestoreButton('restart');
@@ -335,6 +335,5 @@ const styles = StyleSheet.create({
   btnContinue: {
     width: '100%',
     borderWidth: 0.5,
-    borderColor: Colors.accent,
   },
 });
