@@ -384,6 +384,7 @@
     "mark_incomplete": "Marquer comme incomplète",
     "archived_habits": "Habitudes archivées",
     "delete_habit": "Supprimer l'habitude",
+    "delete_habit_confirmation": "Êtes-vous sûr de vouloir supprimer cette habitude ? Cette action ne peut pas être annulée.",
     "no_archived_habits": "Aucune habitude archivée",
     "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici",
     "archive": "Archiver",

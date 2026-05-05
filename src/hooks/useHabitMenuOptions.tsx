@@ -2,6 +2,7 @@ import { ActionSheetOption } from '@/components/AppActionSheetModal';
 import { AppIcon } from '@/components/AppIcon';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Loader } from '@/components/Loader';
+import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -77,7 +78,7 @@ export const useHabitMenuOptions = ({
       closeMenuThen(() => {
         setDialogConfig({
           title: 'common.are_you_sure',
-          subtitle: 'habits.delete_habit',
+          subtitle: 'habits.delete_habit_confirmation',
           positiveText: 'common.remove',
           negativeText: 'common.cancel',
           positiveButtonIcon: (
@@ -110,11 +111,9 @@ export const useHabitMenuOptions = ({
       negativeText={dialogConfig.negativeText}
       positiveButtonIcon={
         isLoading ? (
-          <Loader
-            size={14}
-            transparent
-            containerStyle={{ position: 'relative' }}
-          />
+          <AppView>
+            <Loader transparent containerStyle={{ position: 'relative' }} />
+          </AppView>
         ) : (
           dialogConfig.positiveButtonIcon
         )

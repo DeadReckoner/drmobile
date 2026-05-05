@@ -383,6 +383,7 @@
     "mark_complete": "Mark as Complete",
     "mark_incomplete": "Mark as Incomplete",
     "delete_habit": "Delete Habit",
+    "delete_habit_confirmation": "Are you sure you want to delete this habit? This action cannot be undone.",
     "archived_habits": "Archived Habits",
     "no_archived_habits": "No archived habits",
     "no_archived_habits_description": "Your archived habits will appear here",

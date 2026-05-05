@@ -383,6 +383,7 @@
     "mark_complete": "Marcar como completado",
     "mark_incomplete": "Marcar como incompleto",
     "delete_habit": "Eliminar hábito",
+    "delete_habit_confirmation": "¿Estás seguro de que deseas eliminar este hábito? Esta acción no se puede deshacer.",
     "archived_habits": "Hábitos archivados",
     "no_archived_habits": "No hay hábitos archivados",
     "no_archived_habits_description": "Tus hábitos archivados aparecerán aquí",
