@@ -389,7 +389,21 @@
     "archive": "Archive",
     "archived_roadmap": "Archived Roadmaps",
     "no_archived_roadmaps": "No archived roadmaps",
-    "no_archived_roadmaps_description": "Your archived roadmaps will appear here"
+    "no_archived_roadmaps_description": "Your archived roadmaps will appear here",
+    "restore": {
+      "label": "Restore Habit",
+      "description": "Move this habit back to your active list.",
+      "success": "Habit restored",
+      "confirm_title": "Restore Habit?",
+      "confirm_message": "This habit will be moved back to your active list.",
+      "confirm_button": "Restore"
+    },
+    "archive_confirm": {
+      "title": "Archive Habit?",
+      "message": "This habit will be removed from your active list. You can restore it later.",
+      "button": "Archive"
+    },
+    "delete_habit_label": "Delete Habit"
   },
   "common": {
     "or": "Or",
@@ -463,7 +477,25 @@
     "no_tasks_today": "No tasks available!",
     "no_tasks_today_description": "This milestone has no tasks due to incompleted previous milestones.",
     "delete_roadmap_label": "Delete Roadmap",
-    "options": "Options"
+    "options": "Options",
+    "archive": {
+      "label": "Archive Roadmap",
+      "confirm_title": "Archive Roadmap?",
+      "confirm_message": "This roadmap will be removed from your active list. You can restore it later.",
+      "confirm_button": "Archive",
+      "success": "Roadmap archived",
+      "error": "Failed to archive roadmap",
+      "badge": "Archived",
+      "section_title": "Archived Roadmaps",
+      "empty": "No archived roadmaps"
+    },
+    "restore": {
+      "label": "Restore Roadmap",
+      "continue_label": "Continue Where I Left Off",
+      "restart_label": "Restart from Today",
+      "success": "Roadmap restored",
+      "error": "Failed to restore roadmap"
+    }
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

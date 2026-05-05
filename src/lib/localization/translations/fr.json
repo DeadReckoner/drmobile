@@ -389,7 +389,21 @@
     "archive": "Archiver",
     "archived_roadmap": "Feuilles de route archivées",
     "no_archived_roadmaps": "Aucune feuille de route archivée",
-    "no_archived_roadmaps_description": "Vos feuilles de route archivées apparaîtront ici"
+    "no_archived_roadmaps_description": "Vos feuilles de route archivées apparaîtront ici",
+    "restore": {
+      "label": "Restaurer l'habitude",
+      "description": "Remettre cette habitude dans votre liste active.",
+      "success": "Habitude restaurée",
+      "confirm_title": "Restaurer l'habitude ?",
+      "confirm_message": "Cette habitude sera remise dans votre liste active.",
+      "confirm_button": "Restaurer"
+    },
+    "archive_confirm": {
+      "title": "Archiver l'habitude ?",
+      "message": "Cette habitude sera retirée de votre liste active. Vous pourrez la restaurer plus tard.",
+      "button": "Archiver"
+    },
+    "delete_habit_label": "Supprimer l'habitude"
   },
   "common": {
     "or": "Ou",
@@ -463,7 +477,25 @@
     "no_tasks_today": "Aucune tâche disponible !",
     "no_tasks_today_description": "Ce jalon n'a pas de tâches en raison de jalons précédents incomplets.",
     "delete_roadmap_label": "Supprimer la Feuille de Route",
-    "options": "Options"
+    "options": "Options",
+    "archive": {
+      "label": "Archiver la Feuille de Route",
+      "confirm_title": "Archiver la Feuille de Route ?",
+      "confirm_message": "Cette feuille de route sera retirée de votre liste active. Vous pourrez la restaurer plus tard.",
+      "confirm_button": "Archiver",
+      "success": "Feuille de route archivée",
+      "error": "Échec de l'archivage de la feuille de route",
+      "badge": "Archivée",
+      "section_title": "Feuilles de Route Archivées",
+      "empty": "Aucune feuille de route archivée"
+    },
+    "restore": {
+      "label": "Restaurer la Feuille de Route",
+      "continue_label": "Continuer où j'en étais",
+      "restart_label": "Repartir d'aujourd'hui",
+      "success": "Feuille de route restaurée",
+      "error": "Échec de la restauration de la feuille de route"
+    }
   },
   "messages": {
     "no_messages_yet": "Pas encore de messages !",
