@@ -11,7 +11,9 @@ import { AppView } from '@/components/ui';
 import {
   useArchiveRoadmapMutation,
   useDeleteRoadmapMutation,
+  usePauseRoadmapMutation,
   useRestoreRoadmapMutation,
+  useResumeRoadmapMutation,
 } from '@/hooks/roadmap';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -61,6 +63,10 @@ export const useRoadmapMenuOptions = ({
     useArchiveRoadmapMutation();
   const [restoreRoadmap, { isLoading: isRestoringRoadmap }] =
     useRestoreRoadmapMutation();
+  const [pauseRoadmap, { isLoading: isPausingRoadmap }] =
+    usePauseRoadmapMutation();
+  const [resumeRoadmap, { isLoading: isResumingRoadmap }] =
+    useResumeRoadmapMutation();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeRestoreButton, setActiveRestoreButton] = useState('');
@@ -74,7 +80,11 @@ export const useRoadmapMenuOptions = ({
   const [isRestoreSheetVisible, setIsRestoreSheetVisible] = useState(false);
 
   const isLoading =
-    isDeletingRoadmap || isArchivingRoadmap || isRestoringRoadmap;
+    isDeletingRoadmap ||
+    isArchivingRoadmap ||
+    isRestoringRoadmap ||
+    isPausingRoadmap ||
+    isResumingRoadmap;
 
   const closeDialog = useCallback(() => setIsDialogOpen(false), []);
 
@@ -173,6 +183,77 @@ export const useRoadmapMenuOptions = ({
     [closeMenuThen, handleArchive],
   );
 
+  const handlePause = useCallback(async () => {
+    try {
+      await pauseRoadmap(roadmap.roadmap_id).unwrap();
+      showToast({ type: 'success', message: t('roadmap.pause.success') });
+    } catch (error) {
+      showToast({ type: 'failure', message: getApiErrorMessage(error) });
+    } finally {
+      closeDialog();
+    }
+  }, [closeDialog, pauseRoadmap, roadmap.roadmap_id, showToast, t]);
+
+  const handleResume = useCallback(async () => {
+    try {
+      await resumeRoadmap(roadmap.roadmap_id).unwrap();
+      showToast({ type: 'success', message: t('roadmap.resume.success') });
+    } catch (error) {
+      showToast({ type: 'failure', message: getApiErrorMessage(error) });
+    } finally {
+      closeDialog();
+    }
+  }, [closeDialog, resumeRoadmap, roadmap.roadmap_id, showToast, t]);
+
+  const openResumeDialog = useCallback(
+    () =>
+      closeMenuThen(() => {
+        setDialogConfig({
+          title: 'roadmap.resume.confirm_title',
+          subtitle: 'roadmap.resume.confirm_message',
+          positiveText: 'roadmap.resume.confirm_button',
+          negativeText: 'common.cancel',
+          positiveButtonIcon: (
+            <AppIcon
+              set="MaterialCommunityIcons"
+              name="play-circle-outline"
+              color={Colors.textOnPrimary}
+              size={18}
+            />
+          ),
+          onPositivePress: handleResume,
+        });
+        setIsDialogOpen(true);
+      }),
+    [closeMenuThen, handleResume],
+  );
+
+  const openPauseDialog = useCallback(
+    () =>
+      closeMenuThen(() => {
+        setDialogConfig({
+          title: 'roadmap.pause.confirm_title',
+          subtitle: 'roadmap.pause.confirm_message',
+          positiveText: 'roadmap.pause.confirm_button',
+          negativeText: 'common.cancel',
+          positiveButtonIcon: (
+            <AppIcon
+              set="MaterialCommunityIcons"
+              name="pause-circle-outline"
+              color={Colors.textOnPrimary}
+              size={18}
+            />
+          ),
+          onPositivePress: handlePause,
+        });
+        setIsDialogOpen(true);
+      }),
+    [closeMenuThen, handlePause],
+  );
+
+  const isPaused = !!roadmap.paused_at;
+  const isStarted = !!roadmap.start_date;
+
   const menuOptions = useMemo<ActionSheetOption[]>(
     () => [
       ...(roadmap.archived
@@ -192,6 +273,38 @@ export const useRoadmapMenuOptions = ({
             } satisfies ActionSheetOption,
           ]
         : [
+            ...(isStarted && isPaused
+              ? [
+                  {
+                    label: t('roadmap.resume.label'),
+                    onPress: openResumeDialog,
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="play-circle-outline"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                ]
+              : []),
+            ...(isStarted && !isPaused
+              ? [
+                  {
+                    label: t('roadmap.pause.label'),
+                    onPress: openPauseDialog,
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="pause-circle-outline"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                ]
+              : []),
             {
               label: t('roadmap.archive.label'),
               onPress: openArchiveDialog,
@@ -211,7 +324,17 @@ export const useRoadmapMenuOptions = ({
         icon: <AppIcon name="delete" color={Colors.error} size={20} />,
       },
     ],
-    [closeMenuThen, openArchiveDialog, openDeleteDialog, roadmap.archived, t],
+    [
+      closeMenuThen,
+      isPaused,
+      isStarted,
+      openArchiveDialog,
+      openDeleteDialog,
+      openPauseDialog,
+      openResumeDialog,
+      roadmap.archived,
+      t,
+    ],
   );
 
   const menuDialogs = (

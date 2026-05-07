@@ -497,6 +497,24 @@
       "restart_label": "Restart from Today",
       "success": "Roadmap restored",
       "error": "Failed to restore roadmap"
+    },
+    "pause": {
+      "label": "Pause Roadmap",
+      "confirm_title": "Pause Roadmap?",
+      "confirm_message": "Your roadmap will be paused. Dates won't advance while it's paused.",
+      "confirm_button": "Pause",
+      "success": "Roadmap paused",
+      "error": "Failed to pause roadmap",
+      "badge": "Paused",
+      "banner": "This roadmap is paused. Resume to continue tracking."
+    },
+    "resume": {
+      "label": "Resume Roadmap",
+      "confirm_title": "Resume Roadmap?",
+      "confirm_message": "Your roadmap will resume and dates will be shifted forward by the time it was paused.",
+      "confirm_button": "Resume",
+      "success": "Roadmap resumed",
+      "error": "Failed to resume roadmap"
     }
   },
   "messages": {

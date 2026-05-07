@@ -420,6 +420,29 @@ const RoadmapDetailsPage = () => {
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring().delay(200)}
               exiting={Animations.Exit.FadeOutDown()}>
+              {!!roadmap?.paused_at && (
+                <AppView
+                  row
+                  centerV
+                  gap-8
+                  padding-12
+                  marginB-12
+                  br10
+                  style={styles.pausedBanner}>
+                  <AppIcon
+                    set="MaterialCommunityIcons"
+                    name="pause-circle-outline"
+                    color={Colors.warning}
+                    size={20}
+                  />
+                  <TranslatedText
+                    xsm
+                    flex
+                    style={{ color: Colors.warning }}
+                    translationKey="roadmap.pause.banner"
+                  />
+                </AppView>
+              )}
               {roadmap?.type === 'ai_generated' ? (
                 <AIRoadmapDetails
                   roadmap={roadmap}
@@ -534,6 +557,10 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
+  },
+  pausedBanner: {
+    borderWidth: 1,
+    borderColor: Colors.warning,
   },
 });
 

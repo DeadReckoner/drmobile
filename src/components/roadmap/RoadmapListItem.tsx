@@ -39,6 +39,18 @@ export const RoadmapListItem = ({
           <AppText body1 textColor>
             {roadmap.goal}
           </AppText>
+          {!!roadmap.paused_at && (
+            <AppView
+              br40
+              paddingH-8
+              paddingV-3
+              bg-warning
+              style={styles.pausedBadge}>
+              <AppText sm semibold textColor>
+                {t('roadmap.pause.badge')}
+              </AppText>
+            </AppView>
+          )}
           <AppText xsm textColor>
             {t('common.next_milestone')}:{' '}
             {roadmap.daysRemainingTillNextMilestone || 0} {t('common.days')}
@@ -50,11 +62,16 @@ export const RoadmapListItem = ({
                   style={[
                     styles.roadmapProgressBar,
                     { backgroundColor: Colors.outline },
+                    !!roadmap.paused_at && styles.progressBarPaused,
                   ]}
                   fullWidth={true}
                   progress={roadmap.progress}
                   progressColor={
-                    theme === 'dark' ? Colors.white : Colors.primary
+                    roadmap.paused_at
+                      ? Colors.warning
+                      : theme === 'dark'
+                        ? Colors.white
+                        : Colors.primary
                   }
                 />
 
@@ -78,5 +95,11 @@ const styles = StyleSheet.create({
   roadmapProgressBar: {
     height: 5,
     width: '60%',
+  },
+  pausedBadge: {
+    alignSelf: 'flex-start',
+  },
+  progressBarPaused: {
+    opacity: 0.6,
   },
 });

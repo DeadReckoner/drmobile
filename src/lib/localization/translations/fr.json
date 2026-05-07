@@ -497,6 +497,24 @@
       "restart_label": "Repartir d'aujourd'hui",
       "success": "Feuille de route restaurée",
       "error": "Échec de la restauration de la feuille de route"
+    },
+    "pause": {
+      "label": "Mettre en Pause la Feuille de Route",
+      "confirm_title": "Mettre en Pause ?",
+      "confirm_message": "Votre feuille de route sera mise en pause. Les dates n'avanceront pas pendant la pause.",
+      "confirm_button": "Mettre en Pause",
+      "success": "Feuille de route mise en pause",
+      "error": "Échec de la mise en pause de la feuille de route",
+      "badge": "En Pause",
+      "banner": "Cette feuille de route est en pause. Reprenez pour continuer le suivi."
+    },
+    "resume": {
+      "label": "Reprendre la Feuille de Route",
+      "confirm_title": "Reprendre la Feuille de Route ?",
+      "confirm_message": "Votre feuille de route reprendra et les dates seront décalées vers l'avant de la durée de la pause.",
+      "confirm_button": "Reprendre",
+      "success": "Feuille de route reprise.",
+      "error": "Échec de la reprise de la feuille de route"
     }
   },
   "messages": {

@@ -100,6 +100,7 @@ export interface RoadmapType {
   };
 
   archived?: boolean;
+  paused_at?: string | null; // ISO 8601 UTC timestamp; null = not paused
 }
 
 export interface Phase {

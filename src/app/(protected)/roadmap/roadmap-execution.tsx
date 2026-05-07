@@ -14,7 +14,7 @@ import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrent
 import { RoadmapHighlightOverlay } from '@/components/roadmap/RoadmapHighlightOverlay';
 import { RoadmapIntroContent } from '@/components/roadmap/RoadmapIntroContent';
 import { TodayTab } from '@/components/roadmap/TodayTab';
-import { AppView } from '@/components/ui';
+import { AppText, AppView } from '@/components/ui';
 import {
   useCreateRoadmapMutation,
   useGetRoadmapByIdQuery,
@@ -357,7 +357,14 @@ const RoadmapExecution = () => {
         <View ref={scrollContentRef} collapsable={false}>
           <AppView row spread centerV>
             <HeaderWithBack />
-            <AppView>
+            <AppView row gap-8 centerV>
+              {!!roadmap.paused_at && (
+                <AppView paddingV-4 paddingH-8 br40 bg-warning center>
+                  <AppText sm semibold textColor>
+                    {t('roadmap.pause.badge')}
+                  </AppText>
+                </AppView>
+              )}
               {!!roadmap?.roadmap_id && (
                 <AppButton onPress={() => setIsMenuVisible(true)}>
                   <AppIcon set="Feather" name="more-vertical" size={22} />
