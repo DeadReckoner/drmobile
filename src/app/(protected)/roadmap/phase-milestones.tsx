@@ -139,6 +139,7 @@ const PhaseMilestones = () => {
         keyExtractor={(i) => i.milestone_id}
         refScrollView={scrollViewRef}
         data={milestones}
+        contentContainerStyle={styles.scrollContainer}
         ItemSeparatorComponent={() => <Divider />}
         onLayout={onLayout}
         renderItem={renderMilestoneItem}
@@ -153,5 +154,8 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 6,
+  },
+  scrollContainer: {
+    paddingBottom: 120,
   },
 });
