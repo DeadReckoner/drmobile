@@ -60,7 +60,7 @@ const PhaseMilestonesTasks = () => {
     return tasks.findIndex((t) => t.task_id === currentTask.task_id);
   }, [tasks, currentTask]);
 
-  const { listRef } = useScrollToCurrentIndex(currentTaskIndex);
+  const { listRef } = useScrollToCurrentIndex(currentTaskIndex, tasks.length);
 
   const isGeneratingForThisMilestone = useAppSelector(
     selectIsNextMilestoneGenerating(params.milestoneId),
@@ -139,6 +139,7 @@ const PhaseMilestonesTasks = () => {
           keyExtractor={(i) => i.task_id}
           ref={listRef}
           data={tasks}
+          contentContainerStyle={styles.scrollContainer}
           ItemSeparatorComponent={() => <Divider />}
           renderItem={renderItem}
           ListEmptyComponent={() => (
@@ -199,5 +200,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 80,
     width: '100%',
+  },
+  scrollContainer: {
+    paddingBottom: 120,
   },
 });

@@ -54,21 +54,33 @@ export const useScrollToCurrentItem = (isActive: boolean) => {
 /**
  * Hook for LegendList (FlatList-style): auto-scrolls to the item
  * at `currentIndex` after interactions settle.
+ * Pass `totalCount` so the last item uses scrollToEnd, ensuring it is
+ * fully visible instead of only partially shown.
  */
-export const useScrollToCurrentIndex = (currentIndex: number) => {
+export const useScrollToCurrentIndex = (
+  currentIndex: number,
+  totalCount?: number,
+) => {
   const listRef = useRef<LegendListRef>(null);
 
   useLayoutEffect(() => {
     if (currentIndex < 0) return;
 
+    const isLastItem =
+      totalCount !== undefined && currentIndex === totalCount - 1;
+
     let timer: ReturnType<typeof setTimeout> | null = null;
     const cancelIdle = runWhenIdle(() => {
       timer = setTimeout(() => {
-        listRef.current?.scrollToIndex({
-          index: currentIndex,
-          viewPosition: 0.5,
-          animated: true,
-        });
+        if (isLastItem) {
+          listRef.current?.scrollToEnd({ animated: true });
+        } else {
+          listRef.current?.scrollToIndex({
+            index: currentIndex,
+            viewPosition: 0.5,
+            animated: true,
+          });
+        }
       }, 250);
     });
 
@@ -76,7 +88,7 @@ export const useScrollToCurrentIndex = (currentIndex: number) => {
       cancelIdle();
       if (timer) clearTimeout(timer);
     };
-  }, [currentIndex]);
+  }, [currentIndex, totalCount]);
 
   return { listRef } as const;
 };
