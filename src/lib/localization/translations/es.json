@@ -383,13 +383,28 @@
     "mark_complete": "Marcar como completado",
     "mark_incomplete": "Marcar como incompleto",
     "delete_habit": "Eliminar hábito",
+    "delete_habit_confirmation": "¿Estás seguro de que deseas eliminar este hábito? Esta acción no se puede deshacer.",
     "archived_habits": "Hábitos archivados",
     "no_archived_habits": "No hay hábitos archivados",
     "no_archived_habits_description": "Tus hábitos archivados aparecerán aquí",
     "archive": "Archivar",
     "archived_roadmap": "Hojas de ruta archivadas",
     "no_archived_roadmaps": "No hay hojas de ruta archivadas",
-    "no_archived_roadmaps_description": "Tus hojas de ruta archivadas aparecerán aquí"
+    "no_archived_roadmaps_description": "Tus hojas de ruta archivadas aparecerán aquí",
+    "restore": {
+      "label": "Restaurar hábito",
+      "description": "Mover este hábito de nuevo a tu lista activa.",
+      "success": "Hábito restaurado",
+      "confirm_title": "¿Restaurar hábito?",
+      "confirm_message": "Este hábito volverá a tu lista activa.",
+      "confirm_button": "Restaurar"
+    },
+    "archive_confirm": {
+      "title": "¿Archivar hábito?",
+      "message": "Este hábito se eliminará de tu lista activa. Puedes restaurarlo más tarde.",
+      "button": "Archivar"
+    },
+    "delete_habit_label": "Eliminar hábito"
   },
   "common": {
     "or": "O",
@@ -463,7 +478,44 @@
     "no_tasks_today": "¡No hay tareas disponibles!",
     "no_tasks_today_description": "Este hito no tiene tareas debido a hitos anteriores incompletos.",
     "delete_roadmap_label": "Eliminar Hoja de Ruta",
-    "options": "Opciones"
+    "options": "Opciones",
+    "archive": {
+      "label": "Archivar Hoja de Ruta",
+      "confirm_title": "¿Archivar Hoja de Ruta?",
+      "confirm_message": "Esta hoja de ruta se eliminará de tu lista activa. Puedes restaurarla más tarde.",
+      "confirm_button": "Archivar",
+      "success": "Hoja de ruta archivada",
+      "error": "Error al archivar la hoja de ruta",
+      "badge": "Archivada",
+      "section_title": "Hojas de Ruta Archivadas",
+      "empty": "No hay hojas de ruta archivadas"
+    },
+    "restore": {
+      "label": "Restaurar Hoja de Ruta",
+      "description": "Mover esta hoja de ruta de nuevo a tu lista activa.",
+      "continue_label": "Continuar donde lo dejé",
+      "restart_label": "Reiniciar desde hoy",
+      "success": "Hoja de ruta restaurada",
+      "error": "Error al restaurar la hoja de ruta"
+    },
+    "pause": {
+      "label": "Pausar Hoja de Ruta",
+      "confirm_title": "¿Pausar Hoja de Ruta?",
+      "confirm_message": "Tu hoja de ruta será pausada. Las fechas no avanzarán mientras esté pausada.",
+      "confirm_button": "Pausar",
+      "success": "Hoja de ruta pausada",
+      "error": "Error al pausar la hoja de ruta",
+      "badge": "Pausada",
+      "banner": "Esta hoja de ruta está pausada. Reanuda para continuar el seguimiento."
+    },
+    "resume": {
+      "label": "Reanudar Hoja de Ruta",
+      "confirm_title": "¿Reanudar Hoja de Ruta?",
+      "confirm_message": "Tu hoja de ruta se reanudará y las fechas se desplazarán hacia adelante por el tiempo que estuvo pausada.",
+      "confirm_button": "Reanudar",
+      "success": "Hoja de ruta reanudada.",
+      "error": "Error al reanudar la hoja de ruta"
+    }
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",

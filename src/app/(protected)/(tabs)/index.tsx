@@ -407,7 +407,7 @@ const Today = () => {
               <TranslatedText
                 body2
                 translationKey="common.completed_tasks"
-                marginV-8
+                marginV-16
               />
             )}
             {completedTasks?.length > 0 && (

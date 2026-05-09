@@ -3,7 +3,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { SlideUpTextCarousel } from '@/components/roadmap/ai-roamap/SlideUpTextCarousel';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppImage, AppText, AppView } from '@/components/ui';
+import { AppImage, AppProgressBar, AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
@@ -21,7 +21,7 @@ import {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import { Assets, Colors, ProgressBar } from 'react-native-ui-lib';
+import { Assets, Colors } from 'react-native-ui-lib';
 
 const getSystemPrompts = (t: (_key: TranslationKeysType) => string) => {
   const loadingTexts = t('ai_roadmap.loading_texts');
@@ -92,7 +92,7 @@ export const AiRoadmapCreationLoader = () => {
             <SlideUpTextCarousel items={loadingTexts} />
           </AppView>
           <AppView row center gap-4 marginT-8 marginL-24>
-            <ProgressBar
+            <AppProgressBar
               fullWidth
               progress={jobStatusData?.progress || 0}
               style={{ width: 200 }}
@@ -105,16 +105,21 @@ export const AiRoadmapCreationLoader = () => {
             <AppButton
               row
               bg-accent
-              paddingV-8
+              paddingV-10
               paddingL-16
               paddingR-20
               br100
               center
               onPress={() => router.dismissTo('/')}>
-              <AppIcon name="arrow-left" color={Colors.white} size={20} />
+              <AppIcon
+                set="Ionicons"
+                name="arrow-back"
+                color={Colors.white}
+                size={24}
+              />
               <TranslatedText
                 marginL-8
-                xsm
+                body2
                 regular
                 center
                 translationKey="common.return_to_app"

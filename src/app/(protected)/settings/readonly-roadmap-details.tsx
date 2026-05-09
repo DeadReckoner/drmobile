@@ -161,7 +161,6 @@ const ReadonlyRoadmapDetails = () => {
             <AppView
               key="today-tab"
               flex
-              useSafeArea
               reanimated
               entering={Animations.Entry.FadeInDown()}
               exiting={Animations.Exit.FadeOutDown()}>
@@ -216,7 +215,6 @@ const ReadonlyRoadmapDetails = () => {
               key="overview-tab"
               flex
               gap-12
-              useSafeArea
               reanimated
               entering={Animations.Entry.FadeInDown()}
               exiting={Animations.Exit.FadeOutDown()}>

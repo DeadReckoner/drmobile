@@ -14,6 +14,11 @@ export const {
 
   useGetAnchorRoadmapsQuery,
   useNudgeRoadmapMutation,
+
+  useArchiveRoadmapMutation,
+  useRestoreRoadmapMutation,
+  usePauseRoadmapMutation,
+  useResumeRoadmapMutation,
 } = roadmapApi;
 
 export const {

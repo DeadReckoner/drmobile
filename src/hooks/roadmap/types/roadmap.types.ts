@@ -22,6 +22,7 @@ export interface StepType {
 export interface TaskType {
   task_id: string;
   milestone_id: string;
+  roadmap_id: string;
   user_id?: string;
   title: string;
   description: string;
@@ -98,6 +99,9 @@ export interface RoadmapType {
     name: string;
     email: string;
   };
+
+  archived?: boolean;
+  paused_at?: string | null; // ISO 8601 UTC timestamp; null = not paused
 }
 
 export interface Phase {

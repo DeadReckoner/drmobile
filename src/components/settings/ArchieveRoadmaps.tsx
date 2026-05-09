@@ -1,31 +1,43 @@
+import { AppList } from '@/components/AppList';
 import { Divider } from '@/components/Divider';
-import { RoadmapList } from '@/components/roadmap/RoadmapList';
-import { AppText, AppView } from '@/components/ui';
-import { useGetRoadmapsQuery } from '@/hooks/roadmap';
+import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
+import { ArchivedRoadmapItem } from '@/components/settings/ArchivedRoadmapItem';
+import { AppView } from '@/components/ui';
+import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { LegendListRenderItemProps } from '@legendapp/list';
 import React from 'react';
 
 interface ArchieveRoadmapsProps {
+  archivedRoadmaps?: RoadmapType[];
   showProgress?: boolean;
 }
 
-const ArchieveRoadmap = ({ showProgress }: ArchieveRoadmapsProps) => {
-  const { data } = useGetRoadmapsQuery(); // TODO: get archieve roadmaps only
-  return (
-    <AppView>
-      <AppText textColor center marginV-16>
-        TODO: This should list only archieved roadmaps. Currently listing all
-        roadmaps as the API needs to be updated to support fetching archieved
-        roadmaps only.
-      </AppText>
-      <Divider />
+export const ArchieveRoadmaps = ({
+  showProgress,
+  archivedRoadmaps,
+}: ArchieveRoadmapsProps) => {
+  const renderItem = ({ item }: LegendListRenderItemProps<RoadmapType>) => (
+    <ArchivedRoadmapItem roadmap={item} showProgress={showProgress} />
+  );
 
-      <RoadmapList
-        data={data || []}
-        onItemPress={() => {}}
-        showProgress={showProgress}
+  const renderEmptyItem = () => (
+    <AppView marginT-8>
+      <EmptyListItemPlaceholder
+        title="habits.no_archived_roadmaps"
+        subtitle="habits.no_archived_roadmaps_description"
       />
     </AppView>
   );
-};
 
-export default ArchieveRoadmap;
+  return (
+    <AppList<RoadmapType>
+      data={archivedRoadmaps || []}
+      keyExtractor={(s) => s.roadmap_id}
+      renderItem={renderItem}
+      ListEmptyComponent={renderEmptyItem}
+      ItemSeparatorComponent={() => <Divider marginV-8 />}
+      scrollEnabled={false}
+      showsHorizontalScrollIndicator={false}
+    />
+  );
+};

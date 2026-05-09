@@ -383,13 +383,28 @@
     "mark_complete": "Mark as Complete",
     "mark_incomplete": "Mark as Incomplete",
     "delete_habit": "Delete Habit",
+    "delete_habit_confirmation": "Are you sure you want to delete this habit? This action cannot be undone.",
     "archived_habits": "Archived Habits",
     "no_archived_habits": "No archived habits",
     "no_archived_habits_description": "Your archived habits will appear here",
     "archive": "Archive",
     "archived_roadmap": "Archived Roadmaps",
     "no_archived_roadmaps": "No archived roadmaps",
-    "no_archived_roadmaps_description": "Your archived roadmaps will appear here"
+    "no_archived_roadmaps_description": "Your archived roadmaps will appear here",
+    "restore": {
+      "label": "Restore Habit",
+      "description": "Move this habit back to your active list.",
+      "success": "Habit restored",
+      "confirm_title": "Restore Habit?",
+      "confirm_message": "This habit will be moved back to your active list.",
+      "confirm_button": "Restore"
+    },
+    "archive_confirm": {
+      "title": "Archive Habit?",
+      "message": "This habit will be removed from your active list. You can restore it later.",
+      "button": "Archive"
+    },
+    "delete_habit_label": "Delete Habit"
   },
   "common": {
     "or": "Or",
@@ -463,7 +478,44 @@
     "no_tasks_today": "No tasks available!",
     "no_tasks_today_description": "This milestone has no tasks due to incompleted previous milestones.",
     "delete_roadmap_label": "Delete Roadmap",
-    "options": "Options"
+    "options": "Options",
+    "archive": {
+      "label": "Archive Roadmap",
+      "confirm_title": "Archive Roadmap?",
+      "confirm_message": "This roadmap will be removed from your active list. You can restore it later.",
+      "confirm_button": "Archive",
+      "success": "Roadmap archived",
+      "error": "Failed to archive roadmap",
+      "badge": "Archived",
+      "section_title": "Archived Roadmaps",
+      "empty": "No archived roadmaps"
+    },
+    "restore": {
+      "label": "Restore Roadmap",
+      "description": "Move this roadmap back to your active list.",
+      "continue_label": "Continue Where I Left Off",
+      "restart_label": "Restart from Today",
+      "success": "Roadmap restored",
+      "error": "Failed to restore roadmap"
+    },
+    "pause": {
+      "label": "Pause Roadmap",
+      "confirm_title": "Pause Roadmap?",
+      "confirm_message": "Your roadmap will be paused. Dates won't advance while it's paused.",
+      "confirm_button": "Pause",
+      "success": "Roadmap paused",
+      "error": "Failed to pause roadmap",
+      "badge": "Paused",
+      "banner": "This roadmap is paused. Resume to continue tracking."
+    },
+    "resume": {
+      "label": "Resume Roadmap",
+      "confirm_title": "Resume Roadmap?",
+      "confirm_message": "Your roadmap will resume and dates will be shifted forward by the time it was paused.",
+      "confirm_button": "Resume",
+      "success": "Roadmap resumed",
+      "error": "Failed to resume roadmap"
+    }
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

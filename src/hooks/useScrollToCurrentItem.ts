@@ -1,8 +1,33 @@
 import { LegendListRef } from '@legendapp/list';
 import { useCallback, useLayoutEffect, useRef } from 'react';
-import { Dimensions, InteractionManager, ScrollView } from 'react-native';
+import { Dimensions, ScrollView } from 'react-native';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
+
+type IdleCleanupType = () => void;
+type IdleRequestCallbackType = () => void;
+type IdleApiType = typeof globalThis & {
+  requestIdleCallback?: (_callback: IdleRequestCallbackType) => number;
+  cancelIdleCallback?: (_id: number) => void;
+};
+const idleApi = globalThis as IdleApiType;
+
+const runWhenIdle = (callback: () => void): IdleCleanupType => {
+  if (typeof idleApi.requestIdleCallback === 'function') {
+    const idleId = idleApi.requestIdleCallback(() => {
+      callback();
+    });
+
+    return () => {
+      if (typeof idleApi.cancelIdleCallback === 'function') {
+        idleApi.cancelIdleCallback(idleId);
+      }
+    };
+  }
+
+  const timeoutId = setTimeout(callback, 16);
+  return () => clearTimeout(timeoutId);
+};
 
 /**
  * Hook for ScrollView-based lists: scrolls so the "current" item
@@ -29,26 +54,41 @@ export const useScrollToCurrentItem = (isActive: boolean) => {
 /**
  * Hook for LegendList (FlatList-style): auto-scrolls to the item
  * at `currentIndex` after interactions settle.
+ * Pass `totalCount` so the last item uses scrollToEnd, ensuring it is
+ * fully visible instead of only partially shown.
  */
-export const useScrollToCurrentIndex = (currentIndex: number) => {
+export const useScrollToCurrentIndex = (
+  currentIndex: number,
+  totalCount?: number,
+) => {
   const listRef = useRef<LegendListRef>(null);
 
   useLayoutEffect(() => {
     if (currentIndex < 0) return;
 
-    const interaction = InteractionManager.runAfterInteractions(() => {
-      const timer = setTimeout(() => {
-        listRef.current?.scrollToIndex({
-          index: currentIndex,
-          viewPosition: 0.5,
-          animated: true,
-        });
+    const isLastItem =
+      totalCount !== undefined && currentIndex === totalCount - 1;
+
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const cancelIdle = runWhenIdle(() => {
+      timer = setTimeout(() => {
+        if (isLastItem) {
+          listRef.current?.scrollToEnd({ animated: true });
+        } else {
+          listRef.current?.scrollToIndex({
+            index: currentIndex,
+            viewPosition: 0.5,
+            animated: true,
+          });
+        }
       }, 250);
-      return () => clearTimeout(timer);
     });
 
-    return () => interaction.cancel();
-  }, [currentIndex]);
+    return () => {
+      cancelIdle();
+      if (timer) clearTimeout(timer);
+    };
+  }, [currentIndex, totalCount]);
 
   return { listRef } as const;
 };

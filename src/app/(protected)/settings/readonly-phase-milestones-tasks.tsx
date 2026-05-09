@@ -13,6 +13,7 @@ import { DateUtils } from '@/utils/date.utils';
 import { buildBadgeLabel, findOngoingTask } from '@/utils/roadmap.utils';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const ReadonlyPhaseMilestonesTasks = () => {
@@ -39,7 +40,7 @@ const ReadonlyPhaseMilestonesTasks = () => {
     return tasks.findIndex((task) => task.task_id === currentTask.task_id);
   }, [tasks, currentTask]);
 
-  const { listRef } = useScrollToCurrentIndex(currentTaskIndex);
+  const { listRef } = useScrollToCurrentIndex(currentTaskIndex, tasks.length);
 
   const renderItem = ({ item, index }: { item: TaskType; index: number }) => {
     const badgeLabel = buildBadgeLabel({
@@ -92,6 +93,7 @@ const ReadonlyPhaseMilestonesTasks = () => {
         keyExtractor={(i) => i.task_id}
         ref={listRef}
         data={tasks}
+        contentContainerStyle={styles.scrollContainer}
         ItemSeparatorComponent={() => <Divider />}
         renderItem={renderItem}
         ListEmptyComponent={() => (
@@ -106,3 +108,9 @@ const ReadonlyPhaseMilestonesTasks = () => {
 };
 
 export default ReadonlyPhaseMilestonesTasks;
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    paddingBottom: 120,
+  },
+});

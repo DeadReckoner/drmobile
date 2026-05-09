@@ -2,7 +2,7 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { messagesApi } from '@/store/apis/messagesApi';
 import { WebSocketMessageType } from '@/store/apis/types/messagesApi.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 interface UseChatWebSocketOptions {
   threadId: string;
@@ -21,10 +21,18 @@ export const useChatWebSocket = ({
 }: UseChatWebSocketOptions): UseChatWebSocketReturn => {
   const dispatch = useAppDispatch();
 
-  const messages = useAppSelector(
-    (state) =>
-      messagesApi.endpoints.getThreadMessages.select(threadId)(state)?.data ??
-      [],
+  const selectThreadMessages = useMemo(
+    () => messagesApi.endpoints.getThreadMessages.select(threadId),
+    [threadId],
+  );
+
+  const threadMessagesData = useAppSelector(
+    (state) => selectThreadMessages(state)?.data,
+  );
+
+  const messages = useMemo(
+    () => threadMessagesData ?? [],
+    [threadMessagesData],
   );
 
   const handleWebSocketMessage = useCallback(
@@ -38,7 +46,6 @@ export const useChatWebSocket = ({
           (draft) => {
             if (!draft) return;
 
-            // Find optimistic message to replace
             const optimisticIndex = draft.findIndex(
               (msg) =>
                 msg.message_id.startsWith('temp-') &&
@@ -48,9 +55,6 @@ export const useChatWebSocket = ({
             );
 
             if (optimisticIndex !== -1) {
-              // Check if the confirmed message already exists elsewhere
-              // (can happen when the API response arrives between the
-              //  optimistic insert and the WS confirmation)
               const alreadyExists = draft.some(
                 (msg, idx) =>
                   idx !== optimisticIndex &&
@@ -58,11 +62,8 @@ export const useChatWebSocket = ({
               );
 
               if (alreadyExists) {
-                // The real message is already in the list (from merge),
-                // so just remove the optimistic placeholder.
                 draft.splice(optimisticIndex, 1);
               } else {
-                // Replace optimistic message with the confirmed one
                 draft[optimisticIndex] = {
                   ...message,
                   updated_at: message.created_at,
