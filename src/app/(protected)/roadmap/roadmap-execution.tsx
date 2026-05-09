@@ -32,7 +32,6 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
-import { DateUtils } from '@/utils/date.utils';
 import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -107,14 +106,6 @@ const RoadmapExecution = () => {
             3: <BadgeInfoContent />,
           },
     [isCustomRoadmap],
-  );
-
-  const todayTasks = useMemo(
-    () =>
-      (currentMilestone?.tasks || []).filter(
-        (task) => task.date && DateUtils.isSameDate(task.date, new Date()),
-      ),
-    [currentMilestone],
   );
 
   useEffect(() => {
@@ -386,7 +377,6 @@ const RoadmapExecution = () => {
                 <TodayTab
                   roadmap={roadmap}
                   currentMilestone={currentMilestone}
-                  todayTasks={todayTasks}
                   onRoadmapOverviewCardPress={onRoadmapOverviewCardPress}
                 />
               </>

@@ -173,6 +173,7 @@ const roadmapDraftSlice = createSlice({
         steps: [],
         day: 0,
         status: 'not_started',
+        roadmap_id: state.roadmap.roadmap_id,
       });
     },
 

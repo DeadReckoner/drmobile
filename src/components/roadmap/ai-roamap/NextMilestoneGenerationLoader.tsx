@@ -96,37 +96,39 @@ export const NextMilestoneGenerationLoader = () => {
           <AppView marginT-40>
             <SlideUpTextCarousel items={loadingTexts} />
           </AppView>
-          <AppView row center gap-4 marginT-8 marginL-24>
+          <AppView row center gap-16 marginT-8 marginL-24>
             <AppProgressBar
               fullWidth
               progress={jobStatusData?.progress || 0}
-              style={{ width: 200 }}
+              style={{ width: '50%' }}
             />
-            <AppText xsm textColor center style={{ width: 40 }}>
+            <AppText xsm textColor center>
               {jobStatusData?.progress || 0}%
             </AppText>
           </AppView>
           {!!adjustedRationale && (
             <AppView
-              marginT-16
-              paddingH-24
-              paddingV-12
+              bg-primary
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              marginT-20
               br20
               style={styles.rationaleContainer}>
-              <AppView row centerV gap-6 marginB-4>
+              <AppView row centerV gap-6 marginB-4 marginR-24>
                 <AppIcon
                   set="Ionicons"
                   name="bulb-outline"
                   size={16}
-                  color={Colors.accent}
+                  color={Colors.textOnPrimary}
                 />
                 <TranslatedText
                   xsm
-                  accent
+                  regular
+                  textOnPrimary
                   translationKey="ai_roadmap.milestone_generation.adjusted_message"
                 />
               </AppView>
-              <AppText xsm textColor>
+              <AppText xsm textColor marginL-20>
                 {adjustedRationale}
               </AppText>
             </AppView>
@@ -135,16 +137,21 @@ export const NextMilestoneGenerationLoader = () => {
             <AppButton
               row
               bg-accent
-              paddingV-8
+              paddingV-10
               paddingL-16
               paddingR-20
               br100
               center
               onPress={() => router.back()}>
-              <AppIcon name="arrow-left" color={Colors.white} size={20} />
+              <AppIcon
+                set="Ionicons"
+                name="arrow-back"
+                color={Colors.white}
+                size={24}
+              />
               <TranslatedText
                 marginL-8
-                xsm
+                body2
                 regular
                 center
                 translationKey="common.return_to_app"
@@ -171,7 +178,7 @@ const styles = StyleSheet.create({
     height: 80,
   },
   rationaleContainer: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    maxWidth: 280,
+    maxWidth: '80%',
+    padding: 16,
   },
 });
