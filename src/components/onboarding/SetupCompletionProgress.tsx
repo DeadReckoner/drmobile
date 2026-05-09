@@ -80,7 +80,7 @@ export const SetupCompletionProgress = ({
             animatedProps={animatedCircleProps}
           />
         </Svg>
-        <AppView center style={StyleSheet.absoluteFillObject}>
+        <AppView center style={StyleSheet.absoluteFill}>
           <AppText xsm semibold textColor>
             {percentage}%
           </AppText>

@@ -27,7 +27,7 @@ export const CreateTabListItem = ({
         <AppView bg-accent br30 center style={styles.iconContainer}>
           {type === 'ai' && (
             <AppImage
-              style={[StyleSheet.absoluteFillObject]}
+              style={[StyleSheet.absoluteFill]}
               source={Assets.logo.aiRoadmapBG}
             />
           )}

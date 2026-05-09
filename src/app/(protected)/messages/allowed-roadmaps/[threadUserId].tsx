@@ -46,7 +46,7 @@ const AllowedRoadmaps = () => {
         <AppView marginT-4 bg-primary br30 center style={styles.iconContainer}>
           {roadmap.type === 'ai_generated' && (
             <AppImage
-              style={[StyleSheet.absoluteFillObject]}
+              style={[StyleSheet.absoluteFill]}
               source={Assets.logo.aiRoadmapBG}
             />
           )}
