@@ -164,7 +164,6 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
     return { ...roadmap, milestones: roadmap.milestones || [] };
   }
 
-  // Support both new status field and legacy reached field
   const activeMilestone = milestones.find(
     (m) => m.status !== 'completed' && !m.reached,
   );
@@ -176,7 +175,6 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
     };
   }
   const allTasks = milestones.flatMap((m) => m.tasks);
-  // Support both new status field and legacy completed field
   const completedTasks = allTasks.filter(
     (t) => t.status === 'completed' || t.completed,
   );

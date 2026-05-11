@@ -462,14 +462,12 @@ export const selectPhaseMilestones = (phaseId: string) =>
 export const selectMilestoneTasks = (milestoneId: string) =>
   createAppSelector((state) => {
     const roadmap = state.roadmapDraft.roadmap;
-    // Search in phases first
     for (const phase of roadmap.phases ?? []) {
       const milestone = (phase.milestones ?? []).find(
         (m) => m.milestone_id === milestoneId,
       );
       if (milestone) return milestone.tasks ?? [];
     }
-    // Fallback to top-level milestones
     const milestone = (roadmap.milestones ?? []).find(
       (m) => m.milestone_id === milestoneId,
     );

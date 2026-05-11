@@ -51,7 +51,6 @@ export interface MilestoneType {
   tasks: TaskType[];
   date?: string;
 
-  // Strategic fields (from former MacroMilestone)
   phase_id?: string;
   acceptance_test?: string;
   duration_days_min?: number;
@@ -59,7 +58,6 @@ export interface MilestoneType {
   order_index?: number;
   resources_forecast?: string; // JSON stringified object
 
-  // Related data (from former MacroMilestone)
   spikes?: Spike[];
   risks?: Risk[];
 
