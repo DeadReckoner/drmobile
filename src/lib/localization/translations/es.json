@@ -515,6 +515,14 @@
       "confirm_button": "Reanudar",
       "success": "Hoja de ruta reanudada.",
       "error": "Error al reanudar la hoja de ruta"
+    },
+    "restart": {
+      "label": "Reiniciar Hoja de Ruta",
+      "confirm_title": "¿Reiniciar Hoja de Ruta?",
+      "confirm_message": "Todo el progreso se reiniciará y las fechas se recalcularán desde hoy. Esto no se puede deshacer.",
+      "confirm_button": "Reiniciar",
+      "success": "Hoja de ruta reiniciada desde hoy",
+      "error": "Error al reiniciar la hoja de ruta"
     }
   },
   "messages": {

@@ -42,7 +42,10 @@ export const ConfirmationDialog = ({
   styles: propStyles,
 }: ConfirmationDialogProps) => {
   return (
-    <AppDialog visible={isDialogOpen} onDismiss={onDismiss}>
+    <AppDialog
+      ignoreBackgroundPress={disabled}
+      visible={isDialogOpen}
+      onDismiss={onDismiss}>
       <AppCard padding-20 bg-cardBG>
         <TranslatedText subtitle2 textColor translationKey={title} />
         <Divider margin-4 />

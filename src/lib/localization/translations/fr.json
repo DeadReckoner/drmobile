@@ -515,6 +515,14 @@
       "confirm_button": "Reprendre",
       "success": "Feuille de route reprise.",
       "error": "Échec de la reprise de la feuille de route"
+    },
+    "restart": {
+      "label": "Redémarrer la Feuille de Route",
+      "confirm_title": "Redémarrer la Feuille de Route ?",
+      "confirm_message": "Toute la progression sera réinitialisée et les dates seront recalculées à partir d'aujourd'hui. Cette action est irréversible.",
+      "confirm_button": "Redémarrer",
+      "success": "Feuille de route redémarrée depuis aujourd'hui",
+      "error": "Échec du redémarrage de la feuille de route"
     }
   },
   "messages": {

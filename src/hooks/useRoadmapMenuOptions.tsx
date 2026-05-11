@@ -12,6 +12,7 @@ import {
   useArchiveRoadmapMutation,
   useDeleteRoadmapMutation,
   usePauseRoadmapMutation,
+  useRestartRoadmapMutation,
   useRestoreRoadmapMutation,
   useResumeRoadmapMutation,
 } from '@/hooks/roadmap';
@@ -67,6 +68,8 @@ export const useRoadmapMenuOptions = ({
     usePauseRoadmapMutation();
   const [resumeRoadmap, { isLoading: isResumingRoadmap }] =
     useResumeRoadmapMutation();
+  const [restartRoadmap, { isLoading: isRestartingRoadmap }] =
+    useRestartRoadmapMutation();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeRestoreButton, setActiveRestoreButton] = useState('');
@@ -84,7 +87,8 @@ export const useRoadmapMenuOptions = ({
     isArchivingRoadmap ||
     isRestoringRoadmap ||
     isPausingRoadmap ||
-    isResumingRoadmap;
+    isResumingRoadmap ||
+    isRestartingRoadmap;
 
   const closeDialog = useCallback(() => setIsDialogOpen(false), []);
 
@@ -251,6 +255,40 @@ export const useRoadmapMenuOptions = ({
     [closeMenuThen, handlePause],
   );
 
+  const handleRestart = useCallback(async () => {
+    try {
+      await restartRoadmap(roadmap.roadmap_id).unwrap();
+      showToast({ type: 'success', message: t('roadmap.restart.success') });
+    } catch (error) {
+      showToast({ type: 'failure', message: getApiErrorMessage(error) });
+    } finally {
+      closeDialog();
+    }
+  }, [closeDialog, restartRoadmap, roadmap.roadmap_id, showToast, t]);
+
+  const openRestartDialog = useCallback(
+    () =>
+      closeMenuThen(() => {
+        setDialogConfig({
+          title: 'roadmap.restart.confirm_title',
+          subtitle: 'roadmap.restart.confirm_message',
+          positiveText: 'roadmap.restart.confirm_button',
+          negativeText: 'common.cancel',
+          positiveButtonIcon: (
+            <AppIcon
+              set="MaterialCommunityIcons"
+              name="restart"
+              color={Colors.textOnPrimary}
+              size={18}
+            />
+          ),
+          onPositivePress: handleRestart,
+        });
+        setIsDialogOpen(true);
+      }),
+    [closeMenuThen, handleRestart],
+  );
+
   const isPaused = !!roadmap.paused_at;
   const isStarted = !!roadmap.start_date;
 
@@ -305,6 +343,22 @@ export const useRoadmapMenuOptions = ({
                   } satisfies ActionSheetOption,
                 ]
               : []),
+            ...(isStarted
+              ? [
+                  {
+                    label: t('roadmap.restart.label'),
+                    onPress: openRestartDialog,
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="restart"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                ]
+              : []),
             {
               label: t('roadmap.archive.label'),
               onPress: openArchiveDialog,
@@ -331,6 +385,7 @@ export const useRoadmapMenuOptions = ({
       openArchiveDialog,
       openDeleteDialog,
       openPauseDialog,
+      openRestartDialog,
       openResumeDialog,
       roadmap.archived,
       t,

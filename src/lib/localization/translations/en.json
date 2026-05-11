@@ -515,6 +515,14 @@
       "confirm_button": "Resume",
       "success": "Roadmap resumed",
       "error": "Failed to resume roadmap"
+    },
+    "restart": {
+      "label": "Restart Roadmap",
+      "confirm_title": "Restart Roadmap?",
+      "confirm_message": "All progress will be reset and dates will recalculate from today. This cannot be undone.",
+      "confirm_button": "Restart",
+      "success": "Roadmap restarted from today",
+      "error": "Failed to restart roadmap"
     }
   },
   "messages": {

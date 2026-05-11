@@ -249,6 +249,34 @@ const onResumeRoadmapQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+const onRestartRoadmapQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  string,
+  BaseQueryFunctionType
+> = async (roadmap_id, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = data;
+        }
+      }),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        Object.assign(draft, data);
+      }),
+    );
+
+    dispatch(setDraftRoadmapAction(data));
+    dispatch(roadmapApi.util.invalidateTags(['Tasks']));
+  } catch {}
+};
+
 export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<
@@ -386,6 +414,14 @@ export const roadmapApi = api.injectEndpoints({
         method: 'POST',
       }),
       onQueryStarted: onResumeRoadmapQueryStarted,
+    }),
+
+    restartRoadmap: builder.mutation<RoadmapType, string>({
+      query: (roadmap_id) => ({
+        url: `/roadmaps/${roadmap_id}/restart`,
+        method: 'PUT',
+      }),
+      onQueryStarted: onRestartRoadmapQueryStarted,
     }),
   }),
   overrideExisting: true,

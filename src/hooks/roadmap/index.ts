@@ -19,6 +19,7 @@ export const {
   useRestoreRoadmapMutation,
   usePauseRoadmapMutation,
   useResumeRoadmapMutation,
+  useRestartRoadmapMutation,
 } = roadmapApi;
 
 export const {
