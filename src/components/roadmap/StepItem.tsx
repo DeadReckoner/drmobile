@@ -154,13 +154,22 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
 
   const currentStatus = getStepStatus(step);
 
-  const sheetOptions = [
-    {
-      label: t('step.skip'),
-      icon: <AppIcon set="Feather" name="minus-circle" size={18} />,
-      onPress: () => handleUpdateStatus('skipped'),
-    },
-  ];
+  const sheetOptions =
+    currentStatus === 'skipped' || currentStatus === 'completed'
+      ? [
+          {
+            label: t('step.mark_incomplete'),
+            icon: <AppIcon set="Feather" name="rotate-ccw" size={18} />,
+            onPress: () => handleUpdateStatus('incomplete'),
+          },
+        ]
+      : [
+          {
+            label: t('step.skip'),
+            icon: <AppIcon set="Feather" name="minus-circle" size={18} />,
+            onPress: () => handleUpdateStatus('skipped'),
+          },
+        ];
 
   return (
     <>
@@ -171,11 +180,19 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
               <ActivityIndicator />
             </AppView>
           ) : (
-            <AppCheckbox
-              disabled={mode === 'readonly'}
-              value={step.completed}
-              onValueChange={handleCompleteStep}
-            />
+            <>
+              {step.status === 'skipped' ? (
+                <AppView width={24} height={24} center bg-primary br10>
+                  <AppView br20 height={2} width={'60%'} bg-textColor />
+                </AppView>
+              ) : (
+                <AppCheckbox
+                  disabled={mode === 'readonly'}
+                  value={step.status === 'completed' || step.completed}
+                  onValueChange={handleCompleteStep}
+                />
+              )}
+            </>
           )}
         </AppView>
         <AppButton
