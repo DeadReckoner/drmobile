@@ -11,12 +11,17 @@ export type RoadmapExecutionStatusType =
   | 'completed'
   | 'overdue';
 
+export type StepStatusType = 'incomplete' | 'completed' | 'skipped';
+
 export interface StepType {
   step_id: string;
   task_id: string;
   description: string;
+
+  /** @deprecated Use `status` instead. Will be removed in a future API version. */
   completed: boolean;
   number: number;
+  status?: StepStatusType;
 }
 
 export interface TaskType {

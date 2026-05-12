@@ -544,6 +544,13 @@
       "error": "Failed to realign dates"
     }
   },
+  "step": {
+    "mark_complete": "Mark as Complete",
+    "mark_incomplete": "Mark as Incomplete",
+    "skip": "Skip",
+    "status_options": "Step Options",
+    "skipped_label": "Skipped"
+  },
   "messages": {
     "no_messages_yet": "No messages yet!",
     "no_messages_description": "Start a conversation to connect with your friends.",

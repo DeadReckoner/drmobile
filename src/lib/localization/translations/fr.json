@@ -544,6 +544,13 @@
       "error": "Échec du réalignement des dates"
     }
   },
+  "step": {
+    "mark_complete": "Marquer comme Terminé",
+    "mark_incomplete": "Marquer comme Incomplet",
+    "skip": "Ignorer",
+    "status_options": "Options de l'Étape",
+    "skipped_label": "Ignoré"
+  },
   "messages": {
     "no_messages_yet": "Pas encore de messages !",
     "no_messages_description": "Démarrez une conversation pour vous connecter avec vos amis.",

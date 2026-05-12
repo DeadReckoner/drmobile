@@ -239,6 +239,7 @@ const roadmapDraftSlice = createSlice({
       } else {
         step.completed = action.payload.completed;
       }
+      step.status = action.payload.status ?? step.status;
       step.number = action.payload.number ?? step.number;
       task.status = deriveTaskStatus(task);
       const milestone = findSelectedMilestone(state);
@@ -345,9 +346,13 @@ const roadmapDraftSlice = createSlice({
 
     updateStepByIdAction(
       state,
-      action: PayloadAction<Pick<StepType, 'step_id' | 'completed'>>,
+      action: PayloadAction<
+        Pick<StepType, 'step_id' | 'completed'> & {
+          status?: StepType['status'];
+        }
+      >,
     ) {
-      const { step_id, completed } = action.payload;
+      const { step_id, completed, status } = action.payload;
 
       // Helper that patches the step inside a milestones array
       const patchInMilestones = (milestones: MilestoneType[]) => {
@@ -356,6 +361,7 @@ const roadmapDraftSlice = createSlice({
             const step = task.steps?.find((s) => s.step_id === step_id);
             if (step) {
               step.completed = completed;
+              if (status !== undefined) step.status = status;
               task.status = deriveTaskStatus(task);
               milestone.status = deriveMilestoneStatus(milestone);
               return true;

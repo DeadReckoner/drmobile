@@ -544,6 +544,13 @@
       "error": "Error al realinear las fechas"
     }
   },
+  "step": {
+    "mark_complete": "Marcar como Completado",
+    "mark_incomplete": "Marcar como Incompleto",
+    "skip": "Omitir",
+    "status_options": "Opciones del Paso",
+    "skipped_label": "Omitido"
+  },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",
     "no_messages_description": "Inicia una conversación para conectarte con tus amigos.",
