@@ -523,6 +523,25 @@
       "confirm_button": "Redémarrer",
       "success": "Feuille de route redémarrée depuis aujourd'hui",
       "error": "Échec du redémarrage de la feuille de route"
+    },
+    "shift_dates": {
+      "menu_label": "Décaler les Dates",
+      "title": "Décaler le Calendrier",
+      "description": "Déplacez toutes les dates de la feuille de route vers l'avant ou vers l'arrière d'un nombre de jours défini.",
+      "input_label": "Nombre de Jours\n- positif = en avant \n- négatif = en arrière",
+      "invalid_input": "Veuillez entrer un nombre de jours différent de zéro",
+      "confirm_button": "Décaler",
+      "success": "Calendrier décalé avec succès",
+      "error": "Échec du décalage des dates"
+    },
+    "realign_dates": {
+      "menu_label": "Réaligner les Dates",
+      "title": "Réaligner les Dates",
+      "description": "Déplacez toutes les tâches incomplètes pour commencer à partir d'aujourd'hui, en conservant votre historique complété intact.",
+      "offset_label": "Dans combien de jours commencer ? (0 = aujourd'hui)",
+      "confirm_button": "Réaligner",
+      "success": "Dates réalignées à partir d'aujourd'hui",
+      "error": "Échec du réalignement des dates"
     }
   },
   "messages": {

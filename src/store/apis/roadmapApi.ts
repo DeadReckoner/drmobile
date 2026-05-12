@@ -1,6 +1,9 @@
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
-import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
+import {
+  BaseQueryFunctionType,
+  RealignRoadmapResponse,
+} from '@/store/apis/types/api.types';
 import { setSetupStepAction } from '@/store/slices/onboardingSlice';
 import {
   resetDraftAction,
@@ -277,6 +280,61 @@ const onRestartRoadmapQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+const onShiftRoadmapDatesQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  { roadmap_id: string; days: number },
+  BaseQueryFunctionType
+> = async ({ roadmap_id }, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = data;
+        }
+      }),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        Object.assign(draft, data);
+      }),
+    );
+
+    dispatch(setDraftRoadmapAction(data));
+  } catch {}
+};
+
+const onRealignRoadmapDatesQueryStarted: TypedMutationOnQueryStarted<
+  RealignRoadmapResponse,
+  { roadmap_id: string; offset_days?: number },
+  BaseQueryFunctionType
+> = async ({ roadmap_id }, { dispatch, queryFulfilled }) => {
+  try {
+    const response = await queryFulfilled;
+    const roadmap = response.data.roadmap;
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = roadmap;
+        }
+      }),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        Object.assign(draft, roadmap);
+      }),
+    );
+
+    dispatch(setDraftRoadmapAction(roadmap));
+  } catch {}
+};
+
 export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<
@@ -422,6 +480,30 @@ export const roadmapApi = api.injectEndpoints({
         method: 'PUT',
       }),
       onQueryStarted: onRestartRoadmapQueryStarted,
+    }),
+
+    shiftRoadmapDates: builder.mutation<
+      RoadmapType,
+      { roadmap_id: string; days: number }
+    >({
+      query: ({ roadmap_id, days }) => ({
+        url: `/roadmaps/${roadmap_id}/shift`,
+        method: 'POST',
+        body: { days },
+      }),
+      onQueryStarted: onShiftRoadmapDatesQueryStarted,
+    }),
+
+    realignRoadmapDates: builder.mutation<
+      RealignRoadmapResponse,
+      { roadmap_id: string; offset_days?: number }
+    >({
+      query: ({ roadmap_id, offset_days }) => ({
+        url: `/roadmaps/${roadmap_id}/realign`,
+        method: 'POST',
+        body: { offset_days: offset_days ?? 0 },
+      }),
+      onQueryStarted: onRealignRoadmapDatesQueryStarted,
     }),
   }),
   overrideExisting: true,

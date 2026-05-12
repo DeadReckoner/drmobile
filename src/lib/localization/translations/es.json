@@ -523,6 +523,25 @@
       "confirm_button": "Reiniciar",
       "success": "Hoja de ruta reiniciada desde hoy",
       "error": "Error al reiniciar la hoja de ruta"
+    },
+    "shift_dates": {
+      "menu_label": "Desplazar Fechas",
+      "title": "Desplazar Cronograma",
+      "description": "Mueve todas las fechas de la hoja de ruta hacia adelante o hacia atrás un número determinado de días.",
+      "input_label": "Número de Días\n- positivo = adelante \n- negativo = atrás",
+      "invalid_input": "Por favor ingresa un número de días distinto de cero",
+      "confirm_button": "Desplazar",
+      "success": "Cronograma desplazado exitosamente",
+      "error": "Error al desplazar las fechas"
+    },
+    "realign_dates": {
+      "menu_label": "Realinear Fechas",
+      "title": "Realinear Fechas",
+      "description": "Mueve todas las tareas incompletas para comenzar desde hoy, manteniendo tu historial completado intacto.",
+      "offset_label": "¿En cuántos días comenzar? (0 = hoy)",
+      "confirm_button": "Realinear",
+      "success": "Fechas realineadas desde hoy",
+      "error": "Error al realinear las fechas"
     }
   },
   "messages": {

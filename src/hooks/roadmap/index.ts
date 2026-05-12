@@ -20,6 +20,8 @@ export const {
   usePauseRoadmapMutation,
   useResumeRoadmapMutation,
   useRestartRoadmapMutation,
+  useShiftRoadmapDatesMutation,
+  useRealignRoadmapDatesMutation,
 } = roadmapApi;
 
 export const {

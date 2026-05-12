@@ -523,6 +523,25 @@
       "confirm_button": "Restart",
       "success": "Roadmap restarted from today",
       "error": "Failed to restart roadmap"
+    },
+    "shift_dates": {
+      "menu_label": "Shift Dates",
+      "title": "Shift Timeline",
+      "description": "Move all roadmap dates forward or backward by a set number of days.",
+      "input_label": "Number of Days\n- positive = forward \n- negative = backward",
+      "invalid_input": "Please enter a non-zero number of days",
+      "confirm_button": "Shift",
+      "success": "Timeline shifted successfully",
+      "error": "Failed to shift dates"
+    },
+    "realign_dates": {
+      "menu_label": "Realign Dates",
+      "title": "Realign Dates",
+      "description": "Move all incomplete tasks to start from today, keeping your completed history intact.",
+      "offset_label": "Start in how many days? (0 = today)",
+      "confirm_button": "Realign",
+      "success": "Dates realigned from today",
+      "error": "Failed to realign dates"
     }
   },
   "messages": {

@@ -6,6 +6,8 @@ import { AppIcon } from '@/components/AppIcon';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
+import { RealignDatesModal } from '@/components/roadmap/RealignDatesModal';
+import { ShiftDatesModal } from '@/components/roadmap/ShiftDatesModal';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import {
@@ -81,6 +83,10 @@ export const useRoadmapMenuOptions = ({
     onPositivePress: () => {},
   });
   const [isRestoreSheetVisible, setIsRestoreSheetVisible] = useState(false);
+  const [isShiftDatesModalVisible, setIsShiftDatesModalVisible] =
+    useState(false);
+  const [isRealignDatesModalVisible, setIsRealignDatesModalVisible] =
+    useState(false);
 
   const isLoading =
     isDeletingRoadmap ||
@@ -359,6 +365,36 @@ export const useRoadmapMenuOptions = ({
                   } satisfies ActionSheetOption,
                 ]
               : []),
+            ...(isStarted
+              ? [
+                  {
+                    label: t('roadmap.shift_dates.menu_label'),
+                    onPress: () =>
+                      closeMenuThen(() => setIsShiftDatesModalVisible(true)),
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="calendar-arrow-right"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                  {
+                    label: t('roadmap.realign_dates.menu_label'),
+                    onPress: () =>
+                      closeMenuThen(() => setIsRealignDatesModalVisible(true)),
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="calendar-sync-outline"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                ]
+              : []),
             {
               label: t('roadmap.archive.label'),
               onPress: openArchiveDialog,
@@ -503,6 +539,16 @@ export const useRoadmapMenuOptions = ({
           </AppView>
         </AppCard>
       </AppDialog>
+      <ShiftDatesModal
+        roadmapId={roadmap.roadmap_id}
+        visible={isShiftDatesModalVisible}
+        onDismiss={() => setIsShiftDatesModalVisible(false)}
+      />
+      <RealignDatesModal
+        roadmapId={roadmap.roadmap_id}
+        visible={isRealignDatesModalVisible}
+        onDismiss={() => setIsRealignDatesModalVisible(false)}
+      />
     </>
   );
 
