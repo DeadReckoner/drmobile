@@ -105,6 +105,7 @@ export interface RoadmapType {
 
   archived?: boolean;
   paused_at?: string | null; // ISO 8601 UTC timestamp; null = not paused
+  share_token?: string | null; // present on owned roadmaps; null = not shared
 }
 
 export interface Phase {

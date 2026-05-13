@@ -22,6 +22,11 @@ export const {
   useRestartRoadmapMutation,
   useShiftRoadmapDatesMutation,
   useRealignRoadmapDatesMutation,
+
+  useGenerateShareLinkMutation,
+  useRevokeShareLinkMutation,
+  useGetSharedRoadmapQuery,
+  useCopySharedRoadmapMutation,
 } = roadmapApi;
 
 export const {

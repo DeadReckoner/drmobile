@@ -542,6 +542,33 @@
       "confirm_button": "Realinear",
       "success": "Fechas realineadas desde hoy",
       "error": "Error al realinear las fechas"
+    },
+    "share": {
+      "label": "Compartir Hoja de Ruta",
+      "manage_label": "Gestionar Enlace Compartido",
+      "modal_title": "Compartir Tu Hoja de Ruta",
+      "link_label": "Enlace de Compartir",
+      "copy_link": "Copiar Enlace",
+      "share_via": "Compartir vía...",
+      "revoke_label": "Revocar Enlace",
+      "revoke_confirm_title": "¿Revocar Enlace Compartido?",
+      "revoke_confirm_message": "Cualquier persona con el enlace actual ya no podrá acceder a esta hoja de ruta.",
+      "revoke_confirm_button": "Revocar",
+      "link_generated": "Enlace de compartir creado",
+      "link_copied": "Enlace copiado al portapapeles",
+      "link_revoked": "Enlace compartido revocado",
+      "error": "Error al generar el enlace de compartir",
+      "revoke_error": "Error al revocar el enlace compartido"
+    },
+    "shared_preview": {
+      "title": "Hoja de Ruta Compartida",
+      "by_label": "Por",
+      "add_button": "Agregar a Mis Hojas de Ruta",
+      "already_added": "Ya está en tus hojas de ruta",
+      "copy_success": "Hoja de ruta agregada a tu cuenta",
+      "copy_error": "Error al copiar la hoja de ruta",
+      "not_found": "Este enlace compartido ya no es válido",
+      "sign_in_prompt": "Inicia sesión para agregar esta hoja de ruta a tu cuenta"
     }
   },
   "step": {

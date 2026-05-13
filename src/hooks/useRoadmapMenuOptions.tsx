@@ -7,6 +7,7 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
 import { RealignDatesModal } from '@/components/roadmap/RealignDatesModal';
+import { ShareRoadmapModal } from '@/components/roadmap/ShareRoadmapModal';
 import { ShiftDatesModal } from '@/components/roadmap/ShiftDatesModal';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
@@ -87,6 +88,7 @@ export const useRoadmapMenuOptions = ({
     useState(false);
   const [isRealignDatesModalVisible, setIsRealignDatesModalVisible] =
     useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
 
   const isLoading =
     isDeletingRoadmap ||
@@ -408,6 +410,24 @@ export const useRoadmapMenuOptions = ({
               ),
             } satisfies ActionSheetOption,
           ]),
+      ...(roadmap.roadmap_id
+        ? [
+            {
+              label: roadmap.share_token
+                ? t('roadmap.share.manage_label')
+                : t('roadmap.share.label'),
+              onPress: () => closeMenuThen(() => setIsShareModalVisible(true)),
+              icon: (
+                <AppIcon
+                  set="Feather"
+                  name="share-2"
+                  color={Colors.textColor}
+                  size={20}
+                />
+              ),
+            } satisfies ActionSheetOption,
+          ]
+        : []),
       {
         label: t('roadmap.delete_roadmap_label'),
         onPress: openDeleteDialog,
@@ -424,6 +444,8 @@ export const useRoadmapMenuOptions = ({
       openRestartDialog,
       openResumeDialog,
       roadmap.archived,
+      roadmap.roadmap_id,
+      roadmap.share_token,
       t,
     ],
   );
@@ -549,6 +571,14 @@ export const useRoadmapMenuOptions = ({
         visible={isRealignDatesModalVisible}
         onDismiss={() => setIsRealignDatesModalVisible(false)}
       />
+      {!!roadmap.roadmap_id && (
+        <ShareRoadmapModal
+          roadmapId={roadmap.roadmap_id}
+          shareToken={roadmap.share_token}
+          visible={isShareModalVisible}
+          onDismiss={() => setIsShareModalVisible(false)}
+        />
+      )}
     </>
   );
 

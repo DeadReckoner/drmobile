@@ -36,7 +36,7 @@ export const AppActionSheetModal = (props: AppActionSheetModalProps) => {
       <AppView
         key={option.label}
         style={[styles.option, { borderTopColor: Colors.lineDivider }]}>
-        <AppButton paddingV-20 onPress={() => onOptionPress(index)}>
+        <AppButton paddingV-18 onPress={() => onOptionPress(index)}>
           <AppView row center spread>
             <AppText body2 textColor flex>
               {option.label}

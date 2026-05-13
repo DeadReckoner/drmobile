@@ -1,3 +1,4 @@
+import { Env } from '@/constants/Env';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
 import {
@@ -335,6 +336,78 @@ const onRealignRoadmapDatesQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+const onGenerateShareLinkQueryStarted: TypedMutationOnQueryStarted<
+  { share_token: string },
+  string,
+  BaseQueryFunctionType
+> = async (roadmap_id, { dispatch, queryFulfilled, getState }) => {
+  try {
+    const { data } = await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = { ...draft[idx], share_token: data.share_token };
+        }
+      }),
+    );
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        draft.share_token = data.share_token;
+      }),
+    );
+
+    const currentDraftRoadmap = (getState() as unknown as RootStateType)
+      .roadmapDraft.roadmap;
+    if (currentDraftRoadmap?.roadmap_id === roadmap_id) {
+      dispatch(
+        setDraftRoadmapAction({
+          ...currentDraftRoadmap,
+          share_token: data.share_token,
+        }),
+      );
+    }
+  } catch {}
+};
+
+const onRevokeShareLinkQueryStarted: TypedMutationOnQueryStarted<
+  { message: string },
+  string,
+  BaseQueryFunctionType
+> = async (roadmap_id, { dispatch, queryFulfilled }) => {
+  try {
+    await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = { ...draft[idx], share_token: null };
+        }
+      }),
+    );
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        draft.share_token = null;
+      }),
+    );
+  } catch {}
+};
+
+const onCopySharedRoadmapQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  string,
+  BaseQueryFunctionType
+> = async (_share_token, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        draft.push(data);
+      }),
+    );
+  } catch {}
+};
+
 export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<
@@ -504,6 +577,49 @@ export const roadmapApi = api.injectEndpoints({
         body: { offset_days: offset_days ?? 0 },
       }),
       onQueryStarted: onRealignRoadmapDatesQueryStarted,
+    }),
+
+    generateShareLink: builder.mutation<{ share_token: string }, string>({
+      query: (roadmap_id) => ({
+        url: `/roadmaps/${roadmap_id}/share`,
+        method: 'POST',
+      }),
+      onQueryStarted: onGenerateShareLinkQueryStarted,
+    }),
+
+    revokeShareLink: builder.mutation<{ message: string }, string>({
+      query: (roadmap_id) => ({
+        url: `/roadmaps/${roadmap_id}/share`,
+        method: 'DELETE',
+      }),
+      onQueryStarted: onRevokeShareLinkQueryStarted,
+    }),
+
+    getSharedRoadmap: builder.query<RoadmapType, string>({
+      queryFn: async (share_token) => {
+        try {
+          const response = await fetch(
+            `${Env.EXPO_PUBLIC_API_URL}/api/v1/roadmaps/shared/${share_token}`,
+          );
+          if (!response.ok) {
+            const errorData: unknown = await response.json().catch(() => ({}));
+            return { error: { status: response.status, data: errorData } };
+          }
+          const data: RoadmapType = await response.json();
+          return { data };
+        } catch (error) {
+          return { error: { status: 'FETCH_ERROR', error: String(error) } };
+        }
+      },
+      keepUnusedDataFor: 3600,
+    }),
+
+    copySharedRoadmap: builder.mutation<RoadmapType, string>({
+      query: (share_token) => ({
+        url: `/roadmaps/shared/${share_token}/copy`,
+        method: 'POST',
+      }),
+      onQueryStarted: onCopySharedRoadmapQueryStarted,
     }),
   }),
   overrideExisting: true,

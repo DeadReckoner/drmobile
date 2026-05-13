@@ -13,6 +13,7 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { AddEditCustomRoadmapForm } from '@/components/roadmap/AddEditCustomRoadmapForm';
 import { AIRoadmapDetails } from '@/components/roadmap/ai-roamap/AIRoadmapDetails';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
+import { ShareRoadmapModal } from '@/components/roadmap/ShareRoadmapModal';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
@@ -53,6 +54,7 @@ const RoadmapDetailsPage = () => {
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
   const [isAnchorSheetVisible, setIsAnchorSheetVisible] = useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
 
   const { t } = useLocalization();
   const { showToast } = useToast();
@@ -384,6 +386,11 @@ const RoadmapDetailsPage = () => {
                 <AppIcon set="Feather" name="anchor" size={20} />
               </AppButton>
             )}
+            {!isEditing && !!roadmap?.roadmap_id && (
+              <AppButton onPress={() => setIsShareModalVisible(true)}>
+                <AppIcon set="Feather" name="share-2" size={20} />
+              </AppButton>
+            )}
             {isEditing && (
               <AppButton onPress={toggleEditMode}>
                 <AppIcon
@@ -540,6 +547,14 @@ const RoadmapDetailsPage = () => {
           </AppView>
         </AppView>
       </AppModal>
+      {!!roadmap?.roadmap_id && (
+        <ShareRoadmapModal
+          roadmapId={roadmap.roadmap_id}
+          shareToken={roadmap.share_token}
+          visible={isShareModalVisible}
+          onDismiss={() => setIsShareModalVisible(false)}
+        />
+      )}
     </AppView>
   );
 };
