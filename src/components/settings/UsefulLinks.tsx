@@ -7,7 +7,7 @@ import { AppView } from '@/components/ui';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 
-const UsefulLinks = () => {
+export const UsefulLinks = () => {
   const [isSocialMediaDialogVisible, setIsSocialMediaDialogVisible] =
     useState(false);
   const SettingsItemDivider = () => <LineDivider marginV-0 />;
@@ -46,5 +46,3 @@ const UsefulLinks = () => {
     </AppView>
   );
 };
-
-export default UsefulLinks;

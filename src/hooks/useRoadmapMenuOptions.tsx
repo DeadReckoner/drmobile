@@ -6,12 +6,16 @@ import { AppIcon } from '@/components/AppIcon';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
+import { RealignDatesModal } from '@/components/roadmap/RealignDatesModal';
+import { ShareRoadmapModal } from '@/components/roadmap/ShareRoadmapModal';
+import { ShiftDatesModal } from '@/components/roadmap/ShiftDatesModal';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import {
   useArchiveRoadmapMutation,
   useDeleteRoadmapMutation,
   usePauseRoadmapMutation,
+  useRestartRoadmapMutation,
   useRestoreRoadmapMutation,
   useResumeRoadmapMutation,
 } from '@/hooks/roadmap';
@@ -67,6 +71,8 @@ export const useRoadmapMenuOptions = ({
     usePauseRoadmapMutation();
   const [resumeRoadmap, { isLoading: isResumingRoadmap }] =
     useResumeRoadmapMutation();
+  const [restartRoadmap, { isLoading: isRestartingRoadmap }] =
+    useRestartRoadmapMutation();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeRestoreButton, setActiveRestoreButton] = useState('');
@@ -78,13 +84,19 @@ export const useRoadmapMenuOptions = ({
     onPositivePress: () => {},
   });
   const [isRestoreSheetVisible, setIsRestoreSheetVisible] = useState(false);
+  const [isShiftDatesModalVisible, setIsShiftDatesModalVisible] =
+    useState(false);
+  const [isRealignDatesModalVisible, setIsRealignDatesModalVisible] =
+    useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
 
   const isLoading =
     isDeletingRoadmap ||
     isArchivingRoadmap ||
     isRestoringRoadmap ||
     isPausingRoadmap ||
-    isResumingRoadmap;
+    isResumingRoadmap ||
+    isRestartingRoadmap;
 
   const closeDialog = useCallback(() => setIsDialogOpen(false), []);
 
@@ -251,6 +263,40 @@ export const useRoadmapMenuOptions = ({
     [closeMenuThen, handlePause],
   );
 
+  const handleRestart = useCallback(async () => {
+    try {
+      await restartRoadmap(roadmap.roadmap_id).unwrap();
+      showToast({ type: 'success', message: t('roadmap.restart.success') });
+    } catch (error) {
+      showToast({ type: 'failure', message: getApiErrorMessage(error) });
+    } finally {
+      closeDialog();
+    }
+  }, [closeDialog, restartRoadmap, roadmap.roadmap_id, showToast, t]);
+
+  const openRestartDialog = useCallback(
+    () =>
+      closeMenuThen(() => {
+        setDialogConfig({
+          title: 'roadmap.restart.confirm_title',
+          subtitle: 'roadmap.restart.confirm_message',
+          positiveText: 'roadmap.restart.confirm_button',
+          negativeText: 'common.cancel',
+          positiveButtonIcon: (
+            <AppIcon
+              set="MaterialCommunityIcons"
+              name="restart"
+              color={Colors.textOnPrimary}
+              size={18}
+            />
+          ),
+          onPositivePress: handleRestart,
+        });
+        setIsDialogOpen(true);
+      }),
+    [closeMenuThen, handleRestart],
+  );
+
   const isPaused = !!roadmap.paused_at;
   const isStarted = !!roadmap.start_date;
 
@@ -305,6 +351,52 @@ export const useRoadmapMenuOptions = ({
                   } satisfies ActionSheetOption,
                 ]
               : []),
+            ...(isStarted
+              ? [
+                  {
+                    label: t('roadmap.restart.label'),
+                    onPress: openRestartDialog,
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="restart"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                ]
+              : []),
+            ...(isStarted
+              ? [
+                  {
+                    label: t('roadmap.shift_dates.menu_label'),
+                    onPress: () =>
+                      closeMenuThen(() => setIsShiftDatesModalVisible(true)),
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="calendar-arrow-right"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                  {
+                    label: t('roadmap.realign_dates.menu_label'),
+                    onPress: () =>
+                      closeMenuThen(() => setIsRealignDatesModalVisible(true)),
+                    icon: (
+                      <AppIcon
+                        set="MaterialCommunityIcons"
+                        name="calendar-sync-outline"
+                        color={Colors.textColor}
+                        size={20}
+                      />
+                    ),
+                  } satisfies ActionSheetOption,
+                ]
+              : []),
             {
               label: t('roadmap.archive.label'),
               onPress: openArchiveDialog,
@@ -318,6 +410,24 @@ export const useRoadmapMenuOptions = ({
               ),
             } satisfies ActionSheetOption,
           ]),
+      ...(roadmap.roadmap_id
+        ? [
+            {
+              label: roadmap.share_token
+                ? t('roadmap.share.manage_label')
+                : t('roadmap.share.label'),
+              onPress: () => closeMenuThen(() => setIsShareModalVisible(true)),
+              icon: (
+                <AppIcon
+                  set="Feather"
+                  name="share-2"
+                  color={Colors.textColor}
+                  size={20}
+                />
+              ),
+            } satisfies ActionSheetOption,
+          ]
+        : []),
       {
         label: t('roadmap.delete_roadmap_label'),
         onPress: openDeleteDialog,
@@ -331,8 +441,11 @@ export const useRoadmapMenuOptions = ({
       openArchiveDialog,
       openDeleteDialog,
       openPauseDialog,
+      openRestartDialog,
       openResumeDialog,
       roadmap.archived,
+      roadmap.roadmap_id,
+      roadmap.share_token,
       t,
     ],
   );
@@ -448,6 +561,24 @@ export const useRoadmapMenuOptions = ({
           </AppView>
         </AppCard>
       </AppDialog>
+      <ShiftDatesModal
+        roadmapId={roadmap.roadmap_id}
+        visible={isShiftDatesModalVisible}
+        onDismiss={() => setIsShiftDatesModalVisible(false)}
+      />
+      <RealignDatesModal
+        roadmapId={roadmap.roadmap_id}
+        visible={isRealignDatesModalVisible}
+        onDismiss={() => setIsRealignDatesModalVisible(false)}
+      />
+      {!!roadmap.roadmap_id && (
+        <ShareRoadmapModal
+          roadmapId={roadmap.roadmap_id}
+          shareToken={roadmap.share_token}
+          visible={isShareModalVisible}
+          onDismiss={() => setIsShareModalVisible(false)}
+        />
+      )}
     </>
   );
 

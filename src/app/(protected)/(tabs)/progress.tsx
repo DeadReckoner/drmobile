@@ -48,12 +48,6 @@ const Progress = () => {
     );
     dispatch(setSelectedRoadmapIndex(index));
     dispatch(setShouldSyncWithServerAction(true));
-
-    // if (!isRoadmapStarted(roadmap)) {
-    //   router.navigate('/roadmap/roadmap-details');
-    // } else {
-    //   router.navigate('/roadmap/roadmap-execution');
-    // }
     router.navigate('/roadmap/roadmap-execution');
   };
 

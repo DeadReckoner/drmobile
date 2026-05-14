@@ -58,7 +58,7 @@ export const PrimaryButton = ({
           style={[
             styles.loaderContainer,
             loaderAnimatedStyle,
-            StyleSheet.absoluteFillObject,
+            StyleSheet.absoluteFill,
           ]}>
           <ActivityIndicator color={Colors.textOnPrimary} />
         </Animated.View>

@@ -57,14 +57,14 @@ export const AiRoadmapCreationLoader = () => {
   const jobStatusData = useAppSelector(selectJobStatusResponse);
 
   return (
-    <AppScreen style={StyleSheet.absoluteFillObject}>
+    <AppScreen style={StyleSheet.absoluteFill}>
       <AppView
         flex
         reanimated
         entering={Animations.Entry.FadeInDownWithSpring().duration(1500)}
         exiting={Animations.Exit.FadeOutDown().duration(1000)}
         style={[
-          StyleSheet.absoluteFillObject,
+          StyleSheet.absoluteFill,
           styles.loader,
           { backgroundColor: Colors.dialogOverlay },
         ]}>
@@ -75,7 +75,7 @@ export const AiRoadmapCreationLoader = () => {
               center
               style={[animationStyles, styles.imageContainer]}>
               <AppImage
-                style={[StyleSheet.absoluteFillObject, styles.imageBackground]}
+                style={[StyleSheet.absoluteFill, styles.imageBackground]}
                 source={Assets.logo.aiRoadmapBG}
               />
             </AppView>

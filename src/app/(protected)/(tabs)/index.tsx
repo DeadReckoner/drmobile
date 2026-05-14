@@ -74,7 +74,6 @@ const Today = () => {
     })();
   }, [requestPermissions]);
 
-  // Mark "review today" immediately on mount — user is always on the Today screen
   useEffect(() => {
     if (!isSetupTaskCompleted && !setupSteps.reviewToday) {
       dispatch(setSetupStepAction({ key: 'reviewToday', value: true }));

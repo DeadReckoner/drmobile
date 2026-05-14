@@ -34,7 +34,6 @@ export const NextMilestoneGenerationManager = () => {
 
   const isActive = status === 'generating';
 
-  // ── Polling fallback ────────────────────────────────────────────────────────
   const { data: pollData, refetch: refetchJobStatus } = useGetJobStatusQuery(
     { jobId: jobResponse?.job_id || '' },
     {
@@ -87,7 +86,6 @@ export const NextMilestoneGenerationManager = () => {
     }
   }, [pollData, dispatch, roadmapId, t]);
 
-  // ── WebSocket (primary) ────────────────────────────────────────────────────
   useEffect(() => {
     if (!jobResponse?.ws_url) return;
     if (!isActive) return;
@@ -119,12 +117,10 @@ export const NextMilestoneGenerationManager = () => {
         return;
       }
 
-      // Skip ping/pong frames
       if (frame.type === 'pong') return;
 
       dispatch(setMilestoneJobStatusAction(frame));
 
-      // At 45% if AI adjusted the plan, surface the rationale
       if (
         frame.type === 'progress' &&
         frame.data?.adjusted === true &&
@@ -149,9 +145,7 @@ export const NextMilestoneGenerationManager = () => {
       }
     };
 
-    ws.onerror = () => {
-      // Don't immediately error — let polling determine the real status
-    };
+    ws.onerror = () => {};
 
     ws.onclose = () => {
       wsRef.current = null;
@@ -173,7 +167,6 @@ export const NextMilestoneGenerationManager = () => {
     t,
   ]);
 
-  // ── AppState — reconnect WebSocket when app comes to foreground ────────────
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active' && isActive) {

@@ -1,6 +1,10 @@
+import { Env } from '@/constants/Env';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
-import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
+import {
+  BaseQueryFunctionType,
+  RealignRoadmapResponse,
+} from '@/store/apis/types/api.types';
 import { setSetupStepAction } from '@/store/slices/onboardingSlice';
 import {
   resetDraftAction,
@@ -249,6 +253,161 @@ const onResumeRoadmapQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+const onRestartRoadmapQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  string,
+  BaseQueryFunctionType
+> = async (roadmap_id, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = data;
+        }
+      }),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        Object.assign(draft, data);
+      }),
+    );
+
+    dispatch(setDraftRoadmapAction(data));
+    dispatch(roadmapApi.util.invalidateTags(['Tasks']));
+  } catch {}
+};
+
+const onShiftRoadmapDatesQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  { roadmap_id: string; days: number },
+  BaseQueryFunctionType
+> = async ({ roadmap_id }, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = data;
+        }
+      }),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        Object.assign(draft, data);
+      }),
+    );
+
+    dispatch(setDraftRoadmapAction(data));
+  } catch {}
+};
+
+const onRealignRoadmapDatesQueryStarted: TypedMutationOnQueryStarted<
+  RealignRoadmapResponse,
+  { roadmap_id: string; offset_days?: number },
+  BaseQueryFunctionType
+> = async ({ roadmap_id }, { dispatch, queryFulfilled }) => {
+  try {
+    const response = await queryFulfilled;
+    const roadmap = response.data.roadmap;
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = roadmap;
+        }
+      }),
+    );
+
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        Object.assign(draft, roadmap);
+      }),
+    );
+
+    dispatch(setDraftRoadmapAction(roadmap));
+  } catch {}
+};
+
+const onGenerateShareLinkQueryStarted: TypedMutationOnQueryStarted<
+  { share_token: string },
+  string,
+  BaseQueryFunctionType
+> = async (roadmap_id, { dispatch, queryFulfilled, getState }) => {
+  try {
+    const { data } = await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = { ...draft[idx], share_token: data.share_token };
+        }
+      }),
+    );
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        draft.share_token = data.share_token;
+      }),
+    );
+
+    const currentDraftRoadmap = (getState() as unknown as RootStateType)
+      .roadmapDraft.roadmap;
+    if (currentDraftRoadmap?.roadmap_id === roadmap_id) {
+      dispatch(
+        setDraftRoadmapAction({
+          ...currentDraftRoadmap,
+          share_token: data.share_token,
+        }),
+      );
+    }
+  } catch {}
+};
+
+const onRevokeShareLinkQueryStarted: TypedMutationOnQueryStarted<
+  { message: string },
+  string,
+  BaseQueryFunctionType
+> = async (roadmap_id, { dispatch, queryFulfilled }) => {
+  try {
+    await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        const idx = draft.findIndex((r) => r.roadmap_id === roadmap_id);
+        if (idx !== -1) {
+          draft[idx] = { ...draft[idx], share_token: null };
+        }
+      }),
+    );
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmapById', roadmap_id, (draft) => {
+        draft.share_token = null;
+      }),
+    );
+  } catch {}
+};
+
+const onCopySharedRoadmapQueryStarted: TypedMutationOnQueryStarted<
+  RoadmapType,
+  string,
+  BaseQueryFunctionType
+> = async (_share_token, { dispatch, queryFulfilled }) => {
+  try {
+    const { data } = await queryFulfilled;
+    dispatch(
+      roadmapApi.util.updateQueryData('getRoadmaps', undefined, (draft) => {
+        draft.push(data);
+      }),
+    );
+  } catch {}
+};
+
 export const roadmapApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getRoadmaps: builder.query<
@@ -386,6 +545,81 @@ export const roadmapApi = api.injectEndpoints({
         method: 'POST',
       }),
       onQueryStarted: onResumeRoadmapQueryStarted,
+    }),
+
+    restartRoadmap: builder.mutation<RoadmapType, string>({
+      query: (roadmap_id) => ({
+        url: `/roadmaps/${roadmap_id}/restart`,
+        method: 'PUT',
+      }),
+      onQueryStarted: onRestartRoadmapQueryStarted,
+    }),
+
+    shiftRoadmapDates: builder.mutation<
+      RoadmapType,
+      { roadmap_id: string; days: number }
+    >({
+      query: ({ roadmap_id, days }) => ({
+        url: `/roadmaps/${roadmap_id}/shift`,
+        method: 'POST',
+        body: { days },
+      }),
+      onQueryStarted: onShiftRoadmapDatesQueryStarted,
+    }),
+
+    realignRoadmapDates: builder.mutation<
+      RealignRoadmapResponse,
+      { roadmap_id: string; offset_days?: number }
+    >({
+      query: ({ roadmap_id, offset_days }) => ({
+        url: `/roadmaps/${roadmap_id}/realign`,
+        method: 'POST',
+        body: { offset_days: offset_days ?? 0 },
+      }),
+      onQueryStarted: onRealignRoadmapDatesQueryStarted,
+    }),
+
+    generateShareLink: builder.mutation<{ share_token: string }, string>({
+      query: (roadmap_id) => ({
+        url: `/roadmaps/${roadmap_id}/share`,
+        method: 'POST',
+      }),
+      onQueryStarted: onGenerateShareLinkQueryStarted,
+    }),
+
+    revokeShareLink: builder.mutation<{ message: string }, string>({
+      query: (roadmap_id) => ({
+        url: `/roadmaps/${roadmap_id}/share`,
+        method: 'DELETE',
+      }),
+      onQueryStarted: onRevokeShareLinkQueryStarted,
+    }),
+
+    getSharedRoadmap: builder.query<RoadmapType, string>({
+      queryFn: async (share_token) => {
+        try {
+          const response = await fetch(
+            `${Env.EXPO_PUBLIC_API_URL}/api/v1/roadmaps/shared/${share_token}`,
+          );
+          if (!response.ok) {
+            const errorData: unknown = await response.json().catch(() => ({}));
+            return { error: { status: response.status, data: errorData } };
+          }
+          const data: RoadmapType = await response.json();
+          return { data };
+        } catch (error) {
+          return { error: { status: 'FETCH_ERROR', error: String(error) } };
+        }
+      },
+      keepUnusedDataFor: 3600,
+    }),
+
+    copySharedRoadmap: builder.mutation<RoadmapType, string>({
+      query: (share_token) => ({
+        url: `/roadmaps/shared/${share_token}/copy`,
+        method: 'POST',
+      }),
+      onQueryStarted: onCopySharedRoadmapQueryStarted,
     }),
   }),
   overrideExisting: true,

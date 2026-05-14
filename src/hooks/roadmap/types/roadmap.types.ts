@@ -11,12 +11,17 @@ export type RoadmapExecutionStatusType =
   | 'completed'
   | 'overdue';
 
+export type StepStatusType = 'incomplete' | 'completed' | 'skipped';
+
 export interface StepType {
   step_id: string;
   task_id: string;
   description: string;
+
+  /** @deprecated Use `status` instead. Will be removed in a future API version. */
   completed: boolean;
   number: number;
+  status?: StepStatusType;
 }
 
 export interface TaskType {
@@ -51,7 +56,6 @@ export interface MilestoneType {
   tasks: TaskType[];
   date?: string;
 
-  // Strategic fields (from former MacroMilestone)
   phase_id?: string;
   acceptance_test?: string;
   duration_days_min?: number;
@@ -59,7 +63,6 @@ export interface MilestoneType {
   order_index?: number;
   resources_forecast?: string; // JSON stringified object
 
-  // Related data (from former MacroMilestone)
   spikes?: Spike[];
   risks?: Risk[];
 
@@ -102,6 +105,7 @@ export interface RoadmapType {
 
   archived?: boolean;
   paused_at?: string | null; // ISO 8601 UTC timestamp; null = not paused
+  share_token?: string | null; // present on owned roadmaps; null = not shared
 }
 
 export interface Phase {

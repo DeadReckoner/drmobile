@@ -515,7 +515,68 @@
       "confirm_button": "Reanudar",
       "success": "Hoja de ruta reanudada.",
       "error": "Error al reanudar la hoja de ruta"
+    },
+    "restart": {
+      "label": "Reiniciar Hoja de Ruta",
+      "confirm_title": "¿Reiniciar Hoja de Ruta?",
+      "confirm_message": "Todo el progreso se reiniciará y las fechas se recalcularán desde hoy. Esto no se puede deshacer.",
+      "confirm_button": "Reiniciar",
+      "success": "Hoja de ruta reiniciada desde hoy",
+      "error": "Error al reiniciar la hoja de ruta"
+    },
+    "shift_dates": {
+      "menu_label": "Desplazar Fechas",
+      "title": "Desplazar Cronograma",
+      "description": "Mueve todas las fechas de la hoja de ruta hacia adelante o hacia atrás un número determinado de días.",
+      "input_label": "Número de Días\n- positivo = adelante \n- negativo = atrás",
+      "invalid_input": "Por favor ingresa un número de días distinto de cero",
+      "confirm_button": "Desplazar",
+      "success": "Cronograma desplazado exitosamente",
+      "error": "Error al desplazar las fechas"
+    },
+    "realign_dates": {
+      "menu_label": "Realinear Fechas",
+      "title": "Realinear Fechas",
+      "description": "Mueve todas las tareas incompletas para comenzar desde hoy, manteniendo tu historial completado intacto.",
+      "offset_label": "¿En cuántos días comenzar? (0 = hoy)",
+      "confirm_button": "Realinear",
+      "success": "Fechas realineadas desde hoy",
+      "error": "Error al realinear las fechas"
+    },
+    "share": {
+      "label": "Compartir Hoja de Ruta",
+      "manage_label": "Gestionar Enlace Compartido",
+      "modal_title": "Compartir Tu Hoja de Ruta",
+      "link_label": "Enlace de Compartir",
+      "copy_link": "Copiar Enlace",
+      "share_via": "Compartir vía...",
+      "revoke_label": "Revocar Enlace",
+      "revoke_confirm_title": "¿Revocar Enlace Compartido?",
+      "revoke_confirm_message": "Cualquier persona con el enlace actual ya no podrá acceder a esta hoja de ruta.",
+      "revoke_confirm_button": "Revocar",
+      "link_generated": "Enlace de compartir creado",
+      "link_copied": "Enlace copiado al portapapeles",
+      "link_revoked": "Enlace compartido revocado",
+      "error": "Error al generar el enlace de compartir",
+      "revoke_error": "Error al revocar el enlace compartido"
+    },
+    "shared_preview": {
+      "title": "Hoja de Ruta Compartida",
+      "by_label": "Por",
+      "add_button": "Agregar a Mis Hojas de Ruta",
+      "already_added": "Ya está en tus hojas de ruta",
+      "copy_success": "Hoja de ruta agregada a tu cuenta",
+      "copy_error": "Error al copiar la hoja de ruta",
+      "not_found": "Este enlace compartido ya no es válido",
+      "sign_in_prompt": "Inicia sesión para agregar esta hoja de ruta a tu cuenta"
     }
+  },
+  "step": {
+    "mark_complete": "Marcar como Completado",
+    "mark_incomplete": "Marcar como Incompleto",
+    "skip": "Omitir",
+    "status_options": "Opciones del Paso",
+    "skipped_label": "Omitido"
   },
   "messages": {
     "no_messages_yet": "¡Aún no hay mensajes!",

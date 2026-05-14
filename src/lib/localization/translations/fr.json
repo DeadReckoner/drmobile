@@ -515,7 +515,68 @@
       "confirm_button": "Reprendre",
       "success": "Feuille de route reprise.",
       "error": "Échec de la reprise de la feuille de route"
+    },
+    "restart": {
+      "label": "Redémarrer la Feuille de Route",
+      "confirm_title": "Redémarrer la Feuille de Route ?",
+      "confirm_message": "Toute la progression sera réinitialisée et les dates seront recalculées à partir d'aujourd'hui. Cette action est irréversible.",
+      "confirm_button": "Redémarrer",
+      "success": "Feuille de route redémarrée depuis aujourd'hui",
+      "error": "Échec du redémarrage de la feuille de route"
+    },
+    "shift_dates": {
+      "menu_label": "Décaler les Dates",
+      "title": "Décaler le Calendrier",
+      "description": "Déplacez toutes les dates de la feuille de route vers l'avant ou vers l'arrière d'un nombre de jours défini.",
+      "input_label": "Nombre de Jours\n- positif = en avant \n- négatif = en arrière",
+      "invalid_input": "Veuillez entrer un nombre de jours différent de zéro",
+      "confirm_button": "Décaler",
+      "success": "Calendrier décalé avec succès",
+      "error": "Échec du décalage des dates"
+    },
+    "realign_dates": {
+      "menu_label": "Réaligner les Dates",
+      "title": "Réaligner les Dates",
+      "description": "Déplacez toutes les tâches incomplètes pour commencer à partir d'aujourd'hui, en conservant votre historique complété intact.",
+      "offset_label": "Dans combien de jours commencer ? (0 = aujourd'hui)",
+      "confirm_button": "Réaligner",
+      "success": "Dates réalignées à partir d'aujourd'hui",
+      "error": "Échec du réalignement des dates"
+    },
+    "share": {
+      "label": "Partager la Feuille de Route",
+      "manage_label": "Gérer le Lien de Partage",
+      "modal_title": "Partager Votre Feuille de Route",
+      "link_label": "Lien de Partage",
+      "copy_link": "Copier le Lien",
+      "share_via": "Partager via...",
+      "revoke_label": "Révoquer le Lien",
+      "revoke_confirm_title": "Révoquer le Lien de Partage ?",
+      "revoke_confirm_message": "Toute personne disposant du lien actuel ne pourra plus accéder à cette feuille de route.",
+      "revoke_confirm_button": "Révoquer",
+      "link_generated": "Lien de partage créé",
+      "link_copied": "Lien copié dans le presse-papiers",
+      "link_revoked": "Lien de partage révoqué",
+      "error": "Échec de la génération du lien de partage",
+      "revoke_error": "Échec de la révocation du lien de partage"
+    },
+    "shared_preview": {
+      "title": "Feuille de Route Partagée",
+      "by_label": "Par",
+      "add_button": "Ajouter à Mes Feuilles de Route",
+      "already_added": "Déjà dans vos feuilles de route",
+      "copy_success": "Feuille de route ajoutée à votre compte",
+      "copy_error": "Échec de la copie de la feuille de route",
+      "not_found": "Ce lien de partage n'est plus valide",
+      "sign_in_prompt": "Connectez-vous pour ajouter cette feuille de route à votre compte"
     }
+  },
+  "step": {
+    "mark_complete": "Marquer comme Terminé",
+    "mark_incomplete": "Marquer comme Incomplet",
+    "skip": "Ignorer",
+    "status_options": "Options de l'Étape",
+    "skipped_label": "Ignoré"
   },
   "messages": {
     "no_messages_yet": "Pas encore de messages !",

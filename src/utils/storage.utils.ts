@@ -42,9 +42,7 @@ export const getAppleUserName = async (): Promise<string | null> => {
 export const clearAppleUserName = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(STORAGE_KEYS.APPLE_USER_NAME);
-  } catch {
-    // Silently fail - storage errors shouldn't block operations
-  }
+  } catch {}
 };
 
 export const saveExpoPushTokenStorage = async (

@@ -515,7 +515,68 @@
       "confirm_button": "Resume",
       "success": "Roadmap resumed",
       "error": "Failed to resume roadmap"
+    },
+    "restart": {
+      "label": "Restart Roadmap",
+      "confirm_title": "Restart Roadmap?",
+      "confirm_message": "All progress will be reset and dates will recalculate from today. This cannot be undone.",
+      "confirm_button": "Restart",
+      "success": "Roadmap restarted from today",
+      "error": "Failed to restart roadmap"
+    },
+    "shift_dates": {
+      "menu_label": "Shift Dates",
+      "title": "Shift Timeline",
+      "description": "Move all roadmap dates forward or backward by a set number of days.",
+      "input_label": "Number of Days\n- positive = forward \n- negative = backward",
+      "invalid_input": "Please enter a non-zero number of days",
+      "confirm_button": "Shift",
+      "success": "Timeline shifted successfully",
+      "error": "Failed to shift dates"
+    },
+    "realign_dates": {
+      "menu_label": "Realign Dates",
+      "title": "Realign Dates",
+      "description": "Move all incomplete tasks to start from today, keeping your completed history intact.",
+      "offset_label": "Start in how many days? (0 = today)",
+      "confirm_button": "Realign",
+      "success": "Dates realigned from today",
+      "error": "Failed to realign dates"
+    },
+    "share": {
+      "label": "Share Roadmap",
+      "manage_label": "Manage Share Link",
+      "modal_title": "Share Your Roadmap",
+      "link_label": "Share Link",
+      "copy_link": "Copy Link",
+      "share_via": "Share via...",
+      "revoke_label": "Revoke Link",
+      "revoke_confirm_title": "Revoke Share Link?",
+      "revoke_confirm_message": "Anyone with the current link will no longer be able to access this roadmap.",
+      "revoke_confirm_button": "Revoke",
+      "link_generated": "Share link created",
+      "link_copied": "Link copied to clipboard",
+      "link_revoked": "Share link revoked",
+      "error": "Failed to generate share link",
+      "revoke_error": "Failed to revoke share link"
+    },
+    "shared_preview": {
+      "title": "Shared Roadmap",
+      "by_label": "By",
+      "add_button": "Add to My Roadmaps",
+      "already_added": "Already in your roadmaps",
+      "copy_success": "Roadmap added to your account",
+      "copy_error": "Failed to copy roadmap",
+      "not_found": "This share link is no longer valid",
+      "sign_in_prompt": "Sign in to add this roadmap to your account"
     }
+  },
+  "step": {
+    "mark_complete": "Mark as Complete",
+    "mark_incomplete": "Mark as Incomplete",
+    "skip": "Skip",
+    "status_options": "Step Options",
+    "skipped_label": "Skipped"
   },
   "messages": {
     "no_messages_yet": "No messages yet!",

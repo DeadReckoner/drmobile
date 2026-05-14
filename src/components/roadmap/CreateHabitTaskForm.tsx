@@ -173,7 +173,7 @@ export const CreateHabitTaskForm = ({
 
       {values.recurrenceType === 'none' && (
         <AppDateTimePicker
-          style={[StyleSheet.absoluteFillObject]}
+          style={[StyleSheet.absoluteFill]}
           renderInput={({ value }) => (
             <TranslatedTextInput
               labelKey="habits.due_date_label"
@@ -200,7 +200,7 @@ export const CreateHabitTaskForm = ({
       {values.recurrenceType !== 'none' && (
         <>
           <AppDateTimePicker
-            style={[StyleSheet.absoluteFillObject]}
+            style={[StyleSheet.absoluteFill]}
             renderInput={({ value }) => (
               <TranslatedTextInput
                 labelKey="habits.start_date_label"
@@ -224,7 +224,7 @@ export const CreateHabitTaskForm = ({
           />
 
           <AppDateTimePicker
-            style={[StyleSheet.absoluteFillObject]}
+            style={[StyleSheet.absoluteFill]}
             renderInput={({ value }) => (
               <TranslatedTextInput
                 labelKey="habits.end_date_label"

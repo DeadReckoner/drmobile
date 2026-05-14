@@ -14,7 +14,7 @@ import {
   KeyboardToolbar,
 } from 'react-native-keyboard-controller';
 
-const ContactSupport = () => {
+export const ContactSupport = () => {
   const { sendFeedbackEmail } = useMail();
   const { t } = useLocalization();
   const [subject, setSubject] = useState('');
@@ -71,8 +71,6 @@ const ContactSupport = () => {
     </>
   );
 };
-
-export default ContactSupport;
 
 const styles = StyleSheet.create({
   gestureWrapper: {
