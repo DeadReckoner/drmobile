@@ -7,7 +7,7 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
-import UsefulLinks from '@/components/settings/UsefulLinks';
+import { UsefulLinks } from '@/components/settings/UsefulLinks';
 import { UserStats } from '@/components/settings/UserStats';
 import { SettingsItem } from '@/components/SettingsItem';
 import { AppImage, AppText, AppView } from '@/components/ui';

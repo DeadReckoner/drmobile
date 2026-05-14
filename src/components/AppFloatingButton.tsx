@@ -24,7 +24,7 @@ interface AppFloatingButtonProps {
 
 const ANIMATION_DURATION = 300;
 
-const AppFloatingButton = ({
+export const AppFloatingButton = ({
   visible,
   translationKey,
   onPress,
@@ -116,8 +116,6 @@ const AppFloatingButton = ({
     </Animated.View>
   );
 };
-
-export default AppFloatingButton;
 
 const styles = StyleSheet.create({
   floatingButtonContainer: {

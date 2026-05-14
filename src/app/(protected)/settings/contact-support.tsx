@@ -1,4 +1,4 @@
-import ContactSupport from '@/components/settings/ContactSupport';
+import { ContactSupport } from '@/components/settings/ContactSupport';
 import React from 'react';
 
 const ContactSupportScreen = () => {
