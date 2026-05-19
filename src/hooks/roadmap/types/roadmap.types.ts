@@ -3,6 +3,10 @@ export type FormRoadmapType = Pick<
   'goal' | 'description' | 'days' | 'reason'
 >;
 
+// 'edit' - User can edit the info of the roadmap, milestone, task or step
+// 'create' - Used when user is creating a new roadmap, milestone, task or step
+// 'view' - User can view and perform action of completing the step of a task
+// 'readonly' - Used when we share the roadmap to other user or when Anchor is seeing the roadmap
 export type FormEditModeType = 'edit' | 'create' | 'view' | 'readonly';
 
 export type RoadmapExecutionStatusType =
