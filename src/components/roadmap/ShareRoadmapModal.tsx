@@ -13,11 +13,13 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import * as Clipboard from 'expo-clipboard';
+import * as Linking from 'expo-linking';
 import { useCallback, useEffect, useState } from 'react';
 import { Share, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-const SHARE_BASE_URL = 'https://deadreckoner.io/shared';
+// const SHARE_BASE_URL = 'https://deadreckoner.io/shared'; //TODO: for future implementation
+const SHARE_BASE_URL = Linking.createURL('shared');
 
 interface ShareRoadmapModalProps {
   roadmapId: string;

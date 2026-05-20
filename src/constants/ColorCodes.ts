@@ -30,10 +30,10 @@ export const LightColorCodes = {
   pickerBG: '#FFFFFF',
   hintBackdrop: '#FFFFFF80',
 
-  badgeCurrent: '#82B051',
+  badgeCurrent: '#5A86EE',
   badgeUpcoming: '#F7D840',
   badgeOverdue: '#E63C3C',
-  badgeCompleted: '#5A86EE',
+  badgeCompleted: '#82B051',
 };
 
 export const DarkColorCodes = {
@@ -70,8 +70,8 @@ export const DarkColorCodes = {
   pickerBG: '#0f1217',
   hintBackdrop: 'rgba(18, 20, 20, 0.8)',
 
-  badgeCurrent: '#82B051',
+  badgeCurrent: '#5A86EE',
   badgeUpcoming: '#F7D840',
   badgeOverdue: '#E63C3C',
-  badgeCompleted: '#5A86EE',
+  badgeCompleted: '#82B051',
 };
