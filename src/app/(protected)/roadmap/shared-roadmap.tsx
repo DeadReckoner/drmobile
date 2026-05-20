@@ -1,28 +1,17 @@
-import { AppButton } from '@/components/AppButton';
-import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
-import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
-import { AppSegmentControl } from '@/components/AppSegmentControl';
-import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
-import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
-import { TaskItem } from '@/components/roadmap/TaskItem';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppProgressBar, AppText, AppView } from '@/components/ui';
+import { AppView } from '@/components/ui';
 import {
   useCopySharedRoadmapMutation,
   useGetRoadmapsQuery,
   useGetSharedRoadmapQuery,
 } from '@/hooks/roadmap';
-import {
-  MilestoneType,
-  Phase,
-  TaskType,
-} from '@/hooks/roadmap/types/roadmap.types';
+import { MilestoneType, Phase } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
@@ -30,11 +19,8 @@ import { selectUser } from '@/store/slices/authSlice';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
-import { DateUtils } from '@/utils/date.utils';
-import { findOngoingMilestone } from '@/utils/roadmap.utils';
-import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -45,9 +31,6 @@ const SharedRoadmapScreen = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const isAuthenticated = !!user?.id;
-
-  const [firstTabSelected, setFirstTabSelected] = useState(true);
-
   const {
     data: roadmap,
     isLoading,
@@ -68,27 +51,6 @@ const SharedRoadmapScreen = () => {
     );
   }, [roadmap, myRoadmaps]);
 
-  const currentMilestone = useMemo<MilestoneType | null>(() => {
-    if (!roadmap) return null;
-    const phases = roadmap.phases ?? [];
-    if (phases.length > 0) {
-      for (const phase of phases) {
-        const m = findOngoingMilestone(phase.milestones ?? []);
-        if (m) return m;
-      }
-      return null;
-    }
-    return findOngoingMilestone(roadmap.milestones ?? []) ?? null;
-  }, [roadmap]);
-
-  const todayTasks = useMemo(
-    () =>
-      (currentMilestone?.tasks ?? []).filter(
-        (task) => task.date && DateUtils.isSameDate(task.date, new Date()),
-      ),
-    [currentMilestone],
-  );
-
   const handleCopyRoadmap = useCallback(async () => {
     if (!token) return;
     try {
@@ -98,7 +60,7 @@ const SharedRoadmapScreen = () => {
         type: 'success',
         message: t('roadmap.shared_preview.copy_success'),
       });
-      router.replace('/roadmap/roadmap-details');
+      router.replace('/roadmap/roadmap-execution');
     } catch (err) {
       showToast({
         type: 'failure',
@@ -107,26 +69,53 @@ const SharedRoadmapScreen = () => {
     }
   }, [token, copySharedRoadmap, dispatch, showToast, t]);
 
+  const handlePhasePress = useCallback(
+    (phase: Phase) => {
+      if (!roadmap) return;
+      router.navigate({
+        pathname: '/settings/readonly-phase-milestones',
+        params: {
+          roadmap: JSON.stringify(roadmap),
+          phaseId: phase.phase_id,
+          phaseLabel: String(phase.order_index),
+        },
+      });
+    },
+    [roadmap],
+  );
+
   const handleOverviewPress = useCallback(
     (phase?: Phase) => {
       if (!roadmap) return;
-      if (roadmap.type === 'custom_made') return;
+      if (roadmap.type === 'custom_made') {
+        router.navigate({
+          pathname: '/settings/readonly-phase-milestones',
+          params: { roadmap: JSON.stringify(roadmap) },
+        });
+        return;
+      }
       if (phase) {
-        // read-only; no navigation
+        router.navigate({
+          pathname: '/settings/readonly-phase-details',
+          params: { roadmap: JSON.stringify(roadmap) },
+        });
       }
     },
     [roadmap],
   );
 
-  const handleTaskPress = useCallback((_task: TaskType) => {
-    // read-only preview; no navigation
-  }, []);
-
-  const renderTaskItem = useCallback(
-    ({ item }: LegendListRenderItemProps<TaskType>) => (
-      <TaskItem task={item} onTaskClick={handleTaskPress} />
-    ),
-    [handleTaskPress],
+  const handleMilestonePress = useCallback(
+    (milestone: MilestoneType, phase?: Phase) => {
+      router.navigate({
+        pathname: '/settings/readonly-phase-milestones-tasks',
+        params: {
+          tasks: JSON.stringify(milestone.tasks ?? []),
+          phaseLabel: phase ? String(phase.order_index) : undefined,
+          milestoneLabel: String(milestone.order_index),
+        },
+      });
+    },
+    [],
   );
 
   if (!token) {
@@ -175,8 +164,6 @@ const SharedRoadmapScreen = () => {
     );
   }
 
-  const anchorName = roadmap.anchor ? roadmap.anchor.name : undefined;
-
   return (
     <AppScreen safeArea>
       <ScrollView
@@ -186,149 +173,28 @@ const SharedRoadmapScreen = () => {
           <HeaderWithBack />
         </AppView>
 
-        <AppView row centerV gap-6 marginH-16 marginB-4>
-          <AppIcon
-            set="Feather"
-            name="share-2"
-            size={14}
-            color={Colors.secondary}
-          />
-          <TranslatedText
-            xsm
-            secondary
-            translationKey="roadmap.shared_preview.title"
-          />
-          {anchorName && (
-            <>
-              <AppText xsm secondary>
-                ·
-              </AppText>
-              <AppText xsm secondary>
-                {t('roadmap.shared_preview.by_label')} {anchorName}
-              </AppText>
-            </>
-          )}
-        </AppView>
-
-        <Divider />
-
-        <AppSegmentControl
-          segments={[t('tabs.today'), t('settings.roadmaps').slice(0, 7)]}
-          selectedIndex={firstTabSelected ? 0 : 1}
-          onSegmentChange={(index) => setFirstTabSelected(index === 0)}
-        />
-
         <AppView reanimated layout={Animations.Layout.Springify()}>
-          {firstTabSelected ? (
-            <AppView
-              key="today-tab"
-              flex
-              reanimated
-              entering={Animations.Entry.FadeInDown()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <Divider />
-              <AppCard onPress={() => setFirstTabSelected(false)}>
-                <AppView flex gap-12>
-                  <AppText subtitle1 regular textColor>
-                    {roadmap.goal}
-                  </AppText>
-                  <AppView row flex centerV gap-16>
-                    <AppText body1 light textColor flex-0>
-                      {t('roadmap.progress')}:
-                    </AppText>
-                    <AppProgressBar
-                      style={[
-                        styles.progressBar,
-                        { backgroundColor: Colors.outline },
-                      ]}
-                      fullWidth
-                      progress={roadmap.progress ?? 0}
-                      progressColor={Colors.primary}
-                    />
-                    <AppText body1 light textColor>
-                      {roadmap.progress ?? 0}%
-                    </AppText>
-                  </AppView>
-                  {currentMilestone && (
-                    <AppText body1 light textColor>
-                      {t('common.current_milestone')}:{' '}
-                      {currentMilestone.sub_goal}
-                    </AppText>
-                  )}
-                </AppView>
-              </AppCard>
-              <Divider />
-              <AppList<TaskType>
-                keyExtractor={(i) => i.task_id}
-                data={todayTasks}
-                renderItem={renderTaskItem}
-                ListEmptyComponent={() => (
-                  <EmptyListItemPlaceholder
-                    title="tabs.create_tab.no_tasks_or_habits_yet"
-                    subtitle="tabs.create_tab.no_tasks_or_habits_description"
-                  />
-                )}
-                ItemSeparatorComponent={() => <Divider />}
-                ListFooterComponent={() => <Divider />}
-              />
-            </AppView>
-          ) : (
-            <AppView
-              key="overview-tab"
-              flex
-              gap-12
-              reanimated
-              entering={Animations.Entry.FadeInDown()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <RoadmapCurrentStateOverview
-                key={roadmap.roadmap_id}
-                roadmap={roadmap}
-                roadmapCreateStartControls={null}
-                onOverviewPress={handleOverviewPress}
-                onPhasePress={() => {}}
-                onMilestonePress={() => {}}
-              />
-            </AppView>
-          )}
+          <AppView
+            key="overview-tab"
+            flex
+            gap-12
+            reanimated
+            entering={Animations.Entry.FadeInDown()}
+            exiting={Animations.Exit.FadeOutDown()}>
+            <RoadmapCurrentStateOverview
+              key={roadmap.roadmap_id}
+              roadmap={roadmap}
+              roadmapCreateStartControls={null}
+              onOverviewPress={handleOverviewPress}
+              onPhasePress={handlePhasePress}
+              onMilestonePress={handleMilestonePress}
+            />
+          </AppView>
         </AppView>
       </ScrollView>
 
       <AppView paddingH-16 paddingB-24>
-        {!isAuthenticated ? (
-          <AppView
-            padding-16
-            br10
-            center
-            style={[styles.signInBanner, { borderColor: Colors.accent }]}>
-            <AppIcon
-              set="Feather"
-              name="lock"
-              size={20}
-              color={Colors.accent}
-            />
-            <TranslatedText
-              body2
-              center
-              textColor
-              marginT-8
-              translationKey="roadmap.shared_preview.sign_in_prompt"
-            />
-            <AppButton
-              bg-accent
-              br20
-              center
-              paddingH-24
-              paddingV-10
-              marginT-12
-              onPress={() => router.replace('/(auth)/login')}>
-              <TranslatedText
-                body2
-                style={{ color: Colors.white }}
-                translationKey="authentication.login"
-              />
-            </AppButton>
-          </AppView>
-        ) : alreadyOwned ? (
+        {alreadyOwned ? (
           <AppView
             row
             center
