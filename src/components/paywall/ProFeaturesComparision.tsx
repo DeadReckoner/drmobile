@@ -50,18 +50,23 @@ export const ProFeaturesComparision = () => {
       },
       {
         label: t('paywall.active_habits'),
-        free: { type: 'text', value: '3' },
+        free: { type: 'text', value: '2' },
         pro: { type: 'text', value: t('paywall.unlimited'), highlight: true },
       },
       {
         label: t('paywall.ai_planning'),
+        free: { type: 'text', value: '1' },
+        pro: { type: 'text', value: t('paywall.unlimited'), highlight: true },
+      },
+      {
+        label: t('paywall.ai_weekly_review'),
         free: { type: 'cross' },
         pro: { type: 'check' },
       },
       {
         label: t('paywall.import_existing_plan'),
-        free: { type: 'cross' },
-        pro: { type: 'check' },
+        free: { type: 'text', value: '1' },
+        pro: { type: 'text', value: t('paywall.unlimited'), highlight: true },
       },
     ],
     [t],
@@ -71,7 +76,7 @@ export const ProFeaturesComparision = () => {
     () => [
       {
         label: t('paywall.daily_task_view'),
-        free: { type: 'check' },
+        free: { type: 'cross' },
         pro: { type: 'check' },
       },
       {
@@ -85,11 +90,6 @@ export const ProFeaturesComparision = () => {
       },
       {
         label: t('paywall.advanced_insights'),
-        free: { type: 'cross' },
-        pro: { type: 'check' },
-      },
-      {
-        label: t('paywall.ai_weekly_review'),
         free: { type: 'cross' },
         pro: { type: 'check' },
       },

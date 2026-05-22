@@ -28,8 +28,9 @@ export const SubscriptionItem = ({
         styles.subscriptionItem,
         styles.subscriptionShadow,
         {
-          borderColor: isSelected ? Colors.accent : Colors.outline,
-          shadowColor: isSelected ? Colors.accent : Colors.outline,
+          borderWidth: isSelected ? 2 : 1,
+          borderColor: isSelected ? Colors.blue : Colors.outline,
+          shadowColor: isSelected ? Colors.blue : Colors.outline,
           shadowOpacity: isSelected && isPro ? 0.4 : 0.1,
         },
       ]}>

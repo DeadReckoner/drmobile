@@ -55,6 +55,8 @@ export const PaywallContent = () => {
     setSelectedOffering(SUBSCRIPTIONS[1]);
   };
 
+  const handleRestorePurchase = () => {};
+
   const handleSelectOffering = (subscription: SubscriptionType) => () => {
     setSelectedOffering(subscription);
   };
@@ -128,6 +130,15 @@ export const PaywallContent = () => {
             body1
             semibold
             translationKey="paywall.upgrade_to_pro"
+          />
+        </AppButton>
+        <AppButton
+          style={[styles.upgradeButton, { paddingVertical: 8 }]}
+          onPress={handleRestorePurchase}>
+          <TranslatedText
+            body2
+            semibold
+            translationKey="paywall.restore_purchase"
           />
         </AppButton>
         <TranslatedText
