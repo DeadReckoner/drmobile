@@ -1,6 +1,4 @@
-import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
@@ -18,8 +16,6 @@ export const SubscriptionItem = ({
   subscription,
   isSelected,
 }: SubscriptionItemProps) => {
-  const isPro = subscription.id === 'paywall.pro_plan';
-
   return (
     <AppView
       key={subscription.id}
@@ -28,17 +24,15 @@ export const SubscriptionItem = ({
         styles.subscriptionItem,
         styles.subscriptionShadow,
         {
-          borderWidth: isSelected ? 2 : 1,
+          borderWidth: 2,
           borderColor: isSelected ? Colors.blue : Colors.outline,
           shadowColor: isSelected ? Colors.blue : Colors.outline,
-          shadowOpacity: isSelected && isPro ? 0.4 : 0.1,
+          shadowOpacity: isSelected ? 0.5 : 0,
         },
       ]}>
-      <TranslatedText
-        body2
-        textColor
-        translationKey={subscription.id as TranslationKeysType}
-      />
+      <AppText body2 textColor>
+        {subscription.title}
+      </AppText>
       <AppText body1 textColor>
         {subscription.price}
       </AppText>

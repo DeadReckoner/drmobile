@@ -2,63 +2,79 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
+import { Loader } from '@/components/Loader';
 import { ProFeaturesComparision } from '@/components/paywall/ProFeaturesComparision';
 import { SubscriptionItem } from '@/components/paywall/SubscriptionItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
+import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { useToast } from '@/hooks/useToast';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
+import { type PurchasesPackage } from 'react-native-purchases';
 import { Colors } from 'react-native-ui-lib';
 
-type SubscriptionType = {
-  id: string;
-  title: string;
-  price: string;
-  features: string[];
-};
-
-const SUBSCRIPTIONS: SubscriptionType[] = [
-  {
-    id: 'paywall.free_plan',
-    title: 'Free Plan',
-    price: '$0/month',
-    features: [
-      'Access to basic features',
-      'Standard support',
-      'Cancel anytime',
-    ],
-  },
-  {
-    id: 'paywall.pro_plan',
-    title: 'Pro Monthly',
-    price: '$9.99/month',
-    features: [
-      'Access to all features',
-      'Priority support',
-      'Cancel anytime',
-      'Save 20%',
-    ],
-  },
-];
-
 export const PaywallContent = () => {
-  const [selectedOffering, setSelectedOffering] = useState<SubscriptionType>(
-    SUBSCRIPTIONS[1],
-  );
+  const {
+    subscriptions,
+    isPurchasing,
+    isRestoring,
+    purchasePackage,
+    restorePurchases,
+    offeringsError,
+    retryFetchOfferings,
+    error,
+    dismissError,
+  } = useRevenueCat();
+
+  const { showToast } = useToast();
+  const { t } = useLocalization();
+
+  const [selectedPackage, setSelectedPackage] =
+    useState<PurchasesPackage | null>(null);
 
   const handleClose = () => {
     router.back();
   };
 
-  const handleUpgrade = () => {
-    setSelectedOffering(SUBSCRIPTIONS[1]);
+  const handleUpgrade = async () => {
+    if (!selectedPackage) return;
+    const success = await purchasePackage(selectedPackage);
+    if (success) {
+      showToast({
+        message: t('paywall.purchase_success'),
+        type: 'success',
+      });
+      router.back();
+    } else if (error) {
+      showToast({ message: error, type: 'failure' });
+      dismissError();
+    }
   };
 
-  const handleRestorePurchase = () => {};
+  const handleRestorePurchase = async () => {
+    const restoredActive = await restorePurchases();
+    if (restoredActive) {
+      showToast({
+        message: t('paywall.restore_purchase_success'),
+        type: 'success',
+      });
+      router.back();
+    } else if (error) {
+      showToast({ message: error, type: 'failure' });
+      dismissError();
+    } else {
+      showToast({
+        message: t('paywall.restore_purchase_nothing'),
+        type: 'general',
+      });
+    }
+  };
 
-  const handleSelectOffering = (subscription: SubscriptionType) => () => {
-    setSelectedOffering(subscription);
+  const handleSelectPackage = (pkg: PurchasesPackage) => () => {
+    setSelectedPackage(pkg);
   };
 
   return (
@@ -111,12 +127,35 @@ export const PaywallContent = () => {
         paddingH-24
         gap-8>
         <AppView row gap-12 paddingT-16 flex>
-          {SUBSCRIPTIONS.map((subscription) => (
-            <AppView flex key={subscription.id}>
-              <AppButton onPress={handleSelectOffering(subscription)}>
+          {!offeringsError && subscriptions.length === 0 && (
+            <AppView height={60} center flex>
+              <Loader shouldAnimate={false} transparent />
+            </AppView>
+          )}
+          {offeringsError && (
+            <AppView height={60} center flex gap-8>
+              <TranslatedText
+                xsm
+                style={{ color: Colors.grey40, textAlign: 'center' }}
+                translationKey="paywall.offerings_fetch_error"
+              />
+              <AppButton onPress={retryFetchOfferings}>
+                <TranslatedText xsm semibold translationKey="paywall.retry" />
+              </AppButton>
+            </AppView>
+          )}
+          {subscriptions.map((item) => (
+            <AppView flex key={item.pkg.identifier}>
+              <AppButton onPress={handleSelectPackage(item.pkg)}>
                 <SubscriptionItem
-                  isSelected={selectedOffering.id === subscription.id}
-                  subscription={subscription}
+                  isSelected={
+                    selectedPackage?.identifier === item.pkg.identifier
+                  }
+                  subscription={{
+                    id: item.pkg.identifier,
+                    title: item.pkg.product.title,
+                    price: item.price,
+                  }}
                 />
               </AppButton>
             </AppView>
@@ -124,22 +163,44 @@ export const PaywallContent = () => {
         </AppView>
         <Divider margin-4 />
         <AppButton
-          style={[styles.upgradeButton, { backgroundColor: Colors.blue }]}
+          disabled={
+            isPurchasing || isRestoring || !selectedPackage || offeringsError
+          }
+          style={[
+            styles.upgradeButton,
+            {
+              backgroundColor: !selectedPackage ? Colors.grey40 : Colors.blue,
+            },
+          ]}
           onPress={handleUpgrade}>
-          <TranslatedText
-            body1
-            semibold
-            translationKey="paywall.upgrade_to_pro"
-          />
+          {isPurchasing ? (
+            <AppView
+              height={20}
+              width={20}
+              style={{ paddingVertical: 8, position: 'relative' }}>
+              <Loader transparent />
+            </AppView>
+          ) : (
+            <TranslatedText
+              body1
+              semibold
+              translationKey="paywall.upgrade_to_pro"
+            />
+          )}
         </AppButton>
         <AppButton
-          style={[styles.upgradeButton, { paddingVertical: 8 }]}
+          disabled={isPurchasing || isRestoring}
+          style={[styles.upgradeButton, { paddingVertical: 16 }]}
           onPress={handleRestorePurchase}>
-          <TranslatedText
-            body2
-            semibold
-            translationKey="paywall.restore_purchase"
-          />
+          {isRestoring ? (
+            <Loader transparent />
+          ) : (
+            <TranslatedText
+              body2
+              semibold
+              translationKey="paywall.restore_purchase"
+            />
+          )}
         </AppButton>
         <TranslatedText
           xsm

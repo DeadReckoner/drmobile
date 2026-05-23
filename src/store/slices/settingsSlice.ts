@@ -1,6 +1,7 @@
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import type {
+  IapStateType,
   SettingsStateType,
   ThemeModeType,
   ToastStateType,
@@ -22,6 +23,14 @@ const initialState: SettingsStateType = {
     toastProps: { type: 'general' },
   },
   roadmapListCache: '',
+  iap: {
+    isProUser: false,
+    activeProductId: null,
+    expirationDate: null,
+    isLoading: false,
+    error: null,
+    lastChecked: null,
+  },
 };
 
 const settingsSlice = createSlice({
@@ -57,6 +66,30 @@ const settingsSlice = createSlice({
     setLastRoadmapListCacheDay(state, action) {
       state.roadmapListCache = action.payload;
     },
+    setIapLoading(state, action: PayloadAction<boolean>) {
+      state.iap.isLoading = action.payload;
+    },
+    setIapError(state, action: PayloadAction<string | null>) {
+      state.iap.error = action.payload;
+    },
+    setProEntitlement(
+      state,
+      action: PayloadAction<
+        Pick<IapStateType, 'isProUser' | 'activeProductId' | 'expirationDate'>
+      >,
+    ) {
+      state.iap.isProUser = action.payload.isProUser;
+      state.iap.activeProductId = action.payload.activeProductId;
+      state.iap.expirationDate = action.payload.expirationDate;
+    },
+    clearProEntitlement(state) {
+      state.iap.isProUser = false;
+      state.iap.activeProductId = null;
+      state.iap.expirationDate = null;
+    },
+    setLastChecked(state, action: PayloadAction<string>) {
+      state.iap.lastChecked = action.payload;
+    },
     resetSettingsSlice: () => initialState,
   },
 });
@@ -71,6 +104,11 @@ export const {
   setNotificationMode,
   setHapticsEnabled,
   resetSettingsSlice,
+  setIapLoading,
+  setIapError,
+  setProEntitlement,
+  clearProEntitlement,
+  setLastChecked,
 } = settingsSlice.actions;
 export const selectHapticsEnabled = createAppSelector(
   (state) => state.settings.hapticsEnabled,
@@ -86,6 +124,25 @@ export const selectToastSettings = createAppSelector(
 export const selectSettings = createAppSelector((state) => state.settings);
 export const selectNotificationsEnabled = createAppSelector(
   (state) => state.settings.notificationsEnabled,
+);
+export const selectIap = createAppSelector((state) => state.settings.iap);
+export const selectIsProUser = createAppSelector(
+  (state) => state.settings.iap.isProUser,
+);
+export const selectIapLoading = createAppSelector(
+  (state) => state.settings.iap.isLoading,
+);
+export const selectIapError = createAppSelector(
+  (state) => state.settings.iap.error,
+);
+export const selectActiveProductId = createAppSelector(
+  (state) => state.settings.iap.activeProductId,
+);
+export const selectIapExpirationDate = createAppSelector(
+  (state) => state.settings.iap.expirationDate,
+);
+export const selectIapLastChecked = createAppSelector(
+  (state) => state.settings.iap.lastChecked,
 );
 
 export const settingsReducer = persistReducer(

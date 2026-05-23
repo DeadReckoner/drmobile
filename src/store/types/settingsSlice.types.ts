@@ -10,6 +10,15 @@ type ToastStateType = {
   toastProps: Pick<ToastProps, 'message' | 'icon'> & { type: ToastType };
 };
 
+type IapStateType = {
+  isProUser: boolean;
+  activeProductId: string | null;
+  expirationDate: string | null;
+  isLoading: boolean;
+  error: string | null;
+  lastChecked: string | null;
+};
+
 type SettingsStateType = {
   theme: ThemeModeType;
   language: SupportedLanguagesType;
@@ -17,6 +26,13 @@ type SettingsStateType = {
   roadmapListCache?: string;
   notificationsEnabled: boolean;
   hapticsEnabled: boolean;
+  iap: IapStateType;
 };
 
-export type { SettingsStateType, ThemeModeType, ToastStateType, ToastType };
+export type {
+  IapStateType,
+  SettingsStateType,
+  ThemeModeType,
+  ToastStateType,
+  ToastType,
+};

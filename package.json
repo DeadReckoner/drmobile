@@ -86,7 +86,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
     "prettier": "^3.6.2",
-    "redux-devtools-expo-dev-plugin": "^2.0.0",
     "typescript": "~5.9.2"
   },
   "expo": {

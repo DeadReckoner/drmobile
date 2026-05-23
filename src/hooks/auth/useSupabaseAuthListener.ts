@@ -1,5 +1,6 @@
 import { useUpdateUserMutation } from '@/hooks/user';
 import { useToast } from '@/hooks/useToast';
+import { loginRevenueCat, logoutRevenueCat } from '@/lib/revenueCat';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setAuthUserAction } from '@/store/slices/authSlice';
@@ -70,10 +71,14 @@ export const useSupabaseAutoRefresh = () => {
     async (event: AuthChangeEvent, session: Session | null) => {
       if (AUTH_EVENTS.includes(event)) {
         if (event === 'SIGNED_OUT') {
+          await logoutRevenueCat();
           await handleSignout(dispatch, persistedStore);
           return;
         }
         if (session?.user && session?.access_token) {
+          if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+            await loginRevenueCat(session.user.id);
+          }
           if (event === 'USER_UPDATED') {
             const { first_name, last_name } = getFirstAndLastName(session.user);
             try {

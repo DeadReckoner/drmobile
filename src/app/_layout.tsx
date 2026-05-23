@@ -2,9 +2,13 @@ import { Loader } from '@/components/Loader';
 import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { Env } from '@/constants/Env';
+import { useEntitlementCheck } from '@/hooks/useEntitlementCheck';
+import { initializeRevenueCat } from '@/lib/revenueCat';
 import { persistedStore, store } from '@/store/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { AppState, type AppStateStatus } from 'react-native';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 import { Provider } from 'react-redux';
@@ -21,15 +25,46 @@ GoogleSignin.configure({
   iosClientId: Env.EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID,
 });
 
+initializeRevenueCat();
+
+function AppWithEntitlementCheck() {
+  const { checkEntitlementStatus } = useEntitlementCheck();
+
+  useEffect(() => {
+    checkEntitlementStatus();
+  }, [checkEntitlementStatus]);
+
+  // Re-check entitlement whenever the app comes back to the foreground.
+  // Registered here (once) instead of inside useEntitlementCheck to avoid
+  // duplicate listeners when the hook is composed into multiple sub-hooks.
+  useEffect(() => {
+    const handleAppStateChange = (nextState: AppStateStatus) => {
+      if (nextState === 'active') {
+        checkEntitlementStatus();
+      }
+    };
+
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+    return () => subscription.remove();
+  }, [checkEntitlementStatus]);
+
+  return (
+    <KeyboardProvider>
+      <SplashScreenController>
+        <RootNavigator />
+      </SplashScreenController>
+    </KeyboardProvider>
+  );
+}
+
 export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={<Loader />} persistor={persistedStore}>
-        <KeyboardProvider>
-          <SplashScreenController>
-            <RootNavigator />
-          </SplashScreenController>
-        </KeyboardProvider>
+        <AppWithEntitlementCheck />
       </PersistGate>
     </Provider>
   );
