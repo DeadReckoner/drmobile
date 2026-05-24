@@ -16,9 +16,7 @@ export const RootNavigator = () => {
 
   return (
     <>
-      <Stack screenOptions={resetStackScreenOptions} initialRouteName="paywall">
-        <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
-
+      <Stack screenOptions={resetStackScreenOptions}>
         <Stack.Protected guard={!!user?.id}>
           <Stack.Screen name="(protected)" />
         </Stack.Protected>
@@ -26,6 +24,8 @@ export const RootNavigator = () => {
         <Stack.Protected guard={!user?.id}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
+
+        <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
       </Stack>
 
       <AppToast />

@@ -770,7 +770,7 @@
     "pending": "Fonctionnalité en attente",
     "reminders": "Rappels",
     "history": "Performance historique",
-    "upgrade_to_pro": "Passer \u00e0 Pro",
+    "upgrade_to_pro": "Passer à Pro",
     "restore_purchase": "Restaurer l'achat",
     "restore_purchase_success": "Votre achat a été restauré",
     "restore_purchase_nothing": "Aucun achat actif trouvé à restaurer",
@@ -778,10 +778,11 @@
     "offerings_fetch_error": "Impossible de charger les plans. Vérifiez votre connexion.",
     "retry": "Réessayer",
     "continue_with_free": "Continuer avec le plan gratuit",
-    "cta_disclaimer": "Annulez \u00e0 tout moment \u2022 Mettez \u00e0 niveau \u00e0 tout moment \u2022 Votre plan actuel reste actif jusqu\u2019au changement",
+    "cta_disclaimer": "Annulez à tout moment • Mettez à niveau à tout moment • Votre plan actuel reste actif jusqu’au changement",
     "current_plan": "Actuel",
-    "recommended": "Recommand\u00e9",
+    "recommended": "Recommandé",
     "basic_anchor": "1\nFeuille de route uniquement",
-    "advanced_anchor": "Ilimit\u00e9\nFeuilles de route et habitudes"
+    "advanced_anchor": "Ilimité\nFeuilles de route et habitudes",
+    "not_logged_in_error": "Votre compte n'est pas lié. Veuillez vous déconnecter et vous reconnecter, puis réessayer."
   }
 }

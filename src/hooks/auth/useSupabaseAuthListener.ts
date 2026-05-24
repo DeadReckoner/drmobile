@@ -76,8 +76,14 @@ export const useSupabaseAutoRefresh = () => {
           return;
         }
         if (session?.user && session?.access_token) {
-          if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-            await loginRevenueCat(session.user.id);
+          if (event === 'SIGNED_IN') {
+            await loginRevenueCat({
+              userId: session.user.id,
+              name:
+                session.user.user_metadata?.full_name ||
+                session.user.user_metadata?.name,
+              email: session.user.user_metadata?.email || session.user.email,
+            });
           }
           if (event === 'USER_UPDATED') {
             const { first_name, last_name } = getFirstAndLastName(session.user);

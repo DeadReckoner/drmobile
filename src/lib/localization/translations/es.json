@@ -778,10 +778,11 @@
     "offerings_fetch_error": "No se pudieron cargar los planes. Verifica tu conexión.",
     "retry": "Reintentar",
     "continue_with_free": "Continuar con el plan gratuito",
-    "cta_disclaimer": "Cancela cuando quieras \u2022 Actualiza cuando quieras \u2022 Tu plan actual permanece activo hasta que lo cambies",
+    "cta_disclaimer": "Cancela cuando quieras • Actualiza cuando quieras • Tu plan actual permanece activo hasta que lo cambies",
     "current_plan": "Actual",
     "recommended": "Recomendado",
     "basic_anchor": "1\nSolo hoja de ruta",
-    "advanced_anchor": "Ilimitado\nHojas de ruta y hábitos"
+    "advanced_anchor": "Ilimitado\nHojas de ruta y hábitos",
+    "not_logged_in_error": "Tu cuenta no está vinculada. Por favor, cierra sesión y vuelve a iniciarla, luego inténtalo de nuevo."
   }
 }

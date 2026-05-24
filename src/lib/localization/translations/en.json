@@ -778,10 +778,11 @@
     "offerings_fetch_error": "Unable to load plans. Please check your connection.",
     "retry": "Retry",
     "continue_with_free": "Continue with Free",
-    "cta_disclaimer": "Cancel anytime \u2022 Upgrade anytime \u2022 Your current plan remains active until changed",
+    "cta_disclaimer": "Cancel anytime • Upgrade anytime • Your current plan remains active until changed",
     "current_plan": "Current",
     "recommended": "Recommended",
     "basic_anchor": "1",
-    "advanced_anchor": "Unlimited"
+    "advanced_anchor": "Unlimited",
+    "not_logged_in_error": "Your account is not linked. Please sign out and sign back in, then try again."
   }
 }

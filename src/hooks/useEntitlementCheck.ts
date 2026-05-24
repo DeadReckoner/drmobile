@@ -25,6 +25,7 @@ export const useEntitlementCheck = () => {
 
   const checkEntitlementStatus = useCallback(async (): Promise<boolean> => {
     try {
+      await Purchases.invalidateCustomerInfoCache();
       const customerInfo = await Purchases.getCustomerInfo();
       const entitlement = customerInfo.entitlements.active[ENTITLEMENT_ID];
 

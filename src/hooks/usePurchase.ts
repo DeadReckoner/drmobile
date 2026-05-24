@@ -1,4 +1,7 @@
-import { useAppDispatch } from '@/store/hooks/store.hooks';
+import i18nConfig from '@/lib/localization/i18nConfig';
+import { loginRevenueCat } from '@/lib/revenueCat';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
 import { setIapError, setIapLoading } from '@/store/slices/settingsSlice';
 import { useCallback, useState } from 'react';
 import Purchases, {
@@ -20,6 +23,7 @@ import { useEntitlementCheck } from './useEntitlementCheck';
  */
 export const usePurchase = () => {
   const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
   const { checkEntitlementStatus } = useEntitlementCheck();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
@@ -30,6 +34,22 @@ export const usePurchase = () => {
       dispatch(setIapError(null));
 
       try {
+        const isAnonymous = await Purchases.isAnonymous();
+        if (isAnonymous) {
+          if (user.id) {
+            await loginRevenueCat({
+              userId: user.id,
+              name: user.name,
+              email: user.email,
+            });
+          }
+          const stillAnonymous = await Purchases.isAnonymous();
+          if (stillAnonymous) {
+            dispatch(setIapError(i18nConfig.t('paywall.not_logged_in_error')));
+            return false;
+          }
+        }
+
         await Purchases.purchasePackage(pkg);
         await checkEntitlementStatus();
         return true;
@@ -56,7 +76,7 @@ export const usePurchase = () => {
         setIsPurchasing(false);
       }
     },
-    [dispatch, checkEntitlementStatus],
+    [dispatch, checkEntitlementStatus, user.id, user.name, user.email],
   );
 
   return { purchasePackage, isPurchasing };
