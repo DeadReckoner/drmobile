@@ -306,7 +306,25 @@
     "no_contacts_available": "No contacts available",
     "unknown_contact": "Unknown",
     "failed_to_request_permission": "Failed to request permission",
-    "failed_to_fetch_contacts": "Failed to fetch contacts"
+    "failed_to_fetch_contacts": "Failed to fetch contacts",
+    "membership_details": "Membership Details"
+  },
+  "membership": {
+    "title": "Membership Details",
+    "current_plan": "Current Plan",
+    "plan_free": "Free",
+    "plan_pro": "Pro",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "active_product": "Plan",
+    "amount": "Amount",
+    "billing_cycle": "Billing Cycle",
+    "expires_on": "Renews on",
+    "never_expires": "Never expires",
+    "manage_subscription": "Manage Subscription",
+    "upgrade_to_pro": "Upgrade to Pro",
+    "pro_description": "Unlock unlimited roadmaps, AI-powered planning, advanced insights, and more."
   },
   "notifications": {
     "title": "Notifications",

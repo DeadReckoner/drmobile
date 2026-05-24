@@ -306,7 +306,25 @@
     "no_contacts_available": "Aucun contact disponible",
     "unknown_contact": "Inconnu",
     "failed_to_request_permission": "Échec de la demande d'autorisation",
-    "failed_to_fetch_contacts": "Échec de la récupération des contacts"
+    "failed_to_fetch_contacts": "Échec de la récupération des contacts",
+    "membership_details": "Détails de l'Abonnement"
+  },
+  "membership": {
+    "title": "Détails de l'Abonnement",
+    "current_plan": "Plan Actuel",
+    "plan_free": "Gratuit",
+    "plan_pro": "Pro",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "active_product": "Plan",
+    "amount": "Montant",
+    "billing_cycle": "Cycle de Facturation",
+    "expires_on": "Se renouvelle le",
+    "never_expires": "N'expire jamais",
+    "manage_subscription": "Gérer l'Abonnement",
+    "upgrade_to_pro": "Passer à Pro",
+    "pro_description": "Débloquez des feuilles de route illimitées, la planification IA, des analyses avancées et plus encore."
   },
   "notifications": {
     "title": "Notifications",

@@ -1,10 +1,11 @@
-import { ENTITLEMENT_ID } from '@/constants/iap';
+import { ENTITLEMENT_ID, OFFERING_ID } from '@/constants/iap';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import {
   clearProEntitlement,
   setLastChecked,
   setProEntitlement,
 } from '@/store/slices/settingsSlice';
+import type { IapStateType } from '@/store/types/settingsSlice.types';
 import { useCallback } from 'react';
 import Purchases from 'react-native-purchases';
 
@@ -28,11 +29,35 @@ export const useEntitlementCheck = () => {
       const entitlement = customerInfo.entitlements.active[ENTITLEMENT_ID];
 
       if (entitlement) {
+        let priceString: string | null = null;
+        let planCycle: IapStateType['planCycle'] = null;
+
+        try {
+          const offerings = await Purchases.getOfferings();
+          const offering =
+            OFFERING_ID === 'default'
+              ? offerings.current
+              : offerings.all[OFFERING_ID];
+          if (offering) {
+            const matchingPkg = offering.availablePackages.find(
+              (p) => p.product.identifier === entitlement.identifier,
+            );
+            if (matchingPkg) {
+              priceString = matchingPkg.product.priceString;
+              planCycle = matchingPkg.packageType;
+            }
+          }
+        } catch {
+          // Non-critical — price/cycle will be null if offerings fetch fails
+        }
+
         dispatch(
           setProEntitlement({
             isProUser: true,
             activeProductId: entitlement.productIdentifier,
             expirationDate: entitlement.expirationDate ?? null,
+            priceString,
+            planCycle,
           }),
         );
         dispatch(setLastChecked(new Date().toISOString()));

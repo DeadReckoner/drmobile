@@ -7,6 +7,7 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
+import { MembershipDetailsModal } from '@/components/settings/MembershipDetailsModal';
 import { UsefulLinks } from '@/components/settings/UsefulLinks';
 import { UserStats } from '@/components/settings/UserStats';
 import { SettingsItem } from '@/components/SettingsItem';
@@ -29,6 +30,8 @@ const Settings = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
+  const [isMembershipModalVisible, setIsMembershipModalVisible] =
+    useState(false);
 
   const hideLogoutDialog = () => setIsLogoutDialogVisible(false);
   const showLogoutDialog = () => setIsLogoutDialogVisible(true);
@@ -115,6 +118,15 @@ const Settings = () => {
                 translationKey="settings.settings_preferences"
                 rightElement={
                   <AppIcon set="Feather" name="settings" size={22} />
+                }
+              />
+            </AppButton>
+            <SettingsItemDivider />
+            <AppButton onPress={() => setIsMembershipModalVisible(true)}>
+              <SettingsItem
+                translationKey="settings.membership_details"
+                rightElement={
+                  <AppIcon set="Ionicons" name="sparkles-outline" size={20} />
                 }
               />
             </AppButton>
@@ -215,6 +227,10 @@ const Settings = () => {
         title={t('settings.friends_accountability')}
         visible={isMenuVisible}
         onDismiss={() => setIsMenuVisible(false)}
+      />
+      <MembershipDetailsModal
+        visible={isMembershipModalVisible}
+        onDismiss={() => setIsMembershipModalVisible(false)}
       />
     </AppScreen>
   );

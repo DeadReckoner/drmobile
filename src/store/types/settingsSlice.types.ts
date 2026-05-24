@@ -1,4 +1,5 @@
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
+import { PurchasesPackage } from 'react-native-purchases';
 import { Incubator } from 'react-native-ui-lib';
 
 type ThemeModeType = 'light' | 'dark';
@@ -14,6 +15,8 @@ type IapStateType = {
   isProUser: boolean;
   activeProductId: string | null;
   expirationDate: string | null;
+  priceString: string | null;
+  planCycle: PurchasesPackage['packageType'] | null;
   isLoading: boolean;
   error: string | null;
   lastChecked: string | null;

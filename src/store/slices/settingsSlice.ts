@@ -27,6 +27,8 @@ const initialState: SettingsStateType = {
     isProUser: false,
     activeProductId: null,
     expirationDate: null,
+    priceString: null,
+    planCycle: null,
     isLoading: false,
     error: null,
     lastChecked: null,
@@ -75,17 +77,28 @@ const settingsSlice = createSlice({
     setProEntitlement(
       state,
       action: PayloadAction<
-        Pick<IapStateType, 'isProUser' | 'activeProductId' | 'expirationDate'>
+        Pick<
+          IapStateType,
+          | 'isProUser'
+          | 'activeProductId'
+          | 'expirationDate'
+          | 'priceString'
+          | 'planCycle'
+        >
       >,
     ) {
       state.iap.isProUser = action.payload.isProUser;
       state.iap.activeProductId = action.payload.activeProductId;
       state.iap.expirationDate = action.payload.expirationDate;
+      state.iap.priceString = action.payload.priceString;
+      state.iap.planCycle = action.payload.planCycle;
     },
     clearProEntitlement(state) {
       state.iap.isProUser = false;
       state.iap.activeProductId = null;
       state.iap.expirationDate = null;
+      state.iap.priceString = null;
+      state.iap.planCycle = null;
     },
     setLastChecked(state, action: PayloadAction<string>) {
       state.iap.lastChecked = action.payload;
@@ -140,9 +153,6 @@ export const selectActiveProductId = createAppSelector(
 );
 export const selectIapExpirationDate = createAppSelector(
   (state) => state.settings.iap.expirationDate,
-);
-export const selectIapLastChecked = createAppSelector(
-  (state) => state.settings.iap.lastChecked,
 );
 
 export const settingsReducer = persistReducer(

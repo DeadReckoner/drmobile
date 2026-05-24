@@ -306,7 +306,25 @@
     "no_contacts_available": "No hay contactos disponibles",
     "unknown_contact": "Desconocido",
     "failed_to_request_permission": "Error al solicitar permiso",
-    "failed_to_fetch_contacts": "Error al obtener contactos"
+    "failed_to_fetch_contacts": "Error al obtener contactos",
+    "membership_details": "Detalles de Membresía"
+  },
+  "membership": {
+    "title": "Detalles de Membresía",
+    "current_plan": "Plan Actual",
+    "plan_free": "Gratis",
+    "plan_pro": "Pro",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "active_product": "Plan",
+    "amount": "Monto",
+    "billing_cycle": "Ciclo de Facturación",
+    "expires_on": "Se renueva el",
+    "never_expires": "Nunca expira",
+    "manage_subscription": "Gestionar Suscripción",
+    "upgrade_to_pro": "Actualizar a Pro",
+    "pro_description": "Desbloquea hojas de ruta ilimitadas, planificación con IA, análisis avanzados y más."
   },
   "notifications": {
     "title": "Notificaciones",
