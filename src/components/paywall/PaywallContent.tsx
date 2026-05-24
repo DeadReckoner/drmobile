@@ -6,7 +6,7 @@ import { Loader } from '@/components/Loader';
 import { ProFeaturesComparision } from '@/components/paywall/ProFeaturesComparision';
 import { SubscriptionItem } from '@/components/paywall/SubscriptionItem';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
+import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useToast } from '@/hooks/useToast';
@@ -26,7 +26,6 @@ export const PaywallContent = () => {
     offeringsError,
     retryFetchOfferings,
     error,
-    dismissError,
   } = useRevenueCat();
 
   const { showToast } = useToast();
@@ -48,9 +47,6 @@ export const PaywallContent = () => {
         type: 'success',
       });
       router.back();
-    } else if (error) {
-      showToast({ message: error, type: 'failure' });
-      dismissError();
     }
   };
 
@@ -62,14 +58,6 @@ export const PaywallContent = () => {
         type: 'success',
       });
       router.back();
-    } else if (error) {
-      showToast({ message: error, type: 'failure' });
-      dismissError();
-    } else {
-      showToast({
-        message: t('paywall.restore_purchase_nothing'),
-        type: 'general',
-      });
     }
   };
 
@@ -161,6 +149,14 @@ export const PaywallContent = () => {
             </AppView>
           ))}
         </AppView>
+        {!!error && (
+          <>
+            <Divider margin-0 />
+            <AppText xsm error>
+              {error}
+            </AppText>
+          </>
+        )}
         <Divider margin-4 />
         <AppButton
           disabled={
@@ -190,17 +186,21 @@ export const PaywallContent = () => {
         </AppButton>
         <AppButton
           disabled={isPurchasing || isRestoring}
-          style={[styles.upgradeButton, { paddingVertical: 16 }]}
+          style={[styles.upgradeButton, { paddingVertical: 8 }]}
           onPress={handleRestorePurchase}>
-          {isRestoring ? (
-            <Loader transparent />
-          ) : (
-            <TranslatedText
-              body2
-              semibold
-              translationKey="paywall.restore_purchase"
-            />
-          )}
+          <AppView center>
+            {isRestoring ? (
+              <AppView height={20} width={20}>
+                <Loader transparent />
+              </AppView>
+            ) : (
+              <TranslatedText
+                body2
+                semibold
+                translationKey="paywall.restore_purchase"
+              />
+            )}
+          </AppView>
         </AppButton>
         <TranslatedText
           xsm
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     shadowRadius: 14,
   },
   scrollContent: {
-    paddingBottom: 80,
+    paddingBottom: 100,
   },
   bottomSheet: {
     position: 'absolute',

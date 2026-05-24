@@ -127,10 +127,10 @@ export const MembershipDetailsModal = ({
               </AppText>
             </AppView>
           </AppView>
-          <LineDivider marginV-0 />
 
           {isProUser && (
             <>
+              <LineDivider marginV-0 />
               {priceString && (
                 <AppView row centerV spread>
                   <TranslatedText
