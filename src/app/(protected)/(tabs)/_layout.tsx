@@ -14,17 +14,14 @@ import {
 import { selectTheme } from '@/store/slices/settingsSlice';
 import { store } from '@/store/store';
 import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
-import { router, Tabs } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { Tabs } from 'expo-router';
+import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors, Typography } from 'react-native-ui-lib';
 
 export default function TabLayout() {
   const { t } = useLocalization();
   const theme = useAppSelector(selectTheme);
-  useEffect(() => {
-    router.navigate('/paywall');
-  }, []);
 
   const screenOptions: BottomTabNavigationOptions = useMemo(
     () => ({
