@@ -25,18 +25,21 @@ export const initializeRevenueCat = (): void => {
  * Must be called after a successful sign-in so that purchases are linked
  * to the correct account and can be restored across devices.
  */
-export const loginRevenueCat = async ({
-  userId,
+export const loginRevenueCat = async (userId: string): Promise<void> => {
+  try {
+    if (!userId) return;
+    await Purchases.logIn(userId);
+  } catch {}
+};
+
+export const syncRevenueCatAttributes = async ({
   name,
   email,
 }: {
-  userId: string;
   name: string;
   email: string;
 }): Promise<void> => {
   try {
-    if (!userId) return;
-    await Purchases.logIn(userId);
     const attributes: { $displayName: string; $email: string } = {
       $displayName: name,
       $email: email,
@@ -45,9 +48,7 @@ export const loginRevenueCat = async ({
       Object.entries(attributes).filter(([_, value]) => value !== ''),
     );
     await Purchases.setAttributes(removeEmptyAttributes);
-  } catch {
-    // Non-fatal — SDK will continue with an anonymous identity
-  }
+  } catch {}
 };
 
 /**
