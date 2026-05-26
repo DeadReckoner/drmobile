@@ -7,8 +7,3 @@ export const REVENUECAT_API_KEY_ANDROID =
 
 export const ENTITLEMENT_ID = 'pro';
 export const OFFERING_ID = 'default';
-
-export const PRODUCT_IDS = {
-  MONTHLY: 'pro_monthly',
-  YEARLY: 'pro_yearly',
-} as const;

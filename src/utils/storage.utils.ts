@@ -23,6 +23,23 @@ export const saveAppleUserName = async (
   } catch {}
 };
 
+export const saveAppleAuthCode = async (
+  authCode?: string | null,
+): Promise<void> => {
+  if (!authCode) return;
+  try {
+    await AsyncStorage.setItem('@apple_auth_code', authCode);
+  } catch {}
+};
+
+export const getAppleAuthCode = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem('@apple_auth_code');
+  } catch {
+    return null;
+  }
+};
+
 /**
  * Retrieve Apple user's full name from local storage
  * Returns the stored name or null if not found

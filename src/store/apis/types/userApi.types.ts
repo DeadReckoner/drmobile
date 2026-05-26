@@ -27,3 +27,7 @@ export type UpdateUserResponseType = {
   phone_number?: string;
   CreatedAt: string;
 };
+
+export type DeleteUserResponseType = {
+  message: string;
+};

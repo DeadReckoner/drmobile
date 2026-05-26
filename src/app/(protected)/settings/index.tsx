@@ -7,6 +7,7 @@ import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
+import { Loader } from '@/components/Loader';
 import { MembershipDetailsModal } from '@/components/settings/MembershipDetailsModal';
 import { UsefulLinks } from '@/components/settings/UsefulLinks';
 import { UserStats } from '@/components/settings/UserStats';
@@ -14,9 +15,13 @@ import { SettingsItem } from '@/components/SettingsItem';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useDeleteUserMutation } from '@/hooks/user';
+import { useToast } from '@/hooks/useToast';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { clearAuthAction, selectUser } from '@/store/slices/authSlice';
+import { persistedStore } from '@/store/store';
+import { handleSignout } from '@/utils/apiErrors.utils';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
@@ -27,19 +32,40 @@ const Settings = () => {
   const dispatch = useAppDispatch();
   const { theme } = useAppTheme();
   const { t } = useLocalization();
+  const { showToast } = useToast();
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
+  const [isDeleteAccountDialogVisible, setIsDeleteAccountDialogVisible] =
+    useState(false);
   const [isMembershipModalVisible, setIsMembershipModalVisible] =
     useState(false);
 
   const hideLogoutDialog = () => setIsLogoutDialogVisible(false);
   const showLogoutDialog = () => setIsLogoutDialogVisible(true);
 
+  const hideDeleteAccountDialog = () => setIsDeleteAccountDialogVisible(false);
+  const showDeleteAccountDialog = () => setIsDeleteAccountDialogVisible(true);
+
   const onLogoutConfirmation = async () => {
     hideLogoutDialog();
     dispatch(clearAuthAction());
     await supabaseClient.auth.signOut();
+  };
+
+  const onDeleteAccountConfirmation = async () => {
+    hideDeleteAccountDialog();
+    try {
+      await deleteUser().unwrap();
+      await handleSignout(dispatch, persistedStore);
+      router.replace('/(auth)/login');
+    } catch {
+      showToast({
+        message: t('settings.delete_account_error'),
+        type: 'failure',
+      });
+    }
   };
 
   // const openURL = async (url: string) => {
@@ -175,6 +201,26 @@ const Settings = () => {
                 }
               />
             </AppButton>
+            <SettingsItemDivider />
+            <AppButton disabled={isDeleting} onPress={showDeleteAccountDialog}>
+              <SettingsItem
+                textColor={Colors.error}
+                translationKey="settings.delete_account"
+                rightElement={
+                  isDeleting ? (
+                    <AppView width={24} height={24} center>
+                      <Loader transparent color={Colors.error} />
+                    </AppView>
+                  ) : (
+                    <AppIcon
+                      set="Feather"
+                      name="trash-2"
+                      color={Colors.error}
+                    />
+                  )
+                }
+              />
+            </AppButton>
           </AppView>
         </AppView>
       </ScrollView>
@@ -191,6 +237,27 @@ const Settings = () => {
           <AppIcon
             set="Feather"
             name="log-out"
+            color={Colors.textOnPrimary}
+            size={16}
+          />
+        }
+        negativeButtonIcon={
+          <AppIcon name="close" color={Colors.textOnPrimary} size={16} />
+        }
+      />
+      <ConfirmationDialog
+        isDialogOpen={isDeleteAccountDialogVisible}
+        onDismiss={hideDeleteAccountDialog}
+        title="common.are_you_sure"
+        subtitle="settings.delete_account_dialog"
+        onPositivePress={onDeleteAccountConfirmation}
+        onNegativePress={hideDeleteAccountDialog}
+        positiveText="settings.delete_account"
+        negativeText="common.cancel"
+        positiveButtonIcon={
+          <AppIcon
+            set="Feather"
+            name="trash-2"
             color={Colors.textOnPrimary}
             size={16}
           />

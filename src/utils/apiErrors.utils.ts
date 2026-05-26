@@ -1,4 +1,5 @@
 import i18nConfig from '@/lib/localization/i18nConfig';
+import { logoutRevenueCat } from '@/lib/revenueCat';
 import { api } from '@/store/apis/api';
 import { ApiError } from '@/store/apis/types/api.types';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
@@ -29,6 +30,7 @@ export const handleSignout = async (
       await AsyncStorage.setItem('@apple_user_name', appleUserName);
     }
     await persistedStore.purge();
+    await logoutRevenueCat();
   } catch {}
 };
 

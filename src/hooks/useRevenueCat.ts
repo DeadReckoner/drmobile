@@ -48,7 +48,6 @@ export const useRevenueCat = () => {
     dispatch(setIapError(null));
   }, [dispatch]);
 
-  // Reset any stale persisted loading/error state when the hook mounts
   useEffect(() => {
     dispatch(setIapLoading(false));
     dispatch(setIapError(null));
@@ -68,12 +67,8 @@ export const useRevenueCat = () => {
       const pkgs = offering.availablePackages;
       setPackages(pkgs);
 
-      const monthly = pkgs.find(
-        (p) => p.packageType === 'MONTHLY' || p.identifier === '$rc_monthly',
-      );
-      const yearly = pkgs.find(
-        (p) => p.packageType === 'ANNUAL' || p.identifier === '$rc_annual',
-      );
+      const monthly = pkgs.find((p) => p.packageType === 'MONTHLY');
+      const yearly = pkgs.find((p) => p.packageType === 'ANNUAL');
 
       const subs: SubscriptionPackage[] = [];
       if (monthly)

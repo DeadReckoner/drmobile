@@ -1,4 +1,4 @@
-import { AppScreen } from '@/components/AppScreen';
+import { AppKeyboardController } from '@/components/AppKeyboardController';
 import { UpdateProfileForm } from '@/components/auth/UpdateProfileForm';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
@@ -19,7 +19,7 @@ const EditProfile = () => {
   };
 
   return (
-    <AppScreen safeArea>
+    <AppKeyboardController>
       <HeaderWithBack headerKey="settings.edit_profile" />
       <Divider marginT-24 />
 
@@ -30,7 +30,7 @@ const EditProfile = () => {
           initialLastName={lastName}
         />
       </AppView>
-    </AppScreen>
+    </AppKeyboardController>
   );
 };
 
