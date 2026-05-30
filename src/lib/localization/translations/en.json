@@ -69,7 +69,10 @@
       "first_name_required": "First name is required",
       "last_name_min_length": "Last name must be at least 2 characters",
       "last_name_required": "Last name is required",
-      "profile_updated_success": "Profile updated successfully"
+      "profile_updated_success": "Profile updated successfully",
+      "delete_photo": "Delete Photo",
+      "change_photo": "Change Photo",
+      "photo_deleted_success": "Profile photo removed"
     }
   },
   "tabs": {
@@ -358,7 +361,24 @@
     "clear_notifications_message": "This will permanently remove all notifications. This action cannot be undone.",
     "clearing": "Clearing notifications...",
     "clear_success": "All notifications cleared",
-    "clear_failure": "Failed to clear notifications"
+    "clear_failure": "Failed to clear notifications",
+    "settings_title": "Notification Settings",
+    "push_notifications": "Push Notifications",
+    "email_notifications": "Email Notifications",
+    "quiet_hours": "Quiet Hours",
+    "quiet_hours_description": "Suppress notifications during specified hours",
+    "quiet_hours_start": "Start Time",
+    "quiet_hours_end": "End Time",
+    "digest_preferences": "Digest Preferences",
+    "digest_description": "Receive a summary of your activity",
+    "digest_daily": "Daily",
+    "digest_weekly": "Weekly",
+    "digest_never": "Never",
+    "global_mute": "Mute All Notifications",
+    "global_mute_description": "Temporarily pause all notifications",
+    "channel_settings": "Channels",
+    "schedule_settings": "Schedule",
+    "digest_settings": "Digest"
   },
   "permissions": {
     "contacts_denied_title": "Contacts Permission Denied",

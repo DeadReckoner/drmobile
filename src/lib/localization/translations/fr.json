@@ -69,7 +69,10 @@
       "first_name_required": "Le prénom est requis",
       "last_name_min_length": "Le nom doit contenir au moins 2 caractères",
       "last_name_required": "Le nom est requis",
-      "profile_updated_success": "Profil mis à jour avec succès"
+      "profile_updated_success": "Profil mis à jour avec succès",
+      "delete_photo": "Supprimer la photo",
+      "change_photo": "Changer la photo",
+      "photo_deleted_success": "Photo de profil supprimée"
     }
   },
   "ai_roadmap": {
@@ -358,7 +361,24 @@
     "clear_notifications_message": "Cela supprimera définitivement toutes les notifications. Cette action ne peut pas être annulée.",
     "clearing": "Effacement des notifications...",
     "clear_success": "Toutes les notifications effacées",
-    "clear_failure": "Échec de l'effacement des notifications"
+    "clear_failure": "Échec de l'effacement des notifications",
+    "settings_title": "Paramètres de Notifications",
+    "push_notifications": "Notifications Push",
+    "email_notifications": "Notifications par E-mail",
+    "quiet_hours": "Heures Calmes",
+    "quiet_hours_description": "Supprimer les notifications pendant des heures spécifiées",
+    "quiet_hours_start": "Heure de Début",
+    "quiet_hours_end": "Heure de Fin",
+    "digest_preferences": "Préférences de Résumé",
+    "digest_description": "Recevoir un résumé de votre activité",
+    "digest_daily": "Quotidien",
+    "digest_weekly": "Hebdomadaire",
+    "digest_never": "Jamais",
+    "global_mute": "Mettre en Sourdine Toutes les Notifications",
+    "global_mute_description": "Mettre temporairement en pause toutes les notifications",
+    "channel_settings": "Canaux",
+    "schedule_settings": "Horaire",
+    "digest_settings": "Résumé"
   },
   "permissions": {
     "contacts_denied_title": "Permission de Contacts Refusée",

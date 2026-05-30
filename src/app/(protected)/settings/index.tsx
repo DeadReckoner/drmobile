@@ -59,7 +59,6 @@ const Settings = () => {
     try {
       await deleteUser().unwrap();
       await handleSignout(dispatch, persistedStore);
-      router.replace('/(auth)/login');
     } catch {
       showToast({
         message: t('settings.delete_account_error'),

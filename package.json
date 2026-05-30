@@ -16,7 +16,8 @@
     "prebuild:android": "expo prebuild --platform android",
     "prebuild": "expo prebuild",
     "typecheck": "tsc --noEmit",
-    "dev-build:ios": "npx eas-cli build --profile development --platform ios"
+    "dev-build:ios": "npx eas-cli build --profile development --platform ios",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo-google-fonts/unbounded": "^0.4.0",
@@ -86,6 +87,7 @@
     "expo-dev-client": "~55.0.30",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
+    "patch-package": "^8.0.1",
     "prettier": "^3.6.2",
     "typescript": "~5.9.2"
   },

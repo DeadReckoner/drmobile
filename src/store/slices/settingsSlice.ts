@@ -2,6 +2,7 @@ import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 import { createAppSelector } from '@/store/hooks/store.hooks';
 import type {
   IapStateType,
+  NotificationSettingsType,
   SettingsStateType,
   ThemeModeType,
   ToastStateType,
@@ -18,6 +19,15 @@ const initialState: SettingsStateType = {
   },
   notificationsEnabled: false,
   hapticsEnabled: true,
+  notificationSettings: {
+    pushEnabled: true,
+    emailEnabled: true,
+    quietHoursEnabled: false,
+    quietHoursStart: '22:00',
+    quietHoursEnd: '08:00',
+    digestFrequency: 'daily',
+    globalMute: false,
+  },
   toast: {
     isVisible: false,
     toastProps: { type: 'general' },
@@ -61,6 +71,16 @@ const settingsSlice = createSlice({
     },
     setHapticsEnabled(state, action: PayloadAction<boolean>) {
       state.hapticsEnabled = action.payload;
+    },
+    setNotificationSettings(
+      state,
+      action: PayloadAction<Partial<NotificationSettingsType>>,
+    ) {
+      state.notificationSettings = {
+        ...initialState.notificationSettings,
+        ...(state.notificationSettings ?? {}),
+        ...action.payload,
+      };
     },
     hideToastAction(state) {
       state.toast.isVisible = false;
@@ -116,6 +136,7 @@ export const {
   setLastRoadmapListCacheDay,
   setNotificationMode,
   setHapticsEnabled,
+  setNotificationSettings,
   resetSettingsSlice,
   setIapLoading,
   setIapError,
@@ -137,6 +158,10 @@ export const selectToastSettings = createAppSelector(
 export const selectSettings = createAppSelector((state) => state.settings);
 export const selectNotificationsEnabled = createAppSelector(
   (state) => state.settings.notificationsEnabled,
+);
+export const selectNotificationSettings = createAppSelector(
+  (state) =>
+    state.settings.notificationSettings ?? initialState.notificationSettings,
 );
 export const selectIap = createAppSelector((state) => state.settings.iap);
 export const selectIsProUser = createAppSelector(

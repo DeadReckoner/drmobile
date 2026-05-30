@@ -10,8 +10,6 @@ import { SettingsItem } from '@/components/SettingsItem';
 import { AppText, AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
-import { usePushNotifications } from '@/hooks/usePushNotifications';
-import { useToast } from '@/hooks/useToast';
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -19,13 +17,9 @@ import {
   selectSettings,
   setHapticsEnabled,
 } from '@/store/slices/settingsSlice';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView } from 'react-native';
-import {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { ScrollView } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const SUPPORTED_LANGUAGES: SupportedLanguagesType[] = [
@@ -42,26 +36,7 @@ const SettingsPreferences = () => {
 
   const { toggleTheme, theme } = useAppTheme();
   const { t, setLanguage } = useLocalization();
-  const { showToast } = useToast();
   const [isLanguageDialogVisible, setIsLanguageDialogVisible] = useState(false);
-  const { requestPermissions, disableNotifications, isLoading } =
-    usePushNotifications();
-  const loadingHeight = useSharedValue(0);
-  const loadingOpacity = useSharedValue(0);
-  const loadingMargin = useSharedValue(0);
-
-  useEffect(() => {
-    loadingHeight.value = withTiming(isLoading ? 24 : 0, { duration: 350 });
-    loadingOpacity.value = withTiming(isLoading ? 1 : 0, { duration: 180 });
-    loadingMargin.value = withTiming(isLoading ? 16 : 0, { duration: 220 });
-  }, [isLoading, loadingHeight, loadingMargin, loadingOpacity]);
-
-  const loadingContainerStyle = useAnimatedStyle(() => ({
-    height: loadingHeight.value,
-    opacity: loadingOpacity.value,
-    marginVertical: loadingMargin.value,
-    overflow: 'hidden',
-  }));
 
   const onDarkModeToggle = () => {
     toggleTheme();
@@ -76,29 +51,6 @@ const SettingsPreferences = () => {
     setLanguage(language);
   };
 
-  const onNotificationToggle = async (isEnabled: boolean) => {
-    if (isEnabled) {
-      const granted = await requestPermissions();
-      if (granted) {
-        showToast({
-          type: 'success',
-          message: t('notifications.enabled_title'),
-        });
-      } else {
-        showToast({
-          type: 'failure',
-          message: t('common.something_went_wrong'),
-        });
-      }
-    } else {
-      await disableNotifications();
-      showToast({
-        type: 'success',
-        message: t('notifications.disabled_title'),
-      });
-    }
-  };
-
   return (
     <AppScreen safeArea paddingH-0 key={theme}>
       <ScrollView
@@ -107,30 +59,21 @@ const SettingsPreferences = () => {
         <AppView paddingH-12 marginB-8>
           <HeaderWithBack headerKey="settings.settings_preferences" />
         </AppView>
-        <AppView reanimated style={loadingContainerStyle}>
-          <AppView flex center gap-16 row>
-            <ActivityIndicator />
-            <AppText xsm textColor regular>
-              {t('notifications.updating_settings')}
-            </AppText>
-          </AppView>
-        </AppView>
         <Divider />
         <SettingsItemDivider />
 
-        <SettingsItem
-          leftElement={
-            <AppIcon set="Ionicons" name="notifications-outline" size={22} />
-          }
-          translationKey="notifications.title"
-          rightElement={
-            <AppSwitch
-              value={settings.notificationsEnabled}
-              onValueChange={onNotificationToggle}
-              disabled={isLoading}
-            />
-          }
-        />
+        <AppButton
+          onPress={() => router.navigate('/settings/notification-settings')}>
+          <SettingsItem
+            leftElement={
+              <AppIcon set="Ionicons" name="notifications-outline" size={22} />
+            }
+            translationKey="notifications.title"
+            rightElement={
+              <AppIcon set="Feather" name="chevron-right" size={20} />
+            }
+          />
+        </AppButton>
         <SettingsItemDivider />
 
         <SettingsItem

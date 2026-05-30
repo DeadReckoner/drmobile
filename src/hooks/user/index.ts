@@ -5,4 +5,6 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useGetMyProfileQuery,
+  useUpdateUserWithImageMutation,
+  useDeleteUserImageMutation,
 } = userApi;

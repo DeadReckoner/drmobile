@@ -22,6 +22,18 @@ type IapStateType = {
   lastChecked: string | null;
 };
 
+type DigestFrequencyType = 'daily' | 'weekly' | 'never';
+
+type NotificationSettingsType = {
+  pushEnabled: boolean;
+  emailEnabled: boolean;
+  quietHoursEnabled: boolean;
+  quietHoursStart: string;
+  quietHoursEnd: string;
+  digestFrequency: DigestFrequencyType;
+  globalMute: boolean;
+};
+
 type SettingsStateType = {
   theme: ThemeModeType;
   language: SupportedLanguagesType;
@@ -30,10 +42,13 @@ type SettingsStateType = {
   notificationsEnabled: boolean;
   hapticsEnabled: boolean;
   iap: IapStateType;
+  notificationSettings: NotificationSettingsType;
 };
 
 export type {
+  DigestFrequencyType,
   IapStateType,
+  NotificationSettingsType,
   SettingsStateType,
   ThemeModeType,
   ToastStateType,
