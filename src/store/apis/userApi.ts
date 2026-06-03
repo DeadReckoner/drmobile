@@ -144,6 +144,16 @@ export const userApi = api.injectEndpoints({
         return { data: result.data as DeleteUserResponseType };
       },
     }),
+    updateUserTimezone: builder.mutation<
+      void,
+      { userId: string; timezone: string }
+    >({
+      query: ({ userId, timezone }) => ({
+        url: `/users/${userId}`,
+        method: 'PATCH',
+        body: { timezone },
+      }),
+    }),
     getMyProfile: builder.query<CreateUserResponseType, void>({
       query: () => ({
         url: `/users`,

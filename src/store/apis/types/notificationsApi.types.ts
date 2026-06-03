@@ -1,3 +1,74 @@
+export type NotificationDeliveryType = 'immediate' | 'digest';
+
+export type NotificationTypePrefType = {
+  enabled: boolean;
+  delivery: NotificationDeliveryType;
+};
+
+export type MyGoalsPrefsType = {
+  daily_task_reminder: NotificationTypePrefType;
+  task_due_reminder: NotificationTypePrefType;
+  missed_task: NotificationTypePrefType;
+  falling_behind: NotificationTypePrefType;
+  milestone_at_risk: NotificationTypePrefType;
+  milestone_due: NotificationTypePrefType;
+  follow_on_milestone_ready: NotificationTypePrefType;
+  goal_milestone_completed: NotificationTypePrefType;
+};
+
+export type FriendsAndAccountabilityPrefsType = {
+  friend_request: NotificationTypePrefType;
+  anchor_request: NotificationTypePrefType;
+  anchor_accepted_removed: NotificationTypePrefType;
+  missed_progress: NotificationTypePrefType;
+  falling_behind: NotificationTypePrefType;
+  milestone_at_risk: NotificationTypePrefType;
+  milestone_completed: NotificationTypePrefType;
+  goal_completed: NotificationTypePrefType;
+  timeline_updated: NotificationTypePrefType;
+};
+
+export type ApiDigestFrequencyType = 'none' | 'daily' | 'weekly';
+
+export type NotificationSettingsResponseType = {
+  user_id: string;
+  push_enabled: boolean;
+  email_enabled: boolean;
+  f_and_a_enabled: boolean;
+  apply_to_all_friends: boolean;
+  quiet_hours_enabled: boolean;
+  quiet_hours_start: string;
+  quiet_hours_end: string;
+  digest_frequency: ApiDigestFrequencyType;
+  digest_delivery_hour: number;
+  digest_delivery_day_of_week: number;
+  global_mute_until: string | null;
+  my_goals_prefs: MyGoalsPrefsType;
+  f_and_a_prefs: FriendsAndAccountabilityPrefsType;
+  updated_at: string;
+};
+
+export type UpdateNotificationSettingsPayloadType = Partial<
+  Omit<NotificationSettingsResponseType, 'user_id' | 'updated_at'>
+> & {
+  clear_global_mute?: boolean;
+};
+
+export type NotificationOverrideType = {
+  id: string;
+  friend_id?: string;
+  anchored_roadmap_id?: string;
+  prefs: Partial<FriendsAndAccountabilityPrefsType>;
+  mute_until: string | null;
+  updated_at: string;
+};
+
+export type UpsertNotificationOverridePayloadType = {
+  prefs: Partial<FriendsAndAccountabilityPrefsType>;
+  mute_until?: string;
+  clear_mute_until?: boolean;
+};
+
 export type AddNotificationTokenPayload = {
   expo_token: string;
   platform: 'android' | 'ios';

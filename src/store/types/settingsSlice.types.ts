@@ -27,11 +27,15 @@ type DigestFrequencyType = 'daily' | 'weekly' | 'never';
 type NotificationSettingsType = {
   pushEnabled: boolean;
   emailEnabled: boolean;
+  fAndAEnabled: boolean;
+  applyToAllFriends: boolean;
   quietHoursEnabled: boolean;
   quietHoursStart: string;
   quietHoursEnd: string;
   digestFrequency: DigestFrequencyType;
-  globalMute: boolean;
+  digestDeliveryHour: number;
+  digestDeliveryDayOfWeek: number;
+  globalMuteUntil: string | null;
 };
 
 type SettingsStateType = {

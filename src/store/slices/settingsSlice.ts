@@ -22,11 +22,15 @@ const initialState: SettingsStateType = {
   notificationSettings: {
     pushEnabled: true,
     emailEnabled: true,
+    fAndAEnabled: true,
+    applyToAllFriends: true,
     quietHoursEnabled: false,
     quietHoursStart: '22:00',
     quietHoursEnd: '08:00',
     digestFrequency: 'daily',
-    globalMute: false,
+    digestDeliveryHour: 9,
+    digestDeliveryDayOfWeek: 1,
+    globalMuteUntil: null,
   },
   toast: {
     isVisible: false,
@@ -81,6 +85,12 @@ const settingsSlice = createSlice({
         ...(state.notificationSettings ?? {}),
         ...action.payload,
       };
+    },
+    syncNotificationSettingsFromApi(
+      state,
+      action: PayloadAction<NotificationSettingsType>,
+    ) {
+      state.notificationSettings = action.payload;
     },
     hideToastAction(state) {
       state.toast.isVisible = false;
@@ -137,6 +147,7 @@ export const {
   setNotificationMode,
   setHapticsEnabled,
   setNotificationSettings,
+  syncNotificationSettingsFromApi,
   resetSettingsSlice,
   setIapLoading,
   setIapError,

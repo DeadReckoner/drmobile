@@ -23,6 +23,8 @@ export const ApiCacheTags = Object.freeze({
   FriendsRequests: 'FriendsRequests',
   Habits: 'Habits',
   Billing: 'Billing',
+  NotificationSettings: 'NotificationSettings',
+  NotificationOverrides: 'NotificationOverrides',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
