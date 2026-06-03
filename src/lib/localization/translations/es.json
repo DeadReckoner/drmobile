@@ -803,11 +803,27 @@
     "offerings_fetch_error": "No se pudieron cargar los planes. Verifica tu conexión.",
     "retry": "Reintentar",
     "continue_with_free": "Continuar con el plan gratuito",
-    "cta_disclaimer": "Cancela cuando quieras • Actualiza cuando quieras • Tu plan actual permanece activo hasta que lo cambies",
+    "cta_disclaimer": "Cancela cuando quieras • Se renueva automáticamente a menos que canceles 24hrs antes de la renovación • Gestiona en Configuración de iOS",
     "current_plan": "Actual",
     "recommended": "Recomendado",
     "basic_anchor": "1\nSolo hoja de ruta",
     "advanced_anchor": "Ilimitado\nHojas de ruta y hábitos",
-    "not_logged_in_error": "Tu cuenta no está vinculada. Por favor, cierra sesión y vuelve a iniciarla, luego inténtalo de nuevo."
+    "not_logged_in_error": "Tu cuenta no está vinculada. Por favor, cierra sesión y vuelve a iniciarla, luego inténtalo de nuevo.",
+    "feature_headline": {
+      "active_roadmaps": "Hojas de ruta ilimitadas con Pro",
+      "active_habits": "Hábitos ilimitados con Pro",
+      "roadmap_anchors": "Más anclas con Pro",
+      "habit_anchors": "Las anclas de hábitos son una función Pro",
+      "ai_generations_per_month": "Hojas de ruta con IA ilimitadas con Pro",
+      "archive": "Archivar es una función Pro",
+      "custom_reminders": "Los recordatorios personalizados son una función Pro",
+      "weekly_review": "La revisión semanal con IA es una función Pro",
+      "messaging_reactions": "Las reacciones y respuestas son una función Pro",
+      "anchor_settings": "Los ajustes por ancla son una función Pro",
+      "advanced_stats": "Las estadísticas avanzadas son una función Pro",
+      "historical_performance": "El rendimiento histórico es una función Pro"
+    },
+    "terms_of_use": "Términos de uso",
+    "privacy_policy": "Política de privacidad"
   }
 }

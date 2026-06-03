@@ -2,6 +2,7 @@ import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setIapError, setIapLoading } from '@/store/slices/settingsSlice';
 import { useCallback, useState } from 'react';
 import Purchases, { type PurchasesError } from 'react-native-purchases';
+import { useBillingStatusSync } from './useBillingStatusSync';
 import { useEntitlementCheck } from './useEntitlementCheck';
 
 /**
@@ -19,6 +20,7 @@ import { useEntitlementCheck } from './useEntitlementCheck';
 export const useRestorePurchases = () => {
   const dispatch = useAppDispatch();
   const { checkEntitlementStatus } = useEntitlementCheck();
+  const { refetchBillingStatusAfterDelay } = useBillingStatusSync();
 
   const [isRestoring, setIsRestoring] = useState(false);
 
@@ -29,8 +31,8 @@ export const useRestorePurchases = () => {
 
     try {
       await Purchases.restorePurchases();
-      // Return true only when the user genuinely has an active entitlement
       const isNowPro = await checkEntitlementStatus();
+      refetchBillingStatusAfterDelay();
       return isNowPro;
     } catch (e) {
       const error = e as PurchasesError;
@@ -40,7 +42,7 @@ export const useRestorePurchases = () => {
       dispatch(setIapLoading(false));
       setIsRestoring(false);
     }
-  }, [dispatch, checkEntitlementStatus]);
+  }, [dispatch, checkEntitlementStatus, refetchBillingStatusAfterDelay]);
 
   return { restorePurchases, isRestoring };
 };

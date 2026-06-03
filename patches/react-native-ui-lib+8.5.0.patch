@@ -1,7 +1,19 @@
 diff --git a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts b/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts
-index 8ba4086..9eeb791 100644
+index 8ba4086..5cfff94 100644
 --- a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts
 +++ b/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts
+@@ -1,9 +1,9 @@
+ import React from 'react';
+ import { StyleProp, ViewStyle } from 'react-native';
+ import { BaseComponentInjectedProps } from '../../commons/new';
+-import { TextFieldProps } from '../textField';
+-import type { DialogProps } from '../dialog';
+ import { ButtonProps } from '../button';
++import type { DialogProps } from '../dialog';
++import { TextFieldProps } from '../textField';
+ import { OldApiProps } from './useOldApi';
+ export type DateTimePickerMode = 'date' | 'time';
+ export type DateTimePickerProps = OldApiProps & Omit<TextFieldProps, 'value' | 'onChange'> & {
 @@ -95,6 +95,10 @@ export type DateTimePickerProps = OldApiProps & Omit<TextFieldProps, 'value' | '
       * Cancel button props
       */
@@ -13,6 +25,14 @@ index 8ba4086..9eeb791 100644
  };
  /**
   * @description: Date and Time Picker Component that wraps RNDateTimePicker for date and time modes.
+@@ -284,5 +288,7 @@ declare const _default: React.ForwardRefExoticComponent<OldApiProps & Omit<TextF
+      * Cancel button props
+      */
+     cancelButtonProps?: ButtonProps | undefined;
++
++    pickerStyle?: StyleProp<ViewStyle> | undefined;
+ } & React.RefAttributes<any>>;
+ export default _default;
 diff --git a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.js b/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.js
 index ca2cc1f..764d368 100644
 --- a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.js

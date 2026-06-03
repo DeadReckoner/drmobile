@@ -10,13 +10,19 @@ import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useToast } from '@/hooks/useToast';
+import { FeatureKeyType } from '@/store/types/billing.types';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { type PurchasesPackage } from 'react-native-purchases';
 import { Colors } from 'react-native-ui-lib';
 
-export const PaywallContent = () => {
+type PaywallContentProps = {
+  /** When opened by the 402 interceptor, the feature the user hit. Drives the headline. */
+  feature?: FeatureKeyType;
+};
+
+export const PaywallContent = ({ feature }: PaywallContentProps) => {
   const {
     subscriptions,
     isPurchasing,
@@ -57,8 +63,13 @@ export const PaywallContent = () => {
         message: t('paywall.restore_purchase_success'),
         type: 'success',
       });
-      router.back();
+    } else {
+      showToast({
+        message: t('paywall.restore_purchase_nothing'),
+        type: 'failure',
+      });
     }
+    router.back();
   };
 
   const handleSelectPackage = (pkg: PurchasesPackage) => () => {
@@ -75,7 +86,7 @@ export const PaywallContent = () => {
             <AppIcon name="close" size={24} />
           </AppButton>
           <AppView>
-            <AppView center gap-8 paddingH-36>
+            <AppView center gap-8 marginB-8>
               <AppView center row gap-8>
                 <TranslatedText
                   style={styles.text}
@@ -95,11 +106,11 @@ export const PaywallContent = () => {
                   color={Colors.proBadge}
                 />
               </AppView>
-              <TranslatedText
-                style={styles.text}
-                xsm
-                translationKey="paywall.subtitle"
-              />
+              <AppText textColor style={styles.text} xsm>
+                {feature
+                  ? t(`paywall.feature_headline.${feature}`)
+                  : t('paywall.subtitle')}
+              </AppText>
             </AppView>
             <ProFeaturesComparision />
           </AppView>
@@ -207,6 +218,27 @@ export const PaywallContent = () => {
           style={[styles.disclaimer, { color: Colors.grey40 }]}
           translationKey="paywall.cta_disclaimer"
         />
+
+        <AppView row center gap-16 paddingT-4>
+          <AppButton
+            onPress={() => router.navigate('/settings/terms-and-services')}>
+            <TranslatedText
+              xsm
+              regular
+              style={{ color: Colors.blue }}
+              translationKey="paywall.terms_of_use"
+            />
+          </AppButton>
+          <AppButton
+            onPress={() => router.navigate('/settings/privacy-policy')}>
+            <TranslatedText
+              xsm
+              regular
+              style={{ color: Colors.blue }}
+              translationKey="paywall.privacy_policy"
+            />
+          </AppButton>
+        </AppView>
       </AppView>
     </AppScreen>
   );
@@ -222,7 +254,7 @@ const styles = StyleSheet.create({
     shadowRadius: 14,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 150,
   },
   bottomSheet: {
     position: 'absolute',

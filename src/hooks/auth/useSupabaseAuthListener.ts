@@ -2,7 +2,6 @@ import { useUpdateUserMutation } from '@/hooks/user';
 import { useToast } from '@/hooks/useToast';
 import { loginRevenueCat } from '@/lib/revenueCat';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
-import { userApi } from '@/store/apis/userApi';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setAuthUserAction } from '@/store/slices/authSlice';
 import { persistedStore } from '@/store/store';
@@ -78,11 +77,6 @@ export const useSupabaseAutoRefresh = () => {
         if (session?.user && session?.access_token) {
           if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
             await loginRevenueCat(session.user.id);
-            dispatch(
-              userApi.endpoints.getMyProfile.initiate(undefined, {
-                forceRefetch: true,
-              }),
-            );
           }
           if (event === 'USER_UPDATED') {
             const { first_name, last_name } = getFirstAndLastName(session.user);

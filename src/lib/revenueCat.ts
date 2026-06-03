@@ -14,7 +14,7 @@ export const initializeRevenueCat = (): void => {
     Platform.OS === 'ios' ? REVENUECAT_API_KEY_IOS : REVENUECAT_API_KEY_ANDROID;
 
   if (__DEV__) {
-    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    Purchases.setLogLevel(LOG_LEVEL.ERROR);
   }
 
   Purchases.configure({ apiKey });

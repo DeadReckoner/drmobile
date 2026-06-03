@@ -803,11 +803,27 @@
     "offerings_fetch_error": "Impossible de charger les plans. Vérifiez votre connexion.",
     "retry": "Réessayer",
     "continue_with_free": "Continuer avec le plan gratuit",
-    "cta_disclaimer": "Annulez à tout moment • Mettez à niveau à tout moment • Votre plan actuel reste actif jusqu’au changement",
+    "cta_disclaimer": "Annulez à tout moment • Renouvellement automatique sauf si annulé 24h avant le renouvellement • Gérez dans les paramètres iOS",
     "current_plan": "Actuel",
     "recommended": "Recommandé",
     "basic_anchor": "1\nFeuille de route uniquement",
     "advanced_anchor": "Ilimité\nFeuilles de route et habitudes",
-    "not_logged_in_error": "Votre compte n'est pas lié. Veuillez vous déconnecter et vous reconnecter, puis réessayer."
+    "not_logged_in_error": "Votre compte n'est pas lié. Veuillez vous déconnecter et vous reconnecter, puis réessayer.",
+    "feature_headline": {
+      "active_roadmaps": "Feuilles de route illimitées avec Pro",
+      "active_habits": "Habitudes illimitées avec Pro",
+      "roadmap_anchors": "Plus d'ancres avec Pro",
+      "habit_anchors": "Les ancres d'habitudes sont une fonctionnalité Pro",
+      "ai_generations_per_month": "Feuilles de route IA illimitées avec Pro",
+      "archive": "L'archivage est une fonctionnalité Pro",
+      "custom_reminders": "Les rappels personnalisés sont une fonctionnalité Pro",
+      "weekly_review": "Le bilan hebdomadaire par IA est une fonctionnalité Pro",
+      "messaging_reactions": "Les réactions et réponses sont une fonctionnalité Pro",
+      "anchor_settings": "Les réglages par ancre sont une fonctionnalité Pro",
+      "advanced_stats": "Les statistiques avancées sont une fonctionnalité Pro",
+      "historical_performance": "L'historique des performances est une fonctionnalité Pro"
+    },
+    "terms_of_use": "Conditions d'utilisation",
+    "privacy_policy": "Politique de confidentialité"
   }
 }

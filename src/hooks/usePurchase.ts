@@ -8,6 +8,7 @@ import Purchases, {
   type PurchasesError,
   type PurchasesPackage,
 } from 'react-native-purchases';
+import { useBillingStatusSync } from './useBillingStatusSync';
 import { useEntitlementCheck } from './useEntitlementCheck';
 
 /**
@@ -24,6 +25,7 @@ export const usePurchase = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
   const { checkEntitlementStatus } = useEntitlementCheck();
+  const { refetchBillingStatusAfterDelay } = useBillingStatusSync();
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   const purchasePackage = useCallback(
@@ -40,6 +42,8 @@ export const usePurchase = () => {
 
         await Purchases.purchasePackage(pkg);
         await checkEntitlementStatus();
+        // Reconcile with the backend (webhook may lag a few seconds).
+        refetchBillingStatusAfterDelay();
         return true;
       } catch (e) {
         const error = e as PurchasesError;
@@ -54,6 +58,7 @@ export const usePurchase = () => {
         ) {
           // Already subscribed on this or another account — treat as success
           await checkEntitlementStatus();
+          refetchBillingStatusAfterDelay();
           return true;
         }
 
@@ -64,7 +69,13 @@ export const usePurchase = () => {
         setIsPurchasing(false);
       }
     },
-    [dispatch, checkEntitlementStatus, user.name, user.email],
+    [
+      dispatch,
+      checkEntitlementStatus,
+      refetchBillingStatusAfterDelay,
+      user.name,
+      user.email,
+    ],
   );
 
   return { purchasePackage, isPurchasing };

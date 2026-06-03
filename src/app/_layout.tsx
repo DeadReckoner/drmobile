@@ -2,6 +2,8 @@ import { Loader } from '@/components/Loader';
 import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { Env } from '@/constants/Env';
+import { useBillingPaywall } from '@/hooks/useBillingPaywall';
+import { useBillingStatusSync } from '@/hooks/useBillingStatusSync';
 import { useEntitlementCheck } from '@/hooks/useEntitlementCheck';
 import { initializeRevenueCat } from '@/lib/revenueCat';
 import { persistedStore, store } from '@/store/store';
@@ -29,6 +31,10 @@ initializeRevenueCat();
 
 function AppWithEntitlementCheck() {
   const { checkEntitlementStatus } = useEntitlementCheck();
+  // Keep the backend's authoritative plan state in sync (mount + foreground)
+  // and open the paywall when a 402 sets the trigger.
+  useBillingStatusSync({ register: true });
+  useBillingPaywall();
 
   useEffect(() => {
     checkEntitlementStatus();
