@@ -3,15 +3,14 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { AppSwitch } from '@/components/AppSwitch';
-import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
 import { SettingsItem } from '@/components/SettingsItem';
-import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useToast } from '@/hooks/useToast';
 import { notificationApi } from '@/store/apis/notificationsApi';
 import type {
   FriendsAndAccountabilityPrefsType,
@@ -20,8 +19,6 @@ import type {
   NotificationTypePrefType,
   UpsertNotificationOverridePayloadType,
 } from '@/store/apis/types/notificationsApi.types';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { showToastAction } from '@/store/slices/settingsSlice';
 import {
   buildMuteUntil,
   isMuteActive,
@@ -60,8 +57,8 @@ const DELIVERY_OPTIONS: {
 const FriendNotificationOverride = () => {
   const { theme } = useAppTheme();
   const { t } = useLocalization();
-  const dispatch = useAppDispatch();
   const { friendId } = useLocalSearchParams<{ friendId: string }>();
+  const { showToast } = useToast();
 
   const [isMuteSheetVisible, setIsMuteSheetVisible] = useState(false);
   const [updatingKey, setUpdatingKey] = useState<string | null>(null);
@@ -75,23 +72,14 @@ const FriendNotificationOverride = () => {
   const [upsertOverride] =
     notificationApi.useUpsertFriendNotificationOverrideMutation();
 
-  const [deleteOverride] =
+  const [deleteOverride, { isLoading: isDeleting }] =
     notificationApi.useDeleteFriendNotificationOverrideMutation();
 
-  const override: NotificationOverrideType | undefined =
-    overridesData?.data?.find((o) => o.friend_id === friendId);
+  const override: NotificationOverrideType | undefined = overridesData?.find(
+    (o) => o.friend_id === friendId,
+  );
 
   const muteActive = isMuteActive(override?.mute_until ?? null);
-
-  const muteExpiryLabel = (): string => {
-    if (!override?.mute_until) return '';
-    const muteDate = new Date(override.mute_until);
-    if (muteDate.getFullYear() > 9000)
-      return t('notifications.muted_indefinitely');
-    return t('notifications.muted_until', {
-      time: muteDate.toLocaleString(),
-    });
-  };
 
   const doUpsert = async (
     trackingKey: string,
@@ -102,13 +90,12 @@ const FriendNotificationOverride = () => {
     try {
       await upsertOverride({ friendId, payload }).unwrap();
     } catch {
-      dispatch(
-        showToastAction({
-          toastProps: { type: 'failure', message: 'Failed to update settings' },
-        }),
-      );
+      showToast({
+        type: 'failure',
+        message: 'Failed to update settings',
+      });
     } finally {
-      setUpdatingKey(null);
+      setTimeout(() => setUpdatingKey(null), 1000);
     }
   };
 
@@ -158,14 +145,10 @@ const FriendNotificationOverride = () => {
             try {
               await deleteOverride(friendId).unwrap();
             } catch {
-              dispatch(
-                showToastAction({
-                  toastProps: {
-                    type: 'failure',
-                    message: 'Failed to reset settings',
-                  },
-                }),
-              );
+              showToast({
+                type: 'failure',
+                message: 'Failed to reset settings',
+              });
             }
           },
         },
@@ -185,64 +168,12 @@ const FriendNotificationOverride = () => {
       <ScrollView
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}>
-        <AppView paddingH-12 marginB-8>
-          <HeaderWithBack headerKey="notifications.f_and_a_section" />
+        <AppView paddingH-12>
+          <HeaderWithBack headerKey="notifications.title" />
         </AppView>
-        <Divider />
 
         <AppView style={styles.content}>
-          {/* Override status card */}
           <AppView bg-lightCardBG style={styles.card}>
-            <AppView paddingH-16 paddingV-14>
-              {!override ? (
-                <TranslatedText
-                  body2
-                  translationKey="notifications.override_none"
-                />
-              ) : (
-                <TranslatedText
-                  body2
-                  semibold
-                  translationKey="notifications.override_custom"
-                />
-              )}
-            </AppView>
-          </AppView>
-
-          {/* Mute card */}
-          <AppView bg-lightCardBG style={styles.card}>
-            {muteActive && (
-              <>
-                <AppView
-                  paddingH-16
-                  paddingV-12
-                  style={{ backgroundColor: Colors.warning }}>
-                  <AppView row centerV spread>
-                    <AppView row centerV gap-8 flex>
-                      <AppIcon
-                        set="Ionicons"
-                        name="volume-mute-outline"
-                        size={16}
-                        color={Colors.white}
-                      />
-                      <AppText body2 color={Colors.white} numberOfLines={1}>
-                        {muteExpiryLabel()}
-                      </AppText>
-                    </AppView>
-                    <AppButton onPress={handleClearMute}>
-                      {updatingKey === 'mute' ? (
-                        <ActivityIndicator size="small" color={Colors.white} />
-                      ) : (
-                        <AppText caption color={Colors.white} semibold>
-                          {t('notifications.unmute')}
-                        </AppText>
-                      )}
-                    </AppButton>
-                  </AppView>
-                </AppView>
-                <SettingsItemDivider />
-              </>
-            )}
             <SettingsItem
               leftElement={
                 <AppIcon set="Ionicons" name="volume-mute-outline" size={22} />
@@ -267,17 +198,8 @@ const FriendNotificationOverride = () => {
             />
           </AppView>
 
-          {/* Notification preferences card */}
           <AppView bg-lightCardBG style={styles.card}>
-            <AppView paddingH-16 paddingV-10>
-              <TranslatedText
-                caption
-                semibold
-                translationKey="notifications.f_and_a_section"
-                style={styles.sectionHeader}
-              />
-            </AppView>
-            {OVERRIDE_PREF_KEYS.map((key) => {
+            {OVERRIDE_PREF_KEYS.map((key, index) => {
               const pref: NotificationTypePrefType = override?.prefs?.[key] ?? {
                 enabled: true,
                 delivery: 'immediate',
@@ -285,11 +207,8 @@ const FriendNotificationOverride = () => {
               const isThisUpdating = updatingKey === key;
               return (
                 <AppView key={key}>
-                  <SettingsItemDivider />
+                  {index > 0 && <SettingsItemDivider />}
                   <SettingsItem
-                    leftElement={
-                      <AppIcon set="Ionicons" name="people-outline" size={22} />
-                    }
                     translationKey={
                       `notifications.f_and_a.${key}` as Parameters<typeof t>[0]
                     }
@@ -305,14 +224,9 @@ const FriendNotificationOverride = () => {
                             onPress={() => setDeliveryPickerKey(key)}
                             style={[
                               styles.deliveryBadge,
-                              {
-                                backgroundColor:
-                                  pref.delivery === 'immediate'
-                                    ? Colors.primary
-                                    : Colors.divider,
-                              },
+                              { backgroundColor: Colors.accent },
                             ]}>
-                            <AppText caption color={Colors.white} semibold>
+                            <AppText sm textColor semibold>
                               {pref.delivery === 'immediate'
                                 ? t('notifications.delivery_immediate')
                                 : t('notifications.delivery_digest')}
@@ -333,14 +247,17 @@ const FriendNotificationOverride = () => {
             })}
           </AppView>
 
-          {/* Reset card */}
           {override && (
             <AppView bg-lightCardBG style={styles.card}>
-              <AppButton onPress={handleReset}>
+              <AppButton onPress={handleReset} disabled={isDeleting}>
                 <AppView paddingV-14 paddingH-16 centerH>
-                  <AppText body2 color={Colors.error} semibold>
-                    {t('notifications.override_reset')}
-                  </AppText>
+                  {isDeleting ? (
+                    <ActivityIndicator size="small" color={Colors.error} />
+                  ) : (
+                    <AppText body2 color={Colors.error} semibold>
+                      {t('notifications.override_reset')}
+                    </AppText>
+                  )}
                 </AppView>
               </AppButton>
             </AppView>
@@ -401,6 +318,6 @@ const styles = StyleSheet.create({
   deliveryBadge: {
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 4,
+    borderRadius: 10,
   },
 });

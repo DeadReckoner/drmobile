@@ -69,7 +69,9 @@ export const MyGoalsCard = ({
               }
               rightElement={
                 updatingKey === key ? (
-                  <ActivityIndicator size="small" color={Colors.primary} />
+                  <AppView center width={50}>
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                  </AppView>
                 ) : (
                   <AppSwitch
                     value={pref.enabled}

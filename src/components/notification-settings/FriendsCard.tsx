@@ -49,7 +49,9 @@ export const FriendsCard = ({
         translationKey="notifications.f_and_a_enabled"
         rightElement={
           updatingKey === 'fAndAEnabled' ? (
-            <ActivityIndicator size="small" color={Colors.primary} />
+            <AppView center width={50}>
+              <ActivityIndicator size="small" color={Colors.primary} />
+            </AppView>
           ) : (
             <AppSwitch
               value={settings.fAndAEnabled}
@@ -68,7 +70,9 @@ export const FriendsCard = ({
             translationKey="notifications.apply_to_all_friends"
             rightElement={
               updatingKey === 'applyToAllFriends' ? (
-                <ActivityIndicator size="small" color={Colors.primary} />
+                <AppView center width={50}>
+                  <ActivityIndicator size="small" color={Colors.primary} />
+                </AppView>
               ) : (
                 <AppSwitch
                   value={settings.applyToAllFriends}
@@ -113,7 +117,12 @@ export const FriendsCard = ({
                   }
                   rightElement={
                     updatingFAndAKey === key ? (
-                      <ActivityIndicator size="small" color={Colors.primary} />
+                      <AppView center width={50}>
+                        <ActivityIndicator
+                          size="small"
+                          color={Colors.primary}
+                        />
+                      </AppView>
                     ) : (
                       <AppView row centerV gap-8>
                         <AppSwitch

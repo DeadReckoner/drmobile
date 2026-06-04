@@ -87,7 +87,7 @@ export const notificationApi = api.injectEndpoints({
       invalidatesTags: ['NotificationSettings'],
     }),
     getNotificationFriendOverrides: builder.query<
-      { data: NotificationOverrideType[] },
+      NotificationOverrideType[],
       void
     >({
       query: () => '/notification-settings/friends',

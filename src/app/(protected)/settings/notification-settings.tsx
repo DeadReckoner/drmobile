@@ -1,7 +1,6 @@
 import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
-import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import {
@@ -133,10 +132,9 @@ const NotificationSettings = () => {
       <ScrollView
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}>
-        <AppView paddingH-12 marginB-8>
+        <AppView paddingH-12>
           <HeaderWithBack headerKey="notifications.settings_title" />
         </AppView>
-        <Divider />
 
         <AppView style={styles.content}>
           <GlobalControlsCard
