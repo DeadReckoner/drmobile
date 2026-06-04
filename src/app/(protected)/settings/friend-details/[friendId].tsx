@@ -1,3 +1,4 @@
+import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
@@ -53,6 +54,8 @@ const FriendDetails = () => {
   const friendEmailParam =
     friendProfileData?.user.email?.trim() ||
     (params['friendEmail'] as string | undefined);
+
+  const [isSettingsSheetVisible, setIsSettingsSheetVisible] = useState(false);
 
   const [localFriendshipStatus, setLocalFriendshipStatus] = useState<
     'none' | 'pending' | 'accepted' | null
@@ -375,7 +378,12 @@ const FriendDetails = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always">
-        <HeaderWithBack marginH-16 />
+        <AppView row centerV spread>
+          <HeaderWithBack marginH-16 />
+          <AppButton marginH-16 onPress={() => setIsSettingsSheetVisible(true)}>
+            <AppIcon set="Feather" name="settings" size={20} />
+          </AppButton>
+        </AppView>
         <AppView centerH marginT-20>
           <AppAvatar size={40} />
           <AppText body1 textColor marginT-18 center>
@@ -480,6 +488,24 @@ const FriendDetails = () => {
           />
         </AppView>
       </ScrollView>
+      <AppActionSheetModal
+        title={t('settings.settings')}
+        visible={isSettingsSheetVisible}
+        onDismiss={() => setIsSettingsSheetVisible(false)}
+        options={[
+          {
+            label: t('notifications.settings_title'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/settings/friend-notification-override',
+                params: { friendId, friendName: friendNameParam },
+              });
+            },
+            icon: <AppIcon set="Feather" name="bell" size={20} />,
+          },
+        ]}
+      />
     </AppScreen>
   );
 };

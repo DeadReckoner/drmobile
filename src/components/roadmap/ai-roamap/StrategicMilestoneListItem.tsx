@@ -1,9 +1,10 @@
+import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppText, AppView } from '@/components/ui';
 import type { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
 import { Animations } from '@/utils/animation.utils';
 import React, { useEffect } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -49,10 +50,7 @@ export const StrategicMilestoneListItem = ({
       bg-cardBG
       br30
       style={styles.container}>
-      <TouchableOpacity
-        disabled={isCollapsable}
-        onPress={onPress}
-        activeOpacity={0.7}>
+      <AppButton disabled={isCollapsable} onPress={onPress} activeOpacity={0.7}>
         <AppView padding-16>
           <AppView row center gap-16 style={styles.header}>
             <AppText textColor body2 style={styles.text}>
@@ -65,7 +63,7 @@ export const StrategicMilestoneListItem = ({
             )}
           </AppView>
         </AppView>
-      </TouchableOpacity>
+      </AppButton>
       {isItemExpanded && (
         <AppView bg-lightCardBG>
           <MilestoneMetadata milestone={milestone} />

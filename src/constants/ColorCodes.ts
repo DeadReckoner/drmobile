@@ -34,6 +34,8 @@ export const LightColorCodes = {
   badgeUpcoming: '#F7D840',
   badgeOverdue: '#E63C3C',
   badgeCompleted: '#82B051',
+
+  proBadge: '#7ed4ff',
 };
 
 export const DarkColorCodes = {
@@ -74,4 +76,6 @@ export const DarkColorCodes = {
   badgeUpcoming: '#F7D840',
   badgeOverdue: '#E63C3C',
   badgeCompleted: '#82B051',
+
+  proBadge: '#7ed4ff',
 };

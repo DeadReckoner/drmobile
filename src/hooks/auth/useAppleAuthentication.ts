@@ -10,7 +10,7 @@ import {
   setAuthLoadingAction,
   setAuthResolvedAction,
 } from '@/store/slices/authSlice';
-import { saveAppleUserName } from '@/utils/storage.utils';
+import { saveAppleAuthCode, saveAppleUserName } from '@/utils/storage.utils';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 export const useAppleAuthentication = () => {
@@ -36,6 +36,8 @@ export const useAppleAuthentication = () => {
           credential.fullName?.familyName,
         );
       }
+
+      await saveAppleAuthCode(credential.authorizationCode);
 
       if (credential.identityToken) {
         const response = await linkAppleWithAuthProvider(

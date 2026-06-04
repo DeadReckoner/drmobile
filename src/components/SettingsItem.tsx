@@ -8,12 +8,14 @@ interface SettingsItemProps {
   translationKey: TranslationKeysType;
   rightElement?: React.ReactNode;
   leftElement?: React.ReactNode;
+  centerElement?: React.ReactNode;
   textColor?: string;
 }
 
 export const SettingsItem = ({
   translationKey,
   leftElement,
+  centerElement,
   rightElement,
   textColor,
 }: SettingsItemProps) => {
@@ -21,18 +23,19 @@ export const SettingsItem = ({
     <AppView
       row
       centerV
-      spread
       paddingH-16
       paddingV-16
       gap-16
       style={styles.container}>
       {leftElement && <AppView left>{leftElement}</AppView>}
-      <TranslatedText
-        flex
-        body2
-        color={textColor}
-        translationKey={translationKey}
-      />
+      <AppView flex gap-4>
+        <TranslatedText
+          body2
+          color={textColor}
+          translationKey={translationKey}
+        />
+        {centerElement}
+      </AppView>
       {rightElement && <AppView right>{rightElement}</AppView>}
     </AppView>
   );

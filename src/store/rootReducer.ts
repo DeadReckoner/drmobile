@@ -1,6 +1,7 @@
 import { api } from '@/store/apis/api';
 import { aiRoadmapCreationReducer } from '@/store/slices/aiRoadmapCreationSlice';
 import { authReducer } from '@/store/slices/authSlice';
+import { billingReducer } from '@/store/slices/billingSlice';
 import { nextMilestoneGenerationReducer } from '@/store/slices/nextMilestoneGenerationSlice';
 import { notificationsReducer } from '@/store/slices/notificationsSlice';
 import { onboardingReducer } from '@/store/slices/onboardingSlice';
@@ -10,6 +11,7 @@ import { settingsReducer } from './slices/settingsSlice';
 
 export const rootReducer = combineReducers({
   settings: settingsReducer,
+  billing: billingReducer,
   auth: authReducer,
   onboarding: onboardingReducer,
   roadmapDraft: draftRoadmapReducer,

@@ -33,6 +33,7 @@ export const AppDateTimePicker = (props: DateTimePickerProps) => {
       cancelButtonProps={{
         iconStyle: { tintColor: Colors.textColor },
       }}
+      pickerStyle={styles.pickerStyle}
       headerStyle={styles.headerStyle}
       {...props}
     />
@@ -41,9 +42,13 @@ export const AppDateTimePicker = (props: DateTimePickerProps) => {
 
 const styles = StyleSheet.create({
   containerStyle: {
-    alignItems: 'center',
     borderRadius: 8,
     height: Dimensions.get('screen').height * 0.37,
+    width: '100%',
+  },
+  pickerStyle: {
+    width: '100%',
+    alignSelf: 'center',
   },
   headerStyle: { width: '100%' },
 });

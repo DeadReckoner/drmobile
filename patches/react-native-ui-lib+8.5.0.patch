@@ -1,0 +1,144 @@
+diff --git a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts b/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts
+index 8ba4086..5cfff94 100644
+--- a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts
++++ b/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.d.ts
+@@ -1,9 +1,9 @@
+ import React from 'react';
+ import { StyleProp, ViewStyle } from 'react-native';
+ import { BaseComponentInjectedProps } from '../../commons/new';
+-import { TextFieldProps } from '../textField';
+-import type { DialogProps } from '../dialog';
+ import { ButtonProps } from '../button';
++import type { DialogProps } from '../dialog';
++import { TextFieldProps } from '../textField';
+ import { OldApiProps } from './useOldApi';
+ export type DateTimePickerMode = 'date' | 'time';
+ export type DateTimePickerProps = OldApiProps & Omit<TextFieldProps, 'value' | 'onChange'> & {
+@@ -95,6 +95,10 @@ export type DateTimePickerProps = OldApiProps & Omit<TextFieldProps, 'value' | '
+      * Cancel button props
+      */
+     cancelButtonProps?: ButtonProps;
++    /**
++     * Style to apply to the native date/time picker wheel
++     */
++    pickerStyle?: StyleProp<ViewStyle>;
+ };
+ /**
+  * @description: Date and Time Picker Component that wraps RNDateTimePicker for date and time modes.
+@@ -284,5 +288,7 @@ declare const _default: React.ForwardRefExoticComponent<OldApiProps & Omit<TextF
+      * Cancel button props
+      */
+     cancelButtonProps?: ButtonProps | undefined;
++
++    pickerStyle?: StyleProp<ViewStyle> | undefined;
+ } & React.RefAttributes<any>>;
+ export default _default;
+diff --git a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.js b/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.js
+index ca2cc1f..764d368 100644
+--- a/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.js
++++ b/node_modules/react-native-ui-lib/src/components/dateTimePicker/index.js
+@@ -1,17 +1,17 @@
+-import React, { useCallback, useEffect, useMemo, useRef, useState, useImperativeHandle, forwardRef } from 'react';
++import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+ import { StyleSheet } from 'react-native';
+-import { DateTimePickerPackage as RNDateTimePicker } from "../../optionalDependencies";
+-import { useDidUpdate } from "../../hooks";
+-import { Colors } from "../../style";
+ import Assets from "../../assets";
+ import { Constants, asBaseComponent } from "../../commons/new";
++import { useDidUpdate } from "../../hooks";
++import ExpandableOverlay from "../../incubator/expandableOverlay";
++import { DateTimePickerPackage as RNDateTimePicker } from "../../optionalDependencies";
++import { LogService } from "../../services";
++import { Colors } from "../../style";
++import { isSameDate, isSameHourAndMinute } from "../../utils/dateUtils";
++import Button from "../button";
+ import TextField from "../textField";
+ import View from "../view";
+-import Button from "../button";
+-import ExpandableOverlay from "../../incubator/expandableOverlay";
+ import useOldApi from "./useOldApi";
+-import { isSameDate, isSameHourAndMinute } from "../../utils/dateUtils";
+-import { LogService } from "../../services";
+ /*eslint-disable*/
+ /**
+  * @description: Date and Time Picker Component that wraps RNDateTimePicker for date and time modes.
+@@ -49,6 +49,7 @@ const DateTimePicker = forwardRef((props, ref) => {
+     display = Constants.isIOS ? 'spinner' : undefined,
+     confirmButtonProps,
+     cancelButtonProps,
++    pickerStyle,
+     ...others
+   } = props;
+   const [value, setValue] = useState(propsValue);
+@@ -83,10 +84,8 @@ const DateTimePicker = forwardRef((props, ref) => {
+     };
+   }, [dialogProps, testID]);
+   const dateTimePickerStyle = useMemo(() => {
+-    return {
+-      backgroundColor
+-    };
+-  }, [backgroundColor]);
++    return Object.assign({backgroundColor}, pickerStyle);
++  }, [backgroundColor, pickerStyle]);
+   const {
+     getStringValue: getStringValueOld
+   } = useOldApi({
+@@ -136,11 +135,11 @@ const DateTimePicker = forwardRef((props, ref) => {
+   }, [onDonePressed, toggleExpandableOverlay]);
+   const renderHeader = () => {
+     return <View row spread bg-$backgroundDefault backgroundColor={backgroundColor} paddingH-20 style={[styles.header, headerStyle]} testID={`${testID}.header`}>
+-        <Button link iconSource={Assets.internal.icons.x} iconStyle={{
++      <Button link iconSource={Assets.internal.icons.x} iconStyle={{
+         tintColor: Colors.$iconDefault
+       }} testID={`${testID}.cancel`} {...cancelButtonProps} onPress={toggleExpandableOverlay} />
+-        <Button link iconSource={Assets.internal.icons.check} testID={`${testID}.done`} {...confirmButtonProps} onPress={onDonePressed} />
+-      </View>;
++      <Button link iconSource={Assets.internal.icons.check} testID={`${testID}.done`} {...confirmButtonProps} onPress={onDonePressed} />
++    </View>;
+   };
+   const renderDateTimePicker = useCallback(() => {
+     if (!RNDateTimePicker) {
+@@ -150,9 +149,9 @@ const DateTimePicker = forwardRef((props, ref) => {
+   }, [mode, value, handleChange, minimumDate, maximumDate, locale, is24Hour, minuteInterval, timeZoneOffsetInMinutes, themeVariant]);
+   const renderIOSExpandableOverlay = () => {
+     return <View>
+-        {renderHeader()}
+-        {renderDateTimePicker()}
+-      </View>;
++      {renderHeader()}
++      {renderDateTimePicker()}
++    </View>;
+   };
+   const renderAndroidDateTimePicker = useCallback(({
+     visible
+@@ -162,19 +161,19 @@ const DateTimePicker = forwardRef((props, ref) => {
+     }
+   }, [renderDateTimePicker]);
+   return <>
+-      <ExpandableOverlay
+-    // @ts-expect-error
+-    ref={expandable} expandableContent={Constants.isIOS ? renderIOSExpandableOverlay() : undefined} useDialog dialogProps={_dialogProps} disabled={editable === false}
+-    // NOTE: Android picker comes with its own overlay built-in therefor we're not using ExpandableOverlay for it
+-    renderCustomOverlay={Constants.isAndroid ? renderAndroidDateTimePicker : undefined} testID={`${testID}.overlay`}>
+-        {renderInput ? renderInput({
++    <ExpandableOverlay
++      // @ts-expect-error
++      ref={expandable} expandableContent={Constants.isIOS ? renderIOSExpandableOverlay() : undefined} useDialog dialogProps={_dialogProps} disabled={editable === false}
++      // NOTE: Android picker comes with its own overlay built-in therefor we're not using ExpandableOverlay for it
++      renderCustomOverlay={Constants.isAndroid ? renderAndroidDateTimePicker : undefined} testID={`${testID}.overlay`}>
++      {renderInput ? renderInput({
+         ...props,
+         value: getStringValue()
+       }) : <TextField {...others}
+-      // @ts-expect-error
+-      ref={textField} testID={testID} editable={editable} value={getStringValue()} />}
+-      </ExpandableOverlay>
+-    </>;
++        // @ts-expect-error
++        ref={textField} testID={testID} editable={editable} value={getStringValue()} />}
++    </ExpandableOverlay>
++  </>;
+ });
+ DateTimePicker.displayName = 'DateTimePicker';
+ export { DateTimePicker }; // For tests
