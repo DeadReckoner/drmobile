@@ -428,6 +428,7 @@
       "goal_completed": "Goal Completed",
       "timeline_updated": "Timeline Updated"
     },
+    "save_changes": "Save Changes",
     "override_reset": "Reset to Defaults",
     "override_reset_confirm": "Remove custom settings for this person?",
     "override_none": "Using global settings",

@@ -85,6 +85,26 @@ export const notificationApi = api.injectEndpoints({
         body,
       }),
       invalidatesTags: ['NotificationSettings'],
+      onQueryStarted: async (payload, { dispatch, queryFulfilled }) => {
+        const { clear_global_mute, ...rest } = payload;
+        const patchResult = dispatch(
+          notificationApi.util.updateQueryData(
+            'getNotificationSettings',
+            undefined,
+            (draft) => {
+              Object.assign(draft, rest);
+              if (clear_global_mute) {
+                draft.global_mute_until = null;
+              }
+            },
+          ),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     getNotificationFriendOverrides: builder.query<
       NotificationOverrideType[],
@@ -103,6 +123,36 @@ export const notificationApi = api.injectEndpoints({
         body: payload,
       }),
       invalidatesTags: ['NotificationOverrides'],
+      onQueryStarted: async (
+        { friendId, payload },
+        { dispatch, queryFulfilled },
+      ) => {
+        const patchResult = dispatch(
+          notificationApi.util.updateQueryData(
+            'getNotificationFriendOverrides',
+            undefined,
+            (draft) => {
+              const existing = draft.find((o) => o.friend_id === friendId);
+              if (existing) {
+                if (payload.prefs) {
+                  existing.prefs = { ...existing.prefs, ...payload.prefs };
+                }
+                if (payload.mute_until) {
+                  existing.mute_until = payload.mute_until;
+                }
+                if (payload.clear_mute_until) {
+                  existing.mute_until = null;
+                }
+              }
+            },
+          ),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     deleteFriendNotificationOverride: builder.mutation<void, string>({
       query: (friendId) => ({
@@ -128,6 +178,38 @@ export const notificationApi = api.injectEndpoints({
         body: payload,
       }),
       invalidatesTags: ['NotificationOverrides'],
+      onQueryStarted: async (
+        { roadmapId, payload },
+        { dispatch, queryFulfilled },
+      ) => {
+        const patchResult = dispatch(
+          notificationApi.util.updateQueryData(
+            'getNotificationAnchoredGoalOverrides',
+            undefined,
+            (draft) => {
+              const existing = draft.data.find(
+                (o) => o.anchored_roadmap_id === roadmapId,
+              );
+              if (existing) {
+                if (payload.prefs) {
+                  existing.prefs = { ...existing.prefs, ...payload.prefs };
+                }
+                if (payload.mute_until) {
+                  existing.mute_until = payload.mute_until;
+                }
+                if (payload.clear_mute_until) {
+                  existing.mute_until = null;
+                }
+              }
+            },
+          ),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
     }),
     deleteAnchoredGoalNotificationOverride: builder.mutation<void, string>({
       query: (roadmapId) => ({

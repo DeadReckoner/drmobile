@@ -1,3 +1,4 @@
+import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { LineDivider } from '@/components/LineDivider';
@@ -5,7 +6,7 @@ import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 type FeatureCell =
@@ -181,7 +182,7 @@ export const ProFeaturesComparision = () => {
         </AppView>
       ))}
       <Divider margin-4 />
-      <TouchableOpacity onPress={handleToggleExpanded}>
+      <AppButton onPress={handleToggleExpanded}>
         <AppView center row gap-10>
           <TranslatedText
             body2
@@ -197,7 +198,7 @@ export const ProFeaturesComparision = () => {
             color={Colors.textColor}
           />
         </AppView>
-      </TouchableOpacity>
+      </AppButton>
     </AppView>
   );
 };

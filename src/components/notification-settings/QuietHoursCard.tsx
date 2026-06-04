@@ -7,8 +7,7 @@ import { SettingsItem } from '@/components/SettingsItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import type { NotificationSettingsType } from '@/store/types/settingsSlice.types';
-import { ActivityIndicator, StyleSheet } from 'react-native';
-import { Colors } from 'react-native-ui-lib';
+import { StyleSheet } from 'react-native';
 import { cardStyle } from './shared';
 import {
   formatTimeDisplay,
@@ -18,7 +17,6 @@ import {
 
 type Props = {
   settings: NotificationSettingsType;
-  updatingKey: string | null;
   onSettingUpdate: (
     _key: string,
     _partial: Partial<NotificationSettingsType>,
@@ -28,7 +26,6 @@ type Props = {
 
 export const QuietHoursCard = ({
   settings,
-  updatingKey,
   onSettingUpdate,
   updateSetting,
 }: Props) => (
@@ -37,16 +34,12 @@ export const QuietHoursCard = ({
       leftElement={<AppIcon set="Ionicons" name="moon-outline" size={22} />}
       translationKey="notifications.quiet_hours"
       rightElement={
-        updatingKey === 'quietHoursEnabled' ? (
-          <ActivityIndicator size="small" color={Colors.primary} />
-        ) : (
-          <AppSwitch
-            value={settings.quietHoursEnabled}
-            onValueChange={(value) =>
-              onSettingUpdate('quietHoursEnabled', { quietHoursEnabled: value })
-            }
-          />
-        )
+        <AppSwitch
+          value={settings.quietHoursEnabled}
+          onValueChange={(value) =>
+            onSettingUpdate('quietHoursEnabled', { quietHoursEnabled: value })
+          }
+        />
       }
     />
     {settings.quietHoursEnabled && (

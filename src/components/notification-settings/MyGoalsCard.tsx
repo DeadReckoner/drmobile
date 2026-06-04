@@ -1,3 +1,4 @@
+import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppSwitch } from '@/components/AppSwitch';
 import { LineDivider } from '@/components/LineDivider';
@@ -9,14 +10,13 @@ import type {
   NotificationSettingsResponseType,
   NotificationTypePrefType,
 } from '@/store/apis/types/notificationsApi.types';
-import { ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 import { MY_GOALS_KEYS } from './constants';
 import { cardStyle } from './shared';
 
 type Props = {
   apiData: NotificationSettingsResponseType | undefined;
-  updatingKey: string | null;
   onUpdate: (
     _key: keyof MyGoalsPrefsType,
     _pref: NotificationTypePrefType,
@@ -24,12 +24,7 @@ type Props = {
   onSetDeliveryKey: (_key: keyof MyGoalsPrefsType) => void;
 };
 
-export const MyGoalsCard = ({
-  apiData,
-  updatingKey,
-  onUpdate,
-  onSetDeliveryKey,
-}: Props) => {
+export const MyGoalsCard = ({ apiData, onUpdate, onSetDeliveryKey }: Props) => {
   const { t } = useLocalization();
 
   if (!apiData?.my_goals_prefs) return null;
@@ -53,7 +48,7 @@ export const MyGoalsCard = ({
               }
               centerElement={
                 <AppView left>
-                  <TouchableOpacity
+                  <AppButton
                     onPress={() => onSetDeliveryKey(key)}
                     style={[
                       styles.deliveryBadge,
@@ -64,22 +59,16 @@ export const MyGoalsCard = ({
                         ? t('notifications.delivery_immediate')
                         : t('notifications.delivery_digest')}
                     </AppText>
-                  </TouchableOpacity>
+                  </AppButton>
                 </AppView>
               }
               rightElement={
-                updatingKey === key ? (
-                  <AppView center width={50}>
-                    <ActivityIndicator size="small" color={Colors.primary} />
-                  </AppView>
-                ) : (
-                  <AppSwitch
-                    value={pref.enabled}
-                    onValueChange={(enabled) =>
-                      onUpdate(key, { ...pref, enabled })
-                    }
-                  />
-                )
+                <AppSwitch
+                  value={pref.enabled}
+                  onValueChange={(enabled) =>
+                    onUpdate(key, { ...pref, enabled })
+                  }
+                />
               }
             />
             <LineDivider marginV-0 />

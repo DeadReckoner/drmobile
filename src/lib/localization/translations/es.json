@@ -428,6 +428,7 @@
       "goal_completed": "Meta completada",
       "timeline_updated": "Cronograma actualizado"
     },
+    "save_changes": "Guardar cambios",
     "override_reset": "Restablecer valores predeterminados",
     "override_reset_confirm": "¿Eliminar la configuración personalizada para esta persona?",
     "override_none": "Usando configuración global",

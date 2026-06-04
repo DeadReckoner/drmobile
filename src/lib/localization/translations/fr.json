@@ -428,6 +428,7 @@
       "goal_completed": "Objectif complété",
       "timeline_updated": "Calendrier mis à jour"
     },
+    "save_changes": "Enregistrer les modifications",
     "override_reset": "Réinitialiser les valeurs par défaut",
     "override_reset_confirm": "Supprimer les paramètres personnalisés pour cette personne?",
     "override_none": "Utilisation des paramètres globaux",

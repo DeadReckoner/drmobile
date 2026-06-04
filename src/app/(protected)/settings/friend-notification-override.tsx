@@ -26,13 +26,7 @@ import {
 } from '@/utils/notificationSettings.utils';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 // Per spec section 5: per-person controls are for progress/milestone events only.
@@ -54,6 +48,8 @@ const DELIVERY_OPTIONS: {
   { labelKey: 'notifications.delivery_digest', value: 'digest' },
 ];
 
+type DraftMute = { type: 'set'; until: string } | { type: 'clear' } | null;
+
 const FriendNotificationOverride = () => {
   const { theme } = useAppTheme();
   const { t } = useLocalization();
@@ -61,74 +57,86 @@ const FriendNotificationOverride = () => {
   const { showToast } = useToast();
 
   const [isMuteSheetVisible, setIsMuteSheetVisible] = useState(false);
-  const [updatingKey, setUpdatingKey] = useState<string | null>(null);
   const [deliveryPickerKey, setDeliveryPickerKey] = useState<
     keyof FriendsAndAccountabilityPrefsType | null
   >(null);
+  const [draftPrefs, setDraftPrefs] = useState<
+    Partial<
+      Record<keyof FriendsAndAccountabilityPrefsType, NotificationTypePrefType>
+    >
+  >({});
+  const [draftMute, setDraftMute] = useState<DraftMute>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data: overridesData, isLoading } =
-    notificationApi.useGetNotificationFriendOverridesQuery();
+    notificationApi.useGetNotificationFriendOverridesQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    });
 
   const [upsertOverride] =
     notificationApi.useUpsertFriendNotificationOverrideMutation();
 
-  const [deleteOverride, { isLoading: isDeleting }] =
+  const [deleteOverride] =
     notificationApi.useDeleteFriendNotificationOverrideMutation();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const override: NotificationOverrideType | undefined = overridesData?.find(
     (o) => o.friend_id === friendId,
   );
 
-  const muteActive = isMuteActive(override?.mute_until ?? null);
+  const serverMuteActive = isMuteActive(override?.mute_until ?? null);
+  const displayMuteActive = draftMute
+    ? draftMute.type === 'set'
+    : serverMuteActive;
 
-  const doUpsert = async (
-    trackingKey: string,
-    payload: UpsertNotificationOverridePayloadType,
-  ) => {
-    if (!friendId) return;
-    setUpdatingKey(trackingKey);
-    try {
-      await upsertOverride({ friendId, payload }).unwrap();
-    } catch {
-      showToast({
-        type: 'failure',
-        message: 'Failed to update settings',
-      });
-    } finally {
-      setTimeout(() => setUpdatingKey(null), 1000);
-    }
-  };
+  const getPref = (
+    key: keyof FriendsAndAccountabilityPrefsType,
+  ): NotificationTypePrefType =>
+    draftPrefs[key] ??
+    override?.prefs?.[key] ?? { enabled: true, delivery: 'immediate' };
+
+  const hasChanges = Object.keys(draftPrefs).length > 0 || draftMute !== null;
 
   const handlePrefToggle = (
     key: keyof FriendsAndAccountabilityPrefsType,
     field: 'enabled' | 'delivery',
     value: boolean | NotificationDeliveryType,
   ) => {
-    const currentPref: NotificationTypePrefType = override?.prefs?.[key] ?? {
-      enabled: true,
-      delivery: 'immediate',
-    };
-    doUpsert(key, {
-      prefs: {
-        ...(override?.prefs ?? {}),
-        [key]: { ...currentPref, [field]: value },
-      },
-    });
+    setDraftPrefs((prev) => ({
+      ...prev,
+      [key]: { ...getPref(key), [field]: value },
+    }));
   };
 
   const handleSetMute = (hours: number | null) => {
-    const mute_until = buildMuteUntil(hours);
-    doUpsert('mute', {
-      prefs: override?.prefs ?? {},
-      mute_until: mute_until ?? undefined,
-    });
+    setDraftMute({ type: 'set', until: buildMuteUntil(hours) });
   };
 
   const handleClearMute = () => {
-    doUpsert('mute', {
-      prefs: override?.prefs ?? {},
-      clear_mute_until: true,
-    });
+    setDraftMute({ type: 'clear' });
+  };
+
+  const handleSave = async () => {
+    if (!friendId) return;
+    setIsSaving(true);
+    try {
+      const mergedPrefs = { ...(override?.prefs ?? {}), ...draftPrefs };
+      const payload: UpsertNotificationOverridePayloadType = {
+        prefs: mergedPrefs,
+      };
+      if (draftMute?.type === 'set') payload.mute_until = draftMute.until;
+      if (draftMute?.type === 'clear') payload.clear_mute_until = true;
+      await upsertOverride({ friendId, payload }).unwrap();
+      setDraftPrefs({});
+      setDraftMute(null);
+      showToast({ type: 'success', message: 'Settings saved' });
+    } catch {
+      showToast({ type: 'failure', message: 'Failed to update settings' });
+    } finally {
+      setTimeout(() => {
+        setIsSaving(false);
+      }, 2000);
+    }
   };
 
   const handleReset = () => {
@@ -143,12 +151,19 @@ const FriendNotificationOverride = () => {
           style: 'destructive',
           onPress: async () => {
             try {
+              setIsDeleting(true);
               await deleteOverride(friendId).unwrap();
+              setDraftPrefs({});
+              setDraftMute(null);
             } catch {
               showToast({
                 type: 'failure',
                 message: 'Failed to reset settings',
               });
+            } finally {
+              setTimeout(() => {
+                setIsDeleting(false);
+              }, 1000);
             }
           },
         },
@@ -157,7 +172,7 @@ const FriendNotificationOverride = () => {
   };
 
   const currentDelivery = deliveryPickerKey
-    ? (override?.prefs?.[deliveryPickerKey]?.delivery ?? 'immediate')
+    ? getPref(deliveryPickerKey).delivery
     : 'immediate';
 
   const SettingsItemDivider = () => <LineDivider marginV-0 />;
@@ -180,31 +195,23 @@ const FriendNotificationOverride = () => {
               }
               translationKey="notifications.mute"
               rightElement={
-                updatingKey === 'mute' && !muteActive ? (
-                  <ActivityIndicator size="small" color={Colors.primary} />
-                ) : (
-                  <AppSwitch
-                    value={muteActive}
-                    onValueChange={(value) => {
-                      if (value) {
-                        setIsMuteSheetVisible(true);
-                      } else {
-                        handleClearMute();
-                      }
-                    }}
-                  />
-                )
+                <AppSwitch
+                  value={displayMuteActive}
+                  onValueChange={(value) => {
+                    if (value) {
+                      setIsMuteSheetVisible(true);
+                    } else {
+                      handleClearMute();
+                    }
+                  }}
+                />
               }
             />
           </AppView>
 
           <AppView bg-lightCardBG style={styles.card}>
             {OVERRIDE_PREF_KEYS.map((key, index) => {
-              const pref: NotificationTypePrefType = override?.prefs?.[key] ?? {
-                enabled: true,
-                delivery: 'immediate',
-              };
-              const isThisUpdating = updatingKey === key;
+              const pref = getPref(key);
               return (
                 <AppView key={key}>
                   {index > 0 && <SettingsItemDivider />}
@@ -213,33 +220,26 @@ const FriendNotificationOverride = () => {
                       `notifications.f_and_a.${key}` as Parameters<typeof t>[0]
                     }
                     rightElement={
-                      isThisUpdating ? (
-                        <ActivityIndicator
-                          size="small"
-                          color={Colors.primary}
+                      <AppView row centerV gap-8>
+                        <AppButton
+                          onPress={() => setDeliveryPickerKey(key)}
+                          style={[
+                            styles.deliveryBadge,
+                            { backgroundColor: Colors.accent },
+                          ]}>
+                          <AppText sm textColor semibold>
+                            {pref.delivery === 'immediate'
+                              ? t('notifications.delivery_immediate')
+                              : t('notifications.delivery_digest')}
+                          </AppText>
+                        </AppButton>
+                        <AppSwitch
+                          value={pref.enabled}
+                          onValueChange={(enabled) =>
+                            handlePrefToggle(key, 'enabled', enabled)
+                          }
                         />
-                      ) : (
-                        <AppView row centerV gap-8>
-                          <TouchableOpacity
-                            onPress={() => setDeliveryPickerKey(key)}
-                            style={[
-                              styles.deliveryBadge,
-                              { backgroundColor: Colors.accent },
-                            ]}>
-                            <AppText sm textColor semibold>
-                              {pref.delivery === 'immediate'
-                                ? t('notifications.delivery_immediate')
-                                : t('notifications.delivery_digest')}
-                            </AppText>
-                          </TouchableOpacity>
-                          <AppSwitch
-                            value={pref.enabled}
-                            onValueChange={(enabled) =>
-                              handlePrefToggle(key, 'enabled', enabled)
-                            }
-                          />
-                        </AppView>
-                      )
+                      </AppView>
                     }
                   />
                 </AppView>
@@ -247,10 +247,30 @@ const FriendNotificationOverride = () => {
             })}
           </AppView>
 
+          {hasChanges && (
+            <AppView paddingH-16 paddingB-16>
+              <AppButton
+                bg-primary
+                onPress={handleSave}
+                disabled={isSaving}
+                style={styles.saveButton}>
+                <AppView padding-16 centerH>
+                  {isSaving ? (
+                    <ActivityIndicator size="small" color={Colors.white} />
+                  ) : (
+                    <AppText body2 white semibold>
+                      {t('notifications.save_changes')}
+                    </AppText>
+                  )}
+                </AppView>
+              </AppButton>
+            </AppView>
+          )}
+
           {override && (
             <AppView bg-lightCardBG style={styles.card}>
               <AppButton onPress={handleReset} disabled={isDeleting}>
-                <AppView paddingV-14 paddingH-16 centerH>
+                <AppView padding-16 centerH>
                   {isDeleting ? (
                     <ActivityIndicator size="small" color={Colors.error} />
                   ) : (
@@ -319,5 +339,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
+  },
+  saveButton: {
+    borderRadius: 12,
   },
 });

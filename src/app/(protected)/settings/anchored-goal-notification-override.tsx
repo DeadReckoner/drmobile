@@ -29,13 +29,7 @@ import {
 } from '@/utils/notificationSettings.utils';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 // Per spec section 5: per-goal controls are for progress/milestone events only.
@@ -57,6 +51,11 @@ const DELIVERY_OPTIONS: {
   { labelKey: 'notifications.delivery_digest', value: 'digest' },
 ];
 
+type DraftMute =
+  | { type: 'set'; hours: number | null }
+  | { type: 'clear' }
+  | null;
+
 const AnchoredGoalNotificationOverride = () => {
   const { theme } = useAppTheme();
   const { t } = useLocalization();
@@ -64,10 +63,16 @@ const AnchoredGoalNotificationOverride = () => {
   const { roadmapId } = useLocalSearchParams<{ roadmapId: string }>();
 
   const [isMuteSheetVisible, setIsMuteSheetVisible] = useState(false);
-  const [updatingKey, setUpdatingKey] = useState<string | null>(null);
   const [deliveryPickerKey, setDeliveryPickerKey] = useState<
     keyof FriendsAndAccountabilityPrefsType | null
   >(null);
+  const [draftPrefs, setDraftPrefs] = useState<
+    Partial<
+      Record<keyof FriendsAndAccountabilityPrefsType, NotificationTypePrefType>
+    >
+  >({});
+  const [draftMute, setDraftMute] = useState<DraftMute>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data: overridesData, isLoading } =
     notificationApi.useGetNotificationAnchoredGoalOverridesQuery();
@@ -75,17 +80,33 @@ const AnchoredGoalNotificationOverride = () => {
   const [upsertOverride] =
     notificationApi.useUpsertAnchoredGoalNotificationOverrideMutation();
 
-  const [deleteOverride] =
+  const [deleteOverride, { isLoading: isDeleting }] =
     notificationApi.useDeleteAnchoredGoalNotificationOverrideMutation();
 
   const override: NotificationOverrideType | undefined =
     overridesData?.data?.find((o) => o.anchored_roadmap_id === roadmapId);
 
-  const muteActive = isMuteActive(override?.mute_until ?? null);
+  const serverMuteActive = isMuteActive(override?.mute_until ?? null);
+  const displayMuteActive = draftMute
+    ? draftMute.type === 'set'
+    : serverMuteActive;
+
+  const displayMuteUntil: string | null =
+    draftMute?.type === 'set'
+      ? buildMuteUntil(draftMute.hours)
+      : (override?.mute_until ?? null);
+
+  const getPref = (
+    key: keyof FriendsAndAccountabilityPrefsType,
+  ): NotificationTypePrefType =>
+    draftPrefs[key] ??
+    override?.prefs?.[key] ?? { enabled: true, delivery: 'immediate' };
+
+  const hasChanges = Object.keys(draftPrefs).length > 0 || draftMute !== null;
 
   const muteExpiryLabel = (): string => {
-    if (!override?.mute_until) return '';
-    const muteDate = new Date(override.mute_until);
+    if (!displayMuteUntil) return '';
+    const muteDate = new Date(displayMuteUntil);
     if (muteDate.getFullYear() > 9000)
       return t('notifications.muted_indefinitely');
     return t('notifications.muted_until', {
@@ -93,14 +114,45 @@ const AnchoredGoalNotificationOverride = () => {
     });
   };
 
-  const doUpsert = async (
-    trackingKey: string,
-    payload: UpsertNotificationOverridePayloadType,
+  const handlePrefToggle = (
+    key: keyof FriendsAndAccountabilityPrefsType,
+    field: 'enabled' | 'delivery',
+    value: boolean | NotificationDeliveryType,
   ) => {
+    setDraftPrefs((prev) => ({
+      ...prev,
+      [key]: { ...getPref(key), [field]: value },
+    }));
+  };
+
+  const handleSetMute = (hours: number | null) => {
+    setDraftMute({ type: 'set', hours });
+  };
+
+  const handleClearMute = () => {
+    setDraftMute({ type: 'clear' });
+  };
+
+  const handleSave = async () => {
     if (!roadmapId) return;
-    setUpdatingKey(trackingKey);
+    setIsSaving(true);
     try {
+      const mergedPrefs = { ...(override?.prefs ?? {}), ...draftPrefs };
+      const payload: UpsertNotificationOverridePayloadType = {
+        prefs: mergedPrefs,
+      };
+      if (draftMute?.type === 'set') {
+        payload.mute_until = buildMuteUntil(draftMute.hours);
+      }
+      if (draftMute?.type === 'clear') payload.clear_mute_until = true;
       await upsertOverride({ roadmapId, payload }).unwrap();
+      setDraftPrefs({});
+      setDraftMute(null);
+      dispatch(
+        showToastAction({
+          toastProps: { type: 'success', message: 'Settings saved' },
+        }),
+      );
     } catch {
       dispatch(
         showToastAction({
@@ -108,40 +160,8 @@ const AnchoredGoalNotificationOverride = () => {
         }),
       );
     } finally {
-      setUpdatingKey(null);
+      setIsSaving(false);
     }
-  };
-
-  const handlePrefToggle = (
-    key: keyof FriendsAndAccountabilityPrefsType,
-    field: 'enabled' | 'delivery',
-    value: boolean | NotificationDeliveryType,
-  ) => {
-    const currentPref: NotificationTypePrefType = override?.prefs?.[key] ?? {
-      enabled: true,
-      delivery: 'immediate',
-    };
-    doUpsert(key, {
-      prefs: {
-        ...(override?.prefs ?? {}),
-        [key]: { ...currentPref, [field]: value },
-      },
-    });
-  };
-
-  const handleSetMute = (hours: number | null) => {
-    const mute_until = buildMuteUntil(hours);
-    doUpsert('mute', {
-      prefs: override?.prefs ?? {},
-      mute_until: mute_until ?? undefined,
-    });
-  };
-
-  const handleClearMute = () => {
-    doUpsert('mute', {
-      prefs: override?.prefs ?? {},
-      clear_mute_until: true,
-    });
   };
 
   const handleReset = () => {
@@ -157,6 +177,8 @@ const AnchoredGoalNotificationOverride = () => {
           onPress: async () => {
             try {
               await deleteOverride(roadmapId).unwrap();
+              setDraftPrefs({});
+              setDraftMute(null);
             } catch {
               dispatch(
                 showToastAction({
@@ -174,7 +196,7 @@ const AnchoredGoalNotificationOverride = () => {
   };
 
   const currentDelivery = deliveryPickerKey
-    ? (override?.prefs?.[deliveryPickerKey]?.delivery ?? 'immediate')
+    ? getPref(deliveryPickerKey).delivery
     : 'immediate';
 
   const SettingsItemDivider = () => <LineDivider marginV-0 />;
@@ -194,7 +216,7 @@ const AnchoredGoalNotificationOverride = () => {
           {/* Override status card */}
           <AppView bg-lightCardBG style={styles.card}>
             <AppView paddingH-16 paddingV-14>
-              {!override ? (
+              {!override && !hasChanges ? (
                 <TranslatedText
                   body2
                   translationKey="notifications.override_none"
@@ -211,7 +233,7 @@ const AnchoredGoalNotificationOverride = () => {
 
           {/* Mute card */}
           <AppView bg-lightCardBG style={styles.card}>
-            {muteActive && (
+            {displayMuteActive && (
               <>
                 <AppView
                   paddingH-16
@@ -230,13 +252,9 @@ const AnchoredGoalNotificationOverride = () => {
                       </AppText>
                     </AppView>
                     <AppButton onPress={handleClearMute}>
-                      {updatingKey === 'mute' ? (
-                        <ActivityIndicator size="small" color={Colors.white} />
-                      ) : (
-                        <AppText caption color={Colors.white} semibold>
-                          {t('notifications.unmute')}
-                        </AppText>
-                      )}
+                      <AppText caption color={Colors.white} semibold>
+                        {t('notifications.unmute')}
+                      </AppText>
                     </AppButton>
                   </AppView>
                 </AppView>
@@ -249,20 +267,16 @@ const AnchoredGoalNotificationOverride = () => {
               }
               translationKey="notifications.mute"
               rightElement={
-                updatingKey === 'mute' && !muteActive ? (
-                  <ActivityIndicator size="small" color={Colors.primary} />
-                ) : (
-                  <AppSwitch
-                    value={muteActive}
-                    onValueChange={(value) => {
-                      if (value) {
-                        setIsMuteSheetVisible(true);
-                      } else {
-                        handleClearMute();
-                      }
-                    }}
-                  />
-                )
+                <AppSwitch
+                  value={displayMuteActive}
+                  onValueChange={(value) => {
+                    if (value) {
+                      setIsMuteSheetVisible(true);
+                    } else {
+                      handleClearMute();
+                    }
+                  }}
+                />
               }
             />
           </AppView>
@@ -278,11 +292,7 @@ const AnchoredGoalNotificationOverride = () => {
               />
             </AppView>
             {OVERRIDE_PREF_KEYS.map((key) => {
-              const pref: NotificationTypePrefType = override?.prefs?.[key] ?? {
-                enabled: true,
-                delivery: 'immediate',
-              };
-              const isThisUpdating = updatingKey === key;
+              const pref = getPref(key);
               return (
                 <AppView key={key}>
                   <SettingsItemDivider />
@@ -294,38 +304,31 @@ const AnchoredGoalNotificationOverride = () => {
                       `notifications.f_and_a.${key}` as Parameters<typeof t>[0]
                     }
                     rightElement={
-                      isThisUpdating ? (
-                        <ActivityIndicator
-                          size="small"
-                          color={Colors.primary}
+                      <AppView row centerV gap-8>
+                        <AppButton
+                          onPress={() => setDeliveryPickerKey(key)}
+                          style={[
+                            styles.deliveryBadge,
+                            {
+                              backgroundColor:
+                                pref.delivery === 'immediate'
+                                  ? Colors.primary
+                                  : Colors.divider,
+                            },
+                          ]}>
+                          <AppText caption color={Colors.white} semibold>
+                            {pref.delivery === 'immediate'
+                              ? t('notifications.delivery_immediate')
+                              : t('notifications.delivery_digest')}
+                          </AppText>
+                        </AppButton>
+                        <AppSwitch
+                          value={pref.enabled}
+                          onValueChange={(enabled) =>
+                            handlePrefToggle(key, 'enabled', enabled)
+                          }
                         />
-                      ) : (
-                        <AppView row centerV gap-8>
-                          <TouchableOpacity
-                            onPress={() => setDeliveryPickerKey(key)}
-                            style={[
-                              styles.deliveryBadge,
-                              {
-                                backgroundColor:
-                                  pref.delivery === 'immediate'
-                                    ? Colors.primary
-                                    : Colors.divider,
-                              },
-                            ]}>
-                            <AppText caption color={Colors.white} semibold>
-                              {pref.delivery === 'immediate'
-                                ? t('notifications.delivery_immediate')
-                                : t('notifications.delivery_digest')}
-                            </AppText>
-                          </TouchableOpacity>
-                          <AppSwitch
-                            value={pref.enabled}
-                            onValueChange={(enabled) =>
-                              handlePrefToggle(key, 'enabled', enabled)
-                            }
-                          />
-                        </AppView>
-                      )
+                      </AppView>
                     }
                   />
                 </AppView>
@@ -333,20 +336,43 @@ const AnchoredGoalNotificationOverride = () => {
             })}
           </AppView>
 
-          {/* Reset card */}
           {override && (
             <AppView bg-lightCardBG style={styles.card}>
-              <AppButton onPress={handleReset}>
+              <AppButton onPress={handleReset} disabled={isDeleting}>
                 <AppView paddingV-14 paddingH-16 centerH>
-                  <AppText body2 color={Colors.error} semibold>
-                    {t('notifications.override_reset')}
-                  </AppText>
+                  {isDeleting ? (
+                    <ActivityIndicator size="small" color={Colors.error} />
+                  ) : (
+                    <AppText body2 color={Colors.error} semibold>
+                      {t('notifications.override_reset')}
+                    </AppText>
+                  )}
                 </AppView>
               </AppButton>
             </AppView>
           )}
         </AppView>
       </ScrollView>
+
+      {hasChanges && (
+        <AppView paddingH-16 paddingB-16>
+          <AppButton
+            bg-primary
+            onPress={handleSave}
+            disabled={isSaving}
+            style={styles.saveButton}>
+            <AppView paddingV-14 centerH>
+              {isSaving ? (
+                <ActivityIndicator size="small" color={Colors.white} />
+              ) : (
+                <AppText body2 white semibold>
+                  {t('notifications.save_changes')}
+                </AppText>
+              )}
+            </AppView>
+          </AppButton>
+        </AppView>
+      )}
 
       <AppActionSheetModal
         options={MUTE_DURATION_OPTIONS.map((option) => ({
@@ -402,5 +428,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 4,
+  },
+  saveButton: {
+    borderRadius: 12,
   },
 });

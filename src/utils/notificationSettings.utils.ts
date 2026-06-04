@@ -66,8 +66,10 @@ export const MUTE_DURATION_OPTIONS = [
   { labelKey: 'notifications.mute_indefinite', hours: null },
 ] as const;
 
-export const buildMuteUntil = (hours: number | null): string | undefined => {
-  if (hours === null) return undefined;
+export const INDEFINITE_MUTE_TIMESTAMP = '9999-12-31T23:59:59Z';
+
+export const buildMuteUntil = (hours: number | null): string => {
+  if (hours === null) return INDEFINITE_MUTE_TIMESTAMP;
   return new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
 };
 

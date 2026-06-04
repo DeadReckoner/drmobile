@@ -1,3 +1,4 @@
+import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppSwitch } from '@/components/AppSwitch';
 import { LineDivider } from '@/components/LineDivider';
@@ -10,7 +11,7 @@ import type {
   NotificationTypePrefType,
 } from '@/store/apis/types/notificationsApi.types';
 import type { NotificationSettingsType } from '@/store/types/settingsSlice.types';
-import { ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 import { F_AND_A_KEYS } from './constants';
 import { cardStyle } from './shared';
@@ -18,8 +19,6 @@ import { cardStyle } from './shared';
 type Props = {
   settings: NotificationSettingsType;
   apiData: NotificationSettingsResponseType | undefined;
-  updatingKey: string | null;
-  updatingFAndAKey: string | null;
   onSettingUpdate: (
     _key: string,
     _partial: Partial<NotificationSettingsType>,
@@ -34,8 +33,6 @@ type Props = {
 export const FriendsCard = ({
   settings,
   apiData,
-  updatingKey,
-  updatingFAndAKey,
   onSettingUpdate,
   onUpdate,
   onSetDeliveryKey,
@@ -48,18 +45,12 @@ export const FriendsCard = ({
         leftElement={<AppIcon set="Ionicons" name="people-outline" size={22} />}
         translationKey="notifications.f_and_a_enabled"
         rightElement={
-          updatingKey === 'fAndAEnabled' ? (
-            <AppView center width={50}>
-              <ActivityIndicator size="small" color={Colors.primary} />
-            </AppView>
-          ) : (
-            <AppSwitch
-              value={settings.fAndAEnabled}
-              onValueChange={(value) =>
-                onSettingUpdate('fAndAEnabled', { fAndAEnabled: value })
-              }
-            />
-          )
+          <AppSwitch
+            value={settings.fAndAEnabled}
+            onValueChange={(value) =>
+              onSettingUpdate('fAndAEnabled', { fAndAEnabled: value })
+            }
+          />
         }
       />
 
@@ -69,20 +60,14 @@ export const FriendsCard = ({
           <SettingsItem
             translationKey="notifications.apply_to_all_friends"
             rightElement={
-              updatingKey === 'applyToAllFriends' ? (
-                <AppView center width={50}>
-                  <ActivityIndicator size="small" color={Colors.primary} />
-                </AppView>
-              ) : (
-                <AppSwitch
-                  value={settings.applyToAllFriends}
-                  onValueChange={(value) =>
-                    onSettingUpdate('applyToAllFriends', {
-                      applyToAllFriends: value,
-                    })
-                  }
-                />
-              )
+              <AppSwitch
+                value={settings.applyToAllFriends}
+                onValueChange={(value) =>
+                  onSettingUpdate('applyToAllFriends', {
+                    applyToAllFriends: value,
+                  })
+                }
+              />
             }
           />
           {F_AND_A_KEYS.map((key) => {
@@ -97,7 +82,7 @@ export const FriendsCard = ({
                   }
                   centerElement={
                     <AppView left>
-                      <TouchableOpacity
+                      <AppButton
                         onPress={() => onSetDeliveryKey(key)}
                         style={[
                           styles.deliveryBadge,
@@ -112,27 +97,18 @@ export const FriendsCard = ({
                             ? t('notifications.delivery_immediate')
                             : t('notifications.delivery_digest')}
                         </AppText>
-                      </TouchableOpacity>
+                      </AppButton>
                     </AppView>
                   }
                   rightElement={
-                    updatingFAndAKey === key ? (
-                      <AppView center width={50}>
-                        <ActivityIndicator
-                          size="small"
-                          color={Colors.primary}
-                        />
-                      </AppView>
-                    ) : (
-                      <AppView row centerV gap-8>
-                        <AppSwitch
-                          value={pref.enabled}
-                          onValueChange={(enabled) =>
-                            onUpdate(key, { ...pref, enabled })
-                          }
-                        />
-                      </AppView>
-                    )
+                    <AppView row centerV gap-8>
+                      <AppSwitch
+                        value={pref.enabled}
+                        onValueChange={(enabled) =>
+                          onUpdate(key, { ...pref, enabled })
+                        }
+                      />
+                    </AppView>
                   }
                 />
               </AppView>
