@@ -534,6 +534,7 @@
     "started_successfully": "Started successfully",
     "anchor_request_sent": "Anchor request sent to {{name}}",
     "cancel": "Cancel",
+    "done": "Done",
     "remove": "Remove",
     "are_you_sure": "Are you sure?",
     "delete_roadmap": "All associated milestones, tasks and steps will also be removed.",

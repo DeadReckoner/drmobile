@@ -534,6 +534,7 @@
     "started_successfully": "Iniciado con éxito",
     "anchor_request_sent": "Solicitud de ancla enviada a {{name}}",
     "cancel": "Cancelar",
+    "done": "Hecho",
     "remove": "Eliminar",
     "are_you_sure": "¿Estás seguro?",
     "delete_roadmap": "Todos los hitos, tareas y pasos asociados también se eliminarán.",

@@ -1,6 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppModal } from '@/components/AppModal';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useEffect, useRef, useState } from 'react';
@@ -63,7 +64,7 @@ export const HourPickerModal = ({
       setIsVisible={(v) => {
         if (!v) onClose();
       }}
-      snapPoints={['45%']}>
+      snapPoints={['55%']}>
       <AppView row centerV spread marginB-20>
         <AppText body1 textColor semibold>
           {t('notifications.digest_delivery_hour')}
@@ -123,9 +124,12 @@ export const HourPickerModal = ({
       <AppButton
         onPress={handleConfirm}
         style={[styles.doneButton, { backgroundColor: Colors.primary }]}>
-        <AppText body2 semibold color={Colors.white}>
-          Done
-        </AppText>
+        <TranslatedText
+          body2
+          semibold
+          textOnPrimary
+          translationKey="common.done"
+        />
       </AppButton>
     </AppModal>
   );
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
   doneButton: {
     marginTop: 20,
     borderRadius: 12,
-    paddingVertical: 14,
+    paddingVertical: 16,
     alignItems: 'center',
   },
 });
