@@ -431,7 +431,6 @@
     "save_changes": "Guardar cambios",
     "override_reset": "Restablecer valores predeterminados",
     "override_reset_confirm": "¿Eliminar la configuración personalizada para esta persona?",
-    "override_none": "Usando configuración global",
     "override_custom": "Configuración personalizada activa"
   },
   "permissions": {

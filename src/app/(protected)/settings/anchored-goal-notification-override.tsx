@@ -3,12 +3,12 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { AppSwitch } from '@/components/AppSwitch';
-import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
+import { DeliveryBadge } from '@/components/notification-settings/DeliveryBadge';
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { SettingsItem } from '@/components/SettingsItem';
-import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -60,7 +60,10 @@ const AnchoredGoalNotificationOverride = () => {
   const { theme } = useAppTheme();
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
-  const { roadmapId } = useLocalSearchParams<{ roadmapId: string }>();
+  const { roadmapId, headerTitle } = useLocalSearchParams<{
+    roadmapId: string;
+    headerTitle?: string;
+  }>();
 
   const [isMuteSheetVisible, setIsMuteSheetVisible] = useState(false);
   const [deliveryPickerKey, setDeliveryPickerKey] = useState<
@@ -83,8 +86,9 @@ const AnchoredGoalNotificationOverride = () => {
   const [deleteOverride, { isLoading: isDeleting }] =
     notificationApi.useDeleteAnchoredGoalNotificationOverrideMutation();
 
-  const override: NotificationOverrideType | undefined =
-    overridesData?.data?.find((o) => o.anchored_roadmap_id === roadmapId);
+  const override: NotificationOverrideType | undefined = overridesData?.find(
+    (o) => o.anchored_roadmap_id === roadmapId,
+  );
 
   const serverMuteActive = isMuteActive(override?.mute_until ?? null);
   const displayMuteActive = draftMute
@@ -203,35 +207,19 @@ const AnchoredGoalNotificationOverride = () => {
 
   return (
     <AppScreen safeArea paddingH-0 key={theme}>
-      {isLoading && <Loader transparent />}
+      {isLoading && <Loader />}
       <ScrollView
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}>
-        <AppView paddingH-12 marginB-8>
-          <HeaderWithBack headerKey="notifications.f_and_a_section" />
+        <AppView paddingH-12>
+          <HeaderWithBack
+            headerKey={
+              headerTitle ? undefined : 'notifications.f_and_a_section'
+            }
+            headerText={headerTitle}
+          />
         </AppView>
-        <Divider />
-
         <AppView style={styles.content}>
-          {/* Override status card */}
-          <AppView bg-lightCardBG style={styles.card}>
-            <AppView paddingH-16 paddingV-14>
-              {!override && !hasChanges ? (
-                <TranslatedText
-                  body2
-                  translationKey="notifications.override_none"
-                />
-              ) : (
-                <TranslatedText
-                  body2
-                  semibold
-                  translationKey="notifications.override_custom"
-                />
-              )}
-            </AppView>
-          </AppView>
-
-          {/* Mute card */}
           <AppView bg-lightCardBG style={styles.card}>
             {displayMuteActive && (
               <>
@@ -281,21 +269,12 @@ const AnchoredGoalNotificationOverride = () => {
             />
           </AppView>
 
-          {/* Notification preferences card */}
           <AppView bg-lightCardBG style={styles.card}>
-            <AppView paddingH-16 paddingV-10>
-              <TranslatedText
-                caption
-                semibold
-                translationKey="notifications.f_and_a_section"
-                style={styles.sectionHeader}
-              />
-            </AppView>
-            {OVERRIDE_PREF_KEYS.map((key) => {
+            {OVERRIDE_PREF_KEYS.map((key, index) => {
               const pref = getPref(key);
               return (
                 <AppView key={key}>
-                  <SettingsItemDivider />
+                  {index > 0 && <SettingsItemDivider />}
                   <SettingsItem
                     leftElement={
                       <AppIcon set="Ionicons" name="people-outline" size={22} />
@@ -305,23 +284,10 @@ const AnchoredGoalNotificationOverride = () => {
                     }
                     rightElement={
                       <AppView row centerV gap-8>
-                        <AppButton
+                        <DeliveryBadge
+                          delivery={pref.delivery}
                           onPress={() => setDeliveryPickerKey(key)}
-                          style={[
-                            styles.deliveryBadge,
-                            {
-                              backgroundColor:
-                                pref.delivery === 'immediate'
-                                  ? Colors.primary
-                                  : Colors.divider,
-                            },
-                          ]}>
-                          <AppText caption color={Colors.white} semibold>
-                            {pref.delivery === 'immediate'
-                              ? t('notifications.delivery_immediate')
-                              : t('notifications.delivery_digest')}
-                          </AppText>
-                        </AppButton>
+                        />
                         <AppSwitch
                           value={pref.enabled}
                           onValueChange={(enabled) =>
@@ -335,44 +301,34 @@ const AnchoredGoalNotificationOverride = () => {
               );
             })}
           </AppView>
-
-          {override && (
-            <AppView bg-lightCardBG style={styles.card}>
-              <AppButton onPress={handleReset} disabled={isDeleting}>
-                <AppView paddingV-14 paddingH-16 centerH>
-                  {isDeleting ? (
-                    <ActivityIndicator size="small" color={Colors.error} />
-                  ) : (
-                    <AppText body2 color={Colors.error} semibold>
-                      {t('notifications.override_reset')}
-                    </AppText>
-                  )}
-                </AppView>
-              </AppButton>
-            </AppView>
-          )}
+          <AppView gap-16 paddingH-16>
+            {hasChanges && (
+              <PrimaryButton
+                label="notifications.save_changes"
+                onPress={handleSave}
+                shouldShowLoader
+                disabled={isSaving}
+                isLoading={isSaving}
+              />
+            )}
+            {override && (
+              <AppView bg-lightCardBG br30>
+                <AppButton onPress={handleReset} disabled={isDeleting}>
+                  <AppView paddingV-16 centerH>
+                    {isDeleting ? (
+                      <ActivityIndicator size="small" color={Colors.error} />
+                    ) : (
+                      <AppText body1 color={Colors.error} semibold>
+                        {t('notifications.override_reset')}
+                      </AppText>
+                    )}
+                  </AppView>
+                </AppButton>
+              </AppView>
+            )}
+          </AppView>
         </AppView>
       </ScrollView>
-
-      {hasChanges && (
-        <AppView paddingH-16 paddingB-16>
-          <AppButton
-            bg-primary
-            onPress={handleSave}
-            disabled={isSaving}
-            style={styles.saveButton}>
-            <AppView paddingV-14 centerH>
-              {isSaving ? (
-                <ActivityIndicator size="small" color={Colors.white} />
-              ) : (
-                <AppText body2 white semibold>
-                  {t('notifications.save_changes')}
-                </AppText>
-              )}
-            </AppView>
-          </AppButton>
-        </AppView>
-      )}
 
       <AppActionSheetModal
         options={MUTE_DURATION_OPTIONS.map((option) => ({
@@ -426,8 +382,8 @@ const styles = StyleSheet.create({
   },
   deliveryBadge: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 4,
+    paddingVertical: 4,
+    borderRadius: 10,
   },
   saveButton: {
     borderRadius: 12,

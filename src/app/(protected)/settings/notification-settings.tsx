@@ -1,5 +1,4 @@
 import { AppActionSheetModal } from '@/components/AppActionSheetModal';
-import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { GradientBackdrop } from '@/components/GradientBackdrop';
@@ -16,7 +15,8 @@ import { GlobalControlsCard } from '@/components/notification-settings/GlobalCon
 import { HourPickerModal } from '@/components/notification-settings/HourPickerModal';
 import { MyGoalsCard } from '@/components/notification-settings/MyGoalsCard';
 import { QuietHoursCard } from '@/components/notification-settings/QuietHoursCard';
-import { AppText, AppView } from '@/components/ui';
+import { PrimaryButton } from '@/components/PrimaryButton';
+import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useNotificationSettings } from '@/hooks/useNotificationSettings';
 import { notificationApi } from '@/store/apis/notificationsApi';
@@ -42,7 +42,7 @@ import {
 } from '@/utils/notificationSettings.utils';
 import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 type DraftMute =
@@ -293,23 +293,15 @@ const NotificationSettings = () => {
       </ScrollView>
 
       {isReady && hasChanges && (
-        <AppView paddingB-32 paddingH-16>
+        <AppView paddingB-48 paddingH-16>
           <GradientBackdrop height={200} />
-          <AppButton
-            bg-primary
+          <PrimaryButton
+            label="notifications.save_changes"
             onPress={handleSave}
+            shouldShowLoader
             disabled={isSaving}
-            style={styles.saveButton}>
-            <AppView paddingV-16 centerH>
-              {isSaving ? (
-                <ActivityIndicator size="small" color={Colors.white} />
-              ) : (
-                <AppText body1 textColor semibold>
-                  {t('notifications.save_changes')}
-                </AppText>
-              )}
-            </AppView>
-          </AppButton>
+            isLoading={isSaving}
+          />
         </AppView>
       )}
 

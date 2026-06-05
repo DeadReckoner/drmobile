@@ -1,4 +1,7 @@
+import { AppActionSheetModal } from '@/components/AppActionSheetModal';
+import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
+import { AppIcon } from '@/components/AppIcon';
 import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
 import { AppSegmentControl } from '@/components/AppSegmentControl';
@@ -16,17 +19,17 @@ import {
   TaskType,
 } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
+import { Animations } from '@/utils/animation.utils';
+import { DateUtils } from '@/utils/date.utils';
+import { findOngoingMilestone } from '@/utils/roadmap.utils';
 import {
   consumeRoadmap,
   storeRoadmap,
   storeTask,
   storeTasks,
 } from '@/utils/roadmapTransfer';
-import { useAppSelector } from '@/store/hooks/store.hooks';
-import { selectUser } from '@/store/slices/authSlice';
-import { Animations } from '@/utils/animation.utils';
-import { DateUtils } from '@/utils/date.utils';
-import { findOngoingMilestone } from '@/utils/roadmap.utils';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -38,6 +41,7 @@ const ReadonlyRoadmapDetails = () => {
   const params = useLocalSearchParams<{ roadmap?: string }>();
   const user = useAppSelector(selectUser);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [isSettingsSheetVisible, setIsSettingsSheetVisible] = useState(false);
 
   const [finalRoadmap] = useState<RoadmapType | null>(() => {
     const transferred = consumeRoadmap();
@@ -139,8 +143,11 @@ const ReadonlyRoadmapDetails = () => {
         contentInsetAdjustmentBehavior="always"
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}>
-        <AppView row spread centerV>
+        <AppView row centerV spread>
           <HeaderWithBack />
+          <AppButton marginH-8 onPress={() => setIsSettingsSheetVisible(true)}>
+            <AppIcon set="Feather" name="settings" size={22} />
+          </AppButton>
         </AppView>
         <Divider />
         <AppSegmentControl
@@ -227,6 +234,28 @@ const ReadonlyRoadmapDetails = () => {
       {isAnchor && finalRoadmap.roadmap_id && (
         <RoadmapNudgeButton roadmapId={finalRoadmap.roadmap_id} />
       )}
+
+      <AppActionSheetModal
+        title={t('settings.settings')}
+        visible={isSettingsSheetVisible}
+        onDismiss={() => setIsSettingsSheetVisible(false)}
+        options={[
+          {
+            label: t('notifications.settings_title'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/settings/anchored-goal-notification-override',
+                params: {
+                  roadmapId: finalRoadmap.roadmap_id,
+                  headerTitle: finalRoadmap.goal,
+                },
+              });
+            },
+            icon: <AppIcon set="Feather" name="bell" size={20} />,
+          },
+        ]}
+      />
     </AppScreen>
   );
 };

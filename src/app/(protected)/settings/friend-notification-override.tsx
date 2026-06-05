@@ -6,6 +6,8 @@ import { AppSwitch } from '@/components/AppSwitch';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
+import { DeliveryBadge } from '@/components/notification-settings/DeliveryBadge';
+import { PrimaryButton } from '@/components/PrimaryButton';
 import { SettingsItem } from '@/components/SettingsItem';
 import { AppText, AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
@@ -221,18 +223,10 @@ const FriendNotificationOverride = () => {
                     }
                     rightElement={
                       <AppView row centerV gap-8>
-                        <AppButton
+                        <DeliveryBadge
+                          delivery={pref.delivery}
                           onPress={() => setDeliveryPickerKey(key)}
-                          style={[
-                            styles.deliveryBadge,
-                            { backgroundColor: Colors.accent },
-                          ]}>
-                          <AppText sm textColor semibold>
-                            {pref.delivery === 'immediate'
-                              ? t('notifications.delivery_immediate')
-                              : t('notifications.delivery_digest')}
-                          </AppText>
-                        </AppButton>
+                        />
                         <AppSwitch
                           value={pref.enabled}
                           onValueChange={(enabled) =>
@@ -249,21 +243,13 @@ const FriendNotificationOverride = () => {
 
           {hasChanges && (
             <AppView paddingH-16 paddingB-16>
-              <AppButton
-                bg-primary
+              <PrimaryButton
+                label="notifications.save_changes"
                 onPress={handleSave}
+                shouldShowLoader
                 disabled={isSaving}
-                style={styles.saveButton}>
-                <AppView padding-16 centerH>
-                  {isSaving ? (
-                    <ActivityIndicator size="small" color={Colors.white} />
-                  ) : (
-                    <AppText body2 white semibold>
-                      {t('notifications.save_changes')}
-                    </AppText>
-                  )}
-                </AppView>
-              </AppButton>
+                isLoading={isSaving}
+              />
             </AppView>
           )}
 
@@ -274,7 +260,7 @@ const FriendNotificationOverride = () => {
                   {isDeleting ? (
                     <ActivityIndicator size="small" color={Colors.error} />
                   ) : (
-                    <AppText body2 color={Colors.error} semibold>
+                    <AppText body1 color={Colors.error} semibold>
                       {t('notifications.override_reset')}
                     </AppText>
                   )}
@@ -337,7 +323,7 @@ const styles = StyleSheet.create({
   },
   deliveryBadge: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 10,
   },
   saveButton: {

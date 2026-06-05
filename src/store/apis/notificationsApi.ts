@@ -162,7 +162,7 @@ export const notificationApi = api.injectEndpoints({
       invalidatesTags: ['NotificationOverrides'],
     }),
     getNotificationAnchoredGoalOverrides: builder.query<
-      { data: NotificationOverrideType[] },
+      NotificationOverrideType[],
       void
     >({
       query: () => '/notification-settings/anchored-goals',
@@ -187,7 +187,7 @@ export const notificationApi = api.injectEndpoints({
             'getNotificationAnchoredGoalOverrides',
             undefined,
             (draft) => {
-              const existing = draft.data.find(
+              const existing = draft.find(
                 (o) => o.anchored_roadmap_id === roadmapId,
               );
               if (existing) {

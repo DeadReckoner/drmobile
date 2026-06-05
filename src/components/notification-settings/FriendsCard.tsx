@@ -1,18 +1,16 @@
-import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppSwitch } from '@/components/AppSwitch';
 import { LineDivider } from '@/components/LineDivider';
+import { DeliveryBadge } from '@/components/notification-settings/DeliveryBadge';
 import { SettingsItem } from '@/components/SettingsItem';
-import { AppText, AppView } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
+import { AppView } from '@/components/ui';
+import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import type {
   FriendsAndAccountabilityPrefsType,
   NotificationSettingsResponseType,
   NotificationTypePrefType,
 } from '@/store/apis/types/notificationsApi.types';
 import type { NotificationSettingsType } from '@/store/types/settingsSlice.types';
-import { StyleSheet } from 'react-native';
-import { Colors } from 'react-native-ui-lib';
 import { F_AND_A_KEYS } from './constants';
 import { cardStyle } from './shared';
 
@@ -37,8 +35,6 @@ export const FriendsCard = ({
   onUpdate,
   onSetDeliveryKey,
 }: Props) => {
-  const { t } = useLocalization();
-
   return (
     <AppView bg-lightCardBG style={cardStyle}>
       <SettingsItem
@@ -78,30 +74,14 @@ export const FriendsCard = ({
                 <LineDivider marginV-0 />
                 <SettingsItem
                   translationKey={
-                    `notifications.f_and_a.${key}` as Parameters<typeof t>[0]
-                  }
-                  centerElement={
-                    <AppView left>
-                      <AppButton
-                        onPress={() => onSetDeliveryKey(key)}
-                        style={[
-                          styles.deliveryBadge,
-                          { backgroundColor: Colors.accent },
-                        ]}>
-                        <AppText
-                          sm
-                          textColor={false}
-                          color={Colors.white}
-                          semibold>
-                          {pref.delivery === 'immediate'
-                            ? t('notifications.delivery_immediate')
-                            : t('notifications.delivery_digest')}
-                        </AppText>
-                      </AppButton>
-                    </AppView>
+                    `notifications.f_and_a.${key}` as TranslationKeysType
                   }
                   rightElement={
                     <AppView row centerV gap-8>
+                      <DeliveryBadge
+                        delivery={pref.delivery}
+                        onPress={() => onSetDeliveryKey(key)}
+                      />
                       <AppSwitch
                         value={pref.enabled}
                         onValueChange={(enabled) =>
@@ -119,11 +99,3 @@ export const FriendsCard = ({
     </AppView>
   );
 };
-
-const styles = StyleSheet.create({
-  deliveryBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 10,
-  },
-});

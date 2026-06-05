@@ -431,7 +431,6 @@
     "save_changes": "Save Changes",
     "override_reset": "Reset to Defaults",
     "override_reset_confirm": "Remove custom settings for this person?",
-    "override_none": "Using global settings",
     "override_custom": "Custom settings active"
   },
   "permissions": {
