@@ -19,6 +19,7 @@ import { selectUser } from '@/store/slices/authSlice';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { storeRoadmap, storeTasks } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
@@ -72,10 +73,10 @@ const SharedRoadmapScreen = () => {
   const handlePhasePress = useCallback(
     (phase: Phase) => {
       if (!roadmap) return;
+      storeRoadmap(roadmap);
       router.navigate({
         pathname: '/settings/readonly-phase-milestones',
         params: {
-          roadmap: JSON.stringify(roadmap),
           phaseId: phase.phase_id,
           phaseLabel: String(phase.order_index),
         },
@@ -88,17 +89,13 @@ const SharedRoadmapScreen = () => {
     (phase?: Phase) => {
       if (!roadmap) return;
       if (roadmap.type === 'custom_made') {
-        router.navigate({
-          pathname: '/settings/readonly-phase-milestones',
-          params: { roadmap: JSON.stringify(roadmap) },
-        });
+        storeRoadmap(roadmap);
+        router.navigate({ pathname: '/settings/readonly-phase-milestones' });
         return;
       }
       if (phase) {
-        router.navigate({
-          pathname: '/settings/readonly-phase-details',
-          params: { roadmap: JSON.stringify(roadmap) },
-        });
+        storeRoadmap(roadmap);
+        router.navigate({ pathname: '/settings/readonly-phase-details' });
       }
     },
     [roadmap],
@@ -106,10 +103,10 @@ const SharedRoadmapScreen = () => {
 
   const handleMilestonePress = useCallback(
     (milestone: MilestoneType, phase?: Phase) => {
+      storeTasks(milestone.tasks ?? []);
       router.navigate({
         pathname: '/settings/readonly-phase-milestones-tasks',
         params: {
-          tasks: JSON.stringify(milestone.tasks ?? []),
           phaseLabel: phase ? String(phase.order_index) : undefined,
           milestoneLabel: String(milestone.order_index),
         },

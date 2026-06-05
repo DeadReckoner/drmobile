@@ -9,6 +9,7 @@ import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { storeRoadmap } from '@/utils/roadmapTransfer';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import {
@@ -181,11 +182,10 @@ const FriendDetails = () => {
   }, []);
 
   const handleRoadmapPress = useCallback((roadmap: RoadmapType) => {
+    storeRoadmap(roadmap);
     router.navigate({
       pathname: '/settings/readonly-roadmap-details',
-      params: {
-        roadmap: JSON.stringify(roadmap),
-      },
+      params: { roadmapId: roadmap.roadmap_id },
     });
   }, []);
 

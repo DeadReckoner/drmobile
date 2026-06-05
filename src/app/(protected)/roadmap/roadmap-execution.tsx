@@ -33,6 +33,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
+import { storeMilestone } from '@/utils/roadmapTransfer';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
@@ -199,6 +200,7 @@ const RoadmapExecution = () => {
     ) => {
       const phaseLabel = phase?.order_index;
       const milestoneNumber = milestone.order_index;
+      storeMilestone(milestone);
       router.navigate({
         pathname: '/roadmap/phase-milestones-tasks',
         params: {
@@ -206,7 +208,6 @@ const RoadmapExecution = () => {
           phaseId: phase?.phase_id,
           phaseLabel,
           milestoneLabel: String(milestoneNumber),
-          milestone: JSON.stringify(milestone),
         },
       });
     },

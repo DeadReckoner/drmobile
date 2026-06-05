@@ -18,27 +18,29 @@ import {
   findOngoingMilestone,
   getAllMilestones,
 } from '@/utils/roadmap.utils';
+import { consumeRoadmap, storeTasks } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { LayoutChangeEvent, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const ReadonlyPhaseMilestones = () => {
   const params = useLocalSearchParams<{
-    roadmap: string;
+    roadmap?: string;
     phaseId?: string;
     phaseLabel?: string;
   }>();
   const { t } = useLocalization();
-  const [roadmap, setRoadmap] = useState<RoadmapType | null>(null);
-
-  useEffect(() => {
-    if (params.roadmap) {
-      try {
-        setRoadmap(JSON.parse(params.roadmap));
-      } catch {}
+  const [roadmap] = useState<RoadmapType | null>(() => {
+    const transferred = consumeRoadmap();
+    if (transferred) return transferred;
+    if (!params.roadmap) return null;
+    try {
+      return JSON.parse(params.roadmap) as RoadmapType;
+    } catch {
+      return null;
     }
-  }, [params.roadmap]);
+  });
 
   const milestones = useMemo(() => {
     if (!roadmap) return [];
@@ -81,10 +83,10 @@ const ReadonlyPhaseMilestones = () => {
     return (
       <AppCard
         onPress={() => {
+          storeTasks(item.tasks ?? []);
           router.navigate({
             pathname: '/settings/readonly-phase-milestones-tasks',
             params: {
-              tasks: JSON.stringify(item.tasks ?? []),
               phaseLabel: params.phaseLabel,
               milestoneLabel: milestoneNumber,
             },

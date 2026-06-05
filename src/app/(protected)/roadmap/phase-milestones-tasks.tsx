@@ -28,6 +28,7 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { buildBadgeLabel, findOngoingTask } from '@/utils/roadmap.utils';
+import { consumeMilestone } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -39,12 +40,11 @@ const PhaseMilestonesTasks = () => {
     phaseId?: string;
     phaseLabel?: string;
     milestoneLabel?: string;
-    milestone?: string;
   }>();
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
-  const [currentMilestone, setCurrentMilestone] = useState<MilestoneType>(() =>
-    JSON.parse(params.milestone || '{}'),
+  const [currentMilestone] = useState<MilestoneType>(
+    () => consumeMilestone() ?? ({} as MilestoneType),
   );
   const roadmapId = useAppSelector(
     (state) => state.roadmapDraft.roadmap.roadmap_id,
@@ -73,10 +73,6 @@ const PhaseMilestonesTasks = () => {
     !isGeneratingForThisMilestone &&
     currentMilestone?.status === 'in_progress' &&
     (!tasks || tasks.length === 0);
-
-  useEffect(() => {
-    setCurrentMilestone(JSON.parse(params.milestone || '{}'));
-  }, [params.milestone]);
 
   useEffect(() => {
     if (isCompletedForThisMilestone) {

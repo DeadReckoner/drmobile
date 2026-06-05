@@ -11,27 +11,29 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { useScrollToCurrentIndex } from '@/hooks/useScrollToCurrentItem';
 import { DateUtils } from '@/utils/date.utils';
 import { buildBadgeLabel, findOngoingTask } from '@/utils/roadmap.utils';
+import { consumeTasks, storeTask } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const ReadonlyPhaseMilestonesTasks = () => {
   const params = useLocalSearchParams<{
-    tasks: string;
+    tasks?: string;
     phaseLabel?: string;
     milestoneLabel?: string;
   }>();
   const { t } = useLocalization();
-  const [tasks, setTasks] = useState<TaskType[]>([]);
-
-  useEffect(() => {
-    if (params.tasks) {
-      try {
-        setTasks(JSON.parse(params.tasks));
-      } catch {}
+  const [tasks] = useState<TaskType[]>(() => {
+    const transferred = consumeTasks();
+    if (transferred) return transferred;
+    if (!params.tasks) return [];
+    try {
+      return JSON.parse(params.tasks) as TaskType[];
+    } catch {
+      return [];
     }
-  }, [params.tasks]);
+  });
 
   const currentTask = findOngoingTask(tasks);
 
@@ -53,10 +55,8 @@ const ReadonlyPhaseMilestonesTasks = () => {
     return (
       <AppCard
         onPress={() => {
-          router.navigate({
-            pathname: '/settings/readonly-task-details',
-            params: { task: JSON.stringify(item) },
-          });
+          storeTask(item);
+          router.navigate({ pathname: '/settings/readonly-task-details' });
         }}
         style={{
           borderWidth: 3,

@@ -19,6 +19,7 @@ import {
   calculateMilestoneProgress,
   findOngoingMilestone,
 } from '@/utils/roadmap.utils';
+import { storeMilestone } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
@@ -79,6 +80,7 @@ const PhaseMilestones = () => {
     const itemProgress = calculateMilestoneProgress(item);
 
     const onMilestonePress = () => {
+      storeMilestone(item);
       router.navigate({
         pathname: '/roadmap/phase-milestones-tasks',
         params: {
@@ -86,7 +88,6 @@ const PhaseMilestones = () => {
           phaseId: params.phaseId,
           phaseLabel: params.phaseLabel,
           milestoneLabel: milestoneNumber,
-          milestone: JSON.stringify(item),
         },
       });
     };
