@@ -2,6 +2,7 @@ import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
+import { GradientBackdrop } from '@/components/GradientBackdrop';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import {
@@ -15,7 +16,6 @@ import { GlobalControlsCard } from '@/components/notification-settings/GlobalCon
 import { HourPickerModal } from '@/components/notification-settings/HourPickerModal';
 import { MyGoalsCard } from '@/components/notification-settings/MyGoalsCard';
 import { QuietHoursCard } from '@/components/notification-settings/QuietHoursCard';
-import { GradientBackdrop } from '@/components/roadmap/ai-roamap/GradientRoadmap';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useNotificationSettings } from '@/hooks/useNotificationSettings';
@@ -40,7 +40,8 @@ import {
   localSettingsToApiPayload,
   MUTE_DURATION_OPTIONS,
 } from '@/utils/notificationSettings.utils';
-import { useState } from 'react';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -52,6 +53,11 @@ type DraftMute =
 const NotificationSettings = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
+  const { from } = useLocalSearchParams<{
+    from?: 'friends_accountability_sheet';
+  }>();
+  const showOnlyAccountibilitySettings =
+    from === 'friends_accountability_sheet';
   const { settings, apiData, isLoading } = useNotificationSettings();
 
   const [updateNotificationSettings] =
@@ -81,6 +87,13 @@ const NotificationSettings = () => {
   >({});
   const [draftMute, setDraftMute] = useState<DraftMute>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsReady(true);
+    }, []),
+  );
 
   const displaySettings: NotificationSettingsType = {
     ...settings,
@@ -166,7 +179,6 @@ const NotificationSettings = () => {
         payload.clear_global_mute = true;
       }
 
-      // Optimistic Redux update before the API call
       const optimisticMuteUntil =
         draftMute?.type === 'set'
           ? buildMuteUntil(draftMute.hours)
@@ -231,48 +243,56 @@ const NotificationSettings = () => {
         </AppView>
 
         <AppView style={styles.content}>
-          <GlobalControlsCard
-            settings={displaySettings}
-            muteActive={displayMuteActive}
-            onSettingUpdate={handleSettingUpdate}
-            onMuteToggle={(value) =>
-              value
-                ? setIsMuteSheetVisible(true)
-                : setDraftMute({ type: 'clear' })
-            }
-          />
+          {isReady && (
+            <>
+              {showOnlyAccountibilitySettings ? null : (
+                <>
+                  <GlobalControlsCard
+                    settings={displaySettings}
+                    muteActive={displayMuteActive}
+                    onSettingUpdate={handleSettingUpdate}
+                    onMuteToggle={(value) =>
+                      value
+                        ? setIsMuteSheetVisible(true)
+                        : setDraftMute({ type: 'clear' })
+                    }
+                  />
 
-          <DigestCard
-            settings={displaySettings}
-            digestLabel={digestLabel}
-            onOpenDigestSheet={() => setIsDigestSheetVisible(true)}
-            onOpenHourPicker={() => setIsHourPickerVisible(true)}
-            onOpenDaySheet={() => setIsDaySheetVisible(true)}
-          />
+                  <DigestCard
+                    settings={displaySettings}
+                    digestLabel={digestLabel}
+                    onOpenDigestSheet={() => setIsDigestSheetVisible(true)}
+                    onOpenHourPicker={() => setIsHourPickerVisible(true)}
+                    onOpenDaySheet={() => setIsDaySheetVisible(true)}
+                  />
 
-          <QuietHoursCard
-            settings={displaySettings}
-            onSettingUpdate={handleSettingUpdate}
-            updateSetting={handleDraftSettingChange}
-          />
+                  <QuietHoursCard
+                    settings={displaySettings}
+                    onSettingUpdate={handleSettingUpdate}
+                    updateSetting={handleDraftSettingChange}
+                  />
 
-          <MyGoalsCard
-            apiData={displayApiData}
-            onUpdate={handleMyGoalPrefUpdate}
-            onSetDeliveryKey={setMyGoalDeliveryKey}
-          />
+                  <MyGoalsCard
+                    apiData={displayApiData}
+                    onUpdate={handleMyGoalPrefUpdate}
+                    onSetDeliveryKey={setMyGoalDeliveryKey}
+                  />
+                </>
+              )}
 
-          <FriendsCard
-            settings={displaySettings}
-            apiData={displayApiData}
-            onSettingUpdate={handleSettingUpdate}
-            onUpdate={handleFAndAPrefUpdate}
-            onSetDeliveryKey={setFAndADeliveryKey}
-          />
+              <FriendsCard
+                settings={displaySettings}
+                apiData={displayApiData}
+                onSettingUpdate={handleSettingUpdate}
+                onUpdate={handleFAndAPrefUpdate}
+                onSetDeliveryKey={setFAndADeliveryKey}
+              />
+            </>
+          )}
         </AppView>
       </ScrollView>
 
-      {hasChanges && (
+      {isReady && hasChanges && (
         <AppView paddingB-32 paddingH-16>
           <GradientBackdrop height={200} />
           <AppButton
@@ -293,118 +313,133 @@ const NotificationSettings = () => {
         </AppView>
       )}
 
-      <AppActionSheetModal
-        options={DIGEST_OPTIONS.map((option) => ({
-          label: t(option.label as Parameters<typeof t>[0]),
-          onPress: () => {
+      {isDigestSheetVisible && (
+        <AppActionSheetModal
+          options={DIGEST_OPTIONS.map((option) => ({
+            label: t(option.label as Parameters<typeof t>[0]),
+            onPress: () => {
+              setDraftSettings((prev) => ({
+                ...prev,
+                digestFrequency: option.value,
+              }));
+              setIsDigestSheetVisible(false);
+            },
+            icon: displaySettings.digestFrequency === option.value && (
+              <AppIcon name="check-circle" size={20} color={Colors.success} />
+            ),
+          }))}
+          title={t('notifications.digest_preferences')}
+          visible={isDigestSheetVisible}
+          onDismiss={() => setIsDigestSheetVisible(false)}
+        />
+      )}
+
+      {isDaySheetVisible && (
+        <AppActionSheetModal
+          options={DAY_OPTIONS.map((option) => ({
+            label: t(option.label as Parameters<typeof t>[0]),
+            onPress: () => {
+              setDraftSettings((prev) => ({
+                ...prev,
+                digestDeliveryDayOfWeek: option.value,
+              }));
+              setIsDaySheetVisible(false);
+            },
+            icon: displaySettings.digestDeliveryDayOfWeek === option.value && (
+              <AppIcon name="check-circle" size={20} color={Colors.success} />
+            ),
+          }))}
+          title={t('notifications.digest_delivery_day')}
+          visible={isDaySheetVisible}
+          onDismiss={() => setIsDaySheetVisible(false)}
+        />
+      )}
+
+      {isMuteSheetVisible && (
+        <AppActionSheetModal
+          options={MUTE_DURATION_OPTIONS.map((option) => ({
+            label: t(option.labelKey as Parameters<typeof t>[0]),
+            onPress: () => {
+              setDraftMute({ type: 'set', hours: option.hours });
+              setIsMuteSheetVisible(false);
+            },
+          }))}
+          title={t('notifications.mute')}
+          visible={isMuteSheetVisible}
+          onDismiss={() => setIsMuteSheetVisible(false)}
+        />
+      )}
+
+      {!!myGoalDeliveryKey && (
+        <AppActionSheetModal
+          options={DELIVERY_OPTIONS.map((option) => ({
+            label: t(option.labelKey as Parameters<typeof t>[0]),
+            onPress: () => {
+              if (myGoalDeliveryKey) {
+                const currentPref =
+                  draftMyGoalPrefs[myGoalDeliveryKey] ??
+                  apiData?.my_goals_prefs?.[myGoalDeliveryKey];
+                if (currentPref) {
+                  handleMyGoalPrefUpdate(myGoalDeliveryKey, {
+                    ...currentPref,
+                    delivery: option.value,
+                  });
+                }
+              }
+              setMyGoalDeliveryKey(null);
+            },
+            icon: currentMyGoalDelivery === option.value && (
+              <AppIcon name="check-circle" size={20} color={Colors.success} />
+            ),
+          }))}
+          title={t('notifications.toggle_delivery')}
+          visible={!!myGoalDeliveryKey}
+          onDismiss={() => setMyGoalDeliveryKey(null)}
+        />
+      )}
+
+      {!!fAndADeliveryKey && (
+        <AppActionSheetModal
+          options={DELIVERY_OPTIONS.map((option) => ({
+            label: t(option.labelKey as Parameters<typeof t>[0]),
+            onPress: () => {
+              if (fAndADeliveryKey) {
+                const currentPref =
+                  draftFAndAPrefs[fAndADeliveryKey] ??
+                  apiData?.f_and_a_prefs?.[fAndADeliveryKey];
+                if (currentPref) {
+                  handleFAndAPrefUpdate(fAndADeliveryKey, {
+                    ...currentPref,
+                    delivery: option.value,
+                  });
+                }
+              }
+              setFAndADeliveryKey(null);
+            },
+            icon: currentFAndADelivery === option.value && (
+              <AppIcon name="check-circle" size={20} color={Colors.success} />
+            ),
+          }))}
+          title={t('notifications.toggle_delivery')}
+          visible={!!fAndADeliveryKey}
+          onDismiss={() => setFAndADeliveryKey(null)}
+        />
+      )}
+
+      {isHourPickerVisible && (
+        <HourPickerModal
+          visible={isHourPickerVisible}
+          currentHour24={displaySettings.digestDeliveryHour}
+          onClose={() => setIsHourPickerVisible(false)}
+          onConfirm={(hour24) => {
             setDraftSettings((prev) => ({
               ...prev,
-              digestFrequency: option.value,
+              digestDeliveryHour: hour24,
             }));
-            setIsDigestSheetVisible(false);
-          },
-          icon: displaySettings.digestFrequency === option.value && (
-            <AppIcon name="check-circle" size={20} color={Colors.success} />
-          ),
-        }))}
-        title={t('notifications.digest_preferences')}
-        visible={isDigestSheetVisible}
-        onDismiss={() => setIsDigestSheetVisible(false)}
-      />
-
-      <AppActionSheetModal
-        options={DAY_OPTIONS.map((option) => ({
-          label: t(option.label as Parameters<typeof t>[0]),
-          onPress: () => {
-            setDraftSettings((prev) => ({
-              ...prev,
-              digestDeliveryDayOfWeek: option.value,
-            }));
-            setIsDaySheetVisible(false);
-          },
-          icon: displaySettings.digestDeliveryDayOfWeek === option.value && (
-            <AppIcon name="check-circle" size={20} color={Colors.success} />
-          ),
-        }))}
-        title={t('notifications.digest_delivery_day')}
-        visible={isDaySheetVisible}
-        onDismiss={() => setIsDaySheetVisible(false)}
-      />
-
-      <AppActionSheetModal
-        options={MUTE_DURATION_OPTIONS.map((option) => ({
-          label: t(option.labelKey as Parameters<typeof t>[0]),
-          onPress: () => {
-            setDraftMute({ type: 'set', hours: option.hours });
-            setIsMuteSheetVisible(false);
-          },
-        }))}
-        title={t('notifications.mute')}
-        visible={isMuteSheetVisible}
-        onDismiss={() => setIsMuteSheetVisible(false)}
-      />
-
-      <AppActionSheetModal
-        options={DELIVERY_OPTIONS.map((option) => ({
-          label: t(option.labelKey as Parameters<typeof t>[0]),
-          onPress: () => {
-            if (myGoalDeliveryKey) {
-              const currentPref =
-                draftMyGoalPrefs[myGoalDeliveryKey] ??
-                apiData?.my_goals_prefs?.[myGoalDeliveryKey];
-              if (currentPref) {
-                handleMyGoalPrefUpdate(myGoalDeliveryKey, {
-                  ...currentPref,
-                  delivery: option.value,
-                });
-              }
-            }
-            setMyGoalDeliveryKey(null);
-          },
-          icon: currentMyGoalDelivery === option.value && (
-            <AppIcon name="check-circle" size={20} color={Colors.success} />
-          ),
-        }))}
-        title={t('notifications.toggle_delivery')}
-        visible={!!myGoalDeliveryKey}
-        onDismiss={() => setMyGoalDeliveryKey(null)}
-      />
-
-      <AppActionSheetModal
-        options={DELIVERY_OPTIONS.map((option) => ({
-          label: t(option.labelKey as Parameters<typeof t>[0]),
-          onPress: () => {
-            if (fAndADeliveryKey) {
-              const currentPref =
-                draftFAndAPrefs[fAndADeliveryKey] ??
-                apiData?.f_and_a_prefs?.[fAndADeliveryKey];
-              if (currentPref) {
-                handleFAndAPrefUpdate(fAndADeliveryKey, {
-                  ...currentPref,
-                  delivery: option.value,
-                });
-              }
-            }
-            setFAndADeliveryKey(null);
-          },
-          icon: currentFAndADelivery === option.value && (
-            <AppIcon name="check-circle" size={20} color={Colors.success} />
-          ),
-        }))}
-        title={t('notifications.toggle_delivery')}
-        visible={!!fAndADeliveryKey}
-        onDismiss={() => setFAndADeliveryKey(null)}
-      />
-
-      <HourPickerModal
-        visible={isHourPickerVisible}
-        currentHour24={displaySettings.digestDeliveryHour}
-        onClose={() => setIsHourPickerVisible(false)}
-        onConfirm={(hour24) => {
-          setDraftSettings((prev) => ({ ...prev, digestDeliveryHour: hour24 }));
-          setIsHourPickerVisible(false);
-        }}
-      />
+            setIsHourPickerVisible(false);
+          }}
+        />
+      )}
     </AppScreen>
   );
 };

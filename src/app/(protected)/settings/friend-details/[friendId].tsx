@@ -9,7 +9,6 @@ import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
-import { storeRoadmap } from '@/utils/roadmapTransfer';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import {
@@ -17,6 +16,7 @@ import {
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
 } from '@/store/apis/friendsApi';
+import { storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {

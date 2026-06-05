@@ -179,7 +179,7 @@ const FriendNotificationOverride = () => {
 
   return (
     <AppScreen safeArea paddingH-0 key={theme}>
-      {isLoading && <Loader transparent />}
+      {isLoading && <Loader />}
       <ScrollView
         contentInsetAdjustmentBehavior="always"
         showsVerticalScrollIndicator={false}>

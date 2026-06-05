@@ -1,10 +1,10 @@
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
+import { GradientBackdrop } from '@/components/GradientBackdrop';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { AiRoadmapCreationLoader } from '@/components/roadmap/ai-roamap/AiRoadmapCreationLoader';
 import { Composer } from '@/components/roadmap/ai-roamap/Composer';
-import { GradientBackdrop } from '@/components/roadmap/ai-roamap/GradientRoadmap';
 import { Message } from '@/components/roadmap/ai-roamap/Message';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';

@@ -289,6 +289,25 @@ const Settings = () => {
               />
             ),
           },
+          {
+            label: t('notifications.settings_title'),
+            onPress: () => {
+              setIsMenuVisible(false);
+              router.navigate({
+                pathname: '/settings/notification-settings',
+                params: {
+                  from: 'friends_accountability_sheet',
+                },
+              });
+            },
+            icon: (
+              <AppIcon
+                set="MaterialCommunityIcons"
+                name="bell-outline"
+                size={22}
+              />
+            ),
+          },
         ]}
         title={t('settings.friends_accountability')}
         visible={isMenuVisible}
