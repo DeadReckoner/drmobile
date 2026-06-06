@@ -2,9 +2,9 @@ import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { OverviewCard } from '@/components/roadmap/OverviewCard';
-import { AppText, AppView } from '@/components/ui';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
-import { useLocalization } from '@/hooks/useLocalization';
 import { useScrollToCurrentItem } from '@/hooks/useScrollToCurrentItem';
 import {
   buildBadgeLabel,
@@ -19,7 +19,6 @@ import { Colors } from 'react-native-ui-lib';
 
 const ReadonlyPhaseDetails = () => {
   const params = useLocalSearchParams<{ roadmap?: string }>();
-  const { t } = useLocalization();
   const [roadmap] = useState<RoadmapType | null>(() => {
     const transferred = consumeRoadmap();
     if (transferred) return transferred;
@@ -44,9 +43,10 @@ const ReadonlyPhaseDetails = () => {
       <AppScreen safeArea>
         <HeaderWithBack headerKey="common.phases" />
         <AppView flex center>
-          <AppText body2 secondary>
-            {t('common.something_went_wrong')}
-          </AppText>
+          <TranslatedText
+            secondary
+            translationKey="common.something_went_wrong"
+          />
         </AppView>
       </AppScreen>
     );

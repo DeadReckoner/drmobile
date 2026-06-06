@@ -9,6 +9,7 @@ import { Loader } from '@/components/Loader';
 import { DeliveryBadge } from '@/components/notification-settings/DeliveryBadge';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { SettingsItem } from '@/components/SettingsItem';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -240,9 +241,12 @@ const AnchoredGoalNotificationOverride = () => {
                       </AppText>
                     </AppView>
                     <AppButton onPress={handleClearMute}>
-                      <AppText caption color={Colors.white} semibold>
-                        {t('notifications.unmute')}
-                      </AppText>
+                      <TranslatedText
+                        caption
+                        color={Colors.white}
+                        semibold
+                        translationKey="notifications.unmute"
+                      />
                     </AppButton>
                   </AppView>
                 </AppView>
@@ -318,9 +322,12 @@ const AnchoredGoalNotificationOverride = () => {
                     {isDeleting ? (
                       <ActivityIndicator size="small" color={Colors.error} />
                     ) : (
-                      <AppText body1 color={Colors.error} semibold>
-                        {t('notifications.override_reset')}
-                      </AppText>
+                      <TranslatedText
+                        body1
+                        color={Colors.error}
+                        semibold
+                        translationKey="notifications.override_reset"
+                      />
                     )}
                   </AppView>
                 </AppButton>

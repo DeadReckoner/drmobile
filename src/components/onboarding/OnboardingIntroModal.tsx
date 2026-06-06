@@ -1,8 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { PrimaryButtonContainer } from '@/components/PrimaryButtonContainer';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppText, AppView } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
+import { AppView } from '@/components/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import { selectUser } from '@/store/slices/authSlice';
@@ -50,7 +49,6 @@ const PageCta = ({ animatedStyle, children }: PageCtaProps) => (
 
 export const OnboardingIntroModal = () => {
   const dispatch = useAppDispatch();
-  const { t } = useLocalization();
   const hasSeenIntroModal = useAppSelector(selectHasSeenIntroModal);
   const user = useAppSelector(selectUser);
   const [visible, setVisible] = useState(false);
@@ -177,17 +175,25 @@ export const OnboardingIntroModal = () => {
             contentContainerStyle={styles.scrollContent}>
             {PAGES.map((page, index) => (
               <AppView key={index} style={styles.page} paddingH-24 paddingT-24>
-                <AppText h2 bold textColor>
-                  {index === 0
-                    ? t('onboarding.intro.page1.headline')
-                    : t('onboarding.intro.page2.headline')}
-                </AppText>
+                <TranslatedText
+                  h2
+                  bold
+                  translationKey={
+                    index === 0
+                      ? 'onboarding.intro.page1.headline'
+                      : 'onboarding.intro.page2.headline'
+                  }
+                />
                 <AppView marginT-16>
-                  <AppText body2 textColor light style={styles.bodyText}>
-                    {index === 0
-                      ? t('onboarding.intro.page1.body')
-                      : t('onboarding.intro.page2.body')}
-                  </AppText>
+                  <TranslatedText
+                    light
+                    style={styles.bodyText}
+                    translationKey={
+                      index === 0
+                        ? 'onboarding.intro.page1.body'
+                        : 'onboarding.intro.page2.body'
+                    }
+                  />
                 </AppView>
                 <AppView flex center marginV-16>
                   <Image
@@ -228,14 +234,17 @@ export const OnboardingIntroModal = () => {
                     bold
                     translationKey="onboarding.intro.page2.primary_cta"
                   />
-                  <AppText sm light textColor>
-                    {t('onboarding.intro.page2.primary_subtext')}
-                  </AppText>
+                  <TranslatedText
+                    sm
+                    light
+                    translationKey="onboarding.intro.page2.primary_subtext"
+                  />
                 </PrimaryButtonContainer>
                 <AppButton center padding-16 onPress={handleSkipToApp}>
-                  <AppText body2 textColor underline>
-                    {t('onboarding.intro.page2.secondary_cta')}
-                  </AppText>
+                  <TranslatedText
+                    underline
+                    translationKey="onboarding.intro.page2.secondary_cta"
+                  />
                 </AppButton>
               </PageCta>
             </AppView>

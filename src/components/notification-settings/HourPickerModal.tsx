@@ -3,7 +3,6 @@ import { AppIcon } from '@/components/AppIcon';
 import { AppModal } from '@/components/AppModal';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
 import { useEffect, useRef, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
@@ -24,7 +23,6 @@ export const HourPickerModal = ({
   onClose,
   onConfirm,
 }: Props) => {
-  const { t } = useLocalization();
   const scrollRef = useRef<ScrollView>(null);
   const [pickerHour, setPickerHour] = useState(currentHour24 % 12 || 12);
   const [pickerPeriod, setPickerPeriod] = useState<'AM' | 'PM'>(
@@ -66,9 +64,11 @@ export const HourPickerModal = ({
       }}
       snapPoints={['55%']}>
       <AppView row centerV spread marginB-20>
-        <AppText body1 textColor semibold>
-          {t('notifications.digest_delivery_hour')}
-        </AppText>
+        <TranslatedText
+          body1
+          semibold
+          translationKey="notifications.digest_delivery_hour"
+        />
         <AppButton onPress={onClose}>
           <AppIcon name="close" size={20} />
         </AppButton>

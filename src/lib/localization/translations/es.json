@@ -436,7 +436,10 @@
   "permissions": {
     "contacts_denied_title": "Permiso de Contactos Denegado",
     "contacts_denied_description": "Para invitar amigos desde tus contactos, necesitamos acceso a tu lista de contactos. Por favor, habilita los permisos en la configuración de tu dispositivo.",
-    "open_settings": "Abrir Configuración"
+    "open_settings": "Abrir Configuración",
+    "instructions_header": "Permiso de {{permissionType}} en {{platform}}:",
+    "ios_steps": "1. Toca \"Abrir Configuración\" abajo\n2. Toca \"{{permissionType}}\"\n3. Habilita el acceso para Dead Reckoner\n4. Regresa a la aplicación",
+    "android_steps": "1. Toca \"Abrir Configuración\" abajo\n2. Toca \"Permisos\"\n3. Toca \"{{permissionType}}\"\n4. Selecciona \"Permitir\"\n5. Regresa a la aplicación"
   },
   "habits": {
     "title_label": "Título del hábito",

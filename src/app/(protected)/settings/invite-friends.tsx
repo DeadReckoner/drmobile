@@ -6,6 +6,7 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { InviteViaModal } from '@/components/InviteViaModal';
 import { Loader } from '@/components/Loader';
 import { PermissionDeniedModal } from '@/components/PermissionDeniedModal';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppTextField, AppView } from '@/components/ui';
 import { useContacts } from '@/hooks/useContacts';
 import { useLocalization } from '@/hooks/useLocalization';
@@ -114,9 +115,13 @@ const InviteFriends = () => {
           center
           style={styles.inviteButton}
           backgroundColor={item.invited ? Colors.success : Colors.primary}>
-          <AppText white style={styles.inviteButtonText}>
-            {item.invited ? t('settings.invited') : t('settings.invite')}
-          </AppText>
+          <TranslatedText
+            translationKey={
+              item.invited ? 'settings.invited' : 'settings.invite'
+            }
+            textOnPrimary
+            style={styles.inviteButtonText}
+          />
         </AppView>
       </AppButton>
     </AppView>
@@ -188,12 +193,17 @@ const InviteFriends = () => {
               size={48}
               color={Colors.error}
             />
-            <AppText textColor marginT-16 center body2>
-              {t('settings.contacts_permission_required')}
-            </AppText>
-            <AppText textColor marginT-8 center caption>
-              {t('settings.grant_permission_description')}
-            </AppText>
+            <TranslatedText
+              marginT-16
+              center
+              translationKey="settings.contacts_permission_required"
+            />
+            <TranslatedText
+              marginT-8
+              center
+              caption
+              translationKey="settings.grant_permission_description"
+            />
             <AppButton
               marginT-24
               bg-primary
@@ -201,9 +211,11 @@ const InviteFriends = () => {
               paddingH-24
               br20
               onPress={handleRetryPermission}>
-              <AppText white caption>
-                {t('settings.grant_permission')}
-              </AppText>
+              <TranslatedText
+                textOnPrimary
+                caption
+                translationKey="settings.grant_permission"
+              />
             </AppButton>
           </AppView>
         ) : filteredContacts.length === 0 ? (
@@ -215,11 +227,15 @@ const InviteFriends = () => {
             entering={Animations.Entry.FadeInDownWithSpring()}
             exiting={Animations.Exit.FadeOutDown()}>
             <AppIcon name="user" size={48} color={Colors.secondary} />
-            <AppText textColor marginT-16 center body2>
-              {searchQuery
-                ? t('settings.no_contacts_found')
-                : t('settings.no_contacts_available')}
-            </AppText>
+            <TranslatedText
+              marginT-16
+              center
+              translationKey={
+                searchQuery
+                  ? 'settings.no_contacts_found'
+                  : 'settings.no_contacts_available'
+              }
+            />
           </AppView>
         ) : (
           <Animated.FlatList

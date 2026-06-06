@@ -106,11 +106,15 @@ export const PaywallContent = ({ feature }: PaywallContentProps) => {
                   color={Colors.proBadge}
                 />
               </AppView>
-              <AppText textColor style={styles.text} xsm>
-                {feature
-                  ? t(`paywall.feature_headline.${feature}`)
-                  : t('paywall.subtitle')}
-              </AppText>
+              <TranslatedText
+                style={styles.text}
+                xsm
+                translationKey={
+                  feature
+                    ? `paywall.feature_headline.${feature}`
+                    : 'paywall.subtitle'
+                }
+              />
             </AppView>
             <ProFeaturesComparision />
           </AppView>

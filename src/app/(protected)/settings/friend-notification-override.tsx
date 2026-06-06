@@ -9,7 +9,8 @@ import { Loader } from '@/components/Loader';
 import { DeliveryBadge } from '@/components/notification-settings/DeliveryBadge';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { SettingsItem } from '@/components/SettingsItem';
-import { AppText, AppView } from '@/components/ui';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
@@ -260,9 +261,12 @@ const FriendNotificationOverride = () => {
                   {isDeleting ? (
                     <ActivityIndicator size="small" color={Colors.error} />
                   ) : (
-                    <AppText body1 color={Colors.error} semibold>
-                      {t('notifications.override_reset')}
-                    </AppText>
+                    <TranslatedText
+                      body1
+                      color={Colors.error}
+                      semibold
+                      translationKey="notifications.override_reset"
+                    />
                   )}
                 </AppView>
               </AppButton>

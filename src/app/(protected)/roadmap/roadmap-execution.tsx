@@ -14,7 +14,8 @@ import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrent
 import { RoadmapHighlightOverlay } from '@/components/roadmap/RoadmapHighlightOverlay';
 import { RoadmapIntroContent } from '@/components/roadmap/RoadmapIntroContent';
 import { TodayTab } from '@/components/roadmap/TodayTab';
-import { AppText, AppView } from '@/components/ui';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import {
   useCreateRoadmapMutation,
   useGetRoadmapByIdQuery,
@@ -352,9 +353,11 @@ const RoadmapExecution = () => {
             <AppView row gap-8 centerV>
               {!!roadmap.paused_at && (
                 <AppView paddingV-4 paddingH-8 br40 bg-warning center>
-                  <AppText sm semibold textColor>
-                    {t('roadmap.pause.badge')}
-                  </AppText>
+                  <TranslatedText
+                    sm
+                    semibold
+                    translationKey="roadmap.pause.badge"
+                  />
                 </AppView>
               )}
               {!!roadmap?.roadmap_id && (

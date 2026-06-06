@@ -436,7 +436,10 @@
   "permissions": {
     "contacts_denied_title": "Contacts Permission Denied",
     "contacts_denied_description": "To invite friends from your contacts, we need access to your contacts list. Please enable permissions in your device settings.",
-    "open_settings": "Open Settings"
+    "open_settings": "Open Settings",
+    "instructions_header": "{{platform}} {{permissionType}} Permission:",
+    "ios_steps": "1. Tap \"Open Settings\" below\n2. Tap \"{{permissionType}}\"\n3. Enable access for Dead Reckoner\n4. Return to the app",
+    "android_steps": "1. Tap \"Open Settings\" below\n2. Tap \"Permissions\"\n3. Tap \"{{permissionType}}\"\n4. Select \"Allow\"\n5. Return to the app"
   },
   "habits": {
     "title_label": "Habit Title",

@@ -1,6 +1,5 @@
 import { AppButton } from '@/components/AppButton';
-import { AppText } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
+import { TranslatedText } from '@/components/TranslatedText';
 import React from 'react';
 
 interface DeliveryBadgeProps {
@@ -9,14 +8,18 @@ interface DeliveryBadgeProps {
 }
 
 export const DeliveryBadge = ({ delivery, onPress }: DeliveryBadgeProps) => {
-  const { t } = useLocalization();
   return (
     <AppButton bg-accent paddingH-8 paddingV-4 br50 onPress={onPress}>
-      <AppText sm textOnPrimary regular>
-        {delivery === 'immediate'
-          ? t('notifications.delivery_immediate')
-          : t('notifications.delivery_digest')}
-      </AppText>
+      <TranslatedText
+        sm
+        textOnPrimary
+        regular
+        translationKey={
+          delivery === 'immediate'
+            ? 'notifications.delivery_immediate'
+            : 'notifications.delivery_digest'
+        }
+      />
     </AppButton>
   );
 };

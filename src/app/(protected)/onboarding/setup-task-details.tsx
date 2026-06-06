@@ -6,9 +6,8 @@ import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppCheckbox, AppText, AppView } from '@/components/ui';
+import { AppCheckbox, AppView } from '@/components/ui';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
-import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { useGetFriendsQuery } from '@/store/apis/friendsApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
@@ -68,8 +67,6 @@ const SetupStepRow = ({
   isChecked: boolean;
   onToggleCheck: () => void;
 }) => {
-  const { t } = useLocalization();
-
   return (
     <AppView row marginV-0 paddingH-16>
       <AppCheckbox
@@ -79,23 +76,23 @@ const SetupStepRow = ({
         style={styles.checkbox}
       />
       <AppView flex marginL-12>
-        <AppText
-          body2
-          textColor
-          style={isChecked ? styles.checkedTitle : undefined}>
-          {t(step.titleKey)}
-        </AppText>
+        <TranslatedText
+          style={isChecked ? styles.checkedTitle : undefined}
+          translationKey={step.titleKey}
+        />
         <Divider margin-4 />
-        <AppText xsm secondary style={styles.detailsText}>
-          {t(step.detailsKey)}
-        </AppText>
+        <TranslatedText
+          xsm
+          secondary
+          style={styles.detailsText}
+          translationKey={step.detailsKey}
+        />
       </AppView>
     </AppView>
   );
 };
 
 const SetupTaskDetailsScreen = () => {
-  const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const setupSteps = useAppSelector(selectSetupSteps);
   const allStepsCompleted = useAppSelector(selectAreAllSetupStepsCompleted);
@@ -183,9 +180,10 @@ const SetupTaskDetailsScreen = () => {
         {allStepsCompleted ? (
           <AppCard paddingV-24 paddingH-16>
             <AppView center>
-              <AppText body2 textColor center>
-                {t('onboarding.setup_task.completion_message')}
-              </AppText>
+              <TranslatedText
+                center
+                translationKey="onboarding.setup_task.completion_message"
+              />
             </AppView>
           </AppCard>
         ) : isLoadingData ? (

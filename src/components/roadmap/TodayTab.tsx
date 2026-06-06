@@ -1,6 +1,7 @@
 import { AppCard } from '@/components/AppCard';
 import { Divider } from '@/components/Divider';
 import { TasksList } from '@/components/roadmap/TasksList';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
@@ -50,9 +51,7 @@ export const TodayTab = ({
             </AppText>
           </AppView>
           <AppView row flex centerV gap-16>
-            <AppText body2 regular textColor flex-0>
-              {t('roadmap.progress')}:
-            </AppText>
+            <TranslatedText regular flex-0 translationKey="roadmap.progress" />
             <AppProgressBar
               style={[styles.progressBar, { backgroundColor: Colors.outline }]}
               fullWidth={true}
