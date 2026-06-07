@@ -10,5 +10,7 @@ declare namespace NodeJS {
     EXPO_PUBLIC_FEEDBACK_MAIL: string;
     EXPO_PUBLIC_REVENUECAT_API_KEY_IOS: string;
     EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID: string;
+    EXPO_PUBLIC_ENTITLEMENT_ID: string;
+    EXPO_PUBLIC_OFFERING_ID: string;
   }
 }

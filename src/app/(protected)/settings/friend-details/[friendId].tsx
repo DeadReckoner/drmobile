@@ -42,6 +42,7 @@ const FriendDetails = () => {
     data: friendProfileData,
     isLoading,
     error,
+    isFetching,
   } = useGetFriendProfileQuery(friendId, {
     skip: !friendId,
     refetchOnMountOrArgChange: true,
@@ -225,12 +226,12 @@ const FriendDetails = () => {
     </AppView>
   );
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return (
       <AppScreen paddingH-0 paddingT-60>
         <HeaderWithBack marginH-16 marginT-8 />
         <AppView flex marginT-40>
-          <ActivityIndicator size="small" color={Colors.primary} />
+          <ActivityIndicator size="large" color={Colors.primary} />
         </AppView>
       </AppScreen>
     );
@@ -503,6 +504,17 @@ const FriendDetails = () => {
               });
             },
             icon: <AppIcon set="Feather" name="bell" size={20} />,
+          },
+          {
+            label: t('settings.report'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/report',
+                params: { friendId },
+              });
+            },
+            icon: <AppIcon name="exclamation-circle" size={20} />,
           },
         ]}
       />
