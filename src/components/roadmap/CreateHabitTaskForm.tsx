@@ -3,6 +3,7 @@ import { AppDateTimePicker } from '@/components/AppDateTimePicker';
 import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { WeekdaySelector } from '@/components/WeekdaySelector';
 import { AppText, AppTouchableOpacity, AppView } from '@/components/ui';
@@ -118,9 +119,7 @@ export const CreateHabitTaskForm = ({
       />
 
       <AppView marginB-16>
-        <AppText body2 textColor marginB-8>
-          {t('habits.recurrence_label')}
-        </AppText>
+        <TranslatedText marginB-8 translationKey="habits.recurrence_label" />
         <AppTouchableOpacity
           onPress={() => setIsFrequencyModalOpen(true)}
           style={[

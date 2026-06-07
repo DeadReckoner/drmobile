@@ -1,3 +1,4 @@
+import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
@@ -15,6 +16,7 @@ import {
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
 } from '@/store/apis/friendsApi';
+import { storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -40,6 +42,7 @@ const FriendDetails = () => {
     data: friendProfileData,
     isLoading,
     error,
+    isFetching,
   } = useGetFriendProfileQuery(friendId, {
     skip: !friendId,
     refetchOnMountOrArgChange: true,
@@ -53,6 +56,8 @@ const FriendDetails = () => {
   const friendEmailParam =
     friendProfileData?.user.email?.trim() ||
     (params['friendEmail'] as string | undefined);
+
+  const [isSettingsSheetVisible, setIsSettingsSheetVisible] = useState(false);
 
   const [localFriendshipStatus, setLocalFriendshipStatus] = useState<
     'none' | 'pending' | 'accepted' | null
@@ -178,11 +183,10 @@ const FriendDetails = () => {
   }, []);
 
   const handleRoadmapPress = useCallback((roadmap: RoadmapType) => {
+    storeRoadmap(roadmap);
     router.navigate({
       pathname: '/settings/readonly-roadmap-details',
-      params: {
-        roadmap: JSON.stringify(roadmap),
-      },
+      params: { roadmapId: roadmap.roadmap_id },
     });
   }, []);
 
@@ -222,12 +226,12 @@ const FriendDetails = () => {
     </AppView>
   );
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return (
       <AppScreen paddingH-0 paddingT-60>
         <HeaderWithBack marginH-16 marginT-8 />
         <AppView flex marginT-40>
-          <ActivityIndicator size="small" color={Colors.primary} />
+          <ActivityIndicator size="large" color={Colors.primary} />
         </AppView>
       </AppScreen>
     );
@@ -375,7 +379,12 @@ const FriendDetails = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always">
-        <HeaderWithBack marginH-16 />
+        <AppView row centerV spread>
+          <HeaderWithBack marginH-16 />
+          <AppButton marginH-16 onPress={() => setIsSettingsSheetVisible(true)}>
+            <AppIcon set="Feather" name="settings" size={20} />
+          </AppButton>
+        </AppView>
         <AppView centerH marginT-20>
           <AppAvatar size={40} />
           <AppText body1 textColor marginT-18 center>
@@ -480,6 +489,35 @@ const FriendDetails = () => {
           />
         </AppView>
       </ScrollView>
+      <AppActionSheetModal
+        title={t('settings.settings')}
+        visible={isSettingsSheetVisible}
+        onDismiss={() => setIsSettingsSheetVisible(false)}
+        options={[
+          {
+            label: t('notifications.settings_title'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/settings/friend-notification-override',
+                params: { friendId, friendName: friendNameParam },
+              });
+            },
+            icon: <AppIcon set="Feather" name="bell" size={20} />,
+          },
+          {
+            label: t('settings.report'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/report',
+                params: { friendId },
+              });
+            },
+            icon: <AppIcon name="exclamation-circle" size={20} />,
+          },
+        ]}
+      />
     </AppScreen>
   );
 };

@@ -3,6 +3,7 @@ import i18nConfig from '@/lib/localization/i18nConfig';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { setAuthUserAction } from '@/store/slices/authSlice';
 import { showToastAction } from '@/store/slices/settingsSlice';
+import { PlanLimitError } from '@/store/types/billing.types';
 import { RootStateType } from '@/store/types/store.types';
 import { isTokenError, refreshUserSession } from '@/utils/auth.utils';
 import {
@@ -21,6 +22,9 @@ export const ApiCacheTags = Object.freeze({
   Notifications: 'Notifications',
   FriendsRequests: 'FriendsRequests',
   Habits: 'Habits',
+  Billing: 'Billing',
+  NotificationSettings: 'NotificationSettings',
+  NotificationOverrides: 'NotificationOverrides',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
@@ -44,6 +48,22 @@ export const createBaseQueryWithReauth = () => {
     const status =
       typeof result?.error?.status === 'number' ? result.error.status : 0;
     const hasTokenError = isTokenError(status, errorData);
+
+    // Handle plan/limit errors (402) separately to avoid logging users out on session expiration (401)
+    if (status === 402) {
+      const planError = errorData as Partial<PlanLimitError> | undefined;
+      if (planError?.feature) {
+        apiQuery.dispatch({
+          type: 'billing/setPaywallTrigger',
+          payload: {
+            feature: planError.feature,
+            limit: planError.limit ?? 0,
+            current: planError.current ?? 0,
+          },
+        });
+      }
+      return result;
+    }
 
     if (hasTokenError) {
       try {

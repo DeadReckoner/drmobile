@@ -14,7 +14,8 @@ import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrent
 import { RoadmapHighlightOverlay } from '@/components/roadmap/RoadmapHighlightOverlay';
 import { RoadmapIntroContent } from '@/components/roadmap/RoadmapIntroContent';
 import { TodayTab } from '@/components/roadmap/TodayTab';
-import { AppText, AppView } from '@/components/ui';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import {
   useCreateRoadmapMutation,
   useGetRoadmapByIdQuery,
@@ -33,6 +34,7 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
+import { storeMilestone } from '@/utils/roadmapTransfer';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
@@ -199,6 +201,7 @@ const RoadmapExecution = () => {
     ) => {
       const phaseLabel = phase?.order_index;
       const milestoneNumber = milestone.order_index;
+      storeMilestone(milestone);
       router.navigate({
         pathname: '/roadmap/phase-milestones-tasks',
         params: {
@@ -206,7 +209,6 @@ const RoadmapExecution = () => {
           phaseId: phase?.phase_id,
           phaseLabel,
           milestoneLabel: String(milestoneNumber),
-          milestone: JSON.stringify(milestone),
         },
       });
     },
@@ -351,9 +353,11 @@ const RoadmapExecution = () => {
             <AppView row gap-8 centerV>
               {!!roadmap.paused_at && (
                 <AppView paddingV-4 paddingH-8 br40 bg-warning center>
-                  <AppText sm semibold textColor>
-                    {t('roadmap.pause.badge')}
-                  </AppText>
+                  <TranslatedText
+                    sm
+                    semibold
+                    translationKey="roadmap.pause.badge"
+                  />
                 </AppView>
               )}
               {!!roadmap?.roadmap_id && (

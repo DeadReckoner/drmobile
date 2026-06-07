@@ -5,6 +5,7 @@ import { Divider } from '@/components/Divider';
 import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { usePlanGate } from '@/hooks/usePlanGate';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -18,6 +19,7 @@ import {
   setDraftRoadmapAction,
   setSelectedHabit,
 } from '@/store/slices/roadmapDraftSlice';
+import { FeatureKeyType } from '@/store/types/billing.types';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -28,7 +30,14 @@ const Create = () => {
   const aiRoadmapStatus = useAppSelector(selectAIRoadmapCreationStatus);
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const messages = useAppSelector(selectAIRoadmapMessages);
+  const { isAtLimit } = usePlanGate();
   const [isAIDraftDialogOpen, setIsAIDraftDialogOpen] = useState(false);
+
+  const gate = (feature: FeatureKeyType): boolean => {
+    if (!isAtLimit(feature)) return false;
+    router.navigate({ pathname: '/paywall', params: { feature } });
+    return true;
+  };
 
   const hasUserMessage = messages.some((msg) => msg.type === 'user');
 
@@ -41,6 +50,7 @@ const Create = () => {
     if (hasAIDraftInProgress) {
       setIsAIDraftDialogOpen(true);
     } else {
+      if (gate('active_roadmaps')) return;
       router.navigate('/roadmap/create-ai-roadmap');
     }
   };
@@ -68,10 +78,12 @@ const Create = () => {
   };
 
   const onCustomRoadmapPress = () => {
+    if (gate('active_roadmaps')) return;
     dispatch(resetDraftAction());
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
   const onAddNewHabitPress = () => {
+    if (gate('active_habits')) return;
     dispatch(setSelectedHabit(null));
     router.navigate('/habits/add-edit-habits-task');
   };

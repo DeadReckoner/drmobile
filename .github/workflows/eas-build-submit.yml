@@ -3,7 +3,7 @@ name: EAS Build and Submit
 on:
   push:
     branches:
-      - 'release/**' # Triggers on any release branch
+      - "release/**" # Triggers on any release branch
 
 jobs:
   build-and-submit:
@@ -20,11 +20,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: 'npm'
+          cache: "npm"
 
       # Install dependencies
       - name: 📦 Install dependencies
         run: npm ci
+      - name: 🧹 Apply patches
+        run: npx patch-package
 
       # Setup Expo
       - name: 🏗 Setup Expo

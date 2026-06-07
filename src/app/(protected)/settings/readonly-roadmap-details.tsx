@@ -1,4 +1,7 @@
+import { AppActionSheetModal } from '@/components/AppActionSheetModal';
+import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
+import { AppIcon } from '@/components/AppIcon';
 import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
 import { AppSegmentControl } from '@/components/AppSegmentControl';
@@ -21,36 +24,36 @@ import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { findOngoingMilestone } from '@/utils/roadmap.utils';
+import {
+  consumeRoadmap,
+  storeRoadmap,
+  storeTask,
+  storeTasks,
+} from '@/utils/roadmapTransfer';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const ReadonlyRoadmapDetails = () => {
   const { t } = useLocalization();
-  const params = useLocalSearchParams<{ roadmap: string }>();
+  const params = useLocalSearchParams<{ roadmap?: string }>();
   const user = useAppSelector(selectUser);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [isSettingsSheetVisible, setIsSettingsSheetVisible] = useState(false);
 
-  const [roadmap, setRoadmap] = useState<RoadmapType | null>(null);
-  const [firstTabSelected, setFirstTabSelected] = useState(true);
-
-  useEffect(() => {
-    if (params.roadmap) {
-      try {
-        setRoadmap(JSON.parse(params.roadmap));
-      } catch {}
+  const [finalRoadmap] = useState<RoadmapType | null>(() => {
+    const transferred = consumeRoadmap();
+    if (transferred) return transferred;
+    if (!params.roadmap) return null;
+    try {
+      return JSON.parse(params.roadmap) as RoadmapType;
+    } catch {
+      return null;
     }
-  }, [params.roadmap]);
-
-  const finalRoadmap = roadmap;
+  });
+  const [firstTabSelected, setFirstTabSelected] = useState(true);
   const isAnchor = !!user?.id && user.id === finalRoadmap?.anchor_id;
 
   const currentMilestone = useMemo<MilestoneType | null>(() => {
@@ -78,17 +81,13 @@ const ReadonlyRoadmapDetails = () => {
     (phase?: Phase) => {
       if (!finalRoadmap) return;
       if (finalRoadmap.type === 'custom_made') {
-        router.navigate({
-          pathname: '/settings/readonly-phase-milestones',
-          params: { roadmap: JSON.stringify(finalRoadmap) },
-        });
+        storeRoadmap(finalRoadmap);
+        router.navigate({ pathname: '/settings/readonly-phase-milestones' });
         return;
       }
       if (phase) {
-        router.navigate({
-          pathname: '/settings/readonly-phase-details',
-          params: { roadmap: JSON.stringify(finalRoadmap) },
-        });
+        storeRoadmap(finalRoadmap);
+        router.navigate({ pathname: '/settings/readonly-phase-details' });
       }
     },
     [finalRoadmap],
@@ -97,10 +96,10 @@ const ReadonlyRoadmapDetails = () => {
   const handlePhasePress = useCallback(
     (phase: Phase) => {
       if (!finalRoadmap) return;
+      storeRoadmap(finalRoadmap);
       router.navigate({
         pathname: '/settings/readonly-phase-milestones',
         params: {
-          roadmap: JSON.stringify(finalRoadmap),
           phaseId: phase.phase_id,
           phaseLabel: String(phase.order_index),
         },
@@ -111,10 +110,10 @@ const ReadonlyRoadmapDetails = () => {
 
   const handleMilestonePress = useCallback(
     (milestone: MilestoneType, phase?: Phase) => {
+      storeTasks(milestone.tasks ?? []);
       router.navigate({
         pathname: '/settings/readonly-phase-milestones-tasks',
         params: {
-          tasks: JSON.stringify(milestone.tasks ?? []),
           phaseLabel: phase ? String(phase.order_index) : undefined,
           milestoneLabel: String(milestone.order_index),
         },
@@ -124,10 +123,8 @@ const ReadonlyRoadmapDetails = () => {
   );
 
   const handleTaskPress = useCallback((task: TaskType) => {
-    router.navigate({
-      pathname: '/settings/readonly-task-details',
-      params: { task: JSON.stringify(task) },
-    });
+    storeTask(task);
+    router.navigate({ pathname: '/settings/readonly-task-details' });
   }, []);
 
   const renderTaskItem = useCallback(
@@ -146,8 +143,11 @@ const ReadonlyRoadmapDetails = () => {
         contentInsetAdjustmentBehavior="always"
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}>
-        <AppView row spread centerV>
+        <AppView row centerV spread>
           <HeaderWithBack />
+          <AppButton marginH-8 onPress={() => setIsSettingsSheetVisible(true)}>
+            <AppIcon set="Feather" name="settings" size={22} />
+          </AppButton>
         </AppView>
         <Divider />
         <AppSegmentControl
@@ -234,6 +234,28 @@ const ReadonlyRoadmapDetails = () => {
       {isAnchor && finalRoadmap.roadmap_id && (
         <RoadmapNudgeButton roadmapId={finalRoadmap.roadmap_id} />
       )}
+
+      <AppActionSheetModal
+        title={t('settings.settings')}
+        visible={isSettingsSheetVisible}
+        onDismiss={() => setIsSettingsSheetVisible(false)}
+        options={[
+          {
+            label: t('notifications.settings_title'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/settings/anchored-goal-notification-override',
+                params: {
+                  roadmapId: finalRoadmap.roadmap_id,
+                  headerTitle: finalRoadmap.goal,
+                },
+              });
+            },
+            icon: <AppIcon set="Feather" name="bell" size={20} />,
+          },
+        ]}
+      />
     </AppScreen>
   );
 };

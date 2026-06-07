@@ -344,9 +344,11 @@ export const AnchorSelectionModal = ({
                 paddingV-12
                 onPress={handleInviteOther}>
                 <AppView row centerV spread gap-12>
-                  <AppText body1 textOnPrimary>
-                    {t('settings.share_via')}
-                  </AppText>
+                  <TranslatedText
+                    translationKey="settings.share_via"
+                    body1
+                    textOnPrimary
+                  />
                   <AppIcon
                     set="AntDesign"
                     name="share-alt"

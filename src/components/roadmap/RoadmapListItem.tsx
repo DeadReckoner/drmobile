@@ -1,5 +1,6 @@
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppProgressBar, AppText, AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppTheme } from '@/hooks/useAppTheme';
@@ -46,9 +47,11 @@ export const RoadmapListItem = ({
               paddingV-3
               bg-warning
               style={styles.pausedBadge}>
-              <AppText sm semibold textColor>
-                {t('roadmap.pause.badge')}
-              </AppText>
+              <TranslatedText
+                sm
+                semibold
+                translationKey="roadmap.pause.badge"
+              />
             </AppView>
           )}
           <AppText xsm textColor>

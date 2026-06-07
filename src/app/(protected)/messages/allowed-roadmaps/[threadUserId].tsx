@@ -12,6 +12,7 @@ import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { Animations } from '@/utils/animation.utils';
+import { storeHabit, storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
@@ -35,12 +36,8 @@ const AllowedRoadmaps = () => {
     <AppCard
       paddingV-20
       onPress={() => {
-        router.navigate({
-          pathname: '/settings/readonly-roadmap-details',
-          params: {
-            roadmap: JSON.stringify(roadmap),
-          },
-        });
+        storeRoadmap(roadmap);
+        router.navigate({ pathname: '/settings/readonly-roadmap-details' });
       }}>
       <AppView row gap-16>
         <AppView marginT-4 bg-primary br30 center style={styles.iconContainer}>
@@ -68,10 +65,8 @@ const AllowedRoadmaps = () => {
     <AppCard
       padding-20
       onPress={() => {
-        router.navigate({
-          pathname: '/settings/readonly-habit-details',
-          params: { habit: JSON.stringify(habit) },
-        });
+        storeHabit(habit);
+        router.navigate({ pathname: '/settings/readonly-habit-details' });
       }}>
       <AppView row centerV flex-1 gap-4>
         <AppText body2 textColor flex-1>

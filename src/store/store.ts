@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { AppState } from 'react-native';
-import reduxDevToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 import {
   FLUSH,
   PAUSE,
@@ -38,8 +37,7 @@ const store = configureStore({
       },
     }).concat(api.middleware),
   devTools: false,
-  enhancers: (getDefaultEnhancers) =>
-    getDefaultEnhancers().concat(reduxDevToolsEnhancer()),
+  enhancers: (getDefaultEnhancers) => getDefaultEnhancers(),
 });
 
 const persistedStore = persistStore(store, null, () => {

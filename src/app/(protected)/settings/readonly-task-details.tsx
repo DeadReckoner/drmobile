@@ -7,21 +7,23 @@ import { StepsList } from '@/components/roadmap/StepsList';
 import { UnorderedList } from '@/components/roadmap/UnorderedList';
 import { AppText, AppView } from '@/components/ui';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
+import { consumeTask } from '@/utils/roadmapTransfer';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 const ReadonlyTaskDetails = () => {
-  const params = useLocalSearchParams<{ task: string }>();
-  const [task, setTask] = useState<TaskType | null>(null);
-
-  useEffect(() => {
-    if (params.task) {
-      try {
-        setTask(JSON.parse(params.task));
-      } catch {}
+  const params = useLocalSearchParams<{ task?: string }>();
+  const [task] = useState<TaskType | null>(() => {
+    const transferred = consumeTask();
+    if (transferred) return transferred;
+    if (!params.task) return null;
+    try {
+      return JSON.parse(params.task) as TaskType;
+    } catch {
+      return null;
     }
-  }, [params.task]);
+  });
 
   const dependencies = useMemo(() => {
     if (!task?.dependencies) return 'N/A';

@@ -9,14 +9,19 @@ export type CreateUserParamsType = {
 export type CreateUserResponseType = CreateUserParamsType & {
   user_id: string;
   CreatedAt: string;
+  profile_image_url?: string;
 };
 
 export type UpdateUserParamsType = {
   first_name?: string;
   last_name?: string;
   phone_number?: string;
-
   email?: string;
+};
+
+export type UpdateUserWithImageParamsType = {
+  userPayload: UpdateUserParamsType;
+  imageUri?: string;
 };
 
 export type UpdateUserResponseType = {
@@ -26,4 +31,9 @@ export type UpdateUserResponseType = {
   email: string;
   phone_number?: string;
   CreatedAt: string;
+  profile_image_url?: string;
+};
+
+export type DeleteUserResponseType = {
+  message: string;
 };

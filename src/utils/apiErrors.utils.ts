@@ -1,8 +1,10 @@
 import i18nConfig from '@/lib/localization/i18nConfig';
+import { logoutRevenueCat } from '@/lib/revenueCat';
 import { api } from '@/store/apis/api';
 import { ApiError } from '@/store/apis/types/api.types';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import { clearAuthAction } from '@/store/slices/authSlice';
+import { resetBillingSlice } from '@/store/slices/billingSlice';
 import { resetOnboardingAction } from '@/store/slices/onboardingSlice';
 import { resetDraftAction } from '@/store/slices/roadmapDraftSlice';
 import { resetSettingsSlice } from '@/store/slices/settingsSlice';
@@ -20,6 +22,7 @@ export const handleSignout = async (
     dispatch(resetCreationStateAction());
     dispatch(resetDraftAction());
     dispatch(resetSettingsSlice());
+    dispatch(resetBillingSlice());
     dispatch(resetOnboardingAction());
     dispatch(api.util.resetApiState());
 
@@ -29,6 +32,7 @@ export const handleSignout = async (
       await AsyncStorage.setItem('@apple_user_name', appleUserName);
     }
     await persistedStore.purge();
+    await logoutRevenueCat();
   } catch {}
 };
 

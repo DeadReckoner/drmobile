@@ -15,7 +15,7 @@ export const FriendEmptyState = ({
 }: FriendEmptyStateProps) => {
   return (
     <AppView style={styles.container}>
-      <AppIcon name="user" size={48} color={Colors.secondary} />
+      <AppIcon set="Feather" name="user" size={48} color={Colors.secondary} />
       <TranslatedText marginT-16 secondary translationKey={messageKey} />
     </AppView>
   );

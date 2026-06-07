@@ -180,9 +180,7 @@ const SendFeedbackPage = () => {
         </AppView>
 
         <PrimaryButton
-          label={
-            isLoading ? 'app_feedback.submitting' : 'app_feedback.submit_button'
-          }
+          label={'app_feedback.submit_button'}
           onPress={formik.handleSubmit}
           shouldShowLoader
           isLoading={isLoading}

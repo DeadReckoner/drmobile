@@ -2,8 +2,8 @@ import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { OverviewCard } from '@/components/roadmap/OverviewCard';
-import { AppText, AppView } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import { useScrollToCurrentItem } from '@/hooks/useScrollToCurrentItem';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -18,7 +18,6 @@ import { Colors } from 'react-native-ui-lib';
 
 const PhaseDetailsPage = () => {
   const roadmap = useAppSelector(selectDraftRoadmap);
-  const { t } = useLocalization();
   const phases = useMemo(() => roadmap?.phases ?? [], [roadmap?.phases]);
   const ongoingPhaseId = useAppSelector(selectCurrentPhase)?.phase_id;
   const { scrollViewRef, onCurrentItemLayout } =
@@ -29,9 +28,10 @@ const PhaseDetailsPage = () => {
       <AppScreen safeArea>
         <HeaderWithBack headerKey="common.phases" />
         <AppView flex center>
-          <AppText body2 secondary>
-            {t('common.something_went_wrong')}
-          </AppText>
+          <TranslatedText
+            secondary
+            translationKey="common.something_went_wrong"
+          />
         </AppView>
       </AppScreen>
     );

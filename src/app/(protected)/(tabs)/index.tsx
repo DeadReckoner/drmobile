@@ -251,7 +251,7 @@ const Today = () => {
           <AppText body2 textColor>
             {item.title}
           </AppText>
-          <AppText xsm textColor marginT-4>
+          <AppText xsm textColor marginT-4 numberOfLines={3}>
             {item.description}
           </AppText>
         </AppView>
@@ -304,7 +304,7 @@ const Today = () => {
             </AppView>
           </AppView>
           {item.description && (
-            <AppText xsm textColor marginT-4>
+            <AppText xsm textColor marginT-4 numberOfLines={3}>
               {item.description}
             </AppText>
           )}

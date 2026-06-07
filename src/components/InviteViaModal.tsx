@@ -2,6 +2,7 @@ import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppModal } from '@/components/AppModal';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
@@ -154,9 +155,10 @@ export const InviteViaModal: React.FC<InviteViaModalProps> = ({
       contentContainerStyle={styles.contentContainer}>
       <AppView>
         <AppView row centerV spread marginB-24>
-          <AppText textColor subtitle2>
-            {t('settings.invite_via_title')}
-          </AppText>
+          <TranslatedText
+            subtitle2
+            translationKey="settings.invite_via_title"
+          />
           <AppButton onPress={onDismiss}>
             <AppIcon set="AntDesign" name="close" size={24} />
           </AppButton>

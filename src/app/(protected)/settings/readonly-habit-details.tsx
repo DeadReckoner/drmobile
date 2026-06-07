@@ -8,25 +8,27 @@ import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { DateUtils } from '@/utils/date.utils';
+import { consumeHabit } from '@/utils/roadmapTransfer';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DAY_BITS = [1, 2, 4, 8, 16, 32, 64];
 
 const ReadonlyHabitDetails = () => {
-  const params = useLocalSearchParams<{ habit: string }>();
+  const params = useLocalSearchParams<{ habit?: string }>();
   const { t } = useLocalization();
-  const [habit, setHabit] = useState<HabitType | null>(null);
-
-  useEffect(() => {
-    if (params.habit) {
-      try {
-        setHabit(JSON.parse(params.habit));
-      } catch {}
+  const [habit] = useState<HabitType | null>(() => {
+    const transferred = consumeHabit();
+    if (transferred) return transferred;
+    if (!params.habit) return null;
+    try {
+      return JSON.parse(params.habit) as HabitType;
+    } catch {
+      return null;
     }
-  }, [params.habit]);
+  });
 
   const weeklyDays = useMemo(() => {
     if (!habit?.days_of_week) return '';

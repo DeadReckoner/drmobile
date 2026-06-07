@@ -3,9 +3,13 @@ import { Dimensions } from 'react-native';
 import { Defs, LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
 import { Colors } from 'react-native-ui-lib';
 
-export const GradientBackdrop = () => (
+interface GradientRoadmapProps {
+  height?: number;
+}
+
+export const GradientBackdrop = ({ height }: GradientRoadmapProps) => (
   <Svg
-    height="250"
+    height={height || '250'}
     width={Dimensions.get('window').width}
     style={{
       position: 'absolute',

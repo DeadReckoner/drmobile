@@ -24,6 +24,8 @@ export const RootNavigator = () => {
         <Stack.Protected guard={!user?.id}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
+
+        <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
       </Stack>
 
       <AppToast />

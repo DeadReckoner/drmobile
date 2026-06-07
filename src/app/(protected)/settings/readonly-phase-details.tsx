@@ -2,32 +2,33 @@ import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { OverviewCard } from '@/components/roadmap/OverviewCard';
-import { AppText, AppView } from '@/components/ui';
+import { TranslatedText } from '@/components/TranslatedText';
+import { AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
-import { useLocalization } from '@/hooks/useLocalization';
 import { useScrollToCurrentItem } from '@/hooks/useScrollToCurrentItem';
 import {
   buildBadgeLabel,
   calculatePhaseProgress,
   findOngoingPhase,
 } from '@/utils/roadmap.utils';
+import { consumeRoadmap, storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const ReadonlyPhaseDetails = () => {
-  const params = useLocalSearchParams<{ roadmap: string }>();
-  const { t } = useLocalization();
-  const [roadmap, setRoadmap] = useState<RoadmapType | null>(null);
-
-  useEffect(() => {
-    if (params.roadmap) {
-      try {
-        setRoadmap(JSON.parse(params.roadmap));
-      } catch {}
+  const params = useLocalSearchParams<{ roadmap?: string }>();
+  const [roadmap] = useState<RoadmapType | null>(() => {
+    const transferred = consumeRoadmap();
+    if (transferred) return transferred;
+    if (!params.roadmap) return null;
+    try {
+      return JSON.parse(params.roadmap) as RoadmapType;
+    } catch {
+      return null;
     }
-  }, [params.roadmap]);
+  });
 
   const phases = useMemo(() => roadmap?.phases ?? [], [roadmap?.phases]);
   const ongoingPhaseId = useMemo(
@@ -42,9 +43,10 @@ const ReadonlyPhaseDetails = () => {
       <AppScreen safeArea>
         <HeaderWithBack headerKey="common.phases" />
         <AppView flex center>
-          <AppText body2 secondary>
-            {t('common.something_went_wrong')}
-          </AppText>
+          <TranslatedText
+            secondary
+            translationKey="common.something_went_wrong"
+          />
         </AppView>
       </AppScreen>
     );
@@ -86,10 +88,10 @@ const ReadonlyPhaseDetails = () => {
                     badgeLabel={badgeLabel}
                     badgeStatus={phase.status}
                     onPress={() => {
+                      if (roadmap) storeRoadmap(roadmap);
                       router.navigate({
                         pathname: '/settings/readonly-phase-milestones',
                         params: {
-                          roadmap: JSON.stringify(roadmap),
                           phaseId: phase.phase_id,
                           phaseLabel: String(phase.order_index),
                         },

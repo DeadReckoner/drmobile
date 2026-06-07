@@ -7,6 +7,7 @@ import {
   FriendsList,
   SearchFriends,
 } from '@/components/friends';
+import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { AppView } from '@/components/ui';
 import { Env } from '@/constants/Env';
 import { useGetFriendsQuery } from '@/hooks/friends';
@@ -15,7 +16,6 @@ import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
-import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { Share, StyleSheet } from 'react-native';
 
@@ -51,9 +51,6 @@ const MyFriends = () => {
     setIsSearchMode((prev) => !prev);
   };
 
-  const onBackPress = () =>
-    router.canGoBack() ? router.back() : router.replace('/(protected)/(tabs)');
-
   return (
     <AppScreen paddingH-16 safeArea>
       <AppView style={styles.container}>
@@ -75,9 +72,7 @@ const MyFriends = () => {
               entering={Animations.Entry.FadeInDownWithSpring(300)}
               exiting={Animations.Exit.FadeOutDown()}>
               <AppView row spread gap-8 style={styles.header}>
-                <AppButton onPress={onBackPress}>
-                  <AppIcon name="arrow-left" />
-                </AppButton>
+                <HeaderWithBack />
 
                 <AppView
                   pointerEvents={isSearchMode ? 'none' : 'auto'}

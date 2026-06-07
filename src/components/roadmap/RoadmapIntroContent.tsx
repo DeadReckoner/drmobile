@@ -1,5 +1,6 @@
 import { AppIcon } from '@/components/AppIcon';
 import { LineDivider } from '@/components/LineDivider';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { StyleSheet } from 'react-native';
@@ -41,9 +42,10 @@ export const RoadmapIntroContent = () => {
 
   return (
     <AppView gap-16 paddingB-16>
-      <AppText xsm textColor>
-        {t('feature_highlight.roadmap_intro_message')}
-      </AppText>
+      <TranslatedText
+        xsm
+        translationKey="feature_highlight.roadmap_intro_message"
+      />
       <LineDivider marginV-4 />
       <AppView gap-16>
         {HIERARCHY.map((item, index) => {

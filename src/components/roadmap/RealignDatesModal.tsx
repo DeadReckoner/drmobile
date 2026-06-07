@@ -5,7 +5,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppText, AppTextField, AppView } from '@/components/ui';
+import { AppTextField, AppView } from '@/components/ui';
 import { useRealignRoadmapDatesMutation } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
@@ -127,9 +127,10 @@ export const RealignDatesModal = ({
                   color={Colors.textOnPrimary}
                   size={20}
                 />
-                <AppText body2 white>
-                  {t('roadmap.realign_dates.confirm_button')}
-                </AppText>
+                <TranslatedText
+                  white
+                  translationKey="roadmap.realign_dates.confirm_button"
+                />
               </AppView>
             )}
           </AppButton>
@@ -140,9 +141,7 @@ export const RealignDatesModal = ({
             style={styles.btn}
             padding-12
             onPress={handleDismiss}>
-            <AppText body2 textColor>
-              {t('common.cancel')}
-            </AppText>
+            <TranslatedText translationKey="common.cancel" />
           </AppButton>
         </AppView>
       </AppCard>
