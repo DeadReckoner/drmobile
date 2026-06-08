@@ -3,6 +3,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import * as Sentry from '@sentry/react-native';
 import { Component, ErrorInfo, PropsWithChildren, ReactNode } from 'react';
 import { Colors } from 'react-native-ui-lib';
 
@@ -24,6 +25,8 @@ export class ErrorBoundary extends Component<
     if (__DEV__) {
       // eslint-disable-next-line no-console
       console.error('ErrorBoundary caught an error:', error, errorInfo);
+    } else {
+      Sentry.captureException({ ...error, errorInfo });
     }
   }
 

@@ -92,7 +92,16 @@
       ],
       "expo-mail-composer",
       "expo-image",
-      "expo-asset"
+      "expo-asset",
+      [
+        "@sentry/react-native/expo",
+        {
+          // TODO: replace with production before launch
+          "url": "https://sentry.io/",
+          "project": "test-sentry",
+          "organization": "abhishek-testorg"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

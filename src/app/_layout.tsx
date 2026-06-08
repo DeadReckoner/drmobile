@@ -9,6 +9,7 @@ import { useEntitlementCheck } from '@/hooks/useEntitlementCheck';
 import { initializeRevenueCat } from '@/lib/revenueCat';
 import { persistedStore, store } from '@/store/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import * as Sentry from '@sentry/react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
@@ -27,6 +28,21 @@ GoogleSignin.configure({
   webClientId: Env.EXPO_PUBLIC_GOOGLE_AUTH_WEB_CLIENT_ID,
   iosClientId: Env.EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID,
 });
+
+if (Env.EXPO_PUBLIC_SENTRY_DSN) {
+  Sentry.init({
+    dsn: Env.EXPO_PUBLIC_SENTRY_DSN,
+    sendDefaultPii: true,
+    enableLogs: true,
+
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+    integrations: [Sentry.mobileReplayIntegration()],
+
+    // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+    // spotlight: __DEV__,
+  });
+}
 
 initializeRevenueCat();
 
