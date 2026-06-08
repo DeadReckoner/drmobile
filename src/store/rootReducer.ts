@@ -6,6 +6,7 @@ import { nextMilestoneGenerationReducer } from '@/store/slices/nextMilestoneGene
 import { notificationsReducer } from '@/store/slices/notificationsSlice';
 import { onboardingReducer } from '@/store/slices/onboardingSlice';
 import { draftRoadmapReducer } from '@/store/slices/roadmapDraftSlice';
+import { toastReducer } from '@/store/slices/toastSlice';
 import { combineReducers } from '@reduxjs/toolkit';
 import { settingsReducer } from './slices/settingsSlice';
 
@@ -18,5 +19,6 @@ export const rootReducer = combineReducers({
   aiRoadmapCreation: aiRoadmapCreationReducer,
   nextMilestoneGeneration: nextMilestoneGenerationReducer,
   notifications: notificationsReducer,
+  toast: toastReducer,
   [api.reducerPath]: api.reducer,
 });

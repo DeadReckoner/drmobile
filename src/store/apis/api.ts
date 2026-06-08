@@ -2,7 +2,7 @@ import { Env } from '@/constants/Env';
 import i18nConfig from '@/lib/localization/i18nConfig';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { setAuthUserAction } from '@/store/slices/authSlice';
-import { showToastAction } from '@/store/slices/settingsSlice';
+import { showToastAction } from '@/store/slices/toastSlice';
 import { PlanLimitError } from '@/store/types/billing.types';
 import { RootStateType } from '@/store/types/store.types';
 import { isTokenError, refreshUserSession } from '@/utils/auth.utils';

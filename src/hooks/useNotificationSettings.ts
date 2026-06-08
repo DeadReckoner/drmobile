@@ -8,9 +8,9 @@ import type {
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectNotificationSettings,
-  showToastAction,
   syncNotificationSettingsFromApi,
 } from '@/store/slices/settingsSlice';
+import { showToastAction } from '@/store/slices/toastSlice';
 import type { NotificationSettingsType } from '@/store/types/settingsSlice.types';
 import {
   apiResponseToLocalSettings,

@@ -1,7 +1,7 @@
 import { Loader } from '@/components/Loader';
 import { AppRNUIToast } from '@/components/ui';
 import { useToast } from '@/hooks/useToast';
-import { ToastType } from '@/store/types/settingsSlice.types';
+import { ToastType } from '@/store/types/toastSlice.types';
 import { StyleSheet } from 'react-native';
 
 import { Colors, ToastProps, Typography } from 'react-native-ui-lib';

@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { AppState } from 'react-native';
 import {
+  createMigrate,
   FLUSH,
   PAUSE,
   PERSIST,
@@ -13,14 +14,16 @@ import {
   REGISTER,
   REHYDRATE,
 } from 'redux-persist';
+import { migrations } from './migrations';
 import { rootReducer } from './rootReducer';
 
 const persistedReducer = persistReducer(
   {
     key: 'root',
-    version: 1,
+    version: 2,
     storage: AsyncStorage,
-    blacklist: ['roadmapDraft'],
+    blacklist: ['roadmapDraft', 'toast'],
+    migrate: createMigrate(migrations, { debug: false }),
   },
   rootReducer,
 );

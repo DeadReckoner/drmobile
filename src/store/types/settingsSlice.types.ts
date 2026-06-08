@@ -1,15 +1,7 @@
 import { SupportedLanguagesType } from '@/lib/localization/types/i18n.types';
 import { PurchasesPackage } from 'react-native-purchases';
-import { Incubator } from 'react-native-ui-lib';
 
 type ThemeModeType = 'light' | 'dark';
-
-type ToastProps = React.ComponentProps<typeof Incubator.Toast>;
-type ToastType = `${Incubator.ToastPresets}` | 'warning';
-type ToastStateType = {
-  isVisible: boolean;
-  toastProps: Pick<ToastProps, 'message' | 'icon'> & { type: ToastType };
-};
 
 type IapStateType = {
   isProUser: boolean;
@@ -41,7 +33,6 @@ type NotificationSettingsType = {
 type SettingsStateType = {
   theme: ThemeModeType;
   language: SupportedLanguagesType;
-  toast: ToastStateType;
   roadmapListCache?: string;
   notificationsEnabled: boolean;
   hapticsEnabled: boolean;
@@ -55,6 +46,4 @@ export type {
   NotificationSettingsType,
   SettingsStateType,
   ThemeModeType,
-  ToastStateType,
-  ToastType,
 };

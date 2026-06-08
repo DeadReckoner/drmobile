@@ -4,8 +4,8 @@ import {
   hideToastAction,
   selectToastSettings,
   showToastAction,
-} from '@/store/slices/settingsSlice';
-import { ToastStateType } from '@/store/types/settingsSlice.types';
+} from '@/store/slices/toastSlice';
+import { ToastStateType } from '@/store/types/toastSlice.types';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';

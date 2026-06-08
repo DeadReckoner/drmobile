@@ -22,7 +22,7 @@ import type {
   UpsertNotificationOverridePayloadType,
 } from '@/store/apis/types/notificationsApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import { showToastAction } from '@/store/slices/settingsSlice';
+import { showToastAction } from '@/store/slices/toastSlice';
 import {
   buildMuteUntil,
   isMuteActive,

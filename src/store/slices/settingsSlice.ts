@@ -5,11 +5,8 @@ import type {
   NotificationSettingsType,
   SettingsStateType,
   ThemeModeType,
-  ToastStateType,
 } from '@/store/types/settingsSlice.types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist';
 
 const initialState: SettingsStateType = {
   theme: 'dark',
@@ -31,10 +28,6 @@ const initialState: SettingsStateType = {
     digestDeliveryHour: 9,
     digestDeliveryDayOfWeek: 1,
     globalMuteUntil: null,
-  },
-  toast: {
-    isVisible: false,
-    toastProps: { type: 'general' },
   },
   roadmapListCache: '',
   iap: {
@@ -66,13 +59,6 @@ const settingsSlice = createSlice({
     setNotificationMode(state, action: PayloadAction<boolean>) {
       state.notificationsEnabled = action.payload;
     },
-    showToastAction(
-      state,
-      action: PayloadAction<Pick<ToastStateType, 'toastProps'>>,
-    ) {
-      state.toast.isVisible = true;
-      state.toast.toastProps = action.payload.toastProps;
-    },
     setHapticsEnabled(state, action: PayloadAction<boolean>) {
       state.hapticsEnabled = action.payload;
     },
@@ -91,9 +77,6 @@ const settingsSlice = createSlice({
       action: PayloadAction<NotificationSettingsType>,
     ) {
       state.notificationSettings = action.payload;
-    },
-    hideToastAction(state) {
-      state.toast.isVisible = false;
     },
     setLastRoadmapListCacheDay(state, action) {
       state.roadmapListCache = action.payload;
@@ -141,8 +124,6 @@ export const {
   setThemeAction,
   toggleThemeAction,
   setLanguageAction,
-  showToastAction,
-  hideToastAction,
   setLastRoadmapListCacheDay,
   setNotificationMode,
   setHapticsEnabled,
@@ -162,9 +143,6 @@ export const selectHapticsEnabled = createAppSelector(
 export const selectTheme = createAppSelector((state) => state.settings.theme);
 export const selectLanguage = createAppSelector(
   (state) => state.settings.language,
-);
-export const selectToastSettings = createAppSelector(
-  (state) => state.settings.toast,
 );
 export const selectSettings = createAppSelector((state) => state.settings);
 export const selectNotificationsEnabled = createAppSelector(
@@ -191,11 +169,4 @@ export const selectIapExpirationDate = createAppSelector(
   (state) => state.settings.iap.expirationDate,
 );
 
-export const settingsReducer = persistReducer(
-  {
-    blacklist: ['toast'],
-    storage: AsyncStorage,
-    key: 'settings',
-  },
-  settingsSlice.reducer,
-);
+export const settingsReducer = settingsSlice.reducer;

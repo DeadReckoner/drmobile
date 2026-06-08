@@ -28,10 +28,8 @@ import type {
   UpdateNotificationSettingsPayloadType,
 } from '@/store/apis/types/notificationsApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
-import {
-  showToastAction,
-  syncNotificationSettingsFromApi,
-} from '@/store/slices/settingsSlice';
+import { syncNotificationSettingsFromApi } from '@/store/slices/settingsSlice';
+import { showToastAction } from '@/store/slices/toastSlice';
 import type { NotificationSettingsType } from '@/store/types/settingsSlice.types';
 import {
   apiResponseToLocalSettings,
