@@ -558,6 +558,11 @@
     "unknown_roadmap": "Feuille de Route Inconnue",
     "return_to_app": "Retourner à l'application"
   },
+  "error_boundary": {
+    "title": "Oups ! Une erreur s'est produite",
+    "description": "L'application a rencontré une erreur inattendue. Veuillez réessayer.",
+    "try_again": "Réessayer"
+  },
   "roadmap": {
     "select_anchor": "Sélectionner une ancre",
     "add_anchor": "Ajouter une ancre",

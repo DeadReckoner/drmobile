@@ -558,6 +558,11 @@
     "unknown_roadmap": "Hoja de Ruta Desconocida",
     "return_to_app": "Regresar a la aplicación"
   },
+  "error_boundary": {
+    "title": "¡Vaya! Algo salió mal",
+    "description": "La aplicación encontró un error inesperado. Por favor, inténtalo de nuevo.",
+    "try_again": "Intentar de nuevo"
+  },
   "roadmap": {
     "select_anchor": "Seleccionar un ancla",
     "add_anchor": "Agregar ancla",

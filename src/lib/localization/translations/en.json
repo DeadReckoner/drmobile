@@ -558,6 +558,11 @@
     "unknown_roadmap": "Unknown Roadmap",
     "return_to_app": "Return to app"
   },
+  "error_boundary": {
+    "title": "Oops! Something went wrong",
+    "description": "The app ran into an unexpected error. Please try again.",
+    "try_again": "Try Again"
+  },
   "roadmap": {
     "select_anchor": "Select an Anchor",
     "add_anchor": "Add Anchor",

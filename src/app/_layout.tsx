@@ -1,3 +1,4 @@
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Loader } from '@/components/Loader';
 import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
@@ -69,9 +70,11 @@ function AppWithEntitlementCheck() {
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <PersistGate loading={<Loader />} persistor={persistedStore}>
-        <AppWithEntitlementCheck />
-      </PersistGate>
+      <ErrorBoundary>
+        <PersistGate loading={<Loader />} persistor={persistedStore}>
+          <AppWithEntitlementCheck />
+        </PersistGate>
+      </ErrorBoundary>
     </Provider>
   );
 }
