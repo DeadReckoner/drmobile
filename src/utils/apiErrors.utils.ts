@@ -11,6 +11,7 @@ import { resetSettingsSlice } from '@/store/slices/settingsSlice';
 import { AppDispatchType, RootStateType } from '@/store/types/store.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Action, ThunkDispatch } from '@reduxjs/toolkit';
+import * as Sentry from '@sentry/react-native';
 import { Persistor } from 'redux-persist';
 
 export const handleSignout = async (
@@ -26,6 +27,7 @@ export const handleSignout = async (
     dispatch(resetOnboardingAction());
     dispatch(api.util.resetApiState());
 
+    Sentry.setUser(null);
     const appleUserName = await AsyncStorage.getItem('@apple_user_name');
     await AsyncStorage.clear();
     if (appleUserName) {

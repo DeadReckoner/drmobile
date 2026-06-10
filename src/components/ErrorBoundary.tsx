@@ -1,98 +1,82 @@
-import { AppButton } from '@/components/AppButton';
-import { AppIcon } from '@/components/AppIcon';
-import { Divider } from '@/components/Divider';
-import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
-import * as Sentry from '@sentry/react-native';
-import { Component, ErrorInfo, PropsWithChildren, ReactNode } from 'react';
-import { Colors } from 'react-native-ui-lib';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface ErrorBoundaryState {
-  hasError: boolean;
-}
-
-export class ErrorBoundary extends Component<
-  PropsWithChildren,
-  ErrorBoundaryState
-> {
-  state: ErrorBoundaryState = { hasError: false };
-
-  static getDerivedStateFromError(): ErrorBoundaryState {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
-    } else {
-      Sentry.captureException({ ...error, errorInfo });
-    }
-  }
-
-  handleReset = () => {
-    this.setState({ hasError: false });
-  };
-
-  render(): ReactNode {
-    if (this.state.hasError) {
-      return <ErrorFallback onReset={this.handleReset} />;
-    }
-
-    return this.props.children;
-  }
-}
-
-const ErrorFallback = ({ onReset }: { onReset: () => void }) => {
+/**
+ * Rendered by Sentry.GlobalErrorBoundary when the app crashes. It must stay
+ * self-contained (no Redux, theming, i18n, or other app providers) because
+ * the boundary unmounts the entire provider tree — including the one that
+ * crashed — before swapping in this fallback.
+ */
+export const ErrorFallback = ({
+  onReset,
+  eventId,
+}: {
+  onReset: () => void;
+  eventId: string;
+}) => {
   return (
-    <AppView flex-1 center bg-screenBG padding-24>
-      <AppView
-        bg-error
-        center
-        style={{ width: 64, height: 64, borderRadius: 32 }}>
-        <AppIcon
-          set="Feather"
-          name="alert-triangle"
-          size={32}
-          color={Colors.white}
-        />
-      </AppView>
-      <Divider margin-12 />
-      <TranslatedText
-        subtitle2
-        textColor
-        center
-        translationKey="error_boundary.title"
-      />
-      <Divider margin-8 />
-      <TranslatedText
-        xsm
-        textColor
-        center
-        translationKey="error_boundary.description"
-      />
-      <Divider margin-24 />
-      <AppButton
-        row
-        bg-primary
-        br20
-        paddingV-12
-        paddingH-24
-        center
+    <View style={styles.container}>
+      <View style={styles.iconCircle}>
+        <Text style={styles.iconGlyph}>!</Text>
+      </View>
+      <Text style={styles.title}>Something went wrong!</Text>
+      <Text style={styles.description}>
+        Our team has been notified. Please try again.{'\n'}If issue persist
+        share this eventId: {eventId} with the support team
+      </Text>
+      <TouchableOpacity
+        style={styles.button}
+        activeOpacity={0.7}
         onPress={onReset}>
-        <AppIcon
-          set="Feather"
-          name="refresh-cw"
-          color={Colors.textOnPrimary}
-          size={16}
-        />
-        <Divider margin-4 />
-        <TranslatedText
-          caption
-          textOnPrimary
-          translationKey="error_boundary.try_again"
-        />
-      </AppButton>
-    </AppView>
+        <Text style={styles.buttonText}>Try again</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#242d31',
+    padding: 24,
+  },
+  iconCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#dc2626',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  iconGlyph: {
+    color: '#ffffff',
+    fontSize: 32,
+    fontWeight: '700',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#ffffff',
+    textAlign: 'center',
+  },
+  description: {
+    marginTop: 8,
+    fontSize: 16,
+    color: '#e5e5e5',
+    textAlign: 'center',
+  },
+  button: {
+    marginTop: 24,
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 50,
+    backgroundColor: '#5F6D76',
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});

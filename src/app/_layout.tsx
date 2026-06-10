@@ -1,4 +1,4 @@
-import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { ErrorFallback } from '@/components/ErrorBoundary';
 import { Loader } from '@/components/Loader';
 import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
@@ -34,13 +34,8 @@ if (Env.EXPO_PUBLIC_SENTRY_DSN) {
     dsn: Env.EXPO_PUBLIC_SENTRY_DSN,
     sendDefaultPii: true,
     enableLogs: true,
-
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1,
     integrations: [Sentry.mobileReplayIntegration()],
-
-    // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-    // spotlight: __DEV__,
+    environment: __DEV__ ? 'development' : 'production',
   });
 }
 
@@ -85,12 +80,15 @@ function AppWithEntitlementCheck() {
 
 export default function RootLayout() {
   return (
-    <Provider store={store}>
-      <ErrorBoundary>
+    <Sentry.GlobalErrorBoundary
+      fallback={({ resetError, eventId }) => (
+        <ErrorFallback onReset={resetError} eventId={eventId} />
+      )}>
+      <Provider store={store}>
         <PersistGate loading={<Loader />} persistor={persistedStore}>
           <AppWithEntitlementCheck />
         </PersistGate>
-      </ErrorBoundary>
-    </Provider>
+      </Provider>
+    </Sentry.GlobalErrorBoundary>
   );
 }

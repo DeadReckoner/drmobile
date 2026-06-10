@@ -72,10 +72,7 @@ export const QuietHoursCard = ({
           mode="time"
           onChange={(date) => {
             if (date) {
-              updateSetting({
-                quietHoursStart: formatTimeToString(date),
-                quietHoursEnd: formatTimeToString(date),
-              });
+              updateSetting({ quietHoursStart: formatTimeToString(date) });
             }
           }}
         />
@@ -105,7 +102,6 @@ export const QuietHoursCard = ({
           )}
           value={parseTimeString(settings.quietHoursEnd)}
           mode="time"
-          minimumDate={parseTimeString(settings.quietHoursStart)}
           onChange={(date) => {
             if (date)
               updateSetting({ quietHoursEnd: formatTimeToString(date) });
