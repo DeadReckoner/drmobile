@@ -9,10 +9,12 @@
       "distribution": "internal",
       "ios": {
         "simulator": false
-      }
+      },
+      "channel": "development"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "preview"
     },
     "production": {
       "ios": {
@@ -20,11 +22,9 @@
         "buildConfiguration": "Release",
         "image": "latest"
       },
-      "android": {
-        "buildType": "apk"
-      },
       "autoIncrement": true,
-      "distribution": "store"
+      "distribution": "store",
+      "channel": "production"
     }
   },
   "submit": {
