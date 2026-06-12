@@ -7,6 +7,7 @@ import { ProFeaturesComparision } from '@/components/paywall/ProFeaturesComparis
 import { SubscriptionItem } from '@/components/paywall/SubscriptionItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
+import { AppURLs } from '@/constants/AppURLs.constants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useToast } from '@/hooks/useToast';
@@ -225,7 +226,12 @@ export const PaywallContent = ({ feature }: PaywallContentProps) => {
 
         <AppView row center gap-16 paddingT-4>
           <AppButton
-            onPress={() => router.navigate('/settings/terms-and-services')}>
+            onPress={() =>
+              router.navigate({
+                pathname: '/webview-page',
+                params: { url: AppURLs.TERMS_AND_SERVICE },
+              })
+            }>
             <TranslatedText
               xsm
               regular
@@ -234,7 +240,12 @@ export const PaywallContent = ({ feature }: PaywallContentProps) => {
             />
           </AppButton>
           <AppButton
-            onPress={() => router.navigate('/settings/privacy-policy')}>
+            onPress={() =>
+              router.navigate({
+                pathname: '/webview-page',
+                params: { url: AppURLs.PRIVACY_POLICY },
+              })
+            }>
             <TranslatedText
               xsm
               regular

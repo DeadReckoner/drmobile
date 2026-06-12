@@ -4,6 +4,7 @@ import { FollowOnSocialMedia } from '@/components/FollowOnSocialMedia';
 import { LineDivider } from '@/components/LineDivider';
 import { SettingsItem } from '@/components/SettingsItem';
 import { AppView } from '@/components/ui';
+import { AppURLs } from '@/constants/AppURLs.constants';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 
@@ -28,7 +29,14 @@ export const UsefulLinks = () => {
       <SettingsItemDivider />
 
       <AppButton
-        onPress={() => router.navigate('/settings/terms-and-services')}>
+        onPress={() =>
+          router.navigate({
+            pathname: '/webview-page',
+            params: {
+              url: AppURLs.TERMS_AND_SERVICE,
+            },
+          })
+        }>
         <SettingsItem
           translationKey="settings.terms_of_service"
           rightElement={<AppIcon set="Feather" name="file-text" size={20} />}
@@ -36,7 +44,13 @@ export const UsefulLinks = () => {
       </AppButton>
       <SettingsItemDivider />
 
-      <AppButton onPress={() => router.navigate('/settings/privacy-policy')}>
+      <AppButton
+        onPress={() =>
+          router.navigate({
+            pathname: '/webview-page',
+            params: { url: AppURLs.PRIVACY_POLICY },
+          })
+        }>
         <SettingsItem
           translationKey="settings.privacy_policy"
           rightElement={<AppIcon set="Feather" name="help-circle" size={20} />}
