@@ -556,7 +556,8 @@
     "error_occurred": "Ocurrió un error",
     "unknown_user": "Usuario Desconocido",
     "unknown_roadmap": "Hoja de Ruta Desconocida",
-    "return_to_app": "Regresar a la aplicación"
+    "return_to_app": "Regresar a la aplicación",
+    "terms_policy": "Al continuar, aceptas nuestros "
   },
   "error_boundary": {
     "title": "¡Vaya! Algo salió mal",

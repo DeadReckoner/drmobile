@@ -2,8 +2,9 @@ import { OrDivider } from '@/components/auth/OrDivider';
 import { SocialLogin } from '@/components/auth/SocialLogin';
 import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
-import { AppView } from '@/components/ui';
+import { AppCheckbox, AppText, AppView } from '@/components/ui';
 import {
   AuthErrorType,
   SessionLessUserType,
@@ -11,9 +12,13 @@ import {
 import { useSignupForm } from '@/hooks/auth/useSignupForm';
 import { useToast } from '@/hooks/useToast';
 import { router } from 'expo-router';
+import { useState } from 'react';
+import { Colors } from 'react-native-ui-lib';
 
 export const SignupForm = () => {
   const { showToast } = useToast();
+  const [isChecked, setIsChecked] = useState(false);
+  const [showCheckError, setShowChekError] = useState(false);
 
   const onSuccess = (user: SessionLessUserType) => {
     if (!user?.access_token) {
@@ -22,6 +27,11 @@ export const SignupForm = () => {
   };
 
   const onError = (error: AuthErrorType) => {
+    if (error.message === 'privacy_not_accepted') {
+      setShowChekError(true);
+      return;
+    }
+    setShowChekError(false);
     showToast({
       type: 'failure',
       message: error.message,
@@ -31,7 +41,15 @@ export const SignupForm = () => {
     useSignupForm({
       onSuccess,
       onError,
+      isTermsAccepted: isChecked,
     });
+
+  const onSubmitPress = () => {
+    if (!isChecked) {
+      setShowChekError(true);
+    }
+    handleSubmit();
+  };
 
   return (
     <AppView marginV-40>
@@ -64,11 +82,46 @@ export const SignupForm = () => {
         error={touched.password && errors.password}
         secureTextEntry
       />
+      <AppView row centerV gap-8>
+        <AppCheckbox
+          containerStyle={{
+            borderColor: showCheckError ? Colors.error : Colors.primary,
+            backgroundColor: showCheckError
+              ? Colors.transparent
+              : Colors.primary,
+          }}
+          value={isChecked}
+          onValueChange={(v) => {
+            setIsChecked(v);
+            if (v) {
+              setShowChekError(false);
+            }
+          }}
+        />
+        <AppView row centerV style={{ flexWrap: 'wrap' }}>
+          <TranslatedText sm secondary translationKey="common.terms_policy" />
+          <TranslatedText
+            sm
+            regular
+            secondary
+            translationKey="settings.terms_of_service"
+          />
+          <AppText sm secondary center>
+            {' & '}
+          </AppText>
+          <TranslatedText
+            sm
+            regular
+            secondary
+            translationKey="settings.privacy_policy"
+          />
+        </AppView>
+      </AppView>
       <Divider />
       <PrimaryButton
         shouldShowLoader
         label="authentication.sign_up"
-        onPress={handleSubmit}
+        onPress={onSubmitPress}
         isLoading={isLoading}
       />
       <OrDivider />

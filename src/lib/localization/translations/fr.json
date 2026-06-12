@@ -556,7 +556,8 @@
     "error_occurred": "Une erreur s'est produite",
     "unknown_user": "Utilisateur Inconnu",
     "unknown_roadmap": "Feuille de Route Inconnue",
-    "return_to_app": "Retourner à l'application"
+    "return_to_app": "Retourner à l'application",
+    "terms_policy": "En continuant, vous acceptez nos "
   },
   "error_boundary": {
     "title": "Oups ! Une erreur s'est produite",

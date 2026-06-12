@@ -556,7 +556,8 @@
     "error_occurred": "An error occurred",
     "unknown_user": "Unknown User",
     "unknown_roadmap": "Unknown Roadmap",
-    "return_to_app": "Return to app"
+    "return_to_app": "Return to app",
+    "terms_policy": "By continuing you agree to our "
   },
   "error_boundary": {
     "title": "Oops! Something went wrong",
