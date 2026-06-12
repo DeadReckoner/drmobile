@@ -4,7 +4,13 @@ import { Divider } from '@/components/Divider';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedText } from '@/components/TranslatedText';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
-import { AppCheckbox, AppText, AppView } from '@/components/ui';
+import {
+  AppCheckbox,
+  AppText,
+  AppTouchableOpacity,
+  AppView,
+} from '@/components/ui';
+import { AppURLs } from '@/constants/AppURLs.constants';
 import {
   AuthErrorType,
   SessionLessUserType,
@@ -100,21 +106,43 @@ export const SignupForm = () => {
         />
         <AppView row centerV style={{ flexWrap: 'wrap' }}>
           <TranslatedText sm secondary translationKey="common.terms_policy" />
-          <TranslatedText
-            sm
-            regular
-            secondary
-            translationKey="settings.terms_of_service"
-          />
+
+          <AppTouchableOpacity
+            onPress={() =>
+              router.navigate({
+                pathname: '/webview-page',
+                params: {
+                  url: AppURLs.TERMS_AND_SERVICE,
+                },
+              })
+            }>
+            <TranslatedText
+              sm
+              regular
+              secondary
+              translationKey="settings.terms_of_service"
+            />
+          </AppTouchableOpacity>
           <AppText sm secondary center>
             {' & '}
           </AppText>
-          <TranslatedText
-            sm
-            regular
-            secondary
-            translationKey="settings.privacy_policy"
-          />
+
+          <AppTouchableOpacity
+            onPress={() =>
+              router.navigate({
+                pathname: '/webview-page',
+                params: {
+                  url: AppURLs.PRIVACY_POLICY,
+                },
+              })
+            }>
+            <TranslatedText
+              sm
+              regular
+              secondary
+              translationKey="settings.privacy_policy"
+            />
+          </AppTouchableOpacity>
         </AppView>
       </AppView>
       <Divider />
