@@ -1,18 +1,19 @@
 import { AppList } from '@/components/AppList';
-import { FriendResponse } from '@/hooks/friends/types/friends.types';
 import { useGetFriendsQuery } from '@/store/apis/friendsApi';
 import React, { useCallback, useMemo } from 'react';
 import { RefreshControl } from 'react-native';
+import { Colors } from 'react-native-ui-lib';
 import { FriendEmptyState } from './FriendEmptyState';
 import { FriendListItem } from './FriendListItem';
 import type { Friend } from './types';
 
-interface FriendsListProps {
-  friendsData?: FriendResponse[];
-}
-
-export const FriendsList = ({ friendsData = [] }: FriendsListProps) => {
-  const { refetch, isFetching } = useGetFriendsQuery();
+export const FriendsList = () => {
+  const {
+    refetch,
+    isLoading,
+    isFetching,
+    data: friendsData = [],
+  } = useGetFriendsQuery();
 
   const friends = useMemo<Friend[]>(() => {
     return friendsData.map((r) => ({
@@ -36,7 +37,11 @@ export const FriendsList = ({ friendsData = [] }: FriendsListProps) => {
       key="friends-list"
       data={friends}
       refreshControl={
-        <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+        <RefreshControl
+          refreshing={isLoading || (friends?.length === 0 && isFetching)}
+          onRefresh={refetch}
+          tintColor={Colors.secondary}
+        />
       }
       renderItem={renderItem}
       keyExtractor={keyExtractor}

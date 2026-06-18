@@ -279,6 +279,14 @@
     "friend_request_sent": "Demande d'ami envoyée avec succès",
     "remove_friend_confirmation": "Êtes-vous sûr de vouloir supprimer cet ami ?",
     "friend_removed": "Ami supprimé avec succès",
+    "remove_and_block": "Supprimer et bloquer",
+    "remove_and_block_description": "Ils ne pourront plus vous envoyer de messages ni de demandes d'ami.",
+    "friend_blocked": "Ami supprimé et bloqué",
+    "blocked_users": "Utilisateurs bloqués",
+    "no_blocked_users": "Vous n'avez bloqué personne",
+    "unblock": "Débloquer",
+    "unblock_confirmation": "Voulez-vous vraiment débloquer cet utilisateur ? Vous pourrez à nouveau l'inviter.",
+    "user_unblocked": "Utilisateur débloqué",
     "user_profile": "Profil d'Utilisateur",
     "not_friends_yet": "Pas Encore Amis",
     "profile_locked": "Profil Verrouillé",
@@ -676,6 +684,19 @@
       "copy_error": "Échec de la copie de la feuille de route",
       "not_found": "Ce lien de partage n'est plus valide",
       "sign_in_prompt": "Connectez-vous pour ajouter cette feuille de route à votre compte"
+    },
+    "report_ai_output": {
+      "label": "Signaler le contenu généré par l'IA",
+      "title": "Signaler le contenu de l'IA",
+      "success_message": "Merci ! Votre signalement a été envoyé avec succès.",
+      "reasons": {
+        "unsafe": "Dangereux",
+        "inaccurate": "Inexact",
+        "offensive": "Offensant",
+        "medical_mental_health": "Préoccupation médicale ou de santé mentale",
+        "legal_financial": "Préoccupation juridique ou financière",
+        "other": "Autre"
+      }
     }
   },
   "step": {
@@ -826,7 +847,14 @@
       "note_required": "Veuillez saisir une note avant d'envoyer"
     },
     "success_message": "Merci ! Votre signalement a été envoyé avec succès.",
-    "error_message": "Échec de l'envoi du signalement. Veuillez réessayer."
+    "error_message": "Échec de l'envoi du signalement. Veuillez réessayer.",
+    "reasons": {
+      "harassment": "Harcèlement",
+      "spam": "Spam",
+      "inappropriate_content": "Contenu inapproprié",
+      "impersonation": "Usurpation d'identité",
+      "other": "Autre"
+    }
   },
   "paywall": {
     "title": "Débloquez Pro pour en faire plus",

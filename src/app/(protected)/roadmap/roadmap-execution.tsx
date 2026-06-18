@@ -302,16 +302,12 @@ const RoadmapExecution = () => {
     if (isRoadmapFetching)
       return (
         <Loader
-          marginT-16
           transparent
           containerStyle={{ position: 'relative', marginTop: 16 }}
         />
       );
     return (
-      <AppView
-        marginT-16
-        reanimated
-        entering={Animations.Entry.FadeInDownWithSpring()}>
+      <AppView marginT-16>
         <PrimaryButton
           label="common.start_roadmap"
           shouldShowLoader
@@ -342,7 +338,9 @@ const RoadmapExecution = () => {
         refreshControl={
           <RefreshControl
             refreshing={
-              hasSeenHighlight ? isRoadmapFetching || isRefreshing : false
+              hasSeenHighlight
+                ? (!roadmap.roadmap_id && isRoadmapFetching) || isRefreshing
+                : false
             }
             onRefresh={onManuallyRefresh}
           />

@@ -9,6 +9,7 @@ import { Loader } from '@/components/Loader';
 import { RealignDatesModal } from '@/components/roadmap/RealignDatesModal';
 import { ShareRoadmapModal } from '@/components/roadmap/ShareRoadmapModal';
 import { ShiftDatesModal } from '@/components/roadmap/ShiftDatesModal';
+import { getReportAIOutputMenuOption } from '@/components/report/reportAIOutput';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import {
@@ -428,6 +429,20 @@ export const useRoadmapMenuOptions = ({
             } satisfies ActionSheetOption,
           ]
         : []),
+      ...(roadmap.roadmap_id && roadmap.type === 'ai_generated' && !isStarted
+        ? [
+            getReportAIOutputMenuOption(
+              t,
+              {
+                outputType: 'roadmap',
+                outputId: roadmap.roadmap_id,
+                roadmapId: roadmap.roadmap_id,
+                jobId: roadmap.job_id,
+              },
+              onMenuClose,
+            ),
+          ]
+        : []),
       {
         label: t('roadmap.delete_roadmap_label'),
         onPress: openDeleteDialog,
@@ -436,6 +451,7 @@ export const useRoadmapMenuOptions = ({
     ],
     [
       closeMenuThen,
+      onMenuClose,
       isPaused,
       isStarted,
       openArchiveDialog,
@@ -446,6 +462,8 @@ export const useRoadmapMenuOptions = ({
       roadmap.archived,
       roadmap.roadmap_id,
       roadmap.share_token,
+      roadmap.type,
+      roadmap.job_id,
       t,
     ],
   );

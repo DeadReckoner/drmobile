@@ -10,7 +10,6 @@ import {
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { AppView } from '@/components/ui';
 import { Env } from '@/constants/Env';
-import { useGetFriendsQuery } from '@/hooks/friends';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import { useAppSelector } from '@/store/hooks/store.hooks';
@@ -23,9 +22,6 @@ const MyFriends = () => {
   const { t } = useLocalization();
   const { id } = useAppSelector(selectUser);
   const { showToast } = useToast();
-  const { data: friendsData = [] } = useGetFriendsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
 
   const [isQRCodeModalVisible, setIsQRCodeModalVisible] = useState(false);
   const [isSearchMode, setIsSearchMode] = useState(false);
@@ -91,7 +87,7 @@ const MyFriends = () => {
                 </AppView>
               </AppView>
               <Divider />
-              <FriendsList friendsData={friendsData} />
+              <FriendsList />
             </AppView>
           )}
         </AppView>

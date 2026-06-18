@@ -11,8 +11,7 @@ export const reportApi = api.injectEndpoints({
       SubmitReportParamsType
     >({
       query: (report) => ({
-        //TODO: update the right url with payload
-        url: '/report',
+        url: '/reports',
         method: 'POST',
         body: report,
       }),

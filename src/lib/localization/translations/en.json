@@ -279,6 +279,14 @@
     "friend_request_sent": "Friend request sent successfully",
     "remove_friend_confirmation": "Are you sure you want to remove this friend?",
     "friend_removed": "Friend removed successfully",
+    "remove_and_block": "Remove & Block",
+    "remove_and_block_description": "They won't be able to message you or send friend requests.",
+    "friend_blocked": "Friend removed and blocked",
+    "blocked_users": "Blocked Users",
+    "no_blocked_users": "You haven't blocked anyone",
+    "unblock": "Unblock",
+    "unblock_confirmation": "Are you sure you want to unblock this user? You'll be able to invite them again.",
+    "user_unblocked": "User unblocked",
     "user_profile": "User Profile",
     "not_friends_yet": "Not Friends Yet",
     "profile_locked": "Profile Locked",
@@ -676,6 +684,19 @@
       "copy_error": "Failed to copy roadmap",
       "not_found": "This share link is no longer valid",
       "sign_in_prompt": "Sign in to add this roadmap to your account"
+    },
+    "report_ai_output": {
+      "label": "Report AI Generated Output",
+      "title": "Report AI Output",
+      "success_message": "Thank you! Your report has been submitted successfully.",
+      "reasons": {
+        "unsafe": "Unsafe",
+        "inaccurate": "Inaccurate",
+        "offensive": "Offensive",
+        "medical_mental_health": "Medical or mental health concern",
+        "legal_financial": "Legal or financial concern",
+        "other": "Other"
+      }
     }
   },
   "step": {
@@ -826,7 +847,14 @@
       "note_required": "Please enter a note before submitting"
     },
     "success_message": "Thank you! Your report has been submitted successfully.",
-    "error_message": "Failed to submit report. Please try again."
+    "error_message": "Failed to submit report. Please try again.",
+    "reasons": {
+      "harassment": "Harassment",
+      "spam": "Spam",
+      "inappropriate_content": "Inappropriate content",
+      "impersonation": "Impersonation",
+      "other": "Other"
+    }
   },
   "paywall": {
     "title": "Unlock Pro",
