@@ -38,6 +38,8 @@ export const MessageBubble = ({ message, onRetry }: MessageBubbleProps) => {
       pathname: '/report',
       params: {
         messageId: message.message_id,
+        threadId: message.thread_id,
+        friendId: message.user_id,
       },
     });
   };
@@ -50,6 +52,7 @@ export const MessageBubble = ({ message, onRetry }: MessageBubbleProps) => {
       ]}
       marginB-4>
       <Link
+        disabled={isCurrentUser}
         asChild
         href={'/'}
         style={[
@@ -125,14 +128,16 @@ export const MessageBubble = ({ message, onRetry }: MessageBubbleProps) => {
             </AppView>
           </AppTouchableOpacity>
         </Link.Trigger>
-        <Link.Menu>
-          <Link.MenuAction
-            icon="exclamationmark.circle"
-            destructive
-            onPress={handleReport}>
-            {t('settings.report')}
-          </Link.MenuAction>
-        </Link.Menu>
+        {!isCurrentUser && (
+          <Link.Menu>
+            <Link.MenuAction
+              icon="exclamationmark.circle"
+              destructive
+              onPress={handleReport}>
+              {t('settings.report')}
+            </Link.MenuAction>
+          </Link.Menu>
+        )}
       </Link>
     </AppView>
   );

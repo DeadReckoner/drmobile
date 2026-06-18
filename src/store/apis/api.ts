@@ -16,6 +16,7 @@ import {
 export const ApiCacheTags = Object.freeze({
   Roadmaps: 'Roadmaps',
   Friends: 'Friends',
+  BlockedUsers: 'BlockedUsers',
   Threads: 'Threads',
   Tasks: 'Tasks',
   AnchorRequests: 'AnchorRequests',

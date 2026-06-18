@@ -308,6 +308,21 @@ const Settings = () => {
               />
             ),
           },
+          {
+            // TODO: Integrate api to list blocked users
+            label: t('settings.blocked_users'),
+            onPress: () => {
+              setIsMenuVisible(false);
+              router.navigate('/settings/blocked-users');
+            },
+            icon: (
+              <AppIcon
+                set="MaterialCommunityIcons"
+                name="account-cancel-outline"
+                size={22}
+              />
+            ),
+          },
         ]}
         title={t('settings.friends_accountability')}
         visible={isMenuVisible}

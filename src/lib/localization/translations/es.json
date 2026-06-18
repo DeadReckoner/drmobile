@@ -279,6 +279,14 @@
     "friend_request_sent": "Solicitud de amistad enviada con éxito",
     "remove_friend_confirmation": "¿Estás seguro de que deseas eliminar a este amigo?",
     "friend_removed": "Amigo eliminado con éxito",
+    "remove_and_block": "Eliminar y bloquear",
+    "remove_and_block_description": "No podrán enviarte mensajes ni solicitudes de amistad.",
+    "friend_blocked": "Amigo eliminado y bloqueado",
+    "blocked_users": "Usuarios bloqueados",
+    "no_blocked_users": "No has bloqueado a nadie",
+    "unblock": "Desbloquear",
+    "unblock_confirmation": "¿Seguro que deseas desbloquear a este usuario? Podrás volver a invitarlo.",
+    "user_unblocked": "Usuario desbloqueado",
     "user_profile": "Perfil de Usuario",
     "not_friends_yet": "Aún no son amigos",
     "profile_locked": "Perfil Bloqueado",
@@ -676,6 +684,19 @@
       "copy_error": "Error al copiar la hoja de ruta",
       "not_found": "Este enlace compartido ya no es válido",
       "sign_in_prompt": "Inicia sesión para agregar esta hoja de ruta a tu cuenta"
+    },
+    "report_ai_output": {
+      "label": "Reportar contenido generado por IA",
+      "title": "Reportar contenido de IA",
+      "success_message": "¡Gracias! Tu reporte ha sido enviado con éxito.",
+      "reasons": {
+        "unsafe": "Inseguro",
+        "inaccurate": "Inexacto",
+        "offensive": "Ofensivo",
+        "medical_mental_health": "Preocupación médica o de salud mental",
+        "legal_financial": "Preocupación legal o financiera",
+        "other": "Otro"
+      }
     }
   },
   "step": {
@@ -826,7 +847,14 @@
       "note_required": "Por favor ingresa una nota antes de enviar"
     },
     "success_message": "¡Gracias! Tu reporte ha sido enviado con éxito.",
-    "error_message": "Error al enviar el reporte. Por favor, inténtalo de nuevo."
+    "error_message": "Error al enviar el reporte. Por favor, inténtalo de nuevo.",
+    "reasons": {
+      "harassment": "Acoso",
+      "spam": "Spam",
+      "inappropriate_content": "Contenido inapropiado",
+      "impersonation": "Suplantación de identidad",
+      "other": "Otro"
+    }
   },
   "paywall": {
     "title": "Desbloquea Pro para lograr más",

@@ -12,20 +12,16 @@ import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import {
+  useBlockFriendMutation,
   useGetFriendProfileQuery,
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
 } from '@/store/apis/friendsApi';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const FriendDetails = () => {
@@ -66,6 +62,7 @@ const FriendDetails = () => {
   const roadmaps = friendProfileData?.allowed_roadmaps || [];
 
   const [removeFriend, { isLoading: isRemoving }] = useRemoveFriendMutation();
+  const [blockFriend, { isLoading: isBlocking }] = useBlockFriendMutation();
   const [sendFriendRequest, { isLoading: isSendingRequest }] =
     useSendFriendRequestMutation();
 
@@ -109,13 +106,46 @@ const FriendDetails = () => {
         type: 'success',
         message: t('settings.friend_request_sent'),
       });
-    } catch {
+    } catch (e: unknown) {
       showToast({
         type: 'failure',
-        message: t('common.error_occurred'),
+        message: getApiErrorMessage(e) || t('common.error_occurred'),
       });
     }
   }, [friendId, sendFriendRequest, showToast, t]);
+
+  const handleBlockFriend = useCallback(async () => {
+    try {
+      await blockFriend(friendId).unwrap();
+      setLocalFriendshipStatus('none');
+
+      showToast({
+        type: 'success',
+        message: t('settings.friend_blocked'),
+      });
+      router.back();
+    } catch (e: unknown) {
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(e) || t('common.error_occurred'),
+      });
+    }
+  }, [blockFriend, friendId, showToast, t]);
+
+  const confirmRemoveAndBlock = useCallback(() => {
+    Alert.alert(
+      t('settings.remove_and_block'),
+      t('settings.remove_and_block_description'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('settings.remove_and_block'),
+          style: 'destructive',
+          onPress: handleBlockFriend,
+        },
+      ],
+    );
+  }, [handleBlockFriend, t]);
 
   const handleRemoveFriend = useCallback(() => {
     Alert.alert(
@@ -138,10 +168,10 @@ const FriendDetails = () => {
                 type: 'success',
                 message: t('settings.friend_removed'),
               });
-            } catch {
+            } catch (e: unknown) {
               showToast({
                 type: 'failure',
-                message: t('common.error_occurred'),
+                message: getApiErrorMessage(e) || t('common.error_occurred'),
               });
             }
           },
@@ -226,17 +256,6 @@ const FriendDetails = () => {
     </AppView>
   );
 
-  if (isLoading || isFetching) {
-    return (
-      <AppScreen paddingH-0 paddingT-60>
-        <HeaderWithBack marginH-16 marginT-8 />
-        <AppView flex marginT-40>
-          <ActivityIndicator size="large" color={Colors.primary} />
-        </AppView>
-      </AppScreen>
-    );
-  }
-
   if (is403Error) {
     return (
       <AppScreen paddingH-0 paddingT-60>
@@ -282,10 +301,11 @@ const FriendDetails = () => {
                   onPress={handleFriendshipRequest}
                   disabled={
                     isRemoving ||
+                    isBlocking ||
                     isSendingRequest ||
                     friendshipStatus === 'pending'
                   }>
-                  {isRemoving || isSendingRequest ? (
+                  {isRemoving || isBlocking || isSendingRequest ? (
                     <AppView center>
                       <Loader
                         transparent
@@ -385,6 +405,11 @@ const FriendDetails = () => {
             <AppIcon set="Feather" name="settings" size={20} />
           </AppButton>
         </AppView>
+        {(isLoading || isFetching) && (
+          <AppView flex height={40}>
+            <Loader transparent size="small" />
+          </AppView>
+        )}
         <AppView centerH marginT-20>
           <AppAvatar size={40} />
           <AppText body1 textColor marginT-18 center>
@@ -433,10 +458,11 @@ const FriendDetails = () => {
                 onPress={handleFriendshipRequest}
                 disabled={
                   isRemoving ||
+                  isBlocking ||
                   isSendingRequest ||
                   friendshipStatus === 'pending'
                 }>
-                {isRemoving || isSendingRequest ? (
+                {isRemoving || isBlocking || isSendingRequest ? (
                   <AppView center>
                     <Loader
                       transparent
@@ -515,6 +541,21 @@ const FriendDetails = () => {
               });
             },
             icon: <AppIcon name="exclamation-circle" size={20} />,
+          },
+          {
+            label: t('settings.remove_and_block'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              confirmRemoveAndBlock();
+            },
+            icon: (
+              <AppIcon
+                set="MaterialCommunityIcons"
+                name="account-cancel-outline"
+                size={20}
+                color={Colors.error}
+              />
+            ),
           },
         ]}
       />

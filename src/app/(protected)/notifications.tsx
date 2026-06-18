@@ -1,6 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
@@ -36,8 +37,7 @@ import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Alert, Linking, StyleSheet } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { Alert, Linking, RefreshControl, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Notifications = () => {
@@ -435,14 +435,19 @@ const Notifications = () => {
           </AppView>
         )}
       </AppView>
-      <Animated.FlatList
+      <AppList
         data={notifications || []}
         contentInsetAdjustmentBehavior="always"
         renderItem={renderNotificationItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
+        refreshControl={
+          <RefreshControl
+            tintColor={Colors.secondary}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
         ItemSeparatorComponent={() => <Divider margin-4 />}
         ListEmptyComponent={renderEmptyComponent}
       />

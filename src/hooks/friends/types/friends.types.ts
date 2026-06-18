@@ -42,6 +42,15 @@ export interface FriendResponse {
   created_at: string;
 }
 
+export interface BlockedUser {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  avatar?: string;
+  blocked_at?: string;
+}
+
 export interface FriendProfileResponse {
   user: User;
   allowed_roadmaps: RoadmapType[];

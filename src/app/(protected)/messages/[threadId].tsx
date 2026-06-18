@@ -173,6 +173,14 @@ const ThreadDetailsScreen = () => {
             <AppView flex-1 paddingL-16>
               <HeaderWithBack
                 headerText={threadName || t('settings.unknown_contact')}
+                onHeaderTitlePress={() => {
+                  router.navigate({
+                    pathname: '/settings/friend-details/[friendId]',
+                    params: {
+                      friendId: threadUserId,
+                    },
+                  });
+                }}
               />
             </AppView>
             <AppButton
