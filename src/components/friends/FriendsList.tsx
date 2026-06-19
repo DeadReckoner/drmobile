@@ -18,7 +18,7 @@ export const FriendsList = () => {
   const friends = useMemo<Friend[]>(() => {
     return friendsData.map((r) => ({
       id: r.friend.user_id,
-      name: `${r.friend.first_name} ${r.friend.last_name}`,
+      name: `${r.friend.first_name} ${r.friend.last_name || ''}`,
       avatar: undefined,
       email: r.friend.email,
       friendship_status: 'accepted' as const,

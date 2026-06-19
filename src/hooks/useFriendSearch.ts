@@ -27,7 +27,7 @@ export const useFriendSearch = () => {
     if (!friendsData) return [];
     return friendsData.map((friendResponse) => ({
       id: friendResponse.friend.user_id,
-      name: `${friendResponse.friend.first_name} ${friendResponse.friend.last_name}`,
+      name: `${friendResponse.friend.first_name} ${friendResponse.friend.last_name || ''}`,
       avatar: undefined,
       email: friendResponse.friend.email,
       friendship_status: 'accepted' as const,
@@ -67,7 +67,7 @@ export const useFriendSearch = () => {
       .filter((user) => !existingFriendIds.has(user.user_id))
       .map((user) => ({
         id: user.user_id,
-        name: `${user.first_name} ${user.last_name}`,
+        name: `${user.first_name} ${user.last_name || ''}`,
         avatar: undefined,
         email: user.email,
         friendship_status: user.friendship_status,

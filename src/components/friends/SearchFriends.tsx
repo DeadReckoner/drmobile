@@ -36,7 +36,7 @@ export const SearchFriends = ({ onClose }: SearchFriendsProps) => {
     if (!searchData || !debouncedQuery) return [];
     return searchData.map((u) => ({
       id: u.user_id,
-      name: `${u.first_name} ${u.last_name}`,
+      name: `${u.first_name} ${u.last_name || ''}`,
       avatar: undefined, //TODO: map avatar url when available
       email: u.email,
       friendship_status: u.friendship_status,
