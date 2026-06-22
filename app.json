@@ -96,10 +96,9 @@
       [
         "@sentry/react-native/expo",
         {
-          // TODO: replace with production before launch
           "url": "https://sentry.io/",
-          "project": "test-sentry",
-          "organization": "abhishek-testorg"
+          "project": "react-native",
+          "organization": "dead-reckoner"
         }
       ]
     ],
