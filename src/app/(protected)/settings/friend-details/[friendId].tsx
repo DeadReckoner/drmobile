@@ -256,6 +256,16 @@ const FriendDetails = () => {
     </AppView>
   );
 
+  if (isLoading) {
+    return (
+      <AppScreen>
+        <AppView flex height={40}>
+          <Loader transparent size="small" />
+        </AppView>
+      </AppScreen>
+    );
+  }
+
   if (is403Error) {
     return (
       <AppScreen paddingH-0 paddingT-60>
@@ -405,7 +415,7 @@ const FriendDetails = () => {
             <AppIcon set="Feather" name="settings" size={20} />
           </AppButton>
         </AppView>
-        {(isLoading || isFetching) && (
+        {isFetching && (
           <AppView flex height={40}>
             <Loader transparent size="small" />
           </AppView>
