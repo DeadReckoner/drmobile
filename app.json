@@ -100,14 +100,6 @@
           "project": "react-native",
           "organization": "dead-reckoner"
         }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useModularHeaders": true
-          }
-        }
       ]
     ],
     "experiments": {
