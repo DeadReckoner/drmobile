@@ -100,7 +100,8 @@
           "project": "react-native",
           "organization": "dead-reckoner"
         }
-      ]
+      ],
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true
