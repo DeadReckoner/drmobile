@@ -101,7 +101,14 @@
           "organization": "dead-reckoner"
         }
       ],
-      "expo-build-properties"
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useModularHeaders": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
