@@ -36,6 +36,9 @@ if (Env.EXPO_PUBLIC_SENTRY_DSN) {
     enableLogs: true,
     integrations: [Sentry.mobileReplayIntegration()],
     environment: __DEV__ ? 'development' : 'production',
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+    spotlight: __DEV__,
   });
 }
 
