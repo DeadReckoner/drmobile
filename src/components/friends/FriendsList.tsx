@@ -13,7 +13,9 @@ export const FriendsList = () => {
     isLoading,
     isFetching,
     data: friendsData = [],
-  } = useGetFriendsQuery();
+  } = useGetFriendsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const friends = useMemo<Friend[]>(() => {
     return friendsData.map((r) => ({

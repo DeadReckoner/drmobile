@@ -320,7 +320,9 @@ const RoadmapExecution = () => {
 
   return (
     <AppScreen safeArea>
-      {!hasSeenHighlight && isPendingHighlightStart && <Loader />}
+      {(isRoadmapLoading || (!hasSeenHighlight && isPendingHighlightStart)) && (
+        <Loader />
+      )}
 
       <ScrollView
         pointerEvents={

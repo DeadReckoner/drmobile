@@ -23,7 +23,6 @@ export const Loader = ({
     <AppView
       reanimated={shouldAnimate}
       entering={Animations.Entry.FadeInDownWithSpring()}
-      exiting={Animations.Exit.FadeOutDown()}
       style={[
         StyleSheet.absoluteFill,
         styles.loader,

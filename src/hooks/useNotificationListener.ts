@@ -1,4 +1,5 @@
 import { messagesApi } from '@/store/apis/messagesApi';
+import { notificationApi } from '@/store/apis/notificationsApi';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setRequestBadgeAction } from '@/store/slices/notificationsSlice';
 import { notificationsUtils } from '@/utils/notifications.utils';
@@ -45,6 +46,7 @@ export const useNotificationListener = () => {
     (content: Notifications.NotificationContent) => {
       const data = content.data;
       if (!data) return;
+      dispatch(notificationApi.util.invalidateTags(['Notifications']));
       switch (data.type) {
         case 'message_new':
           handleNewMessages(data.thread_id as string, content.body || '');

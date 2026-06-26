@@ -437,6 +437,7 @@ const Notifications = () => {
       </AppView>
       <AppList
         data={notifications || []}
+        extraData={processingIds}
         contentInsetAdjustmentBehavior="always"
         renderItem={renderNotificationItem}
         keyExtractor={keyExtractor}
