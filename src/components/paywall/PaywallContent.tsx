@@ -13,7 +13,7 @@ import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useToast } from '@/hooks/useToast';
 import { FeatureKeyType } from '@/store/types/billing.types';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { type PurchasesPackage } from 'react-native-purchases';
 import { Colors } from 'react-native-ui-lib';
@@ -40,6 +40,22 @@ export const PaywallContent = ({ feature }: PaywallContentProps) => {
 
   const [selectedPackage, setSelectedPackage] =
     useState<PurchasesPackage | null>(null);
+
+  /**
+   * Highlight label for the annual plan. Shows the real savings vs paying
+   * monthly for a year when both prices are available, otherwise "Best Value".
+   */
+  const annualBadge = useMemo(() => {
+    const monthly = subscriptions.find((s) => s.pkg.packageType === 'MONTHLY')
+      ?.pkg.product.price;
+    const annual = subscriptions.find((s) => s.pkg.packageType === 'ANNUAL')
+      ?.pkg.product.price;
+    if (monthly && annual) {
+      const percent = Math.round((1 - annual / (monthly * 12)) * 100);
+      if (percent > 0) return t('paywall.save_percent', { percent });
+    }
+    return t('paywall.best_value');
+  }, [subscriptions, t]);
 
   const handleClose = () => {
     router.back();
@@ -154,6 +170,9 @@ export const PaywallContent = ({ feature }: PaywallContentProps) => {
                 <SubscriptionItem
                   isSelected={
                     selectedPackage?.identifier === item.pkg.identifier
+                  }
+                  badge={
+                    item.pkg.packageType === 'ANNUAL' ? annualBadge : undefined
                   }
                   subscription={{
                     id: item.pkg.identifier,

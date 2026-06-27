@@ -5,6 +5,8 @@ import { Colors } from 'react-native-ui-lib';
 
 interface SubscriptionItemProps {
   isSelected?: boolean;
+  /** Optional highlight pill (e.g. "Best Value", "Save 50%") shown above the title. */
+  badge?: string;
   subscription: {
     id: string;
     title: string;
@@ -15,6 +17,7 @@ interface SubscriptionItemProps {
 export const SubscriptionItem = ({
   subscription,
   isSelected,
+  badge,
 }: SubscriptionItemProps) => {
   return (
     <AppView
@@ -24,12 +27,22 @@ export const SubscriptionItem = ({
         styles.subscriptionItem,
         styles.subscriptionShadow,
         {
-          borderWidth: 2,
           borderColor: isSelected ? Colors.blue : Colors.outline,
           shadowColor: isSelected ? Colors.blue : Colors.outline,
           shadowOpacity: isSelected ? 0.5 : 0,
         },
       ]}>
+      {!!badge && (
+        <AppView
+          style={[styles.badge, { backgroundColor: Colors.badgeCompleted }]}
+          paddingH-8
+          paddingV-4
+          br20>
+          <AppText sm semibold style={styles.badgeText}>
+            {badge}
+          </AppText>
+        </AppView>
+      )}
       <AppText body2 textColor>
         {subscription.title}
       </AppText>
@@ -49,7 +62,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   subscriptionShadow: {
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
+  },
+  badge: {
+    position: 'absolute',
+    top: -12,
+    right: 12,
+  },
+  badgeText: {
+    color: Colors.white,
   },
 });
