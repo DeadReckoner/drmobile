@@ -1,7 +1,14 @@
 import { AppButton } from '@/components/AppButton';
 import { AppText, AppView } from '@/components/ui';
 import React, { useEffect, useRef, useState } from 'react';
-import { Modal, StyleSheet, useWindowDimensions, View } from 'react-native';
+import {
+  Image,
+  ImageSourcePropType,
+  Modal,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -21,6 +28,7 @@ export interface HighlightFrame {
 export interface HighlightStep {
   title: string;
   message: string;
+  image?: ImageSourcePropType;
 }
 
 interface RoadmapHighlightOverlayProps {
@@ -179,9 +187,18 @@ export const RoadmapHighlightOverlay = ({
           {step?.title}
         </AppText>
         {customContent ?? (
-          <AppText body2 light textColor>
-            {step?.message}
-          </AppText>
+          <>
+            <AppText body2 light textColor>
+              {step?.message}
+            </AppText>
+            {step?.image && (
+              <Image
+                source={step.image}
+                style={styles.stepImage}
+                resizeMode="contain"
+              />
+            )}
+          </>
         )}
 
         <AppView row spread centerV marginT-12>
@@ -243,6 +260,12 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 8,
+  },
+  stepImage: {
+    width: '100%',
+    height: 300,
+    marginTop: 12,
+    borderRadius: 8,
   },
   dot: {
     height: 6,

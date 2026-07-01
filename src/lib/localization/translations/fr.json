@@ -804,7 +804,9 @@
     "badge_color_current": "En cours",
     "badge_color_upcoming": "À venir",
     "badge_color_overdue": "En retard",
-    "badge_color_completed": "Terminé"
+    "badge_color_completed": "Terminé",
+    "manage_roadmap_title": "Gérer la feuille de route",
+    "manage_roadmap_message": "Touchez le menu pour gérer votre feuille de route. Vous pouvez la mettre en pause ou la redémarrer, décaler ou réaligner les dates, l'archiver, gérer votre lien de partage, et plus encore."
   },
   "coming_soon": {
     "title": "Bientôt disponible",

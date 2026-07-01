@@ -804,7 +804,9 @@
     "badge_color_current": "Actual",
     "badge_color_upcoming": "Próximo",
     "badge_color_overdue": "Atrasado",
-    "badge_color_completed": "Completado"
+    "badge_color_completed": "Completado",
+    "manage_roadmap_title": "Gestionar hoja de ruta",
+    "manage_roadmap_message": "Toca el menú para gestionar tu hoja de ruta. Desde aquí puedes pausarla o reiniciarla, desplazar o realinear fechas, archivarla, gestionar tu enlace para compartir y mucho más."
   },
   "coming_soon": {
     "title": "Próximamente",

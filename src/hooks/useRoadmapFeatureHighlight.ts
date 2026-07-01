@@ -5,10 +5,10 @@ import {
   selectHasSeenRoadmapHighlight,
 } from '@/store/slices/onboardingSlice';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { ImageSourcePropType, View } from 'react-native';
 
-const TOTAL_STEPS = 5;
-const TOTAL_STEPS_CUSTOM = 4;
+const TOTAL_STEPS = 6;
+const TOTAL_STEPS_CUSTOM = TOTAL_STEPS - 1;
 
 // Maps each onboarding step index to the registered target ref index.
 // null means no element is highlighted for that step.
@@ -18,6 +18,7 @@ const STEP_TARGET_INDEX: Record<number, number | null> = {
   2: 2, // phase card
   3: 3, // milestone card
   4: 1, // anchor card
+  5: 4,
 };
 
 // For custom roadmaps: phase step is omitted
@@ -26,11 +27,13 @@ const STEP_TARGET_INDEX_CUSTOM: Record<number, number | null> = {
   1: 0, // overview card
   2: 3, // milestone card
   3: 1, // anchor card
+  4: 4,
 };
 
 interface HighlightStep {
   title: string;
   message: string;
+  image?: ImageSourcePropType;
 }
 
 export const useRoadmapFeatureHighlight = (
@@ -82,6 +85,11 @@ export const useRoadmapFeatureHighlight = (
     {
       title: t('feature_highlight.anchor_title'),
       message: t('feature_highlight.anchor_message'),
+    },
+    {
+      title: t('feature_highlight.manage_roadmap_title'),
+      message: t('feature_highlight.manage_roadmap_message'),
+      image: require('assets/images/manage_roadmap.png') as ImageSourcePropType,
     },
   ];
 

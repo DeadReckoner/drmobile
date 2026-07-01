@@ -804,7 +804,9 @@
     "badge_color_current": "Current",
     "badge_color_upcoming": "Upcoming",
     "badge_color_overdue": "Overdue",
-    "badge_color_completed": "Completed"
+    "badge_color_completed": "Completed",
+    "manage_roadmap_title": "Manage Roadmap",
+    "manage_roadmap_message": "Tap the menu to manage your roadmap. From here you can pause or restart it, shift or realign dates, archive it, manage your share link, and more."
   },
   "coming_soon": {
     "title": "Coming Soon",

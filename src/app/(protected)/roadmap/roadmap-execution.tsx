@@ -361,9 +361,11 @@ const RoadmapExecution = () => {
                 </AppView>
               )}
               {!!roadmap?.roadmap_id && (
-                <AppButton onPress={() => setIsMenuVisible(true)}>
-                  <AppIcon set="Feather" name="more-vertical" size={22} />
-                </AppButton>
+                <AppView paddingT-4 ref={(ref) => handleTargetLayout(4, ref)}>
+                  <AppButton onPress={() => setIsMenuVisible(true)}>
+                    <AppIcon set="Feather" name="more-vertical" size={22} />
+                  </AppButton>
+                </AppView>
               )}
             </AppView>
           </AppView>
