@@ -45,7 +45,6 @@ const onboardingSlice = createSlice({
     completeSetupTaskAction(state) {
       state.isSetupTaskCompleted = true;
     },
-    resetOnboardingAction: () => initialState,
   },
 });
 
@@ -55,7 +54,6 @@ export const {
   toggleSetupStepAction,
   setSetupStepAction,
   completeSetupTaskAction,
-  resetOnboardingAction,
 } = onboardingSlice.actions;
 
 export const selectHasSeenIntroModal = createAppSelector(

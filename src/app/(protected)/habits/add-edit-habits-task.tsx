@@ -164,7 +164,7 @@ const AddEditHabitTask = () => {
           </AppView>
           <AppView flex gap-4>
             <AppText body2 textColor>
-              {item.friend.first_name} {item.friend.last_name}
+              {item.friend.first_name} {item.friend.last_name || ''}
             </AppText>
             {item.friend.email && (
               <AppText xsm secondary>
@@ -182,7 +182,7 @@ const AddEditHabitTask = () => {
               ? onRemoveAnchor(item.friend.user_id)
               : onSelectAnchor(
                   item.friend.user_id,
-                  `${item.friend.first_name} ${item.friend.last_name}`,
+                  `${item.friend.first_name} ${item.friend.last_name || ''}`,
                 )
           }>
           {isLoading || isProcessingThisItem ? (

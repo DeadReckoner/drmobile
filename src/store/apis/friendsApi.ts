@@ -198,6 +198,7 @@ export const friendsApi = api.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, friendId) => [
         'Friends',
+        'Threads',
         { type: 'Friends', id: friendId },
       ],
       async onQueryStarted(friendId, { dispatch, queryFulfilled, getState }) {

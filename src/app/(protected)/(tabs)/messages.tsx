@@ -66,7 +66,7 @@ const Messages = () => {
     );
 
     const displayName = otherParticipant
-      ? `${otherParticipant.first_name} ${otherParticipant.last_name}`.trim() ||
+      ? `${otherParticipant.first_name} ${otherParticipant.last_name || ''}`.trim() ||
         t('settings.unknown_contact')
       : thread.name || t('settings.unknown_contact');
 

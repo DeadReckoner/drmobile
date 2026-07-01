@@ -31,7 +31,7 @@ export const ThreadListItem = ({
 
     if (otherParticipant) {
       const fullName =
-        `${otherParticipant.first_name} ${otherParticipant.last_name}`.trim();
+        `${otherParticipant.first_name} ${otherParticipant.last_name || ''}`.trim();
       return fullName;
     }
   };

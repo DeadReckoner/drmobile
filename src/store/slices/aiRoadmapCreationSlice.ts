@@ -146,6 +146,37 @@ const aiRoadmapCreationSlice = createSlice({
 
     // Reset the entire state
     resetCreationStateAction: () => initialState,
+
+    undoLastStepAction: (state) => {
+      let lastUserIndex = -1;
+      for (let i = state.messages.length - 1; i >= 0; i--) {
+        if (state.messages[i].type === 'user') {
+          lastUserIndex = i;
+          break;
+        }
+      }
+      if (lastUserIndex === -1) return;
+
+      const lastUserMessage = state.messages[lastUserIndex];
+      state.messages = state.messages.slice(0, lastUserIndex);
+      delete state.formData[lastUserMessage.id];
+
+      const precedingMessage = state.messages[state.messages.length - 1];
+      if (precedingMessage?.id.startsWith('system-')) {
+        const index = parseInt(precedingMessage.id.split('-')[1], 10);
+        if (!isNaN(index)) {
+          state.currentPromptIndex = index;
+        }
+      }
+
+      state.isConversationRunning = true;
+      state.isTyping = false;
+      state.status = 'collecting';
+      state.error = null;
+      state.createdRoadmap = null;
+      state.aiRoadmapCreationJobResponse = null;
+      state.jobStatusResponse = null;
+    },
   },
 });
 
@@ -161,11 +192,11 @@ export const {
   completeRoadmapCreationAction,
   setCreationErrorAction,
   resetCreationStateAction,
+  undoLastStepAction,
   setAIRoadmapJobCreationResponseAction,
   setAiJobStatusAction,
 } = aiRoadmapCreationSlice.actions;
 
-// Selectors
 export const selectAIRoadmapCreationState = createAppSelector(
   (state) => state.aiRoadmapCreation,
 );
@@ -227,6 +258,15 @@ export const selectShouldShowAIRoadmapBanner = createAppSelector((state) => {
     status === 'creating' ||
     (status === 'collecting' && hasUserMessage) ||
     status === 'error'
+  );
+});
+
+export const selectCanUndoAIRoadmap = createAppSelector((state) => {
+  const { status, messages } = state.aiRoadmapCreation;
+  return (
+    status !== 'creating' &&
+    status !== 'completed' &&
+    messages.some((msg) => msg.type === 'user')
   );
 });
 

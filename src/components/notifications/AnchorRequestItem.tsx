@@ -51,7 +51,6 @@ export const AnchorRequestItem = ({
                     containerStyle={{ position: 'relative' }}
                     color={Colors.white}
                     transparent
-                    size={16}
                   />
                 </AppView>
               ) : (
@@ -77,7 +76,6 @@ export const AnchorRequestItem = ({
                     containerStyle={{ position: 'relative' }}
                     color={Colors.white}
                     transparent
-                    size={16}
                   />
                 </AppView>
               ) : (

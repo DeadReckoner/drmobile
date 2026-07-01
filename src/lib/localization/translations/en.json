@@ -804,7 +804,9 @@
     "badge_color_current": "Current",
     "badge_color_upcoming": "Upcoming",
     "badge_color_overdue": "Overdue",
-    "badge_color_completed": "Completed"
+    "badge_color_completed": "Completed",
+    "manage_roadmap_title": "Manage Roadmap",
+    "manage_roadmap_message": "Tap the menu to manage your roadmap. From here you can pause or restart it, shift or realign dates, archive it, manage your share link, and more."
   },
   "coming_soon": {
     "title": "Coming Soon",
@@ -896,6 +898,11 @@
     "messaging_note": "Reactions, replies, check-ins",
     "pending": "Pending feature",
     "reminders": "Reminders",
+    "ai_reviews_insights": "AI reviews & insights",
+    "templates_imports": "Templates & imports",
+    "full_access": "Full access",
+    "best_value": "Best Value",
+    "save_percent": "Save {{percent}}%",
     "history": "Historical performance",
     "upgrade_to_pro": "Upgrade to Pro",
     "restore_purchase": "Restore Purchase",
@@ -905,7 +912,7 @@
     "offerings_fetch_error": "Unable to load plans. Please check your connection.",
     "retry": "Retry",
     "continue_with_free": "Continue with Free",
-    "cta_disclaimer": "Cancel anytime • Auto-renews unless cancelled 24hrs before renewal • Manage in iOS Settings",
+    "cta_disclaimer": "Cancel anytime • Auto-renews until cancelled.",
     "current_plan": "Current",
     "recommended": "Recommended",
     "basic_anchor": "1",

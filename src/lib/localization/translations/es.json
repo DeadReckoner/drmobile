@@ -804,7 +804,9 @@
     "badge_color_current": "Actual",
     "badge_color_upcoming": "Próximo",
     "badge_color_overdue": "Atrasado",
-    "badge_color_completed": "Completado"
+    "badge_color_completed": "Completado",
+    "manage_roadmap_title": "Gestionar hoja de ruta",
+    "manage_roadmap_message": "Toca el menú para gestionar tu hoja de ruta. Desde aquí puedes pausarla o reiniciarla, desplazar o realinear fechas, archivarla, gestionar tu enlace para compartir y mucho más."
   },
   "coming_soon": {
     "title": "Próximamente",
@@ -896,6 +898,11 @@
     "messaging_note": "Reacciones, respuestas, check-ins",
     "pending": "Función pendiente",
     "reminders": "Recordatorios",
+    "ai_reviews_insights": "Reseñas e ideas con IA",
+    "templates_imports": "Plantillas e importaciones",
+    "full_access": "Acceso completo",
+    "best_value": "Mejor valor",
+    "save_percent": "Ahorra {{percent}}%",
     "history": "Rendimiento histórico",
     "upgrade_to_pro": "Actualizar a Pro",
     "restore_purchase": "Restaurar compra",
@@ -905,7 +912,7 @@
     "offerings_fetch_error": "No se pudieron cargar los planes. Verifica tu conexión.",
     "retry": "Reintentar",
     "continue_with_free": "Continuar con el plan gratuito",
-    "cta_disclaimer": "Cancela cuando quieras • Se renueva automáticamente a menos que canceles 24hrs antes de la renovación • Gestiona en Configuración de iOS",
+    "cta_disclaimer": "Cancela cuando quieras • Se renueva automáticamente hasta que canceles.",
     "current_plan": "Actual",
     "recommended": "Recomendado",
     "basic_anchor": "1\nSolo hoja de ruta",

@@ -5,7 +5,6 @@ import { ApiError } from '@/store/apis/types/api.types';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import { clearAuthAction } from '@/store/slices/authSlice';
 import { resetBillingSlice } from '@/store/slices/billingSlice';
-import { resetOnboardingAction } from '@/store/slices/onboardingSlice';
 import { resetDraftAction } from '@/store/slices/roadmapDraftSlice';
 import { resetSettingsSlice } from '@/store/slices/settingsSlice';
 import { AppDispatchType, RootStateType } from '@/store/types/store.types';
@@ -24,17 +23,17 @@ export const handleSignout = async (
     dispatch(resetDraftAction());
     dispatch(resetSettingsSlice());
     dispatch(resetBillingSlice());
-    dispatch(resetOnboardingAction());
     dispatch(api.util.resetApiState());
 
     Sentry.setUser(null);
     const appleUserName = await AsyncStorage.getItem('@apple_user_name');
     await AsyncStorage.clear();
+    await persistedStore.purge();
+    await logoutRevenueCat();
+
     if (appleUserName) {
       await AsyncStorage.setItem('@apple_user_name', appleUserName);
     }
-    await persistedStore.purge();
-    await logoutRevenueCat();
   } catch {}
 };
 
@@ -44,7 +43,6 @@ export const getApiErrorMessage = (error: unknown) => {
     apiError?.message ||
     apiError?.data?.message ||
     apiError?.data?.error ||
-    i18nConfig.t('common.something_went_wrong') ||
-    'Something went wrong.'
+    i18nConfig.t('common.something_went_wrong')
   );
 };

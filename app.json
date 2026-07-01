@@ -96,10 +96,26 @@
       [
         "@sentry/react-native/expo",
         {
-          // TODO: replace with production before launch
           "url": "https://sentry.io/",
-          "project": "test-sentry",
-          "organization": "abhishek-testorg"
+          "project": "react-native",
+          "organization": "dead-reckoner"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "extraPods": [
+              {
+                "name": "GoogleUtilities",
+                "modular_headers": true
+              },
+              {
+                "name": "RecaptchaInterop",
+                "modular_headers": true
+              }
+            ]
+          }
         }
       ]
     ],

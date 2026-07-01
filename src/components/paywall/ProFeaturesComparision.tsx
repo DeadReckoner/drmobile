@@ -1,11 +1,9 @@
-import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
-import { Divider } from '@/components/Divider';
 import { LineDivider } from '@/components/LineDivider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -40,9 +38,8 @@ const renderCell = (cell: FeatureCell): React.ReactNode => {
 
 export const ProFeaturesComparision = () => {
   const { t } = useLocalization();
-  const [expanded, setExpanded] = useState(false);
 
-  const initialFeatures = useMemo<FeatureRowData[]>(
+  const features = useMemo<FeatureRowData[]>(
     () => [
       {
         label: t('paywall.active_roadmaps'),
@@ -56,29 +53,13 @@ export const ProFeaturesComparision = () => {
       },
       {
         label: t('paywall.ai_planning'),
-        free: { type: 'text', value: '1' },
+        free: { type: 'text', value: t('paywall.limited') },
         pro: { type: 'text', value: t('paywall.unlimited'), highlight: true },
       },
       {
-        label: t('paywall.ai_weekly_review'),
-        free: { type: 'cross' },
-        pro: { type: 'check' },
-      },
-      {
-        label: t('paywall.import_existing_plan'),
+        label: t('paywall.accountability_anchors'),
         free: { type: 'text', value: '1' },
         pro: { type: 'text', value: t('paywall.unlimited'), highlight: true },
-      },
-    ],
-    [t],
-  );
-
-  const moreFeatures = useMemo<FeatureRowData[]>(
-    () => [
-      {
-        label: t('paywall.daily_task_view'),
-        free: { type: 'cross' },
-        pro: { type: 'check' },
       },
       {
         label: t('paywall.reminders'),
@@ -90,52 +71,22 @@ export const ProFeaturesComparision = () => {
         },
       },
       {
-        label: t('paywall.advanced_insights'),
-        free: { type: 'cross' },
-        pro: { type: 'check' },
-      },
-      {
-        label: t('paywall.accountability_anchors'),
-        free: { type: 'text', value: t('paywall.basic_anchor') },
-        pro: {
-          type: 'text',
-          value: t('paywall.advanced_anchor'),
-          highlight: true,
-        },
-      },
-      {
-        label: t('paywall.friends_list'),
-        free: { type: 'check' },
-        pro: { type: 'check' },
-      },
-      {
-        label: t('paywall.progress_stats'),
+        label: t('paywall.ai_reviews_insights'),
         free: { type: 'text', value: t('paywall.basic') },
         pro: { type: 'text', value: t('paywall.advanced'), highlight: true },
       },
       {
-        label: t('paywall.templates'),
+        label: t('paywall.templates_imports'),
         free: { type: 'text', value: t('paywall.limited') },
         pro: {
           type: 'text',
-          value: t('paywall.full_library'),
+          value: t('paywall.full_access'),
           highlight: true,
         },
-      },
-      {
-        label: t('paywall.messaging'),
-        free: { type: 'text', value: t('paywall.basic') },
-        pro: { type: 'text', value: t('paywall.advanced'), highlight: true },
       },
     ],
     [t],
   );
-
-  const visibleFeatures = expanded
-    ? [...initialFeatures, ...moreFeatures]
-    : initialFeatures;
-
-  const handleToggleExpanded = () => setExpanded((prev) => !prev);
 
   return (
     <AppView gap-8 marginV-16>
@@ -165,7 +116,7 @@ export const ProFeaturesComparision = () => {
         </AppView>
       </AppView>
       <LineDivider marginV-0 />
-      {visibleFeatures.map((feature) => (
+      {features.map((feature) => (
         <AppView key={feature.label} gap-8>
           <AppView row gap-8 paddingV-8 style={styles.featureRow}>
             <AppText xsm regular style={styles.featureLabel} textColor>
@@ -181,24 +132,6 @@ export const ProFeaturesComparision = () => {
           <LineDivider marginV-0 />
         </AppView>
       ))}
-      <Divider margin-4 />
-      <AppButton onPress={handleToggleExpanded}>
-        <AppView center row gap-10>
-          <TranslatedText
-            body2
-            textColor
-            translationKey={
-              expanded ? 'paywall.hide_features' : 'paywall.see_all_features'
-            }
-          />
-          <AppIcon
-            set="Ionicons"
-            name={expanded ? 'chevron-up' : 'chevron-down'}
-            size={14}
-            color={Colors.textColor}
-          />
-        </AppView>
-      </AppButton>
     </AppView>
   );
 };

@@ -804,7 +804,9 @@
     "badge_color_current": "En cours",
     "badge_color_upcoming": "À venir",
     "badge_color_overdue": "En retard",
-    "badge_color_completed": "Terminé"
+    "badge_color_completed": "Terminé",
+    "manage_roadmap_title": "Gérer la feuille de route",
+    "manage_roadmap_message": "Touchez le menu pour gérer votre feuille de route. Vous pouvez la mettre en pause ou la redémarrer, décaler ou réaligner les dates, l'archiver, gérer votre lien de partage, et plus encore."
   },
   "coming_soon": {
     "title": "Bientôt disponible",
@@ -896,6 +898,11 @@
     "messaging_note": "Réactions, réponses, check-ins",
     "pending": "Fonctionnalité en attente",
     "reminders": "Rappels",
+    "ai_reviews_insights": "Avis et analyses IA",
+    "templates_imports": "Modèles et imports",
+    "full_access": "Accès complet",
+    "best_value": "Meilleure offre",
+    "save_percent": "Économisez {{percent}}%",
     "history": "Performance historique",
     "upgrade_to_pro": "Passer à Pro",
     "restore_purchase": "Restaurer l'achat",
@@ -905,7 +912,7 @@
     "offerings_fetch_error": "Impossible de charger les plans. Vérifiez votre connexion.",
     "retry": "Réessayer",
     "continue_with_free": "Continuer avec le plan gratuit",
-    "cta_disclaimer": "Annulez à tout moment • Renouvellement automatique sauf si annulé 24h avant le renouvellement • Gérez dans les paramètres iOS",
+    "cta_disclaimer": "Annulez à tout moment • Renouvellement automatique jusqu'à annulation.",
     "current_plan": "Actuel",
     "recommended": "Recommandé",
     "basic_anchor": "1\nFeuille de route uniquement",
