@@ -1,4 +1,5 @@
 import {
+  AnchoringResponse,
   ApiResponse,
   BlockedUser,
   FriendProfileResponse,
@@ -339,6 +340,15 @@ export const friendsApi = api.injectEndpoints({
         { type: 'Friends', id: friendId },
       ],
     }),
+
+    getAnchoring: builder.query<AnchoringResponse, void>({
+      query: () => ({
+        url: '/friends/anchoring',
+        method: 'GET',
+      }),
+      keepUnusedDataFor: 900,
+      providesTags: ['Anchoring'],
+    }),
   }),
   overrideExisting: true,
 });
@@ -357,4 +367,5 @@ export const {
   useGetBlockedUsersQuery,
   useGetFriendsQuery,
   useGetFriendProfileQuery,
+  useGetAnchoringQuery,
 } = friendsApi;

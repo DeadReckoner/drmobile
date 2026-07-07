@@ -1,19 +1,8 @@
-import ComingSoonPage from '@/app/(protected)/coming-soon';
+import { Anchoring } from '@/components/friends/Anchoring';
 import React from 'react';
 
 const Accountability = () => {
-  // const { data, isLoading } = useGetAnchorRoadmapsQuery();
-
-  // if (isLoading) {
-  //   return (
-  //     <AppScreen paddingH-0 safeArea>
-  //       <AppView flex-1 center>
-  //         <Loader transparent />
-  //       </AppView>
-  //     </AppScreen>
-  //   );
-  // }
-  return <ComingSoonPage />;
+  return <Anchoring />;
 };
 
 export default Accountability;

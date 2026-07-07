@@ -272,6 +272,8 @@
     "linkedin": "LinkedIn",
     "website": "Sitio Web",
     "no_friends_found": "No se encontraron amigos",
+    "no_anchors_found": "Aún no hay anclajes",
+    "no_anchors_found_description": "Aún no te han agregado como ancla para ningún objetivo.",
     "friends": "Amigos",
     "remove": "Eliminar",
     "add": "Agregar",

@@ -272,6 +272,8 @@
     "linkedin": "LinkedIn",
     "website": "Website",
     "no_friends_found": "No friends found",
+    "no_anchors_found": "No Anchors Yet",
+    "no_anchors_found_description": "You haven't been added as an anchor for any goals yet.",
     "friends": "Friends",
     "remove": "Remove",
     "add": "Add",

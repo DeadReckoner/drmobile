@@ -1,4 +1,4 @@
-import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
+import { RoadmapType, TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { HabitType } from '@/store/apis/types/habitsApi.types';
 
 export interface User {
@@ -86,4 +86,33 @@ export interface AnchorRequestResponse {
   request_id: string;
   status: 'accepted' | 'rejected';
   updated_at: string;
+}
+
+export interface AnchoringUserProfile {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number?: string;
+  CreatedAt?: string;
+  profile_image_url?: string;
+  timezone?: string;
+}
+
+export interface AnchoringRoadmap {
+  roadmap_id: string;
+  goal: string;
+  description: string;
+  tasks: TaskType[];
+}
+
+export interface AnchoringUser {
+  user: AnchoringUserProfile;
+  roadmaps: AnchoringRoadmap[];
+  habits: HabitType[];
+}
+
+export interface AnchoringResponse {
+  date: string;
+  users: AnchoringUser[];
 }
