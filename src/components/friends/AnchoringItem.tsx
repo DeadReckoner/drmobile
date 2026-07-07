@@ -2,6 +2,7 @@ import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import {
   AnchoringRoadmap,
@@ -159,9 +160,11 @@ export const AnchoringItem = ({ anchoringUser }: AnchoringItemProps) => {
         </AppView>
       ) : (
         <AppView marginT-12>
-          <AppText xsm secondary>
-            No roadmaps shared
-          </AppText>
+          <TranslatedText
+            xsm
+            secondary
+            translationKey="settings.no_roadmaps_shared"
+          />
         </AppView>
       )}
     </AppCard>
