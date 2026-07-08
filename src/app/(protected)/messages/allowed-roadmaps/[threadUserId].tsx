@@ -1,3 +1,4 @@
+import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppList } from '@/components/AppList';
@@ -10,27 +11,75 @@ import { AppImage, AppText, AppView } from '@/components/ui';
 import { useGetFriendProfileQuery } from '@/hooks/friends';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useGetThreadsQuery } from '@/store/apis/messagesApi';
 import { HabitType } from '@/store/apis/types/habitsApi.types';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
 import { Animations } from '@/utils/animation.utils';
 import { storeHabit, storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { Assets, Colors } from 'react-native-ui-lib';
 
 const AllowedRoadmaps = () => {
-  const params = useLocalSearchParams<{ threadUserId: string }>();
-  const { data, isFetching, refetch } = useGetFriendProfileQuery(
-    params['threadUserId'],
-    {
-      skip: !params['threadUserId'],
-      refetchOnMountOrArgChange: true,
-      refetchOnFocus: true,
-    },
-  );
+  const params = useLocalSearchParams<{
+    threadUserId: string;
+    from?: string;
+  }>();
+  const { data, refetch } = useGetFriendProfileQuery(params['threadUserId'], {
+    skip: !params['threadUserId'],
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+  });
 
   const { t } = useLocalization();
   const [selectedTab, setSelectedTab] = useState('roadmaps');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await refetch();
+    setIsRefreshing(false);
+  }, [refetch]);
+
+  const currentUser = useAppSelector(selectUser);
+  const { data: threadsData } = useGetThreadsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+
+  const messageThread = useMemo(() => {
+    if (!threadsData || !params['threadUserId']) return null;
+    return (
+      threadsData.find((thread) =>
+        thread.participants.some((p) => p.user_id === params['threadUserId']),
+      ) ?? null
+    );
+  }, [threadsData, params]);
+
+  const handleChatPress = () => {
+    if (params['from'] === 'thread') {
+      router.back();
+      return;
+    }
+    if (!messageThread) return;
+    const otherParticipant = messageThread.participants.find(
+      (p) => p.user_id !== currentUser?.id,
+    );
+    const displayName = otherParticipant
+      ? `${otherParticipant.first_name} ${otherParticipant.last_name || ''}`.trim()
+      : messageThread.name || t('settings.unknown_contact');
+
+    router.navigate({
+      pathname: '/messages/[threadId]',
+      params: {
+        threadId: messageThread.thread_id,
+        threadName: displayName,
+        threadUserId: params['threadUserId'],
+        fromRoadmaps: 'true',
+      },
+    });
+  };
 
   const renderItem = ({ item: roadmap }: { item: RoadmapType }) => (
     <AppCard
@@ -134,7 +183,16 @@ const AllowedRoadmaps = () => {
 
   return (
     <AppScreen safeArea>
-      <HeaderWithBack />
+      <AppView row centerV spread>
+        <AppView flex-1>
+          <HeaderWithBack />
+        </AppView>
+        {messageThread && params['from'] !== 'thread' && (
+          <AppButton paddingV-8 paddingH-16 onPress={handleChatPress}>
+            <AppIcon name="message" size={22} color={Colors.textColor} />
+          </AppButton>
+        )}
+      </AppView>
       <Divider />
       <AppSegmentControl
         segments={[
@@ -162,7 +220,10 @@ const AllowedRoadmaps = () => {
               ListEmptyComponent={renderEmptyRoadmaps}
               ItemSeparatorComponent={renderItemSeparator}
               refreshControl={
-                <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={handleRefresh}
+                />
               }
             />
           </AppView>
@@ -182,7 +243,10 @@ const AllowedRoadmaps = () => {
               ListEmptyComponent={renderEmptyHabits}
               ItemSeparatorComponent={renderItemSeparator}
               refreshControl={
-                <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={handleRefresh}
+                />
               }
             />
           </AppView>

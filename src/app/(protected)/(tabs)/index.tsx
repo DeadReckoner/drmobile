@@ -3,16 +3,13 @@ import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
-import { AppSegmentControl } from '@/components/AppSegmentControl';
 import { Divider } from '@/components/Divider';
-import { AnchoringItem } from '@/components/friends/AnchoringItem';
 import { Loader } from '@/components/Loader';
 import { OnboardingSetupTask } from '@/components/onboarding/OnboardingSetupTask';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
-import { AnchoringUser } from '@/hooks/friends/types/friends.types';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
@@ -22,7 +19,6 @@ import {
 } from '@/hooks/task';
 import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
-import { useGetAnchoringQuery } from '@/store/apis/friendsApi';
 import { useGetTodayHabitsQuery } from '@/store/apis/habitsApi';
 import { HabitWithStatusType } from '@/store/apis/types/habitsApi.types';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
@@ -44,7 +40,7 @@ import { DateUtils } from '@/utils/date.utils';
 import { storeTask } from '@/utils/roadmapTransfer';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, Tabs } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -53,11 +49,7 @@ const Today = () => {
   const isSetupTaskCompleted = useAppSelector(selectIsSetupTaskCompleted);
   const setupSteps = useAppSelector(selectSetupSteps);
   const showSetupTask = !isSetupTaskCompleted;
-  const [selectedSegment, setSelectedSegment] = useState(0);
-  const segments = useMemo(
-    () => [t('tabs.today'), t('settings.accountability')],
-    [t],
-  );
+
   const [currentDate] = useState(() =>
     DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
   );
@@ -123,18 +115,6 @@ const Today = () => {
       refetchOnMountOrArgChange: true,
     });
 
-  const {
-    data: anchoringData,
-    isLoading: anchoringLoading,
-    refetch: refetchAnchoring,
-  } = useGetAnchoringQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
-
-  const handleSegmentChange = useCallback((index: number) => {
-    setSelectedSegment(index);
-  }, []);
-
   useEffect(() => {
     if (isSetupTaskCompleted) return;
 
@@ -182,7 +162,19 @@ const Today = () => {
     router.navigate('/settings');
   };
 
+  const onAnchorClick = () => {
+    router.navigate('/anchoring');
+  };
+
   const hasUnreadNotifications = useAppSelector(selectHasRequestBadge);
+
+  const hasAnchorNotifications = useMemo(
+    () =>
+      notificationsData?.some(
+        (n) => n.type === 'anchor_request' || n.type === 'habit_anchor_request',
+      ) ?? false,
+    [notificationsData],
+  );
 
   useEffect(() => {
     if (notificationsData !== undefined) {
@@ -241,7 +233,6 @@ const Today = () => {
         refetch().unwrap(),
         refetchHabits().unwrap(),
         refetchNotifications().unwrap(),
-        refetchAnchoring().unwrap(),
       ]);
     } catch {
     } finally {
@@ -400,6 +391,14 @@ const Today = () => {
                 )}
               </AppView>
             </AppButton>
+            <AppButton onPress={onAnchorClick}>
+              <AppView>
+                <AppIcon set="Feather" name="anchor" size={24} />
+                {hasAnchorNotifications && (
+                  <AppView style={styles.customBadge} />
+                )}
+              </AppView>
+            </AppButton>
             <AppButton onPress={onUserProfileClick}>
               <AppIcon set="Feather" name="user" size={26} />
             </AppButton>
@@ -407,118 +406,73 @@ const Today = () => {
         </AppView>
         <Divider />
 
-        <AppSegmentControl
-          segments={segments}
-          selectedIndex={selectedSegment}
-          onSegmentChange={handleSegmentChange}
-        />
-        <Divider />
-
-        {selectedSegment === 0 && (
-          <>
-            {(habitsLoading || isLoading) && (
-              <AppView height={80}>
-                <Loader transparent />
-              </AppView>
-            )}
-
-            {showSetupTask && !isLoading && !habitsLoading && (
-              <AppView>
-                <OnboardingSetupTask />
-                <Divider />
-              </AppView>
-            )}
-
-            {!isLoading && !habitsLoading && (
-              <>
-                {shouldShowEmptyState && renderEmptyComponent()}
-
-                <AppView
-                  reanimated
-                  entering={Animations.Entry.FadeInDownWithSpring()}
-                  exiting={Animations.Exit.FadeOutDown()}>
-                  <AppList<HabitWithStatusType>
-                    keyExtractor={(i) => i.habit_id}
-                    data={nonCompletedHabits || []}
-                    renderItem={renderHabitItem}
-                    ListFooterComponent={() =>
-                      nonCompletedHabits.length > 0 && <Divider />
-                    }
-                    ItemSeparatorComponent={() => <Divider />}
-                  />
-                </AppView>
-
-                <AppView
-                  reanimated
-                  entering={Animations.Entry.FadeInDownWithSpring()}
-                  exiting={Animations.Exit.FadeOutDown()}>
-                  <AppList<TaskType>
-                    keyExtractor={(i) => i.task_id}
-                    data={nonCompletedTasks || []}
-                    renderItem={renderItem}
-                    ItemSeparatorComponent={() => <Divider />}
-                  />
-                </AppView>
-                {(completedTasks?.length > 0 ||
-                  completedHabits?.length > 0) && (
-                  <TranslatedText
-                    body2
-                    translationKey="common.completed_tasks"
-                    marginV-16
-                  />
-                )}
-                {completedTasks?.length > 0 && (
-                  <AppList<TaskType>
-                    keyExtractor={(i) => i.task_id}
-                    data={completedTasks || []}
-                    renderItem={renderItem}
-                    ListFooterComponent={() => <Divider />}
-                    ItemSeparatorComponent={() => <Divider />}
-                  />
-                )}
-                {completedHabits?.length > 0 && (
-                  <AppList<HabitWithStatusType>
-                    keyExtractor={(i) => i.habit_id}
-                    data={completedHabits || []}
-                    renderItem={renderHabitItem}
-                    ListFooterComponent={() => <Divider />}
-                    ItemSeparatorComponent={() => <Divider />}
-                  />
-                )}
-              </>
-            )}
-          </>
+        {(habitsLoading || isLoading) && (
+          <AppView height={80}>
+            <Loader transparent />
+          </AppView>
         )}
 
-        {selectedSegment === 1 && (
+        {showSetupTask && !isLoading && !habitsLoading && (
+          <AppView>
+            <OnboardingSetupTask />
+            <Divider />
+          </AppView>
+        )}
+
+        {!isLoading && !habitsLoading && (
           <>
-            {anchoringLoading && (
-              <AppView height={80}>
-                <Loader transparent />
-              </AppView>
+            {shouldShowEmptyState && renderEmptyComponent()}
+
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <AppList<HabitWithStatusType>
+                keyExtractor={(i) => i.habit_id}
+                data={nonCompletedHabits || []}
+                renderItem={renderHabitItem}
+                ListFooterComponent={() =>
+                  nonCompletedHabits.length > 0 && <Divider />
+                }
+                ItemSeparatorComponent={() => <Divider />}
+              />
+            </AppView>
+
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <AppList<TaskType>
+                keyExtractor={(i) => i.task_id}
+                data={nonCompletedTasks || []}
+                renderItem={renderItem}
+                ItemSeparatorComponent={() => <Divider />}
+              />
+            </AppView>
+            {(completedTasks?.length > 0 || completedHabits?.length > 0) && (
+              <TranslatedText
+                body2
+                translationKey="common.completed_tasks"
+                marginV-16
+              />
             )}
-            {!anchoringLoading && (
-              <AppView
-                reanimated
-                entering={Animations.Entry.FadeInDownWithSpring()}
-                exiting={Animations.Exit.FadeOutDown()}>
-                <AppList<AnchoringUser>
-                  keyExtractor={(i) => i.user.user_id}
-                  data={anchoringData?.users || []}
-                  renderItem={({ item: anchoringUser }) => (
-                    <AnchoringItem anchoringUser={anchoringUser} />
-                  )}
-                  ItemSeparatorComponent={() => <Divider />}
-                  ListEmptyComponent={() => (
-                    <AppView marginT-16>
-                      <EmptyListItemPlaceholder
-                        title="settings.no_anchors_found"
-                        subtitle="settings.no_anchors_found_description"
-                      />
-                    </AppView>
-                  )}
-                />
-              </AppView>
+            {completedTasks?.length > 0 && (
+              <AppList<TaskType>
+                keyExtractor={(i) => i.task_id}
+                data={completedTasks || []}
+                renderItem={renderItem}
+                ListFooterComponent={() => <Divider />}
+                ItemSeparatorComponent={() => <Divider />}
+              />
+            )}
+            {completedHabits?.length > 0 && (
+              <AppList<HabitWithStatusType>
+                keyExtractor={(i) => i.habit_id}
+                data={completedHabits || []}
+                renderItem={renderHabitItem}
+                ListFooterComponent={() => <Divider />}
+                ItemSeparatorComponent={() => <Divider />}
+              />
             )}
           </>
         )}

@@ -26,11 +26,13 @@ import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { Colors } from 'react-native-ui-lib';
 
 const ThreadDetailsScreen = () => {
-  const { threadId, threadName, threadUserId } = useLocalSearchParams<{
-    threadId: string;
-    threadName: string;
-    threadUserId: string;
-  }>();
+  const { threadId, threadName, threadUserId, fromRoadmaps } =
+    useLocalSearchParams<{
+      threadId: string;
+      threadName: string;
+      threadUserId: string;
+      fromRoadmaps?: string;
+    }>();
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectUser);
@@ -148,9 +150,13 @@ const ThreadDetailsScreen = () => {
   };
 
   const handleRoadmapClick = () => {
+    if (fromRoadmaps === 'true') {
+      router.back();
+      return;
+    }
     router.navigate({
       pathname: '/messages/allowed-roadmaps/[threadUserId]',
-      params: { threadUserId: threadUserId },
+      params: { threadUserId, from: 'thread' },
     });
   };
 
