@@ -16,7 +16,10 @@ import { AnchoringUser } from '@/hooks/friends/types/friends.types';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
-import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
+import {
+  useGetTasksByRangeQuery,
+  useGetUserTasksByStartDateQuery,
+} from '@/hooks/task';
 import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useGetAnchoringQuery } from '@/store/apis/friendsApi';
@@ -38,10 +41,11 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
+import { storeTask } from '@/utils/roadmapTransfer';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, Tabs } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Modal, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
@@ -74,7 +78,19 @@ const Today = () => {
   });
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
+  const [isWeeklyModalVisible, setIsWeeklyModalVisible] = useState(false);
   const dispatch = useAppDispatch();
+
+  const weeklyRange = useMemo(() => {
+    const tomorrow = DateUtils.createDate().add(1, 'day');
+    return {
+      startDate: DateUtils.formatDate(tomorrow, 'YYYY-MM-DD'),
+      endDate: DateUtils.formatDate(tomorrow.add(7, 'day'), 'YYYY-MM-DD'),
+    };
+  }, []);
+
+  const { data: weeklyTasks, isLoading: weeklyTasksLoading } =
+    useGetTasksByRangeQuery(weeklyRange, { skip: !isWeeklyModalVisible });
   const { requestPermissions } = usePushNotifications();
 
   useEffect(() => {
@@ -149,7 +165,13 @@ const Today = () => {
   }, [roadmaps, friends, setupSteps, isSetupTaskCompleted, dispatch]);
 
   const onCalendarClick = () => {
-    // router.navigate('/calendar');
+    setIsWeeklyModalVisible(true);
+  };
+
+  const handleWeeklyTaskPress = (task: TaskType) => {
+    storeTask(task);
+    setIsWeeklyModalVisible(false);
+    router.navigate('/settings/readonly-task-details');
   };
 
   const onNotificationsClick = () => {
@@ -366,11 +388,11 @@ const Today = () => {
 
         <AppView row centerV spread>
           <TranslatedText h2 translationKey="tabs.today" />
-          <AppView center row>
+          <AppView center row gap-16>
             <AppButton onPress={onCalendarClick}>
               <AppIcon set="Feather" name="calendar" size={26} />
             </AppButton>
-            <AppButton marginL-18 marginR-12 onPress={onNotificationsClick}>
+            <AppButton onPress={onNotificationsClick}>
               <AppView>
                 <AppIcon name="notification" size={26} />
                 {hasUnreadNotifications && (
@@ -501,6 +523,94 @@ const Today = () => {
           </>
         )}
       </ScrollView>
+
+      <Modal
+        visible={isWeeklyModalVisible}
+        backdropColor={Colors.screenBG}
+        presentationStyle="pageSheet"
+        animationType="slide"
+        allowSwipeDismissal
+        onRequestClose={() => {
+          setIsWeeklyModalVisible(false);
+        }}>
+        <AppView
+          marginT-8
+          centerV
+          style={{
+            width: 100,
+            height: 3,
+            borderRadius: 10,
+            backgroundColor: Colors.textColor,
+            alignSelf: 'center',
+          }}
+        />
+        <Divider marginT-16 />
+
+        <AppList
+          keyExtractor={(i) => i.task_id}
+          contentContainerStyle={{ padding: 16 }}
+          ListHeaderComponent={() => (
+            <AppView flex-1>
+              <TranslatedText
+                h3
+                textColor
+                translationKey="tabs.upcoming_week"
+                marginB-12
+              />
+              {weeklyTasksLoading && (
+                <AppView height={80}>
+                  <Loader transparent />
+                </AppView>
+              )}
+            </AppView>
+          )}
+          data={weeklyTasks || []}
+          renderItem={({ item, index: idx }) => (
+            <React.Fragment key={item.task_id}>
+              {idx > 0 && <Divider />}
+              <AppCard
+                style={styles.taskCard}
+                row
+                centerV
+                onPress={() => handleWeeklyTaskPress(item)}
+                padding-0>
+                <AppView
+                  br40
+                  style={[
+                    styles.indicator,
+                    {
+                      backgroundColor:
+                        item.status === 'completed'
+                          ? Colors.success
+                          : Colors.primary,
+                    },
+                  ]}
+                />
+                <AppView flex-1 padding-16>
+                  <AppText body2 textColor>
+                    {item.title}
+                  </AppText>
+                  {!!item.description && (
+                    <AppText xsm textColor marginT-4 numberOfLines={3}>
+                      {item.description}
+                    </AppText>
+                  )}
+                </AppView>
+              </AppCard>
+            </React.Fragment>
+          )}
+          ListEmptyComponent={() =>
+            !weeklyTasksLoading && (
+              <AppView marginT-16>
+                <EmptyListItemPlaceholder
+                  title="onboarding.empty_state.no_weekly_tasks_title"
+                  subtitle="onboarding.empty_state.no_weekly_tasks_description"
+                />
+              </AppView>
+            )
+          }
+        />
+      </Modal>
     </AppScreen>
   );
 };
@@ -517,6 +627,16 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   habitChipContainer: { alignSelf: 'flex-start' },
+  modalOverlay: {
+    flex: 1,
+  },
+  weeklySheetContent: {
+    flex: 1,
+  },
+  weeklySheetContentContainer: {
+    padding: 16,
+    paddingBottom: 40,
+  },
   customBadge: {
     position: 'absolute',
     right: -2,

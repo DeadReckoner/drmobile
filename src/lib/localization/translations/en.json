@@ -80,6 +80,7 @@
     "progress": "Progress",
     "create": "Create",
     "messages": "Messages",
+    "upcoming_week": "Upcoming Week",
     "today_tab": {
       "habits_title": "Your Habits",
       "tasks_title": "Today's Tasks",
@@ -778,6 +779,8 @@
     "empty_state": {
       "no_tasks_title": "No tasks yet",
       "no_tasks_description": "No tasks yet. Create a roadmap or recurring habit to populate your day.",
+      "no_weekly_tasks_title": "No upcoming tasks",
+      "no_weekly_tasks_description": "You have no tasks scheduled for the upcoming week.",
       "go_to_create": "Go to Create"
     }
   },

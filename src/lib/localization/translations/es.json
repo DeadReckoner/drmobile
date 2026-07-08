@@ -166,6 +166,7 @@
     "progress": "Progreso",
     "create": "Crear",
     "messages": "Mensajes",
+    "upcoming_week": "Próxima Semana",
     "today_tab": {
       "habits_title": "Tus Hábitos",
       "tasks_title": "Tareas de Hoy",
@@ -778,6 +779,8 @@
     "empty_state": {
       "no_tasks_title": "Aún no hay tareas",
       "no_tasks_description": "Aún no hay tareas. Crea una hoja de ruta o un hábito recurrente para llenar tu día.",
+      "no_weekly_tasks_title": "Sin tareas próximas",
+      "no_weekly_tasks_description": "No tienes tareas programadas para la próxima semana.",
       "go_to_create": "Ir a Crear"
     }
   },
