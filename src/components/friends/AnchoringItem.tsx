@@ -3,53 +3,58 @@ import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppText, AppView } from '@/components/ui';
+import { AppImage, AppText, AppView } from '@/components/ui';
 import {
   AnchoringRoadmap,
   AnchoringUser,
 } from '@/hooks/friends/types/friends.types';
-import {
-  MilestoneType,
-  RoadmapType,
-  TaskType,
-} from '@/hooks/roadmap/types/roadmap.types';
-import { storeRoadmap } from '@/utils/roadmapTransfer';
+import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
+import { useLocalization } from '@/hooks/useLocalization';
+import { HabitType, RecurrenceType } from '@/store/apis/types/habitsApi.types';
+import { storeHabit, storeTasks } from '@/utils/roadmapTransfer';
 import { router } from 'expo-router';
 import React, { useCallback } from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
-const toRoadmapType = (roadmap: AnchoringRoadmap): RoadmapType => ({
-  roadmap_id: roadmap.roadmap_id,
-  goal: roadmap.goal,
-  description: roadmap.description,
-  days: 0,
-  completed: false,
-  start_date: new Date().toISOString(),
-  milestones:
-    roadmap.tasks.length > 0
-      ? [
-          {
-            milestone_id: 'anchoring-today',
-            roadmap_id: roadmap.roadmap_id,
-            sub_goal: 'Today',
-            description: '',
-            day: 0,
-            tasks: roadmap.tasks,
-            status: 'in_progress',
-          } as MilestoneType,
-        ]
-      : [],
-});
+const RECURRENCE_COLORS: Record<RecurrenceType, string> = {
+  daily: '#4A90D9',
+  weekly: '#7B68EE',
+  monthly: '#E67E22',
+  none: '#888888',
+};
+
+interface RecurrenceBadgeProps {
+  type: RecurrenceType;
+}
+
+const RecurrenceBadge = ({ type }: RecurrenceBadgeProps) => {
+  const { t } = useLocalization();
+  return (
+    <AppView
+      style={[
+        styles.recurrenceBadge,
+        { backgroundColor: RECURRENCE_COLORS[type] },
+      ]}>
+      <AppText sm regular textColor>
+        {t(`habits.recurrence.${type}`)}
+      </AppText>
+    </AppView>
+  );
+};
 
 interface RoadmapRowProps {
   roadmap: AnchoringRoadmap;
 }
 
 const RoadmapRow = ({ roadmap }: RoadmapRowProps) => {
+  const { t } = useLocalization();
   const handlePress = useCallback(() => {
-    storeRoadmap(toRoadmapType(roadmap));
-    router.navigate({ pathname: '/settings/readonly-roadmap-details' });
+    storeTasks(roadmap.tasks);
+    router.navigate({
+      pathname: '/settings/anchoring-roadmap-tasks',
+      params: { goal: roadmap.goal, roadmapId: roadmap.roadmap_id },
+    });
   }, [roadmap]);
 
   return (
@@ -57,7 +62,7 @@ const RoadmapRow = ({ roadmap }: RoadmapRowProps) => {
       onPress={handlePress}
       activeOpacity={0.7}
       style={styles.roadmapRow}>
-      <AppView row centerV gap-8>
+      <AppView flex row centerV gap-8>
         <AppView
           style={[
             styles.roadmapDot,
@@ -66,13 +71,8 @@ const RoadmapRow = ({ roadmap }: RoadmapRowProps) => {
             },
           ]}
         />
-        <AppView flex row centerV>
-          <AppText
-            flex
-            body2
-            textColor
-            numberOfLines={2}
-            style={styles.roadmapGoal}>
+        <AppView row paddingR-16>
+          <AppText flex body2 textColor numberOfLines={2}>
             {roadmap.goal}
           </AppText>
           <AppIcon set="Ionicons" name="arrow-forward-outline" size={22} />
@@ -98,10 +98,56 @@ const RoadmapRow = ({ roadmap }: RoadmapRowProps) => {
       {roadmap.tasks.length === 0 && (
         <AppView style={styles.taskList}>
           <AppText xsm secondary style={styles.noTasksText}>
-            No tasks today
+            {t('roadmap.no_tasks_today')}
           </AppText>
         </AppView>
       )}
+    </AppButton>
+  );
+};
+
+interface HabitRowProps {
+  habit: HabitType;
+}
+
+const HabitRow = ({ habit }: HabitRowProps) => {
+  const handlePress = useCallback(() => {
+    storeHabit(habit);
+    router.navigate({ pathname: '/settings/anchoring-habit-details' });
+  }, [habit]);
+
+  return (
+    <AppButton
+      onPress={handlePress}
+      activeOpacity={0.7}
+      style={styles.habitRow}>
+      <AppView row centerV gap-8>
+        <AppView
+          style={[styles.roadmapDot, { backgroundColor: Colors.textColor }]}
+        />
+        <AppView flex gap-4>
+          <AppView row>
+            <AppView row flex centerV>
+              <AppText
+                body2
+                textColor
+                numberOfLines={2}
+                style={styles.habitTitle}>
+                {habit.title}
+              </AppText>
+              <AppView centerV>
+                <RecurrenceBadge type={habit.recurrence_type} />
+              </AppView>
+            </AppView>
+            <AppIcon set="Ionicons" name="arrow-forward-outline" size={22} />
+          </AppView>
+          {!!habit.description && (
+            <AppText xsm secondary numberOfLines={2}>
+              {habit.description}
+            </AppText>
+          )}
+        </AppView>
+      </AppView>
     </AppButton>
   );
 };
@@ -111,7 +157,7 @@ interface AnchoringItemProps {
 }
 
 export const AnchoringItem = ({ anchoringUser }: AnchoringItemProps) => {
-  const { user, roadmaps } = anchoringUser;
+  const { user, roadmaps, habits } = anchoringUser;
   const fullName = `${user.first_name} ${user.last_name}`.trim();
 
   return (
@@ -127,7 +173,7 @@ export const AnchoringItem = ({ anchoringUser }: AnchoringItemProps) => {
         }>
         <AppView row centerV gap-12 marginB-12>
           {user.profile_image_url ? (
-            <Image
+            <AppImage
               source={{ uri: user.profile_image_url }}
               style={styles.avatar}
             />
@@ -137,9 +183,6 @@ export const AnchoringItem = ({ anchoringUser }: AnchoringItemProps) => {
           <AppView flex>
             <AppText body2 textColor>
               {fullName}
-            </AppText>
-            <AppText xsm secondary>
-              {roadmaps.length} roadmap{roadmaps.length !== 1 ? 's' : ''}
             </AppText>
           </AppView>
         </AppView>
@@ -167,6 +210,22 @@ export const AnchoringItem = ({ anchoringUser }: AnchoringItemProps) => {
           />
         </AppView>
       )}
+
+      {habits && habits.length > 0 && (
+        <>
+          <AppView style={[styles.divider, styles.sectionDivider]} />
+          <AppView gap-4>
+            {habits.map((habit, index) => (
+              <AppView key={habit.habit_id}>
+                <HabitRow habit={habit} />
+                {index < habits.length - 1 && (
+                  <AppView style={styles.roadmapDivider} />
+                )}
+              </AppView>
+            ))}
+          </AppView>
+        </>
+      )}
     </AppCard>
   );
 };
@@ -182,6 +241,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.grey60,
     opacity: 0.4,
   },
+  sectionDivider: {
+    marginVertical: 12,
+  },
   roadmapRow: {
     paddingVertical: 4,
   },
@@ -192,11 +254,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
     alignSelf: 'flex-start',
     marginTop: 8,
-  },
-  roadmapGoal: {
-    fontWeight: '600',
-    marginRight: 16,
-    maxWidth: '85%',
   },
   taskList: {
     marginTop: 6,
@@ -222,5 +279,17 @@ const styles = StyleSheet.create({
     opacity: 0.25,
     marginVertical: 6,
     marginLeft: 16,
+  },
+  habitRow: {
+    paddingVertical: 4,
+  },
+  habitTitle: {
+    marginRight: 8,
+  },
+  recurrenceBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 100,
+    alignSelf: 'flex-start',
   },
 });

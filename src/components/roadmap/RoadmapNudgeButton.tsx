@@ -47,7 +47,7 @@ export const RoadmapNudgeButton = ({
         center
         bg-accent
         br100
-        disabled={disabled || isNudging}
+        disabled={isModalVisible || disabled || isNudging}
         style={styles.nudgeButton}
         onPress={() => setIsModalVisible(true)}>
         <AppIcon
@@ -62,6 +62,9 @@ export const RoadmapNudgeButton = ({
         visible={isModalVisible}
         setIsVisible={setIsModalVisible}
         snapPoints={['30%']}
+        onClose={() => {
+          setIsModalVisible(false);
+        }}
         dismissible={!isNudging}>
         <AppView flex-1 style={styles.modalContent}>
           <TranslatedText

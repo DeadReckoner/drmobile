@@ -1,7 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { PrimaryButtonContainer } from '@/components/PrimaryButtonContainer';
 import { TranslatedText } from '@/components/TranslatedText';
-import { AppView } from '@/components/ui';
+import { AppImage, AppView } from '@/components/ui';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import { selectUser } from '@/store/slices/authSlice';
@@ -9,7 +9,6 @@ import {
   markIntroModalSeenAction,
   selectHasSeenIntroModal,
 } from '@/store/slices/onboardingSlice';
-import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Dimensions, StyleSheet, ViewStyle } from 'react-native';
@@ -155,7 +154,7 @@ export const OnboardingIntroModal = () => {
         bg-screenBG
         pointerEvents="box-none">
         <AppView style={StyleSheet.absoluteFill}>
-          <Image
+          <AppImage
             source={require('assets/images/icon.png')}
             contentFit="cover"
             style={styles.backgroundImage}
@@ -196,7 +195,7 @@ export const OnboardingIntroModal = () => {
                   />
                 </AppView>
                 <AppView flex center marginV-16>
-                  <Image
+                  <AppImage
                     source={page.image}
                     contentFit="contain"
                     transition={350}

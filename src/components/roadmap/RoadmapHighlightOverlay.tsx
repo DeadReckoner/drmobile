@@ -1,8 +1,7 @@
 import { AppButton } from '@/components/AppButton';
-import { AppText, AppView } from '@/components/ui';
+import { AppImage, AppText, AppView } from '@/components/ui';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Image,
   ImageSourcePropType,
   Modal,
   StyleSheet,
@@ -192,7 +191,7 @@ export const RoadmapHighlightOverlay = ({
               {step?.message}
             </AppText>
             {step?.image && (
-              <Image
+              <AppImage
                 source={step.image}
                 style={styles.stepImage}
                 resizeMode="contain"

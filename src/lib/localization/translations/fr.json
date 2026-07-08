@@ -592,7 +592,7 @@
     "complete_all_steps": "Compléter toutes les étapes",
     "complete_all_steps_success": "Toutes les étapes ont été complétées avec succès !",
     "complete_all_steps_failure": "Impossible de compléter toutes les étapes",
-    "no_tasks_today": "Aucune tâche disponible !",
+    "no_tasks_today": "Aucune tâche disponible ",
     "no_tasks_today_description": "Ce jalon n'a pas de tâches en raison de jalons précédents incomplets.",
     "delete_roadmap_label": "Supprimer la Feuille de Route",
     "options": "Options",
