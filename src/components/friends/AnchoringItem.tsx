@@ -2,6 +2,7 @@ import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { RecurrenceBadge } from '@/components/roadmap/ReccurenceBadge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import {
@@ -10,38 +11,12 @@ import {
 } from '@/hooks/friends/types/friends.types';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
-import { HabitType, RecurrenceType } from '@/store/apis/types/habitsApi.types';
+import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { storeHabit, storeTasks } from '@/utils/roadmapTransfer';
 import { router } from 'expo-router';
 import React, { useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
-
-const RECURRENCE_COLORS: Record<RecurrenceType, string> = {
-  daily: '#4A90D9',
-  weekly: '#7B68EE',
-  monthly: '#E67E22',
-  none: '#888888',
-};
-
-interface RecurrenceBadgeProps {
-  type: RecurrenceType;
-}
-
-const RecurrenceBadge = ({ type }: RecurrenceBadgeProps) => {
-  const { t } = useLocalization();
-  return (
-    <AppView
-      style={[
-        styles.recurrenceBadge,
-        { backgroundColor: RECURRENCE_COLORS[type] },
-      ]}>
-      <AppText sm regular textColor>
-        {t(`habits.recurrence.${type}`)}
-      </AppText>
-    </AppView>
-  );
-};
 
 interface RoadmapRowProps {
   roadmap: AnchoringRoadmap;
@@ -113,7 +88,7 @@ interface HabitRowProps {
 const HabitRow = ({ habit }: HabitRowProps) => {
   const handlePress = useCallback(() => {
     storeHabit(habit);
-    router.navigate({ pathname: '/settings/anchoring-habit-details' });
+    router.navigate({ pathname: '/settings/readonly-habit-details' });
   }, [habit]);
 
   return (
@@ -285,11 +260,5 @@ const styles = StyleSheet.create({
   },
   habitTitle: {
     marginRight: 8,
-  },
-  recurrenceBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 100,
-    alignSelf: 'flex-start',
   },
 });
