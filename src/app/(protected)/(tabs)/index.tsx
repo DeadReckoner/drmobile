@@ -379,7 +379,7 @@ const Today = () => {
 
         <AppView row centerV spread>
           <TranslatedText h2 translationKey="tabs.today" />
-          <AppView center row gap-16>
+          <AppView center row gap-20>
             <AppButton onPress={onCalendarClick}>
               <AppIcon set="Feather" name="calendar" size={26} />
             </AppButton>
