@@ -7,6 +7,7 @@ import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
 import { OnboardingSetupTask } from '@/components/onboarding/OnboardingSetupTask';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
+import { LevelBadge } from '@/components/roadmap/LevelBadge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
@@ -37,6 +38,7 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
+import { buildBadgeLabel } from '@/utils/roadmap.utils';
 import { storeTask } from '@/utils/roadmapTransfer';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, Tabs } from 'expo-router';
@@ -203,7 +205,10 @@ const Today = () => {
       data?.filter(
         (task) =>
           task.status !== 'completed' &&
-          !(task.steps?.length && task.steps.every((step) => step.completed)),
+          !(
+            task.steps?.length &&
+            task.steps.every((step) => step.status === 'completed')
+          ),
       ) ?? [],
     [data],
   );
@@ -265,6 +270,11 @@ const Today = () => {
   };
 
   const renderItem = ({ item, index }: LegendListRenderItemProps<TaskType>) => {
+    const badgeLabel = buildBadgeLabel({
+      phase: item.phase_number,
+      milestone: item.milestone_number,
+      task: item.task_number,
+    });
     return (
       <AppCard
         style={styles.taskCard}
@@ -283,9 +293,12 @@ const Today = () => {
           ]}
         />
         <AppView flex-1 padding-16>
-          <AppText body2 textColor>
-            {item.title}
-          </AppText>
+          <AppView row gap-16>
+            <AppText body2 textColor flex-1>
+              {item.title}
+            </AppText>
+            <LevelBadge label={badgeLabel} status={item.status} />
+          </AppView>
           {!!item.description && (
             <AppText xsm textColor marginT-4 numberOfLines={3}>
               {item.description}
