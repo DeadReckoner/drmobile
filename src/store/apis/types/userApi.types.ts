@@ -10,6 +10,7 @@ export type CreateUserResponseType = CreateUserParamsType & {
   user_id: string;
   CreatedAt: string;
   profile_image_url?: string;
+  onboarding_completed?: boolean;
 };
 
 export type UpdateUserParamsType = {
@@ -17,6 +18,7 @@ export type UpdateUserParamsType = {
   last_name?: string;
   phone_number?: string;
   email?: string;
+  onboarding_completed?: boolean;
 };
 
 export type UpdateUserWithImageParamsType = {
