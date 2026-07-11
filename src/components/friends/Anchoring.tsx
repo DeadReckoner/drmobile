@@ -7,9 +7,7 @@ import { AppView } from '@/components/ui';
 import { useGetAnchoringQuery } from '@/store/apis/friendsApi';
 
 export const Anchoring = () => {
-  const { data, isLoading } = useGetAnchoringQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data, isLoading } = useGetAnchoringQuery();
 
   return (
     <AppScreen>
