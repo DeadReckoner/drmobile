@@ -4,24 +4,12 @@ import { AnchoringItem } from '@/components/friends/AnchoringItem';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
 import { AppView } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
-import { useToast } from '@/hooks/useToast';
 import { useGetAnchoringQuery } from '@/store/apis/friendsApi';
-import { useEffect } from 'react';
 
 export const Anchoring = () => {
-  const { data, isLoading, error } = useGetAnchoringQuery();
-  const { showToast } = useToast();
-  const { t } = useLocalization();
-
-  useEffect(() => {
-    if (error) {
-      showToast({
-        type: 'failure',
-        message: t('common.something_went_wrong'),
-      });
-    }
-  }, [error, showToast, t]);
+  const { data, isLoading } = useGetAnchoringQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   return (
     <AppScreen>

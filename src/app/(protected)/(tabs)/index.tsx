@@ -165,7 +165,7 @@ const Today = () => {
   };
 
   const onAnchorClick = () => {
-    router.navigate('/anchoring');
+    router.navigate('/settings/accountability');
   };
 
   const hasUnreadNotifications = useAppSelector(selectHasRequestBadge);
