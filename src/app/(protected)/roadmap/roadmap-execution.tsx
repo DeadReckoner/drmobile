@@ -2,6 +2,7 @@ import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
+import { GradientBackdrop } from '@/components/GradientBackdrop';
 import { AppSegmentControl } from '@/components/AppSegmentControl';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
@@ -26,9 +27,12 @@ import { useRoadmapHighlightController } from '@/hooks/useRoadmapHighlightContro
 import { useRoadmapMenuOptions } from '@/hooks/useRoadmapMenuOptions';
 import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { selectIsNextMilestoneGenerating } from '@/store/slices/nextMilestoneGenerationSlice';
 import {
   selectCurrentMilestone,
   selectDraftRoadmap,
+  selectFirstUngeneratedMilestone,
+  selectMilestoneBeforeId,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
@@ -38,12 +42,32 @@ import { storeMilestone } from '@/utils/roadmapTransfer';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { Colors } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
   const draftRoadmap = useAppSelector(selectDraftRoadmap);
   const currentMilestone = useAppSelector(selectCurrentMilestone);
+  const firstUngeneratedMilestone = useAppSelector(
+    selectFirstUngeneratedMilestone,
+  );
+  const isGeneratingForUngenerated = useAppSelector(
+    selectIsNextMilestoneGenerating(
+      firstUngeneratedMilestone?.milestone_id ?? '',
+    ),
+  );
+  const previousMilestone = useAppSelector(
+    selectMilestoneBeforeId(firstUngeneratedMilestone?.milestone_id ?? ''),
+  );
+  const previousMilestoneComplete =
+    !previousMilestone ||
+    (previousMilestone.tasks.length > 0 &&
+      previousMilestone.tasks.every((t) => t.status === 'completed'));
+  const shouldShowGenerateMilestone =
+    !!firstUngeneratedMilestone &&
+    !isGeneratingForUngenerated &&
+    previousMilestoneComplete;
   const isCustomRoadmap = draftRoadmap?.type === 'custom_made';
   const {
     data,
@@ -431,6 +455,39 @@ const RoadmapExecution = () => {
         </View>
       </ScrollView>
 
+      {firstTabSelected && shouldShowGenerateMilestone && (
+        <AppView
+          bg-transparent
+          pointerEvents="box-none"
+          style={StyleSheet.absoluteFill}>
+          <GradientBackdrop />
+          <AppView center style={styles.floatingButton}>
+            <AppButton
+              onPress={() => {
+                router.navigate({
+                  pathname: '/roadmap/generate-next-milestone',
+                  params: {
+                    milestoneId: firstUngeneratedMilestone!.milestone_id,
+                  },
+                });
+              }}>
+              <AppView row gap-8 center bg-accent br100 padding-12 paddingH-24>
+                <TranslatedText
+                  body2
+                  translationKey="ai_roadmap.generate_milestone"
+                />
+                <AppIcon
+                  set="Ionicons"
+                  name="arrow-forward-circle-outline"
+                  size={24}
+                  color={Colors.white}
+                />
+              </AppView>
+            </AppButton>
+          </AppView>
+        </AppView>
+      )}
+
       <RoadmapHighlightOverlay
         visible={isHighlightVisible}
         currentStep={currentStep}
@@ -472,5 +529,10 @@ const styles = StyleSheet.create({
     zIndex: 999,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 80,
+    width: '100%',
   },
 });

@@ -28,8 +28,10 @@ import {
 import {
   AnchorAcceptedData,
   AnchorRequestData,
+  FollowOnMilestoneReadyData,
   FriendAcceptedData,
   FriendRequestData,
+  MilestoneGenerationCompleteData,
   NotificationType,
 } from '@/store/apis/types/notificationsApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
@@ -242,6 +244,44 @@ const Notifications = () => {
           },
         });
       }
+
+      if (notification.type === 'follow_on_milestone_ready') {
+        const data = notification.data as FollowOnMilestoneReadyData;
+        dispatch(
+          setDraftRoadmapAction({
+            roadmap_id: data.roadmap_id,
+            goal: '',
+            description: '',
+            days: 0,
+            completed: false,
+            start_date: '',
+            milestones: [],
+            reason: '',
+          }),
+        );
+        router.navigate('/roadmap/roadmap-execution');
+      }
+      if (notification.type === 'next_milestone_complete') {
+        const data = notification.data as MilestoneGenerationCompleteData;
+        dispatch(
+          setDraftRoadmapAction({
+            roadmap_id: data.roadmap_id,
+            goal: '',
+            description: '',
+            days: 0,
+            completed: false,
+            start_date: '',
+            milestones: [],
+            reason: '',
+          }),
+        );
+        router.navigate({
+          pathname: '/roadmap/phase-milestones-tasks',
+          params: {
+            milestoneId: data.milestone_id,
+          },
+        });
+      }
     },
     [dispatch],
   );
@@ -284,7 +324,9 @@ const Notifications = () => {
         type === 'anchor_accepted' ||
         type === 'anchor_rejected' ||
         type === 'friend_accepted' ||
-        type === 'friend_rejected';
+        type === 'friend_rejected' ||
+        type === 'next_milestone_complete' ||
+        type === 'follow_on_milestone_ready';
 
       return (
         <AppCard

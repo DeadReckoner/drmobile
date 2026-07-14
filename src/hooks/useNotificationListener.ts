@@ -2,6 +2,7 @@ import { messagesApi } from '@/store/apis/messagesApi';
 import { notificationApi } from '@/store/apis/notificationsApi';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setRequestBadgeAction } from '@/store/slices/notificationsSlice';
+import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { notificationsUtils } from '@/utils/notifications.utils';
 import * as Notifications from 'expo-notifications';
 import { router, usePathname } from 'expo-router';
@@ -77,6 +78,39 @@ export const useNotificationListener = () => {
             },
           });
           break;
+        case 'follow_on_milestone_ready':
+          dispatch(
+            setDraftRoadmapAction({
+              roadmap_id: data.roadmap_id as string,
+              goal: '',
+              description: '',
+              days: 0,
+              completed: false,
+              start_date: '',
+              milestones: [],
+              reason: '',
+            }),
+          );
+          router.navigate('/roadmap/roadmap-execution');
+          break;
+        case 'next_milestone_complete':
+          dispatch(
+            setDraftRoadmapAction({
+              roadmap_id: data.roadmap_id as string,
+              goal: '',
+              description: '',
+              days: 0,
+              completed: false,
+              start_date: '',
+              milestones: [],
+              reason: '',
+            }),
+          );
+          router.navigate({
+            pathname: '/roadmap/phase-milestones-tasks',
+            params: { milestoneId: data.milestone_id as string },
+          });
+          break;
         default:
           router.navigate('/notifications');
       }
@@ -88,7 +122,7 @@ export const useNotificationListener = () => {
         } catch {}
       })();
     },
-    [handleNotificationProcessing],
+    [handleNotificationProcessing, dispatch],
   );
 
   useEffect(() => {
