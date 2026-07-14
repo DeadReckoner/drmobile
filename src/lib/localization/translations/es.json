@@ -166,6 +166,7 @@
     "progress": "Progreso",
     "create": "Crear",
     "messages": "Mensajes",
+    "upcoming_week": "Próxima Semana",
     "today_tab": {
       "habits_title": "Tus Hábitos",
       "tasks_title": "Tareas de Hoy",
@@ -272,6 +273,14 @@
     "linkedin": "LinkedIn",
     "website": "Sitio Web",
     "no_friends_found": "No se encontraron amigos",
+    "no_anchors_found": "Aún no hay anclajes",
+    "no_anchors_found_description": "Aún no te han agregado como ancla para ningún objetivo.",
+    "anchoring_title": "Anclaje",
+    "not_anchoring_anyone": "Aún no estás anclando a nadie",
+    "not_anchoring_description": "Los anclajes ayudan a las personas a mantenerse responsables viendo los objetivos, hábitos y el progreso que eligen compartir.\n\nInvita a alguien que prospere con la responsabilidad, o a alguien que podría necesitarla.",
+    "invite_a_friend": "Invitar a un Amigo",
+    "learn_how_anchors_work": "Aprende Cómo Funcionan los Anclajes",
+    "open_message_thread": "Mensaje",
     "friends": "Amigos",
     "remove": "Eliminar",
     "add": "Agregar",
@@ -324,7 +333,16 @@
     "failed_to_request_permission": "Error al solicitar permiso",
     "failed_to_fetch_contacts": "Error al obtener contactos",
     "membership_details": "Detalles de Membresía",
-    "report": "Informe"
+    "report": "Informe",
+    "user_stats": {
+      "streak": "Racha",
+      "days": "días",
+      "last_days": "Últimos {{dayCount}} días",
+      "compliant": "cumplidor",
+      "no_data_yet": "Sin datos aún",
+      "tasks": "tareas",
+      "habits": "hábitos"
+    }
   },
   "membership": {
     "title": "Detalles de Membresía",
@@ -590,7 +608,7 @@
     "complete_all_steps": "Completar todos los pasos",
     "complete_all_steps_success": "¡Todos los pasos completados con éxito!",
     "complete_all_steps_failure": "No se pudieron completar todos los pasos",
-    "no_tasks_today": "¡No hay tareas disponibles!",
+    "no_tasks_today": "¡No hay tareas disponibles",
     "no_tasks_today_description": "Este hito no tiene tareas debido a hitos anteriores incompletos.",
     "delete_roadmap_label": "Eliminar Hoja de Ruta",
     "options": "Opciones",
@@ -776,6 +794,8 @@
     "empty_state": {
       "no_tasks_title": "Aún no hay tareas",
       "no_tasks_description": "Aún no hay tareas. Crea una hoja de ruta o un hábito recurrente para llenar tu día.",
+      "no_weekly_tasks_title": "Sin tareas próximas",
+      "no_weekly_tasks_description": "No tienes tareas programadas para la próxima semana.",
       "go_to_create": "Ir a Crear"
     }
   },

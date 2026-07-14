@@ -45,6 +45,10 @@ const onboardingSlice = createSlice({
     completeSetupTaskAction(state) {
       state.isSetupTaskCompleted = true;
     },
+    resetOnboardingFromServerAction(state) {
+      state.hasSeenIntroModal = false;
+      state.isSetupTaskCompleted = false;
+    },
   },
 });
 
@@ -54,6 +58,7 @@ export const {
   toggleSetupStepAction,
   setSetupStepAction,
   completeSetupTaskAction,
+  resetOnboardingFromServerAction,
 } = onboardingSlice.actions;
 
 export const selectHasSeenIntroModal = createAppSelector(

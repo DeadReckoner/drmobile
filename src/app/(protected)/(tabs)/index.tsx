@@ -7,13 +7,17 @@ import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
 import { OnboardingSetupTask } from '@/components/onboarding/OnboardingSetupTask';
 import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlaceholder';
+import { LevelBadge } from '@/components/roadmap/LevelBadge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
-import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
+import {
+  useGetTasksByRangeQuery,
+  useGetUserTasksByStartDateQuery,
+} from '@/hooks/task';
 import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useGetTodayHabitsQuery } from '@/store/apis/habitsApi';
@@ -34,10 +38,12 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
+import { buildBadgeLabel } from '@/utils/roadmap.utils';
+import { storeTask } from '@/utils/roadmapTransfer';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, Tabs } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Modal, RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
@@ -45,6 +51,7 @@ const Today = () => {
   const isSetupTaskCompleted = useAppSelector(selectIsSetupTaskCompleted);
   const setupSteps = useAppSelector(selectSetupSteps);
   const showSetupTask = !isSetupTaskCompleted;
+
   const [currentDate] = useState(() =>
     DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
   );
@@ -65,7 +72,19 @@ const Today = () => {
   });
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
+  const [isWeeklyModalVisible, setIsWeeklyModalVisible] = useState(false);
   const dispatch = useAppDispatch();
+
+  const weeklyRange = useMemo(() => {
+    const tomorrow = DateUtils.createDate().add(1, 'day');
+    return {
+      startDate: DateUtils.formatDate(tomorrow, 'YYYY-MM-DD'),
+      endDate: DateUtils.formatDate(tomorrow.add(7, 'day'), 'YYYY-MM-DD'),
+    };
+  }, []);
+
+  const { data: weeklyTasks, isLoading: weeklyTasksLoading } =
+    useGetTasksByRangeQuery(weeklyRange, { skip: !isWeeklyModalVisible });
   const { requestPermissions } = usePushNotifications();
 
   useEffect(() => {
@@ -128,7 +147,13 @@ const Today = () => {
   }, [roadmaps, friends, setupSteps, isSetupTaskCompleted, dispatch]);
 
   const onCalendarClick = () => {
-    // router.navigate('/calendar');
+    setIsWeeklyModalVisible(true);
+  };
+
+  const handleWeeklyTaskPress = (task: TaskType) => {
+    storeTask(task);
+    setIsWeeklyModalVisible(false);
+    router.navigate('/settings/readonly-task-details');
   };
 
   const onNotificationsClick = () => {
@@ -139,7 +164,19 @@ const Today = () => {
     router.navigate('/settings');
   };
 
+  const onAnchorClick = () => {
+    router.navigate('/settings/accountability');
+  };
+
   const hasUnreadNotifications = useAppSelector(selectHasRequestBadge);
+
+  const hasAnchorNotifications = useMemo(
+    () =>
+      notificationsData?.some(
+        (n) => n.type === 'anchor_request' || n.type === 'habit_anchor_request',
+      ) ?? false,
+    [notificationsData],
+  );
 
   useEffect(() => {
     if (notificationsData !== undefined) {
@@ -168,7 +205,10 @@ const Today = () => {
       data?.filter(
         (task) =>
           task.status !== 'completed' &&
-          !(task.steps?.length && task.steps.every((step) => step.completed)),
+          !(
+            task.steps?.length &&
+            task.steps.every((step) => step.status === 'completed')
+          ),
       ) ?? [],
     [data],
   );
@@ -230,6 +270,11 @@ const Today = () => {
   };
 
   const renderItem = ({ item, index }: LegendListRenderItemProps<TaskType>) => {
+    const badgeLabel = buildBadgeLabel({
+      phase: item.phase_number,
+      milestone: item.milestone_number,
+      task: item.task_number,
+    });
     return (
       <AppCard
         style={styles.taskCard}
@@ -248,12 +293,17 @@ const Today = () => {
           ]}
         />
         <AppView flex-1 padding-16>
-          <AppText body2 textColor>
-            {item.title}
-          </AppText>
-          <AppText xsm textColor marginT-4 numberOfLines={3}>
-            {item.description}
-          </AppText>
+          <AppView row gap-16>
+            <AppText body2 textColor flex-1>
+              {item.title}
+            </AppText>
+            <LevelBadge label={badgeLabel} status={item.status} />
+          </AppView>
+          {!!item.description && (
+            <AppText xsm textColor marginT-4 numberOfLines={3}>
+              {item.description}
+            </AppText>
+          )}
         </AppView>
       </AppCard>
     );
@@ -303,7 +353,7 @@ const Today = () => {
               </AppText>
             </AppView>
           </AppView>
-          {item.description && (
+          {!!item.description && (
             <AppText xsm textColor marginT-4 numberOfLines={3}>
               {item.description}
             </AppText>
@@ -339,16 +389,25 @@ const Today = () => {
           />
         }>
         <Divider />
+
         <AppView row centerV spread>
           <TranslatedText h2 translationKey="tabs.today" />
-          <AppView center row>
+          <AppView center row gap-20>
             <AppButton onPress={onCalendarClick}>
               <AppIcon set="Feather" name="calendar" size={26} />
             </AppButton>
-            <AppButton marginL-18 marginR-12 onPress={onNotificationsClick}>
+            <AppButton onPress={onNotificationsClick}>
               <AppView>
                 <AppIcon name="notification" size={26} />
                 {hasUnreadNotifications && (
+                  <AppView style={styles.customBadge} />
+                )}
+              </AppView>
+            </AppButton>
+            <AppButton onPress={onAnchorClick}>
+              <AppView>
+                <AppIcon set="Feather" name="anchor" size={24} />
+                {hasAnchorNotifications && (
                   <AppView style={styles.customBadge} />
                 )}
               </AppView>
@@ -359,6 +418,7 @@ const Today = () => {
           </AppView>
         </AppView>
         <Divider />
+
         {(habitsLoading || isLoading) && (
           <AppView height={80}>
             <Loader transparent />
@@ -430,6 +490,94 @@ const Today = () => {
           </>
         )}
       </ScrollView>
+
+      <Modal
+        visible={isWeeklyModalVisible}
+        backdropColor={Colors.screenBG}
+        presentationStyle="pageSheet"
+        animationType="slide"
+        allowSwipeDismissal
+        onRequestClose={() => {
+          setIsWeeklyModalVisible(false);
+        }}>
+        <AppView
+          marginT-8
+          centerV
+          style={{
+            width: 100,
+            height: 3,
+            borderRadius: 10,
+            backgroundColor: Colors.textColor,
+            alignSelf: 'center',
+          }}
+        />
+        <Divider marginT-16 />
+
+        <AppList
+          keyExtractor={(i) => i.task_id}
+          contentContainerStyle={{ padding: 16 }}
+          ListHeaderComponent={() => (
+            <AppView flex-1>
+              <TranslatedText
+                h3
+                textColor
+                translationKey="tabs.upcoming_week"
+                marginB-12
+              />
+              {weeklyTasksLoading && (
+                <AppView height={80}>
+                  <Loader transparent />
+                </AppView>
+              )}
+            </AppView>
+          )}
+          data={weeklyTasks || []}
+          renderItem={({ item, index: idx }) => (
+            <React.Fragment key={item.task_id}>
+              {idx > 0 && <Divider />}
+              <AppCard
+                style={styles.taskCard}
+                row
+                centerV
+                onPress={() => handleWeeklyTaskPress(item)}
+                padding-0>
+                <AppView
+                  br40
+                  style={[
+                    styles.indicator,
+                    {
+                      backgroundColor:
+                        item.status === 'completed'
+                          ? Colors.success
+                          : Colors.primary,
+                    },
+                  ]}
+                />
+                <AppView flex-1 padding-16>
+                  <AppText body2 textColor>
+                    {item.title}
+                  </AppText>
+                  {!!item.description && (
+                    <AppText xsm textColor marginT-4 numberOfLines={3}>
+                      {item.description}
+                    </AppText>
+                  )}
+                </AppView>
+              </AppCard>
+            </React.Fragment>
+          )}
+          ListEmptyComponent={() =>
+            !weeklyTasksLoading && (
+              <AppView marginT-16>
+                <EmptyListItemPlaceholder
+                  title="onboarding.empty_state.no_weekly_tasks_title"
+                  subtitle="onboarding.empty_state.no_weekly_tasks_description"
+                />
+              </AppView>
+            )
+          }
+        />
+      </Modal>
     </AppScreen>
   );
 };
@@ -446,6 +594,16 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   habitChipContainer: { alignSelf: 'flex-start' },
+  modalOverlay: {
+    flex: 1,
+  },
+  weeklySheetContent: {
+    flex: 1,
+  },
+  weeklySheetContentContainer: {
+    padding: 16,
+    paddingBottom: 40,
+  },
   customBadge: {
     position: 'absolute',
     right: -2,

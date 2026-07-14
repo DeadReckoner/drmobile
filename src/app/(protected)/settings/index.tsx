@@ -12,12 +12,20 @@ import { MembershipDetailsModal } from '@/components/settings/MembershipDetailsM
 import { UsefulLinks } from '@/components/settings/UsefulLinks';
 import { UserStats } from '@/components/settings/UserStats';
 import { SettingsItem } from '@/components/SettingsItem';
-import { AppImage, AppText, AppView } from '@/components/ui';
+import { TranslatedText } from '@/components/TranslatedText';
+import {
+  AppImage,
+  AppText,
+  AppTouchableOpacity,
+  AppView,
+} from '@/components/ui';
+import { useGetFriendsQuery } from '@/hooks/friends';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useDeleteUserMutation } from '@/hooks/user';
 import { useToast } from '@/hooks/useToast';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
+import { useGetAnchoringQuery } from '@/store/apis/friendsApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { clearAuthAction, selectUser } from '@/store/slices/authSlice';
 import { persistedStore } from '@/store/store';
@@ -35,6 +43,10 @@ const Settings = () => {
   const { showToast } = useToast();
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const { data: friends } = useGetFriendsQuery();
+  const { data: anchoring } = useGetAnchoringQuery();
+  const friendsCount = friends?.length ?? 0;
+  const accountabilityCount = anchoring?.users?.length ?? 0;
 
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const [isDeleteAccountDialogVisible, setIsDeleteAccountDialogVisible] =
@@ -88,23 +100,56 @@ const Settings = () => {
         </AppView>
         <Divider marginT-24 />
         <AppView style={styles.content} key={theme}>
-          <AppView gap-16 center paddingH-16>
-            <AppButton>
-              <AppView>
-                {user.avatar ? (
-                  <AppImage
-                    source={{ uri: user.avatar }}
-                    style={styles.image}
-                  />
-                ) : (
-                  <AppAvatar size={48} />
-                )}
-              </AppView>
-            </AppButton>
-            <AppView gap-6 center>
-              <AppText body1 textColor>
+          <AppView row paddingH-16 gap-16>
+            <AppView center>
+              {user.avatar ? (
+                <AppImage source={{ uri: user.avatar }} style={styles.image} />
+              ) : (
+                <AppAvatar size={45} />
+              )}
+            </AppView>
+            <AppView gap-12 flex-1>
+              <AppText body2 textColor regular>
                 {user.name}
               </AppText>
+              <AppView row gap-8 centerV>
+                <AppTouchableOpacity
+                  style={styles.profileCountBtn}
+                  hitSlop={8}
+                  onPress={() =>
+                    router.navigate('/(protected)/settings/my-friends')
+                  }>
+                  <AppView gap-4 center>
+                    <AppText textColor body2>
+                      {friendsCount}
+                    </AppText>
+                    <TranslatedText
+                      textColor
+                      caption
+                      translationKey="settings.friends"
+                    />
+                  </AppView>
+                </AppTouchableOpacity>
+                <LineDivider width={1} height={30} bg-outline marginV-0 />
+                <AppTouchableOpacity
+                  marginL-20
+                  style={styles.profileCountBtn}
+                  onPress={() => {
+                    router.navigate('/settings/accountability');
+                  }}>
+                  <AppView gap-4 center>
+                    <AppText textColor body2>
+                      {accountabilityCount}
+                    </AppText>
+
+                    <TranslatedText
+                      textColor
+                      caption
+                      translationKey="settings.accountability"
+                    />
+                  </AppView>
+                </AppTouchableOpacity>
+              </AppView>
             </AppView>
           </AppView>
 
@@ -309,7 +354,6 @@ const Settings = () => {
             ),
           },
           {
-            // TODO: Integrate api to list blocked users
             label: t('settings.blocked_users'),
             onPress: () => {
               setIsMenuVisible(false);
@@ -340,8 +384,8 @@ export default Settings;
 
 const styles = StyleSheet.create({
   image: {
-    width: 96,
-    height: 96,
+    width: 80,
+    height: 80,
     borderRadius: 100,
     alignSelf: 'center',
   },
@@ -355,4 +399,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
   },
+  profileCountBtn: { alignItems: 'flex-start', minWidth: 80 },
 });

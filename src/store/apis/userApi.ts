@@ -6,8 +6,13 @@ import {
   UpdateUserParamsType,
   UpdateUserResponseType,
   UpdateUserWithImageParamsType,
+  UserStatsResponseType,
 } from '@/store/apis/types/userApi.types';
 import { setAuthUserAction } from '@/store/slices/authSlice';
+import {
+  completeSetupTaskAction,
+  resetOnboardingFromServerAction,
+} from '@/store/slices/onboardingSlice';
 import { RootStateType } from '@/store/types/store.types';
 import { getAppleAuthCode } from '@/utils/storage.utils';
 
@@ -154,6 +159,13 @@ export const userApi = api.injectEndpoints({
         body: { timezone },
       }),
     }),
+    getUserStats: builder.query<UserStatsResponseType, void>({
+      query: () => ({
+        url: '/users/stats',
+        method: 'GET',
+      }),
+      keepUnusedDataFor: 900,
+    }),
     getMyProfile: builder.query<CreateUserResponseType, void>({
       query: () => ({
         url: `/users`,
@@ -171,6 +183,11 @@ export const userApi = api.injectEndpoints({
               avatar: data.profile_image_url || currentUser.avatar,
             }),
           );
+          if (data.onboarding_completed === true) {
+            dispatch(completeSetupTaskAction());
+          } else if (data.onboarding_completed === false) {
+            dispatch(resetOnboardingFromServerAction());
+          }
         } catch {}
       },
     }),

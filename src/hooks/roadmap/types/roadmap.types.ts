@@ -46,6 +46,10 @@ export interface TaskType {
   confidence?: string;
 
   status: RoadmapExecutionStatusType;
+
+  phase_number?: number;
+  milestone_number?: number;
+  task_number?: number;
 }
 
 export interface MilestoneType {

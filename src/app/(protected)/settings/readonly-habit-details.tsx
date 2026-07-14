@@ -4,8 +4,9 @@ import { Divider } from '@/components/Divider';
 import { HabitInfoItem } from '@/components/HabitInfoItem';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { LineDivider } from '@/components/LineDivider';
+import { RecurrenceBadge } from '@/components/roadmap/ReccurenceBadge';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
 import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { DateUtils } from '@/utils/date.utils';
 import { consumeHabit } from '@/utils/roadmapTransfer';
@@ -18,7 +19,6 @@ const DAY_BITS = [1, 2, 4, 8, 16, 32, 64];
 
 const ReadonlyHabitDetails = () => {
   const params = useLocalSearchParams<{ habit?: string }>();
-  const { t } = useLocalization();
   const [habit] = useState<HabitType | null>(() => {
     const transferred = consumeHabit();
     if (transferred) return transferred;
@@ -64,10 +64,13 @@ const ReadonlyHabitDetails = () => {
         </AppCard>
         <Divider />
         <AppCard>
-          <HabitInfoItem
-            translationKey="habits.recurrence_label"
-            value={t(`habits.recurrence.${habit.recurrence_type}`)}
-          />
+          <AppView gap-4 marginB-16>
+            <TranslatedText translationKey="habits.recurrence_label" />
+            <RecurrenceBadge
+              textProps={{ caption: true }}
+              type={habit.recurrence_type}
+            />
+          </AppView>
           {habit.recurrence_type === 'weekly' && !!weeklyDays && (
             <HabitInfoItem
               translationKey="habits.weekly_days_label"

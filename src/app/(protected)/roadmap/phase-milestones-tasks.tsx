@@ -12,10 +12,10 @@ import { EmptyListItemPlaceholder } from '@/components/roadmap/EmptyListItemPlac
 import { LevelBadge } from '@/components/roadmap/LevelBadge';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { MilestoneType, TaskType } from '@/hooks/roadmap/types/roadmap.types';
+import { useGetRoadmapByIdQuery } from '@/hooks/roadmap';
+import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useScrollToCurrentIndex } from '@/hooks/useScrollToCurrentItem';
-import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   resetMilestoneGenerationAction,
@@ -23,14 +23,16 @@ import {
   selectIsNextMilestoneGenerating,
 } from '@/store/slices/nextMilestoneGenerationSlice';
 import {
+  selectMilestoneBeforeId,
   selectMilestoneTasks,
+  selectNextMilestoneAfter,
+  setDraftRoadmapAction,
   setSelectedTaskAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { buildBadgeLabel, findOngoingTask } from '@/utils/roadmap.utils';
-import { consumeMilestone } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
@@ -43,14 +45,14 @@ const PhaseMilestonesTasks = () => {
   }>();
   const { t } = useLocalization();
   const dispatch = useAppDispatch();
-  const [currentMilestone] = useState<MilestoneType>(
-    () => consumeMilestone() ?? ({} as MilestoneType),
-  );
   const roadmapId = useAppSelector(
     (state) => state.roadmapDraft.roadmap.roadmap_id,
   );
-  const { isFetching: isRoadmapRefetching } =
-    roadmapApi.endpoints.getRoadmapById.useQueryState(roadmapId);
+  const { data: roadmapData, isFetching: isRoadmapRefetching } =
+    useGetRoadmapByIdQuery(roadmapId, {
+      skip: !roadmapId,
+      refetchOnMountOrArgChange: true,
+    });
   const tasks = useAppSelector(selectMilestoneTasks(params.milestoneId));
 
   const currentTask = findOngoingTask(tasks);
@@ -68,11 +70,45 @@ const PhaseMilestonesTasks = () => {
   const isCompletedForThisMilestone = useAppSelector(
     selectIsNextMilestoneCompleted(params.milestoneId),
   );
+  const nextMilestone = useAppSelector(
+    selectNextMilestoneAfter(params.milestoneId),
+  );
+  const prevMilestone = useAppSelector(
+    selectMilestoneBeforeId(params.milestoneId),
+  );
+
+  const prevMilestoneComplete =
+    !prevMilestone ||
+    (prevMilestone.tasks.length > 0 &&
+      prevMilestone.tasks.every((t) => t.status === 'completed'));
+
+  // Scenario 1: current milestone tasks are all done and the next milestone
+  // has no tasks yet (i.e. it hasn't been generated).
+  const allTasksCompleted =
+    tasks.length > 0 && tasks.every((t) => t.status === 'completed');
+  const hasUngeneratedNext =
+    !!nextMilestone &&
+    (!nextMilestone.tasks || nextMilestone.tasks.length === 0);
+
+  // Scenario 2: user navigated to a milestone that has no tasks yet,
+  // but only if the preceding milestone is fully complete.
+  const currentNotGenerated = tasks.length === 0;
 
   const shouldShowGenerateNextMilestone =
     !isGeneratingForThisMilestone &&
-    currentMilestone?.status === 'in_progress' &&
-    (!tasks || tasks.length === 0);
+    prevMilestoneComplete &&
+    (currentNotGenerated || (allTasksCompleted && hasUngeneratedNext));
+
+  // Scenario 1 → pass next milestone's id; Scenario 2 → pass current id.
+  const generateMilestoneId = currentNotGenerated
+    ? params.milestoneId
+    : (nextMilestone?.milestone_id ?? '');
+
+  useEffect(() => {
+    if (roadmapData) {
+      dispatch(setDraftRoadmapAction(roadmapData));
+    }
+  }, [roadmapData, dispatch]);
 
   useEffect(() => {
     if (isCompletedForThisMilestone) {
@@ -155,7 +191,7 @@ const PhaseMilestonesTasks = () => {
                 router.navigate({
                   pathname: '/roadmap/generate-next-milestone',
                   params: {
-                    milestoneId: params.milestoneId,
+                    milestoneId: generateMilestoneId,
                   },
                 });
               }}>

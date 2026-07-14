@@ -40,21 +40,34 @@ export const InProgressAIRoadmapBanner = () => {
     selectAIRoadmapCreationState,
   );
 
-  const { data: jobStatusData, refetch: refetchJobStatus } =
-    useGetJobStatusQuery(
-      {
-        jobId: aiRoadmapCreationJobResponse?.job_id || '',
-      },
-      {
-        skip:
-          !aiRoadmapCreationJobResponse?.job_id ||
-          status === 'completed' ||
-          status === 'error',
-        refetchOnFocus: true,
-        refetchOnReconnect: true,
-        refetchOnMountOrArgChange: true,
-      },
-    );
+  const {
+    data: jobStatusData,
+    refetch: refetchJobStatus,
+    isError: isJobStatusError,
+  } = useGetJobStatusQuery(
+    {
+      jobId: aiRoadmapCreationJobResponse?.job_id || '',
+    },
+    {
+      skip:
+        !aiRoadmapCreationJobResponse?.job_id ||
+        status === 'completed' ||
+        status === 'error',
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  useEffect(() => {
+    if (isJobStatusError) {
+      dispatch(setCreationErrorAction(t('common.something_went_wrong')));
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+    }
+  }, [isJobStatusError, dispatch, t]);
 
   useEffect(() => {
     if (!jobStatusData?.job_id) return;

@@ -166,6 +166,7 @@
     "progress": "Progrès",
     "create": "Créer",
     "messages": "Messages",
+    "upcoming_week": "Semaine à Venir",
     "today_tab": {
       "habits_title": "Vos Habitudes",
       "tasks_title": "Tâches d'Aujourd'hui",
@@ -272,6 +273,14 @@
     "linkedin": "LinkedIn",
     "website": "Site Web",
     "no_friends_found": "Aucun ami trouvé",
+    "no_anchors_found": "Aucune ancre pour l'instant",
+    "no_anchors_found_description": "Vous n'avez pas encore été ajouté comme ancre pour des objectifs.",
+    "anchoring_title": "Ancrage",
+    "not_anchoring_anyone": "Vous n'ancrez encore personne",
+    "not_anchoring_description": "Les ancres aident les gens à rester responsables en voyant les objectifs, les habitudes et les progrès qu'ils choisissent de partager.\n\nInvitez quelqu'un qui s'épanouit avec la responsabilité, ou quelqu'un qui pourrait en avoir besoin.",
+    "invite_a_friend": "Inviter un Ami",
+    "learn_how_anchors_work": "Découvrez Comment Fonctionnent les Ancres",
+    "open_message_thread": "Message",
     "friends": "Amis",
     "remove": "Supprimer",
     "add": "Ajouter",
@@ -324,7 +333,16 @@
     "failed_to_request_permission": "Échec de la demande d'autorisation",
     "failed_to_fetch_contacts": "Échec de la récupération des contacts",
     "membership_details": "Détails de l'Abonnement",
-    "report": "Rapport"
+    "report": "Rapport",
+    "user_stats": {
+      "streak": "Série",
+      "days": "jours",
+      "last_days": "Les {{dayCount}} derniers jours",
+      "compliant": "conforme",
+      "no_data_yet": "Pas de données pour le moment",
+      "tasks": "tâches",
+      "habits": "habitudes"
+    }
   },
   "membership": {
     "title": "Détails de l'Abonnement",
@@ -590,7 +608,7 @@
     "complete_all_steps": "Compléter toutes les étapes",
     "complete_all_steps_success": "Toutes les étapes ont été complétées avec succès !",
     "complete_all_steps_failure": "Impossible de compléter toutes les étapes",
-    "no_tasks_today": "Aucune tâche disponible !",
+    "no_tasks_today": "Aucune tâche disponible ",
     "no_tasks_today_description": "Ce jalon n'a pas de tâches en raison de jalons précédents incomplets.",
     "delete_roadmap_label": "Supprimer la Feuille de Route",
     "options": "Options",
@@ -776,6 +794,8 @@
     "empty_state": {
       "no_tasks_title": "Pas encore de tâches",
       "no_tasks_description": "Pas encore de tâches. Créez une feuille de route ou une habitude récurrente pour remplir votre journée.",
+      "no_weekly_tasks_title": "Aucune tâche à venir",
+      "no_weekly_tasks_description": "Vous n'avez aucune tâche prévue pour la semaine à venir.",
       "go_to_create": "Aller à Créer"
     }
   },

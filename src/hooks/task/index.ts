@@ -6,5 +6,6 @@ export const {
   useDeleteTaskMutation,
 
   useGetUserTasksByStartDateQuery,
+  useGetTasksByRangeQuery,
   useGetTasksByIdQuery,
 } = taskApi;

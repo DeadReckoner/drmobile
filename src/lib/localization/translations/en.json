@@ -80,6 +80,7 @@
     "progress": "Progress",
     "create": "Create",
     "messages": "Messages",
+    "upcoming_week": "Upcoming Week",
     "today_tab": {
       "habits_title": "Your Habits",
       "tasks_title": "Today's Tasks",
@@ -272,6 +273,14 @@
     "linkedin": "LinkedIn",
     "website": "Website",
     "no_friends_found": "No friends found",
+    "no_anchors_found": "No Anchors Yet",
+    "no_anchors_found_description": "You haven't been added as an anchor for any goals yet.",
+    "anchoring_title": "Anchoring",
+    "not_anchoring_anyone": "You're not anchoring anyone yet",
+    "not_anchoring_description": "Anchors help people stay accountable by seeing the goals, habits, and progress they choose to share.\n\nInvite someone who thrives with accountability, or someone who could use it.",
+    "invite_a_friend": "Invite a Friend",
+    "learn_how_anchors_work": "Learn How Anchors Work",
+    "open_message_thread": "Message",
     "friends": "Friends",
     "remove": "Remove",
     "add": "Add",
@@ -324,7 +333,16 @@
     "failed_to_request_permission": "Failed to request permission",
     "failed_to_fetch_contacts": "Failed to fetch contacts",
     "membership_details": "Membership Details",
-    "report": "Report"
+    "report": "Report",
+    "user_stats": {
+      "streak": "Streak",
+      "days": "days",
+      "last_days": "Last {{dayCount}} days",
+      "compliant": "Compliant",
+      "no_data_yet": "No data yet",
+      "tasks": "tasks",
+      "habits": "habits"
+    }
   },
   "membership": {
     "title": "Membership Details",
@@ -590,7 +608,7 @@
     "complete_all_steps": "Complete All Steps",
     "complete_all_steps_success": "All steps completed successfully!",
     "complete_all_steps_failure": "Failed to complete all steps",
-    "no_tasks_today": "No tasks available!",
+    "no_tasks_today": "No tasks available",
     "no_tasks_today_description": "This milestone has no tasks due to incompleted previous milestones.",
     "delete_roadmap_label": "Delete Roadmap",
     "options": "Options",
@@ -776,6 +794,8 @@
     "empty_state": {
       "no_tasks_title": "No tasks yet",
       "no_tasks_description": "No tasks yet. Create a roadmap or recurring habit to populate your day.",
+      "no_weekly_tasks_title": "No upcoming tasks",
+      "no_weekly_tasks_description": "You have no tasks scheduled for the upcoming week.",
       "go_to_create": "Go to Create"
     }
   },

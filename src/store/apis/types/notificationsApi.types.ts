@@ -96,9 +96,14 @@ export type NotificationEventType =
   | 'habit_anchor_request'
   | 'anchor_accepted'
   | 'anchor_rejected'
-  | 'message_new';
+  | 'message_new'
+  | 'follow_on_milestone_ready';
 
 export type RoadmapCompleteData = { roadmap_id: string };
+export type MilestoneGenerationCompleteData = {
+  roadmap_id: string;
+  milestone_id: string;
+};
 export type RoadmapFailedData = { roadmap_id: string; error: string };
 export type FriendRequestData = {
   friendship_id: string;
@@ -132,6 +137,10 @@ export type MessageNewData = {
   thread_id: string;
   sender_id: string;
 };
+export type FollowOnMilestoneReadyData = {
+  roadmap_id: string;
+  stage: number;
+};
 
 type NotificationTypeDataMap =
   | { type: 'roadmap_complete'; data: RoadmapCompleteData }
@@ -143,7 +152,9 @@ type NotificationTypeDataMap =
   | { type: 'habit_anchor_request'; data: AnchorRequestData }
   | { type: 'anchor_accepted'; data: AnchorAcceptedData }
   | { type: 'anchor_rejected'; data: AnchorRejectedData }
-  | { type: 'message_new'; data: MessageNewData };
+  | { type: 'message_new'; data: MessageNewData }
+  | { type: 'next_milestone_complete'; data: MilestoneGenerationCompleteData }
+  | { type: 'follow_on_milestone_ready'; data: FollowOnMilestoneReadyData };
 
 export type NotificationType = {
   notification_id: string;

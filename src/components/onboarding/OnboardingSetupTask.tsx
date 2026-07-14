@@ -3,6 +3,7 @@ import { Divider } from '@/components/Divider';
 import { SetupCompletionProgress } from '@/components/onboarding/SetupCompletionProgress';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
+import { useUpdateUserMutation } from '@/hooks/user';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   completeSetupTaskAction,
@@ -19,6 +20,7 @@ type CompletionPhase = 'idle' | 'progress' | 'message';
 
 export const OnboardingSetupTask = () => {
   const dispatch = useAppDispatch();
+  const [updateUser] = useUpdateUserMutation();
   const setupSteps = useAppSelector(selectSetupSteps);
   const allStepsCompleted = useAppSelector(selectAreAllSetupStepsCompleted);
   const [phase, setPhase] = useState<CompletionPhase>('idle');
@@ -44,6 +46,7 @@ export const OnboardingSetupTask = () => {
       setPhase('message');
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       dispatch(completeSetupTaskAction());
+      updateUser({ onboarding_completed: true });
     }, 1600);
   };
 

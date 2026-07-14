@@ -5,7 +5,6 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Colors } from 'react-native-ui-lib';
 
 interface AppModalProps extends Omit<BottomSheetProps, 'visible'> {
@@ -63,30 +62,28 @@ export const AppModal = ({
   );
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={visible ? initialIndex : -1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        enablePanDownToClose={dismissible ? enablePanDownToClose : false}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={[{ backgroundColor: Colors.cardBG }, backgroundStyle]}
-        handleIndicatorStyle={[
-          styles.indicatorStyle,
-          { backgroundColor: Colors.textColor },
-        ]}
-        {...props}>
-        <BottomSheetView
-          style={StyleSheet.flatten([
-            styles.contentContainer,
-            { backgroundColor: Colors.cardBG },
-            contentContainerStyle,
-          ])}>
-          {children}
-        </BottomSheetView>
-      </BottomSheet>
-    </GestureHandlerRootView>
+    <BottomSheet
+      ref={bottomSheetRef}
+      index={visible ? initialIndex : -1}
+      snapPoints={snapPoints}
+      onChange={handleSheetChanges}
+      enablePanDownToClose={dismissible ? enablePanDownToClose : false}
+      backdropComponent={renderBackdrop}
+      backgroundStyle={[{ backgroundColor: Colors.cardBG }, backgroundStyle]}
+      handleIndicatorStyle={[
+        styles.indicatorStyle,
+        { backgroundColor: Colors.textColor },
+      ]}
+      {...props}>
+      <BottomSheetView
+        style={StyleSheet.flatten([
+          styles.contentContainer,
+          { backgroundColor: Colors.cardBG },
+          contentContainerStyle,
+        ])}>
+        {children}
+      </BottomSheetView>
+    </BottomSheet>
   );
 };
 

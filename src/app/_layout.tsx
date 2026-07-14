@@ -13,6 +13,7 @@ import * as Sentry from '@sentry/react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 import { Provider } from 'react-redux';
@@ -87,11 +88,13 @@ export default function RootLayout() {
       fallback={({ resetError, eventId }) => (
         <ErrorFallback onReset={resetError} eventId={eventId} />
       )}>
-      <Provider store={store}>
-        <PersistGate loading={<Loader />} persistor={persistedStore}>
-          <AppWithEntitlementCheck />
-        </PersistGate>
-      </Provider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Provider store={store}>
+          <PersistGate loading={<Loader />} persistor={persistedStore}>
+            <AppWithEntitlementCheck />
+          </PersistGate>
+        </Provider>
+      </GestureHandlerRootView>
     </Sentry.GlobalErrorBoundary>
   );
 }

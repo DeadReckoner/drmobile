@@ -3,7 +3,9 @@ import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
+import { AppSegmentControl } from '@/components/AppSegmentControl';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
@@ -17,11 +19,12 @@ import {
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
 } from '@/store/apis/friendsApi';
+import { HabitType } from '@/store/apis/types/habitsApi.types';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
-import { storeRoadmap } from '@/utils/roadmapTransfer';
+import { storeHabit, storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
+import { Alert, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const FriendDetails = () => {
@@ -54,12 +57,16 @@ const FriendDetails = () => {
     (params['friendEmail'] as string | undefined);
 
   const [isSettingsSheetVisible, setIsSettingsSheetVisible] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'roadmaps' | 'habits'>(
+    'roadmaps',
+  );
 
   const [localFriendshipStatus, setLocalFriendshipStatus] = useState<
     'none' | 'pending' | 'accepted' | null
   >(null);
 
   const roadmaps = friendProfileData?.allowed_roadmaps || [];
+  const habits = friendProfileData?.allowed_habits || [];
 
   const [removeFriend, { isLoading: isRemoving }] = useRemoveFriendMutation();
   const [blockFriend, { isLoading: isBlocking }] = useBlockFriendMutation();
@@ -212,6 +219,53 @@ const FriendDetails = () => {
     );
   }, []);
 
+  const renderEmptyHabits = useCallback(() => {
+    return (
+      <AppCard paddingV-48 center>
+        <AppView center gap-20>
+          <TranslatedText body2 translationKey="settings.no_habits_shared" />
+        </AppView>
+      </AppCard>
+    );
+  }, []);
+
+  const renderHabitItem = useCallback(
+    ({ item: habit }: { item: HabitType }) => {
+      return (
+        <AppCard
+          paddingV-20
+          marginB-16
+          onPress={() => {
+            storeHabit(habit);
+            router.navigate({ pathname: '/settings/readonly-habit-details' });
+          }}>
+          <AppView row centerV flex-1 gap-4>
+            <AppText body2 textColor flex-1>
+              {habit.title}
+            </AppText>
+            <AppView bg-accent paddingH-8 paddingV-4 br100>
+              <AppText
+                white
+                xsm
+                regular
+                style={{ textTransform: 'capitalize' }}>
+                {habit.recurrence_type === 'none'
+                  ? t('habits.recurrence.none')
+                  : habit.recurrence_type}
+              </AppText>
+            </AppView>
+          </AppView>
+          {habit.description ? (
+            <AppText xsm textColor marginT-4>
+              {habit.description}
+            </AppText>
+          ) : null}
+        </AppCard>
+      );
+    },
+    [t],
+  );
+
   const handleRoadmapPress = useCallback((roadmap: RoadmapType) => {
     storeRoadmap(roadmap);
     router.navigate({
@@ -244,16 +298,6 @@ const FriendDetails = () => {
       );
     },
     [handleRoadmapPress],
-  );
-  const renderHeader = () => (
-    <AppView marginT-24 row gap-8>
-      <TranslatedText
-        body1
-        textColor
-        translationKey="settings.roadmaps"
-        marginB-16
-      />
-    </AppView>
   );
 
   if (isLoading) {
@@ -456,7 +500,6 @@ const FriendDetails = () => {
                     style={styles.statLabel}
                     marginB-8
                   />
-
                   <AppIcon name="message" size={20} />
                 </AppView>
               </AppButton>
@@ -515,14 +558,34 @@ const FriendDetails = () => {
           </AppView>
         </AppCard>
 
-        <AppView paddingH-16>
-          <FlatList
-            scrollEnabled={false}
-            data={roadmaps || []}
-            ListHeaderComponent={renderHeader}
-            ListEmptyComponent={renderEmptyRoadmaps}
-            renderItem={renderRoadmapItem}
+        <AppView marginH-16 marginT-24>
+          <AppSegmentControl
+            segments={[
+              t('settings.roadmaps'),
+              `${t('settings.habits')}/${t('common.tasks')}`,
+            ]}
+            selectedIndex={selectedTab === 'roadmaps' ? 0 : 1}
+            onSegmentChange={(index) =>
+              setSelectedTab(index === 0 ? 'roadmaps' : 'habits')
+            }
           />
+        </AppView>
+        <AppView paddingH-16 marginT-16>
+          {selectedTab === 'roadmaps' ? (
+            <AppList
+              scrollEnabled={false}
+              data={roadmaps}
+              ListEmptyComponent={renderEmptyRoadmaps}
+              renderItem={renderRoadmapItem}
+            />
+          ) : (
+            <AppList
+              scrollEnabled={false}
+              data={habits}
+              ListEmptyComponent={renderEmptyHabits}
+              renderItem={renderHabitItem}
+            />
+          )}
         </AppView>
       </ScrollView>
       <AppActionSheetModal
