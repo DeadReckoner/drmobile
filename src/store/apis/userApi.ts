@@ -6,6 +6,7 @@ import {
   UpdateUserParamsType,
   UpdateUserResponseType,
   UpdateUserWithImageParamsType,
+  UserStatsResponseType,
 } from '@/store/apis/types/userApi.types';
 import { setAuthUserAction } from '@/store/slices/authSlice';
 import {
@@ -157,6 +158,13 @@ export const userApi = api.injectEndpoints({
         method: 'PATCH',
         body: { timezone },
       }),
+    }),
+    getUserStats: builder.query<UserStatsResponseType, void>({
+      query: () => ({
+        url: '/users/stats',
+        method: 'GET',
+      }),
+      keepUnusedDataFor: 900,
     }),
     getMyProfile: builder.query<CreateUserResponseType, void>({
       query: () => ({

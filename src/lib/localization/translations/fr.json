@@ -333,7 +333,16 @@
     "failed_to_request_permission": "Échec de la demande d'autorisation",
     "failed_to_fetch_contacts": "Échec de la récupération des contacts",
     "membership_details": "Détails de l'Abonnement",
-    "report": "Rapport"
+    "report": "Rapport",
+    "user_stats": {
+      "streak": "Série",
+      "days": "jours",
+      "last_days": "Les {{dayCount}} derniers jours",
+      "compliant": "conforme",
+      "no_data_yet": "Pas de données pour le moment",
+      "tasks": "tâches",
+      "habits": "habitudes"
+    }
   },
   "membership": {
     "title": "Détails de l'Abonnement",

@@ -333,7 +333,16 @@
     "failed_to_request_permission": "Failed to request permission",
     "failed_to_fetch_contacts": "Failed to fetch contacts",
     "membership_details": "Membership Details",
-    "report": "Report"
+    "report": "Report",
+    "user_stats": {
+      "streak": "Streak",
+      "days": "days",
+      "last_days": "Last {{dayCount}} days",
+      "compliant": "Compliant",
+      "no_data_yet": "No data yet",
+      "tasks": "tasks",
+      "habits": "habits"
+    }
   },
   "membership": {
     "title": "Membership Details",

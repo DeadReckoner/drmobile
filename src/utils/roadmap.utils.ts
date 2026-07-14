@@ -75,7 +75,7 @@ export const buildBadgeLabel = ({
   if (isValidValue(phase)) parts.push(`P${phase}`);
   if (isValidValue(milestone)) parts.push(`M${milestone}`);
   if (isValidValue(task)) parts.push(`T${task}`);
-  return parts.join('-');
+  return parts.join(' · ');
 };
 
 /**

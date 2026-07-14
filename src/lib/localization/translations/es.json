@@ -333,7 +333,16 @@
     "failed_to_request_permission": "Error al solicitar permiso",
     "failed_to_fetch_contacts": "Error al obtener contactos",
     "membership_details": "Detalles de Membresía",
-    "report": "Informe"
+    "report": "Informe",
+    "user_stats": {
+      "streak": "Racha",
+      "days": "días",
+      "last_days": "Últimos {{dayCount}} días",
+      "compliant": "cumplidor",
+      "no_data_yet": "Sin datos aún",
+      "tasks": "tareas",
+      "habits": "hábitos"
+    }
   },
   "membership": {
     "title": "Detalles de Membresía",

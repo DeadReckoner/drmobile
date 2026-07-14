@@ -39,3 +39,13 @@ export type UpdateUserResponseType = {
 export type DeleteUserResponseType = {
   message: string;
 };
+
+export type UserStatsResponseType = {
+  current_streak_days: number;
+  compliance_30d: number | null;
+  window_days: number;
+  tasks_due_30d: number;
+  tasks_completed_30d: number;
+  habit_instances_due_30d: number;
+  habit_instances_completed_30d: number;
+};
