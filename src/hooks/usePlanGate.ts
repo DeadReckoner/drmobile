@@ -16,14 +16,14 @@ const LIMIT_KEY: Partial<Record<FeatureKeyType, keyof BillingLimits>> = {
   active_roadmaps: 'active_roadmaps',
   active_habits: 'active_habits',
   roadmap_anchors: 'anchors_per_roadmap',
-  ai_generations_per_month: 'ai_generations_per_month',
+  ai_generations_per_day: 'ai_generations_per_day',
 };
 
 /** Features whose current usage is reported in `/billing/status`. */
 const USAGE_KEY: Partial<Record<FeatureKeyType, keyof BillingUsage>> = {
   active_roadmaps: 'active_roadmaps',
   active_habits: 'active_habits',
-  ai_generations_per_month: 'ai_generations_this_period',
+  ai_generations_per_day: 'ai_generations_this_period',
 };
 
 const UNLIMITED = -1;
@@ -34,10 +34,10 @@ const UNLIMITED = -1;
  * the server-side source of truth; these helpers just let the UI lock/badge an
  * action before the request fires.
  *
- * Note: features without a numeric limit (habit_anchors, archive, and the
- * Step-8 paid-only features) are simply "Pro-only" — blocked whenever the user
- * isn't Pro. When limits haven't loaded yet, gating is permissive and we let
- * the server return a 402.
+ * Note: features without a numeric limit (habit_anchors and the Step-8
+ * paid-only features) are simply "Pro-only" — blocked whenever the user isn't
+ * Pro. When limits haven't loaded yet, gating is permissive and we let the
+ * server return a 402.
  */
 export const usePlanGate = () => {
   const isPro = useAppSelector(selectIsPro);

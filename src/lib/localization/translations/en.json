@@ -629,7 +629,8 @@
       "continue_label": "Continue Where I Left Off",
       "restart_label": "Restart from Today",
       "success": "Roadmap restored",
-      "error": "Failed to restore roadmap"
+      "error": "Failed to restore roadmap",
+      "active_limit_message": "Archive or delete your active roadmap to restore this one"
     },
     "pause": {
       "label": "Pause Roadmap",
@@ -943,8 +944,7 @@
       "active_habits": "Unlimited habits with Pro",
       "roadmap_anchors": "More anchors with Pro",
       "habit_anchors": "Habit anchors are a Pro feature",
-      "ai_generations_per_month": "Unlimited AI roadmaps with Pro",
-      "archive": "Archiving is a Pro feature",
+      "ai_generations_per_day": "Unlimited AI roadmaps with Pro",
       "custom_reminders": "Custom reminders are a Pro feature",
       "weekly_review": "AI-powered weekly review is a Pro feature",
       "messaging_reactions": "Reactions & replies are a Pro feature",

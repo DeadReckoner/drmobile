@@ -30,6 +30,7 @@ import {
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { PlanLimitError } from '@/store/types/billing.types';
 import { router } from 'expo-router';
 import React, { JSX, useCallback, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -146,7 +147,18 @@ export const useRoadmapMenuOptions = ({
         showToast({ type: 'success', message: t('roadmap.restore.success') });
         router.replace('/roadmap/roadmap-execution');
       } catch (error) {
-        showToast({ type: 'failure', message: getApiErrorMessage(error) });
+        const planError = (error as { data?: Partial<PlanLimitError> })?.data;
+        if (
+          planError?.code === 'plan_limit' &&
+          planError?.feature === 'active_roadmaps'
+        ) {
+          showToast({
+            type: 'failure',
+            message: t('roadmap.restore.active_limit_message'),
+          });
+        } else {
+          showToast({ type: 'failure', message: getApiErrorMessage(error) });
+        }
       } finally {
         setIsRestoreSheetVisible(false);
         setActiveRestoreButton('');
