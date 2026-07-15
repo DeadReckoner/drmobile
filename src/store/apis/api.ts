@@ -61,6 +61,7 @@ export const createBaseQueryWithReauth = () => {
             feature: planError.feature,
             limit: planError.limit ?? 0,
             current: planError.current ?? 0,
+            message: planError.message,
           },
         });
       }

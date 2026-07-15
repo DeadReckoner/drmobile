@@ -21,9 +21,11 @@ import { Colors } from 'react-native-ui-lib';
 type PaywallContentProps = {
   /** When opened by the 402 interceptor, the feature the user hit. Drives the headline. */
   feature?: FeatureKeyType;
+  /** Server-provided message from the 402 body — shown as the subtitle when present. */
+  message?: string;
 };
 
-export const PaywallContent = ({ feature }: PaywallContentProps) => {
+export const PaywallContent = ({ feature, message }: PaywallContentProps) => {
   const {
     subscriptions,
     isPurchasing,
@@ -123,15 +125,21 @@ export const PaywallContent = ({ feature }: PaywallContentProps) => {
                   color={Colors.proBadge}
                 />
               </AppView>
-              <TranslatedText
-                style={styles.text}
-                xsm
-                translationKey={
-                  feature
-                    ? `paywall.feature_headline.${feature}`
-                    : 'paywall.subtitle'
-                }
-              />
+              {message ? (
+                <AppText style={styles.text} xsm>
+                  {message}
+                </AppText>
+              ) : (
+                <TranslatedText
+                  style={styles.text}
+                  xsm
+                  translationKey={
+                    feature
+                      ? `paywall.feature_headline.${feature}`
+                      : 'paywall.subtitle'
+                  }
+                />
+              )}
             </AppView>
             <ProFeaturesComparision />
           </AppView>

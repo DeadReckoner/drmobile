@@ -22,7 +22,10 @@ export const useBillingPaywall = () => {
     if (!trigger) return;
     router.navigate({
       pathname: '/paywall',
-      params: { feature: trigger.feature },
+      params: {
+        feature: trigger.feature,
+        ...(trigger.message ? { message: trigger.message } : {}),
+      },
     });
     dispatch(clearPaywallTrigger());
   }, [trigger, dispatch]);
