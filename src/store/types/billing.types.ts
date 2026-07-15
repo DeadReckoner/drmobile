@@ -31,8 +31,7 @@ export type FeatureKeyType =
   | 'active_habits'
   | 'roadmap_anchors'
   | 'habit_anchors'
-  | 'ai_generations_per_month'
-  | 'archive'
+  | 'ai_generations_per_day'
   | 'custom_reminders'
   | 'weekly_review'
   | 'messaging_reactions'
@@ -45,7 +44,7 @@ export type BillingLimits = {
   active_roadmaps: number;
   active_habits: number;
   anchors_per_roadmap: number;
-  ai_generations_per_month: number;
+  ai_generations_per_day: number;
 };
 
 export type BillingUsage = {

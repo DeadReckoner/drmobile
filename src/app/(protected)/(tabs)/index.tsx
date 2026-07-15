@@ -14,10 +14,7 @@ import { useGetFriendsQuery } from '@/hooks/friends';
 import { useGetNotificationsQuery } from '@/hooks/notifications';
 import { useGetRoadmapsQuery } from '@/hooks/roadmap';
 import { TaskType } from '@/hooks/roadmap/types/roadmap.types';
-import {
-  useGetTasksByRangeQuery,
-  useGetUserTasksByStartDateQuery,
-} from '@/hooks/task';
+import { useGetUserTasksByStartDateQuery } from '@/hooks/task';
 import { useLocalization } from '@/hooks/useLocalization';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { useGetTodayHabitsQuery } from '@/store/apis/habitsApi';
@@ -39,11 +36,10 @@ import {
 import { Animations } from '@/utils/animation.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { buildBadgeLabel } from '@/utils/roadmap.utils';
-import { storeTask } from '@/utils/roadmapTransfer';
 import { LegendListRenderItemProps } from '@legendapp/list';
 import { router, Tabs } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Today = () => {
@@ -72,19 +68,19 @@ const Today = () => {
   });
 
   const [manualRefreshing, setManualRefreshing] = useState(false);
-  const [isWeeklyModalVisible, setIsWeeklyModalVisible] = useState(false);
+  // const [isWeeklyModalVisible, setIsWeeklyModalVisible] = useState(false);
   const dispatch = useAppDispatch();
 
-  const weeklyRange = useMemo(() => {
-    const tomorrow = DateUtils.createDate().add(1, 'day');
-    return {
-      startDate: DateUtils.formatDate(tomorrow, 'YYYY-MM-DD'),
-      endDate: DateUtils.formatDate(tomorrow.add(7, 'day'), 'YYYY-MM-DD'),
-    };
-  }, []);
+  // const weeklyRange = useMemo(() => {
+  //   const tomorrow = DateUtils.createDate().add(1, 'day');
+  //   return {
+  //     startDate: DateUtils.formatDate(tomorrow, 'YYYY-MM-DD'),
+  //     endDate: DateUtils.formatDate(tomorrow.add(7, 'day'), 'YYYY-MM-DD'),
+  //   };
+  // }, []);
 
-  const { data: weeklyTasks, isLoading: weeklyTasksLoading } =
-    useGetTasksByRangeQuery(weeklyRange, { skip: !isWeeklyModalVisible });
+  // const { data: weeklyTasks, isLoading: weeklyTasksLoading } =
+  //   useGetTasksByRangeQuery(weeklyRange, { skip: !isWeeklyModalVisible });
   const { requestPermissions } = usePushNotifications();
 
   useEffect(() => {
@@ -146,15 +142,15 @@ const Today = () => {
     }
   }, [roadmaps, friends, setupSteps, isSetupTaskCompleted, dispatch]);
 
-  const onCalendarClick = () => {
-    setIsWeeklyModalVisible(true);
-  };
+  // const onCalendarClick = () => {
+  //   setIsWeeklyModalVisible(true);
+  // };
 
-  const handleWeeklyTaskPress = (task: TaskType) => {
-    storeTask(task);
-    setIsWeeklyModalVisible(false);
-    router.navigate('/settings/readonly-task-details');
-  };
+  // const handleWeeklyTaskPress = (task: TaskType) => {
+  //   storeTask(task);
+  //   setIsWeeklyModalVisible(false);
+  //   router.navigate('/settings/readonly-task-details');
+  // };
 
   const onNotificationsClick = () => {
     router.navigate('/notifications');
@@ -393,9 +389,9 @@ const Today = () => {
         <AppView row centerV spread>
           <TranslatedText h2 translationKey="tabs.today" />
           <AppView center row gap-20>
-            <AppButton onPress={onCalendarClick}>
+            {/* <AppButton onPress={onCalendarClick}>
               <AppIcon set="Feather" name="calendar" size={26} />
-            </AppButton>
+            </AppButton> */}
             <AppButton onPress={onNotificationsClick}>
               <AppView>
                 <AppIcon name="notification" size={26} />
@@ -491,7 +487,8 @@ const Today = () => {
         )}
       </ScrollView>
 
-      <Modal
+      {/* Reenable weekly modal when feature supports it in future */}
+      {/* <Modal
         visible={isWeeklyModalVisible}
         backdropColor={Colors.screenBG}
         presentationStyle="pageSheet"
@@ -577,7 +574,7 @@ const Today = () => {
             )
           }
         />
-      </Modal>
+      </Modal> */}
     </AppScreen>
   );
 };

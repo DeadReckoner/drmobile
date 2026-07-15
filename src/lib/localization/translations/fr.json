@@ -629,7 +629,8 @@
       "continue_label": "Continuer où j'en étais",
       "restart_label": "Repartir d'aujourd'hui",
       "success": "Feuille de route restaurée",
-      "error": "Échec de la restauration de la feuille de route"
+      "error": "Échec de la restauration de la feuille de route",
+      "active_limit_message": "Archivez ou supprimez votre feuille de route active pour restaurer celle-ci"
     },
     "pause": {
       "label": "Mettre en Pause la Feuille de Route",
@@ -943,8 +944,7 @@
       "active_habits": "Habitudes illimitées avec Pro",
       "roadmap_anchors": "Plus d'ancres avec Pro",
       "habit_anchors": "Les ancres d'habitudes sont une fonctionnalité Pro",
-      "ai_generations_per_month": "Feuilles de route IA illimitées avec Pro",
-      "archive": "L'archivage est une fonctionnalité Pro",
+      "ai_generations_per_day": "Feuilles de route IA illimitées avec Pro",
       "custom_reminders": "Les rappels personnalisés sont une fonctionnalité Pro",
       "weekly_review": "Le bilan hebdomadaire par IA est une fonctionnalité Pro",
       "messaging_reactions": "Les réactions et réponses sont une fonctionnalité Pro",

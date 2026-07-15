@@ -629,7 +629,8 @@
       "continue_label": "Continuar donde lo dejé",
       "restart_label": "Reiniciar desde hoy",
       "success": "Hoja de ruta restaurada",
-      "error": "Error al restaurar la hoja de ruta"
+      "error": "Error al restaurar la hoja de ruta",
+      "active_limit_message": "Archiva o elimina tu hoja de ruta activa para restaurar esta"
     },
     "pause": {
       "label": "Pausar Hoja de Ruta",
@@ -943,8 +944,7 @@
       "active_habits": "Hábitos ilimitados con Pro",
       "roadmap_anchors": "Más anclas con Pro",
       "habit_anchors": "Las anclas de hábitos son una función Pro",
-      "ai_generations_per_month": "Hojas de ruta con IA ilimitadas con Pro",
-      "archive": "Archivar es una función Pro",
+      "ai_generations_per_day": "Hojas de ruta con IA ilimitadas con Pro",
       "custom_reminders": "Los recordatorios personalizados son una función Pro",
       "weekly_review": "La revisión semanal con IA es una función Pro",
       "messaging_reactions": "Las reacciones y respuestas son una función Pro",
