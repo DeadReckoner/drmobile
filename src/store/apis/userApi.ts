@@ -113,7 +113,9 @@ export const userApi = api.injectEndpoints({
         dispatch(
           setAuthUserAction({
             ...state.auth.user,
-            avatar: data.profile_image_url ?? state.auth.user.avatar,
+            name: `${data.first_name} ${data.last_name}`.trim(),
+            email: data.email,
+            avatar: data.profile_image_url || state.auth.user.avatar,
           }),
         );
 

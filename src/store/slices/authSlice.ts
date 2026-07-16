@@ -20,6 +20,9 @@ const authSlice = createSlice({
     },
     setAuthUserAction(state, action: PayloadAction<UserType>) {
       state.user = action.payload;
+      state.user.avatar = action.payload.avatar
+        ? `${action.payload.avatar}?time=${Date.now()}`
+        : '';
       state.isLoading = false;
     },
     clearAuthAction(state) {
