@@ -27,6 +27,7 @@ export const ApiCacheTags = Object.freeze({
   NotificationSettings: 'NotificationSettings',
   NotificationOverrides: 'NotificationOverrides',
   Anchoring: 'Anchoring',
+  UserStats: 'UserStats',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
