@@ -9,6 +9,7 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import {
   useDeleteUserImageMutation,
+  useUpdateUserMutation,
   useUpdateUserWithImageMutation,
 } from '@/hooks/user';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -61,6 +62,7 @@ export const UpdateProfileForm = ({
   const { showToast } = useToast();
   const { updateUserWithAuthProvider } = useAuth();
   const { t } = useLocalization();
+  const [updateUser] = useUpdateUserMutation();
   const [updateUserWithImage] = useUpdateUserWithImageMutation();
   const [deleteUserImage] = useDeleteUserImageMutation();
 
@@ -104,20 +106,21 @@ export const UpdateProfileForm = ({
     onSubmit: async (values) => {
       setIsLoading(true);
       try {
-        const { error } = await updateUserWithAuthProvider({
-          data: {
-            full_name: `${values.first_name.trim()} ${values.last_name.trim()}`,
-            email: values.email.trim(),
-          },
-        });
-        if (error) {
-          throw error;
-        }
-
         if (imageDeleted) {
           await deleteUserImage().unwrap();
+          const { error } = await updateUserWithAuthProvider({
+            data: {
+              full_name: `${values.first_name.trim()} ${values.last_name.trim()}`,
+              email: values.email.trim(),
+              avatar_url: '',
+            },
+          });
+
+          if (error) {
+            throw error;
+          }
         } else if (pendingImageUri) {
-          await updateUserWithImage({
+          const response = await updateUserWithImage({
             userPayload: {
               first_name: values.first_name.trim(),
               last_name: values.last_name.trim(),
@@ -125,6 +128,34 @@ export const UpdateProfileForm = ({
             },
             imageUri: pendingImageUri,
           }).unwrap();
+          const { error } = await updateUserWithAuthProvider({
+            data: {
+              full_name: `${values.first_name.trim()} ${values.last_name.trim()}`,
+              email: values.email.trim(),
+              avatar_url: response.profile_image_url || user.avatar,
+            },
+          });
+
+          if (error) {
+            throw error;
+          }
+        } else {
+          await updateUser({
+            first_name: values.first_name.trim(),
+            last_name: values.last_name.trim(),
+            email: values.email.trim(),
+          }).unwrap();
+          const { error } = await updateUserWithAuthProvider({
+            data: {
+              full_name: `${values.first_name.trim()} ${values.last_name.trim()}`,
+              email: values.email.trim(),
+              avatar_url: user.avatar || '',
+            },
+          });
+
+          if (error) {
+            throw error;
+          }
         }
 
         showToast({

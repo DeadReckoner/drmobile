@@ -3,8 +3,11 @@ import { FeatureKeyType } from '@/store/types/billing.types';
 import { useLocalSearchParams } from 'expo-router';
 
 const PaywallScreen = () => {
-  const { feature } = useLocalSearchParams<{ feature?: FeatureKeyType }>();
-  return <PaywallContent feature={feature} />;
+  const { feature, message } = useLocalSearchParams<{
+    feature?: FeatureKeyType;
+    message?: string;
+  }>();
+  return <PaywallContent feature={feature} message={message} />;
 };
 
 export default PaywallScreen;

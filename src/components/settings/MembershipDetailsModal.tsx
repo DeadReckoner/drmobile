@@ -198,16 +198,16 @@ export const MembershipDetailsModal = ({
             />
           </AppButton>
         ) : (
-          <AppButton bg-accent br20 paddingV-14 center onPress={handleUpgrade}>
+          <AppButton bg-accent br40 paddingV-14 center onPress={handleUpgrade}>
             <AppView row centerV gap-8>
               <AppIcon
                 set="Ionicons"
                 name="sparkles"
-                size={16}
+                size={18}
                 color={Colors.textOnPrimary}
               />
               <TranslatedText
-                body2
+                body1
                 semibold
                 style={{ color: Colors.textOnPrimary }}
                 translationKey="membership.upgrade_to_pro"

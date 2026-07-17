@@ -6,10 +6,10 @@ import { AppIcon } from '@/components/AppIcon';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
 import { Loader } from '@/components/Loader';
+import { getReportAIOutputMenuOption } from '@/components/report/reportAIOutput';
 import { RealignDatesModal } from '@/components/roadmap/RealignDatesModal';
 import { ShareRoadmapModal } from '@/components/roadmap/ShareRoadmapModal';
 import { ShiftDatesModal } from '@/components/roadmap/ShiftDatesModal';
-import { getReportAIOutputMenuOption } from '@/components/report/reportAIOutput';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import {
@@ -29,8 +29,9 @@ import {
   resetDraftAction,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
-import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { PlanLimitError } from '@/store/types/billing.types';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { isRoadmapStarted } from '@/utils/roadmap.utils';
 import { router } from 'expo-router';
 import React, { JSX, useCallback, useMemo, useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -311,7 +312,7 @@ export const useRoadmapMenuOptions = ({
   );
 
   const isPaused = !!roadmap.paused_at;
-  const isStarted = !!roadmap.start_date;
+  const isStarted = isRoadmapStarted(roadmap);
 
   const menuOptions = useMemo<ActionSheetOption[]>(
     () => [

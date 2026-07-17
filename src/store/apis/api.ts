@@ -27,6 +27,7 @@ export const ApiCacheTags = Object.freeze({
   NotificationSettings: 'NotificationSettings',
   NotificationOverrides: 'NotificationOverrides',
   Anchoring: 'Anchoring',
+  UserStats: 'UserStats',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
@@ -61,6 +62,7 @@ export const createBaseQueryWithReauth = () => {
             feature: planError.feature,
             limit: planError.limit ?? 0,
             current: planError.current ?? 0,
+            message: planError.message,
           },
         });
       }

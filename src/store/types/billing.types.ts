@@ -78,4 +78,5 @@ export type PaywallTriggerType = {
   feature: FeatureKeyType;
   limit: number;
   current: number;
+  message?: string;
 } | null;

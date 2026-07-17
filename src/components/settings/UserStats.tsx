@@ -9,7 +9,9 @@ import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 export const UserStats = () => {
-  const { data } = useGetUserStatsQuery();
+  const { data } = useGetUserStatsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const { t } = useLocalization();
 

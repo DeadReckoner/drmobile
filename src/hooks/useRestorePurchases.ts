@@ -20,7 +20,7 @@ import { useEntitlementCheck } from './useEntitlementCheck';
 export const useRestorePurchases = () => {
   const dispatch = useAppDispatch();
   const { checkEntitlementStatus } = useEntitlementCheck();
-  const { refetchBillingStatusAfterDelay } = useBillingStatusSync();
+  const { verifyBillingPlan } = useBillingStatusSync();
 
   const [isRestoring, setIsRestoring] = useState(false);
 
@@ -32,8 +32,19 @@ export const useRestorePurchases = () => {
     try {
       await Purchases.restorePurchases();
       const isNowPro = await checkEntitlementStatus();
-      refetchBillingStatusAfterDelay();
-      return isNowPro;
+
+      if (!isNowPro) return false;
+
+      const serverConfirmed = await verifyBillingPlan();
+      if (!serverConfirmed) {
+        dispatch(
+          setIapError(
+            'Your purchase was restored but could not be verified. Please try again or contact support.',
+          ),
+        );
+      }
+
+      return serverConfirmed;
     } catch (e) {
       const error = e as PurchasesError;
       dispatch(setIapError(error.message ?? 'Restore failed'));
@@ -42,7 +53,7 @@ export const useRestorePurchases = () => {
       dispatch(setIapLoading(false));
       setIsRestoring(false);
     }
-  }, [dispatch, checkEntitlementStatus, refetchBillingStatusAfterDelay]);
+  }, [dispatch, checkEntitlementStatus, verifyBillingPlan]);
 
   return { restorePurchases, isRestoring };
 };
