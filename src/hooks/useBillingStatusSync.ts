@@ -7,6 +7,9 @@ import { AppState, type AppStateStatus } from 'react-native';
 /** Delay (ms) before the post-purchase reconciliation refetch (webhook lag). */
 const POST_PURCHASE_REFETCH_DELAY = 5000;
 
+/** Retry schedule (ms) for verifyBillingPlan — waits for webhook propagation. */
+const VERIFY_RETRY_DELAYS = [0, 3000, 5000];
+
 /**
  * Keeps the backend's authoritative `/billing/status` in sync (the source of
  * truth for plan + limits + usage). See BILLING_INTEGRATION_PLAN.md Phase 5.
@@ -37,6 +40,28 @@ export const useBillingStatusSync = ({ register = false } = {}) => {
     setTimeout(refetchBillingStatus, POST_PURCHASE_REFETCH_DELAY);
   }, [refetchBillingStatus]);
 
+  /**
+   * Polls `/billing/status` until the server confirms `plan: "paid"`, retrying
+   * across VERIFY_RETRY_DELAYS to allow for RevenueCat webhook propagation.
+   * Returns `true` once the server confirms, `false` if all retries exhaust.
+   */
+  const verifyBillingPlan = useCallback(async (): Promise<boolean> => {
+    for (const delay of VERIFY_RETRY_DELAYS) {
+      if (delay > 0) await new Promise((r) => setTimeout(r, delay));
+      try {
+        const result = await dispatch(
+          billingApi.endpoints.getBillingStatus.initiate(undefined, {
+            forceRefetch: true,
+          }),
+        ).unwrap();
+        if (result.plan === 'paid') return true;
+      } catch {
+        // Network error — continue retrying
+      }
+    }
+    return false;
+  }, [dispatch]);
+
   useEffect(() => {
     if (!register) return;
     refetchBillingStatus();
@@ -54,5 +79,9 @@ export const useBillingStatusSync = ({ register = false } = {}) => {
     return () => subscription.remove();
   }, [register, refetchBillingStatus]);
 
-  return { refetchBillingStatus, refetchBillingStatusAfterDelay };
+  return {
+    refetchBillingStatus,
+    refetchBillingStatusAfterDelay,
+    verifyBillingPlan,
+  };
 };
