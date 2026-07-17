@@ -6,6 +6,7 @@ import {
 import { api } from '@/store/apis/api';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { taskApi } from '@/store/apis/taskApi';
+import { userApi } from '@/store/apis/userApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   addStepAction,
@@ -103,6 +104,9 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
   StepType & { task_id: string },
   BaseQueryFunctionType
 > = async (stepArg, { dispatch, queryFulfilled, getState }) => {
+  // Capture original task status before optimistic update
+  let originalTaskStatus: string | undefined;
+
   // Optimistic update — runs immediately before the server responds
   const patchResult = dispatch(
     taskApi.util.updateQueryData(
@@ -112,6 +116,7 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
         const taskIdx = tasks.findIndex((t) => t.task_id === stepArg.task_id);
         if (taskIdx === -1) return;
         const task = tasks[taskIdx];
+        originalTaskStatus = task.status;
         const stepIdx = task.steps?.findIndex(
           (s) => s.step_id === stepArg.step_id,
         );
@@ -142,6 +147,7 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
     const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
 
     // Reconcile with real server data
+    let reconciledTaskStatus: string | undefined;
     dispatch(
       taskApi.util.updateQueryData(
         'getUserTasksByStartDate',
@@ -161,12 +167,21 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
             data.completed,
             data.status ?? 'incomplete',
           );
+          reconciledTaskStatus = newTaskStatus;
           if (newTaskStatus === 'completed' || task.status === 'completed') {
             task.status = newTaskStatus;
           }
         },
       ),
     );
+
+    if (reconciledTaskStatus !== originalTaskStatus) {
+      dispatch(
+        userApi.endpoints.getUserStats.initiate(undefined, {
+          forceRefetch: true,
+        }),
+      );
+    }
 
     if (roadmapIdx === -1 || milestoneIdx === -1 || taskIdx === -1) {
       return;
@@ -320,7 +335,12 @@ const onCompleteAllStepsQueryStarted: TypedMutationOnQueryStarted<
     const updatedTask: TaskType = {
       ...selectedTask,
       status: 'completed',
-      steps: selectedTask.steps?.map((s) => ({ ...s, completed: true })) ?? [],
+      steps:
+        selectedTask.steps?.map((s) => ({
+          ...s,
+          completed: true,
+          status: 'completed',
+        })) ?? [],
     };
     dispatch(setSelectedTaskAction({ task: updatedTask }));
   }
@@ -337,6 +357,12 @@ const onCompleteAllStepsQueryStarted: TypedMutationOnQueryStarted<
         }),
       );
     }
+
+    dispatch(
+      userApi.endpoints.getUserStats.initiate(undefined, {
+        forceRefetch: true,
+      }),
+    );
   } catch {
     patchResult.undo();
   }

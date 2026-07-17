@@ -21,8 +21,7 @@ const TodayTaskDetails = () => {
   const task = useAppSelector(selectSelectedTask);
   const { showToast } = useToast();
   const { t } = useLocalization();
-  const [completeAllSteps, { isLoading: isCompletingAll }] =
-    useCompleteAllStepsMutation();
+  const [completeAllSteps] = useCompleteAllStepsMutation();
 
   const dependencies = useMemo(() => {
     if (!task?.dependencies) return 'N/A';
@@ -100,8 +99,6 @@ const TodayTaskDetails = () => {
                 <PrimaryButton
                   label="roadmap.complete_all_steps"
                   onPress={handleCompleteAll}
-                  isLoading={isCompletingAll}
-                  shouldShowLoader
                 />
               )}
             </AppView>
