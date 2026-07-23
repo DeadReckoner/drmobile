@@ -44,7 +44,9 @@ const getStepStatus = (step: StepType): StepStatusType => {
 
 export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
   const scale = useSharedValue(1);
-  const [updateStep, { isLoading: isUpdating }] = useUpdateStepMutation();
+  const [updateStep, { isLoading: isUpdating }] = useUpdateStepMutation({
+    fixedCacheKey: `update-step-${step.step_id}`,
+  });
   const task = useAppSelector(selectSelectedTask);
   const selectedDraft = useAppSelector(selectDraftSlice);
   const { showToast } = useToast();
