@@ -160,6 +160,27 @@ export interface RoadmapCreationJobStatusResponse {
   };
 }
 
+// ─── Plan Import ─────────────────────────────────────────────────────────────
+
+export type ImportFidelityType = 'high' | 'medium' | 'low';
+
+export interface ImportNotesType {
+  source_summary: string;
+  fidelity: ImportFidelityType;
+  inferred: string[];
+  dropped: string[];
+}
+
+export interface ImportPlanContextType {
+  goalName?: string;
+  targetCompletionDate?: string;
+  weeklyTimeCommitment?: string;
+  workFrequency?: string;
+  currentSkillLevel?: string;
+  constraints?: string;
+  additionalContext?: string;
+}
+
 // ─── Next Milestone Generation ────────────────────────────────────────────────
 
 export interface MilestoneReviewAnswers {

@@ -32,6 +32,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-document-picker",
       [
         "expo-contacts",
         {
@@ -97,7 +98,7 @@
         "@sentry/react-native/expo",
         {
           "url": "https://sentry.io/",
-          "project": "react-native",
+          "project": "drmobile",
           "organization": "dead-reckoner"
         }
       ],

@@ -22,7 +22,7 @@ const persistedReducer = persistReducer(
     key: 'root',
     version: 2,
     storage: AsyncStorage,
-    blacklist: ['roadmapDraft', 'toast'],
+    blacklist: ['roadmapDraft', 'toast', 'planImport'],
     migrate: createMigrate(migrations, { debug: false }),
   },
   rootReducer,

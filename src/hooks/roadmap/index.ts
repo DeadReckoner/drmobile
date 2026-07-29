@@ -33,6 +33,7 @@ export const {
   useCreateAIRoadmapMutation,
   useGetJobStatusQuery,
   useGenerateNextMilestoneMutation,
+  useImportPlanMutation,
 } = aiRoadmapApi;
 
 export const {
