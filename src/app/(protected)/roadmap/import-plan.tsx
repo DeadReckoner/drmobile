@@ -299,7 +299,6 @@ const ImportPlan = () => {
           )}
         </AppCard>
 
-        {/* Error State */}
         {status === 'error' && (
           <AppView
             reanimated
@@ -336,7 +335,6 @@ const ImportPlan = () => {
           </AppView>
         )}
 
-        {/* Completed State */}
         {status === 'completed' && createdRoadmap && (
           <AppView
             reanimated

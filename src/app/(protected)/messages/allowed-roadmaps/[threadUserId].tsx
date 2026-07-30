@@ -221,6 +221,7 @@ const AllowedRoadmaps = () => {
               ItemSeparatorComponent={renderItemSeparator}
               refreshControl={
                 <RefreshControl
+                  tintColor={Colors.secondary}
                   refreshing={isRefreshing}
                   onRefresh={handleRefresh}
                 />
@@ -244,6 +245,7 @@ const AllowedRoadmaps = () => {
               ItemSeparatorComponent={renderItemSeparator}
               refreshControl={
                 <RefreshControl
+                  tintColor={Colors.secondary}
                   refreshing={isRefreshing}
                   onRefresh={handleRefresh}
                 />

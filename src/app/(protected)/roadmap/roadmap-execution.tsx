@@ -10,8 +10,8 @@ import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { AnchorCard } from '@/components/roadmap/AnchorCard';
 import { AnchorSelectionModal } from '@/components/roadmap/AnchorSelectionModal';
-import { ImportNotesModal } from '@/components/roadmap/ImportNotesModal';
 import { BadgeInfoContent } from '@/components/roadmap/BadgeInfoContent';
+import { ImportNotesModal } from '@/components/roadmap/ImportNotesModal';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
 import { RoadmapHighlightOverlay } from '@/components/roadmap/RoadmapHighlightOverlay';
 import { RoadmapIntroContent } from '@/components/roadmap/RoadmapIntroContent';
@@ -366,6 +366,7 @@ const RoadmapExecution = () => {
         onScrollEndDrag={onScrollEnd}
         refreshControl={
           <RefreshControl
+            tintColor={Colors.secondary}
             refreshing={
               hasSeenHighlight
                 ? (!roadmap.roadmap_id && isRoadmapFetching) || isRefreshing
