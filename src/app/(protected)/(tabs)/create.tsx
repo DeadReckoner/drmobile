@@ -5,6 +5,7 @@ import { Divider } from '@/components/Divider';
 import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { resolveEntry } from '@/hooks/goalDiscovery/draft';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -13,6 +14,8 @@ import {
   selectAIRoadmapMessages,
   selectCreatedRoadmap,
 } from '@/store/slices/aiRoadmapCreationSlice';
+import { selectUser } from '@/store/slices/authSlice';
+import { selectGoalDiscoveryDraft } from '@/store/slices/goalDiscoverySlice';
 import {
   resetDraftAction,
   setDraftRoadmapAction,
@@ -28,6 +31,8 @@ const Create = () => {
   const aiRoadmapStatus = useAppSelector(selectAIRoadmapCreationStatus);
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const messages = useAppSelector(selectAIRoadmapMessages);
+  const goalDiscoveryDraft = useAppSelector(selectGoalDiscoveryDraft);
+  const user = useAppSelector(selectUser);
   const [isAIDraftDialogOpen, setIsAIDraftDialogOpen] = useState(false);
 
   const hasUserMessage = messages.some((msg) => msg.type === 'user');
@@ -67,6 +72,24 @@ const Create = () => {
     }
   };
 
+  /**
+   * Goal Discovery resumes this user's saved draft or pending job when there is
+   * one, and otherwise starts at the form. It never enters the chat flow, and
+   * never starts a generation just from being opened.
+   */
+  const onGoalDiscoveryPress = () => {
+    const entry = resolveEntry(goalDiscoveryDraft, user.id);
+    if (entry.route === 'options') {
+      router.navigate('/goal-discovery/options');
+      return;
+    }
+    if (entry.route === 'stage2') {
+      router.navigate('/goal-discovery/roadmap-details');
+      return;
+    }
+    router.navigate('/goal-discovery');
+  };
+
   const onCustomRoadmapPress = () => {
     dispatch(resetDraftAction());
     router.navigate('/roadmap/add-edit-custom-roadmap');
@@ -93,6 +116,13 @@ const Create = () => {
             descriptionKey="tabs.create_tab.build_roadmap_ai_desc"
             onPress={onAIRoadmapPress}
             icon={<AppIcon set="Feather" name="map" color={Colors.white} />}
+          />
+          <CreateTabListItem
+            type="ai"
+            titleKey="tabs.create_tab.goal_discovery"
+            descriptionKey="tabs.create_tab.goal_discovery_desc"
+            onPress={onGoalDiscoveryPress}
+            icon={<AppIcon set="Feather" name="compass" color={Colors.white} />}
           />
           <CreateTabListItem
             type="custom"

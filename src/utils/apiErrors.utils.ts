@@ -3,6 +3,7 @@ import { api } from '@/store/apis/api';
 import { ApiError } from '@/store/apis/types/api.types';
 import { resetCreationStateAction } from '@/store/slices/aiRoadmapCreationSlice';
 import { clearAuthAction } from '@/store/slices/authSlice';
+import { resetGoalDiscoveryAction } from '@/store/slices/goalDiscoverySlice';
 import { resetOnboardingAction } from '@/store/slices/onboardingSlice';
 import { resetDraftAction } from '@/store/slices/roadmapDraftSlice';
 import { resetSettingsSlice } from '@/store/slices/settingsSlice';
@@ -18,6 +19,9 @@ export const handleSignout = async (
   try {
     dispatch(clearAuthAction());
     dispatch(resetCreationStateAction());
+    // The goal discovery draft holds the user's own written answers, so it must
+    // be cleared on sign-out and never resurface for the next account.
+    dispatch(resetGoalDiscoveryAction());
     dispatch(resetDraftAction());
     dispatch(resetSettingsSlice());
     dispatch(resetOnboardingAction());

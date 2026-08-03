@@ -1,6 +1,7 @@
 import { api } from '@/store/apis/api';
 import { aiRoadmapCreationReducer } from '@/store/slices/aiRoadmapCreationSlice';
 import { authReducer } from '@/store/slices/authSlice';
+import { goalDiscoveryReducer } from '@/store/slices/goalDiscoverySlice';
 import { notificationsReducer } from '@/store/slices/notificationsSlice';
 import { onboardingReducer } from '@/store/slices/onboardingSlice';
 import { draftRoadmapReducer } from '@/store/slices/roadmapDraftSlice';
@@ -13,6 +14,7 @@ export const rootReducer = combineReducers({
   onboarding: onboardingReducer,
   roadmapDraft: draftRoadmapReducer,
   aiRoadmapCreation: aiRoadmapCreationReducer,
+  goalDiscovery: goalDiscoveryReducer,
   notifications: notificationsReducer,
   [api.reducerPath]: api.reducer,
 });
