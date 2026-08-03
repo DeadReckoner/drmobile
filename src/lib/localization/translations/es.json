@@ -295,6 +295,7 @@
   },
   "habits": {
     "steps": {
+      "save_failed": "Tu hábito se guardó, pero sus pasos no.",
       "add_step": "Añadir paso",
       "step_placeholder": "Describe este paso",
       "optional_hint": "Opcional",

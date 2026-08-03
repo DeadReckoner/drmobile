@@ -7,6 +7,7 @@ import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { WeekdaySelector } from '@/components/WeekdaySelector';
 import { AppText, AppTouchableOpacity, AppView } from '@/components/ui';
 import { HabitStepsEditor } from '@/components/habits/HabitStepsEditor';
+import { HabitSaveFailure } from '@/hooks/habits/habitSave';
 import { useHabitStepsDraft } from '@/hooks/habits/useHabitStepsDraft';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useStandaloneTaskForm } from '@/hooks/roadmap/useStandaloneTaskForm';
@@ -16,6 +17,7 @@ import { useGetHabitStepsQuery } from '@/store/apis/habitsApi';
 import { RecurrenceType } from '@/store/apis/types/habitsApi.types';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectSelectedHabit } from '@/store/slices/roadmapDraftSlice';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import { DateUtils } from '@/utils/date.utils';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -46,6 +48,24 @@ export const CreateHabitTaskForm = ({
     onSuccess?.();
   };
 
+  // A failed save has to say something. Previously onError was never passed at
+  // all, so a failure produced no toast, no navigation and no explanation.
+  const onFormError = (failure: HabitSaveFailure) => {
+    if (failure.stage === 'steps') {
+      // The habit itself saved. Say so explicitly, otherwise the natural
+      // reaction is to press Save again expecting nothing to exist yet.
+      showToast({
+        type: 'failure',
+        message: `${t('habits.steps.save_failed')} ${getApiErrorMessage(failure.error)}`,
+      });
+      return;
+    }
+    showToast({
+      type: 'failure',
+      message: getApiErrorMessage(failure.error),
+    });
+  };
+
   // Step definitions are edited locally and committed once the habit exists.
   const selectedHabit = useAppSelector(selectSelectedHabit);
   const { data: existingSteps } = useGetHabitStepsQuery(
@@ -66,6 +86,7 @@ export const CreateHabitTaskForm = ({
   } = useStandaloneTaskForm({
     mode,
     onSuccess: onFormSuccess,
+    onError: onFormError,
     syncSteps: stepsDraft.sync,
   });
 

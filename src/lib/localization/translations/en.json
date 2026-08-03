@@ -295,6 +295,7 @@
   },
   "habits": {
     "steps": {
+      "save_failed": "Your habit was saved, but its steps were not.",
       "add_step": "Add step",
       "step_placeholder": "Describe this step",
       "optional_hint": "Optional",

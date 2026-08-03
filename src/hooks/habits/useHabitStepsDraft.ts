@@ -101,10 +101,13 @@ export const useHabitStepsDraft = (initial?: HabitStepType[]) => {
     async (habitId: string) => {
       const kept = steps.filter((s) => s.description.trim().length > 0);
 
-      for (const id of removedIds) {
-        await deleteStep({ habit_id: habitId, habit_step_id: id }).unwrap();
-      }
-
+      // Creations and renames are applied BEFORE deletions so the whole edit
+      // batch lands on the active occurrence as one atomic change. Deleting
+      // first is subtly wrong: removing the only unchecked step momentarily
+      // leaves every remaining step complete, the server (correctly) completes
+      // the occurrence at that instant, and steps added later in the same save
+      // then bounce off the now-immutable completed occurrence. Create-first
+      // keeps the occurrence open until the batch's true final shape is known.
       const orderedIds: string[] = [];
       for (let i = 0; i < kept.length; i++) {
         const step = kept[i];
@@ -129,6 +132,10 @@ export const useHabitStepsDraft = (initial?: HabitStepType[]) => {
           }).unwrap();
           orderedIds.push(created.habit_step_id);
         }
+      }
+
+      for (const id of removedIds) {
+        await deleteStep({ habit_id: habitId, habit_step_id: id }).unwrap();
       }
 
       // One reorder call rather than N number patches, so display order can

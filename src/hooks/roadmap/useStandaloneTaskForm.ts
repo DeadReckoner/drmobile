@@ -1,3 +1,4 @@
+import { HabitSaveFailure, runHabitSave } from '@/hooks/habits/habitSave';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -13,6 +14,7 @@ import { useAppSelector } from '@/store/hooks/store.hooks';
 import { selectSelectedHabit } from '@/store/slices/roadmapDraftSlice';
 import { isInvalidMessage, isRequiredMessage } from '@/utils/form.utils';
 import { useFormik } from 'formik';
+import { useRef, useState } from 'react';
 import * as Yup from 'yup';
 
 const createTaskValidationSchema = (t: (_: TranslationKeysType) => string) => {
@@ -75,7 +77,11 @@ type TaskSchemaType = Yup.InferType<
 interface TaskFormHookProps {
   mode?: FormEditModeType;
   onSuccess?: () => void;
-  onError?: (_error: unknown) => void;
+  /**
+   * Receives the typed failure so the caller can distinguish "nothing saved"
+   * from "habit saved, steps did not" -- they need different messages.
+   */
+  onError?: (_failure: HabitSaveFailure) => void;
   /**
    * Applies the step-definition draft once the habit exists. Steps live on
    * their own endpoints, and on create there is no habit id to attach them to
@@ -93,12 +99,17 @@ export const useStandaloneTaskForm = ({
 }: TaskFormHookProps) => {
   const { t } = useLocalization();
   const schema = createTaskValidationSchema(t);
-  const [createHabit, { isLoading: isHabitCreating }] =
-    useCreateHabitMutation();
-  const [updateHabit, { isLoading: isHabitUpdating }] =
-    useUpdateHabitMutation();
+  const [createHabit] = useCreateHabitMutation();
+  const [updateHabit] = useUpdateHabitMutation();
   const selectedHabit = useAppSelector(selectSelectedHabit);
   const canEdit = mode === 'edit';
+
+  // Covers the WHOLE save (habit + step sync). The mutation hooks' own
+  // isLoading only covered the habit write, so the button went idle again
+  // while steps were still syncing.
+  const [isSaving, setIsSaving] = useState(false);
+  const inFlightRef = useRef(false);
+  const createdHabitIdRef = useRef<string | undefined>(undefined);
 
   const onStandaloneTaskSubmit = async (props: TaskSchemaType) => {
     const payload: CreateHabitRequestType = {
@@ -120,26 +131,46 @@ export const useStandaloneTaskForm = ({
       payload.due_date = props.dueDate;
     }
 
-    if (canEdit && selectedHabit?.habit_id) {
-      await updateHabit({
-        habit_id: selectedHabit?.habit_id,
-        ...payload,
-      }).unwrap();
-      await syncSteps?.(selectedHabit.habit_id);
-    } else {
-      try {
-        const created = await createHabit(payload).unwrap();
-        if (created?.habit_id) {
-          await syncSteps?.(created.habit_id);
-        }
-      } catch (error) {
-        onError?.(error);
-        // The habit may exist while its steps failed; surfacing the error and
-        // stopping is better than reporting success over a half-saved item.
+    // One press at a time. The button is disabled while saving, but the guard
+    // is here too because the previous shape re-enabled it between the habit
+    // write and the step sync -- a second press there created a second habit.
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
+    setIsSaving(true);
+
+    try {
+      const result = await runHabitSave({
+        mode: canEdit && selectedHabit?.habit_id ? 'edit' : 'create',
+        payload,
+        habitId: selectedHabit?.habit_id,
+        // Set only after a steps-stage failure, so retrying re-syncs steps to
+        // the habit that already exists instead of creating another one.
+        alreadyCreatedHabitId: createdHabitIdRef.current,
+        deps: {
+          createHabit: (p) => createHabit(p).unwrap(),
+          updateHabit: (id, p) => updateHabit({ habit_id: id, ...p }).unwrap(),
+          syncSteps,
+        },
+      });
+
+      if (result.ok) {
+        createdHabitIdRef.current = undefined;
+        onSuccess?.();
         return;
       }
+
+      if (result.failure.stage === 'steps') {
+        // The habit is saved; only its steps are missing. Remember it so the
+        // retry path above skips creation.
+        createdHabitIdRef.current = result.failure.habitId;
+      }
+      onError?.(result.failure);
+    } finally {
+      // Always, on every path: a stuck spinner is what made this
+      // unrecoverable from the user's side in the first place.
+      inFlightRef.current = false;
+      setIsSaving(false);
     }
-    onSuccess?.();
   };
 
   const { handleChange, handleBlur, ...restFormikOptions } =
@@ -162,7 +193,7 @@ export const useStandaloneTaskForm = ({
     });
 
   return {
-    isLoading: isHabitCreating || isHabitUpdating,
+    isLoading: isSaving,
     handleChange: handleChange<keyof TaskSchemaType>,
     handleBlur: handleBlur<keyof TaskSchemaType>,
     ...restFormikOptions,

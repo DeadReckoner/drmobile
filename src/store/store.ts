@@ -21,7 +21,13 @@ const persistedReducer = persistReducer(
     key: 'root',
     version: 1,
     storage: AsyncStorage,
-    blacklist: ['roadmapDraft'],
+    // The RTK Query slice must never be persisted: rehydrating a request that
+    // was in-flight when the app was killed restores it as permanently
+    // "pending" -- no fetch is actually running, RTK sees an active entry and
+    // never refetches, and the screen spins forever until app data is cleared.
+    // Queries should always start fresh; caching across launches is not worth
+    // resurrecting dead request state.
+    blacklist: ['roadmapDraft', api.reducerPath],
   },
   rootReducer,
 );

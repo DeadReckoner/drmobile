@@ -239,6 +239,15 @@ const onUncompleteHabitQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+// Habit reads/writes are small database operations; anything beyond this is a
+// dead or unreachable server, not a slow one. Without it these requests inherit
+// fetchBaseQuery's default of no timeout at all, so pointing the app at a host
+// that silently drops packets (an unreachable emulator host alias, a server
+// that is not running) leaves the request pending forever and the Save button
+// spinning with no way back. Applied per-endpoint rather than globally so the
+// long-running AI generation endpoints keep their current behaviour.
+const HABIT_REQUEST_TIMEOUT_MS = 15000;
+
 // Editing step definitions changes what every not-yet-started occurrence looks
 // like, so the lists and the active occurrence all have to re-read.
 const habitStepTags = (habitId: string) =>
@@ -323,6 +332,7 @@ export const habitsApi = api.injectEndpoints({
         url: '/habits',
         method: 'POST',
         body,
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       onQueryStarted: onCreateHabitStarted,
     }),
@@ -384,6 +394,7 @@ export const habitsApi = api.injectEndpoints({
         url: `/habits/${habit_id}`,
         method: 'PATCH',
         body,
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       onQueryStarted: onUpdateHabitQueryStarted,
     }),
@@ -458,6 +469,7 @@ export const habitsApi = api.injectEndpoints({
         url: `/habits/${habit_id}/steps`,
         method: 'POST',
         body,
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
     }),
@@ -470,6 +482,7 @@ export const habitsApi = api.injectEndpoints({
         url: `/habits/${habit_id}/steps/${habit_step_id}`,
         method: 'PATCH',
         body,
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
     }),
@@ -478,6 +491,7 @@ export const habitsApi = api.injectEndpoints({
       query: ({ habit_id, habit_step_id }) => ({
         url: `/habits/${habit_id}/steps/${habit_step_id}`,
         method: 'DELETE',
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
     }),
@@ -490,6 +504,7 @@ export const habitsApi = api.injectEndpoints({
         url: `/habits/${habit_id}/steps/reorder`,
         method: 'POST',
         body: { step_ids },
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
     }),
@@ -503,6 +518,7 @@ export const habitsApi = api.injectEndpoints({
       query: ({ habit_id, date }) => ({
         url: `/habits/${habit_id}/occurrence/steps`,
         params: date ? { date } : undefined,
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       providesTags: (_result, _error, { habit_id, date }) => [
         { type: 'Habits', id: `OCCURRENCE-${habit_id}-${date ?? 'today'}` },
@@ -520,6 +536,7 @@ export const habitsApi = api.injectEndpoints({
         url: `/habits/${habit_id}/occurrence/steps/${habit_step_id}`,
         method: 'PATCH',
         body,
+        timeout: HABIT_REQUEST_TIMEOUT_MS,
       }),
       onQueryStarted: onSetHabitStepStateQueryStarted,
     }),

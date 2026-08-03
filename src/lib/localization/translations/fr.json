@@ -295,6 +295,7 @@
   },
   "habits": {
     "steps": {
+      "save_failed": "Votre habitude a été enregistrée, mais pas ses étapes.",
       "add_step": "Ajouter une étape",
       "step_placeholder": "Décrivez cette étape",
       "optional_hint": "Facultatif",
