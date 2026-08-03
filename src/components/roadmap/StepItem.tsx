@@ -1,6 +1,4 @@
-import { AppButton } from '@/components/AppButton';
-import { AppIcon } from '@/components/AppIcon';
-import { AppCheckbox, AppText, AppView } from '@/components/ui';
+import { StepRow } from '@/components/StepRow';
 import {
   FormEditModeType,
   StepType,
@@ -19,13 +17,6 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
-import {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withSpring,
-} from 'react-native-reanimated';
 
 interface StepItemProps {
   step: StepType;
@@ -35,21 +26,11 @@ interface StepItemProps {
 }
 
 export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
-  const scale = useSharedValue(1);
   const [updateStep, { isLoading: isUpdating }] = useUpdateStepMutation();
   const task = useAppSelector(selectSelectedTask);
   const selectedDraft = useAppSelector(selectDraftSlice);
   const { showToast } = useToast();
   const dispatch = useAppDispatch();
-  const iconStyles = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-  const onPressIn = () => {
-    scale.value = withSequence(withSpring(0.7), withSpring(1.2));
-  };
-  const onPressOut = () => {
-    scale.value = withSpring(1);
-  };
 
   const handleCompleteStep = async (value: boolean) => {
     if (selectedDraft.shouldSyncWithServer && step.step_id) {
@@ -103,35 +84,17 @@ export const StepItem = ({ step, index, onStepPress, mode }: StepItemProps) => {
   };
 
   return (
-    <>
-      <AppView row padding-16 gap-16 center br30>
-        <AppView>
-          {isUpdating ? (
-            <AppView width={24} height={24} center>
-              <ActivityIndicator />
-            </AppView>
-          ) : (
-            <AppCheckbox
-              disabled={mode === 'readonly'}
-              value={step.completed}
-              onValueChange={handleCompleteStep}
-            />
-          )}
-        </AppView>
-        <AppText textColor body2 flex>
-          {step.description}
-        </AppText>
-        {mode !== 'view' && mode !== 'readonly' && (
-          <AppButton
-            onPress={() => onStepPress(step)}
-            onPressIn={onPressIn}
-            onPressOut={onPressOut}>
-            <AppView reanimated style={iconStyles}>
-              <AppIcon set="Feather" name={'arrow-right'} size={20} />
-            </AppView>
-          </AppButton>
-        )}
-      </AppView>
-    </>
+    <StepRow
+      description={step.description}
+      completed={step.completed}
+      isUpdating={isUpdating}
+      disabled={mode === 'readonly'}
+      onToggle={handleCompleteStep}
+      onEditPress={
+        mode !== 'view' && mode !== 'readonly'
+          ? () => onStepPress(step)
+          : undefined
+      }
+    />
   );
 };

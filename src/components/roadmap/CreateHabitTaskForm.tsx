@@ -6,11 +6,16 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { WeekdaySelector } from '@/components/WeekdaySelector';
 import { AppText, AppTouchableOpacity, AppView } from '@/components/ui';
+import { HabitStepsEditor } from '@/components/habits/HabitStepsEditor';
+import { useHabitStepsDraft } from '@/hooks/habits/useHabitStepsDraft';
 import { FormEditModeType } from '@/hooks/roadmap/types/roadmap.types';
 import { useStandaloneTaskForm } from '@/hooks/roadmap/useStandaloneTaskForm';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
+import { useGetHabitStepsQuery } from '@/store/apis/habitsApi';
 import { RecurrenceType } from '@/store/apis/types/habitsApi.types';
+import { useAppSelector } from '@/store/hooks/store.hooks';
+import { selectSelectedHabit } from '@/store/slices/roadmapDraftSlice';
 import { DateUtils } from '@/utils/date.utils';
 import { useState } from 'react';
 import { StyleSheet } from 'react-native';
@@ -41,6 +46,14 @@ export const CreateHabitTaskForm = ({
     onSuccess?.();
   };
 
+  // Step definitions are edited locally and committed once the habit exists.
+  const selectedHabit = useAppSelector(selectSelectedHabit);
+  const { data: existingSteps } = useGetHabitStepsQuery(
+    selectedHabit?.habit_id as string,
+    { skip: mode !== 'edit' || !selectedHabit?.habit_id },
+  );
+  const stepsDraft = useHabitStepsDraft(existingSteps);
+
   const {
     isLoading,
     handleBlur,
@@ -53,6 +66,7 @@ export const CreateHabitTaskForm = ({
   } = useStandaloneTaskForm({
     mode,
     onSuccess: onFormSuccess,
+    syncSteps: stepsDraft.sync,
   });
 
   const onDateChange = (type: 'startDate' | 'endDate', date: Date) => {
@@ -252,6 +266,16 @@ export const CreateHabitTaskForm = ({
           />
         </>
       )}
+
+      <Divider margin-12 />
+      <HabitStepsEditor
+        steps={stepsDraft.steps}
+        onAdd={stepsDraft.addStep}
+        onChange={stepsDraft.updateStep}
+        onRemove={stepsDraft.removeStep}
+        onMove={stepsDraft.moveStep}
+        disabled={isLoading}
+      />
 
       <Divider margin-12 />
       <PrimaryButton

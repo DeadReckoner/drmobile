@@ -294,6 +294,14 @@
     "open_settings": "Abrir Configuración"
   },
   "habits": {
+    "steps": {
+      "add_step": "Añadir paso",
+      "step_placeholder": "Describe este paso",
+      "optional_hint": "Opcional",
+      "empty_hint": "Añade pasos para convertirlo en una lista. Sin pasos, se completa con un solo toque.",
+      "all_steps_done": "Todos los pasos hechos: se marcó como completado.",
+      "complete_all_to_finish": "Completa todos los pasos para terminarlo."
+    },
     "title_label": "Título del hábito",
     "title_placeholder": "Ingresa el título del hábito",
     "description_label": "Descripción",

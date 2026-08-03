@@ -294,6 +294,14 @@
     "open_settings": "Open Settings"
   },
   "habits": {
+    "steps": {
+      "add_step": "Add step",
+      "step_placeholder": "Describe this step",
+      "optional_hint": "Optional",
+      "empty_hint": "Add steps to break this into a checklist. Without steps, it completes in a single tap.",
+      "all_steps_done": "All steps done — this is marked complete.",
+      "complete_all_to_finish": "Complete every step to finish this."
+    },
     "title_label": "Habit Title",
     "title_placeholder": "Enter habit title",
     "description_label": "Description",

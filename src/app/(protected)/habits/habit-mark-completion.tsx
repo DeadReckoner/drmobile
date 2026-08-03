@@ -9,8 +9,10 @@ import { AppText, AppView } from '@/components/ui';
 import { WeekdaySelector } from '@/components/WeekdaySelector';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
+import { HabitStepsChecklist } from '@/components/habits/HabitStepsChecklist';
 import {
   useCompleteHabitMutation,
+  useGetHabitOccurrenceStepsQuery,
   useGetHabitQuery,
   useUncompleteHabitMutation,
 } from '@/store/apis/habitsApi';
@@ -32,6 +34,16 @@ const HabitMarkCompletion = () => {
   const [isHabitCompleted, setIsHabitCompleted] = useState(
     isCompleted === 'true',
   );
+
+  const today = DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD');
+  // Whether this recurring item is step-driven. Read from the occurrence rather
+  // than the template so an item whose steps were all removed falls straight
+  // back to the single-action button.
+  const { data: occurrence } = useGetHabitOccurrenceStepsQuery({
+    habit_id: habitId,
+    date: today,
+  });
+  const hasSteps = (occurrence?.steps_total ?? 0) > 0;
 
   const [completeHabit, { isLoading: isCompletingHabit }] =
     useCompleteHabitMutation();
@@ -162,17 +174,31 @@ const HabitMarkCompletion = () => {
               )}
             </AppView>
 
-            <PrimaryButton
-              disabled={isProcessing}
-              label={
-                isHabitCompleted
-                  ? 'habits.mark_incomplete'
-                  : 'habits.mark_complete'
-              }
-              shouldShowLoader
-              isLoading={isProcessing}
-              onPress={handleToggleHabitCompletion}
-            />
+            <AppView>
+              {/* Renders nothing when the item has no steps, leaving the
+                  single-action button below as the only completion path. */}
+              <HabitStepsChecklist
+                habitId={habitId}
+                date={today}
+                onOccurrenceCompletedChange={setIsHabitCompleted}
+              />
+
+              {/* With steps, the final step is what completes the occurrence,
+                  so the manual button would be a second, conflicting path. */}
+              {!hasSteps && (
+                <PrimaryButton
+                  disabled={isProcessing}
+                  label={
+                    isHabitCompleted
+                      ? 'habits.mark_incomplete'
+                      : 'habits.mark_complete'
+                  }
+                  shouldShowLoader
+                  isLoading={isProcessing}
+                  onPress={handleToggleHabitCompletion}
+                />
+              )}
+            </AppView>
           </AppView>
         </ScrollView>
       )}

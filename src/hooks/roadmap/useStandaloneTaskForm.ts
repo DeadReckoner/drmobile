@@ -76,12 +76,20 @@ interface TaskFormHookProps {
   mode?: FormEditModeType;
   onSuccess?: () => void;
   onError?: (_error: unknown) => void;
+  /**
+   * Applies the step-definition draft once the habit exists. Steps live on
+   * their own endpoints, and on create there is no habit id to attach them to
+   * until the habit has been saved, so the form commits them here rather than
+   * inside the habit payload.
+   */
+  syncSteps?: (_habitId: string) => Promise<void>;
 }
 
 export const useStandaloneTaskForm = ({
   mode = 'create',
   onSuccess,
   onError,
+  syncSteps,
 }: TaskFormHookProps) => {
   const { t } = useLocalization();
   const schema = createTaskValidationSchema(t);
@@ -117,11 +125,18 @@ export const useStandaloneTaskForm = ({
         habit_id: selectedHabit?.habit_id,
         ...payload,
       }).unwrap();
+      await syncSteps?.(selectedHabit.habit_id);
     } else {
       try {
-        await createHabit(payload).unwrap();
+        const created = await createHabit(payload).unwrap();
+        if (created?.habit_id) {
+          await syncSteps?.(created.habit_id);
+        }
       } catch (error) {
         onError?.(error);
+        // The habit may exist while its steps failed; surfacing the error and
+        // stopping is better than reporting success over a half-saved item.
+        return;
       }
     }
     onSuccess?.();

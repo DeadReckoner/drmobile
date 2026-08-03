@@ -5,7 +5,10 @@ import {
   CompleteHabitResponseType,
   CreateHabitRequestType,
   CreateHabitResponseType,
+  CreateHabitStepRequestType,
+  DeleteHabitStepRequestType,
   GetHabitCompletionsResponseType,
+  GetHabitOccurrenceStepsRequestType,
   GetHabitStatsResponseType,
   GetHabitsForDateResponseType,
   GetHabitsForRangeQueryParamsType,
@@ -13,10 +16,16 @@ import {
   GetHabitsQueryParamsType,
   GetHabitsResponseType,
   GetTodayHabitsResponseType,
+  HabitOccurrenceStepsType,
+  HabitStepType,
   HabitType,
+  ReorderHabitStepsRequestType,
+  SetHabitStepStateRequestType,
+  StepStatusType,
   UncompleteHabitRequestType,
   UpdateHabitRequestType,
   UpdateHabitResponseType,
+  UpdateHabitStepRequestType,
 } from '@/store/apis/types/habitsApi.types';
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
 
@@ -230,6 +239,80 @@ const onUncompleteHabitQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+// Editing step definitions changes what every not-yet-started occurrence looks
+// like, so the lists and the active occurrence all have to re-read.
+const habitStepTags = (habitId: string) =>
+  [
+    { type: 'Habits' as const, id: habitId },
+    { type: 'Habits' as const, id: `STEPS-${habitId}` },
+    { type: 'Habits' as const, id: 'LIST' },
+    { type: 'Habits' as const, id: 'TODAY' },
+  ] as const;
+
+// Toggling a step is the highest-frequency interaction in the feature, so it
+// updates optimistically: the checkbox moves immediately and the parent's
+// completed state is derived locally with the same rule the server applies
+// (an occurrence is done when nothing is left "incomplete" -- skipped counts).
+// The server response then replaces the guess, so any disagreement (another
+// device, a template edit mid-flight) self-corrects rather than sticking.
+const onSetHabitStepStateQueryStarted: TypedMutationOnQueryStarted<
+  HabitOccurrenceStepsType,
+  SetHabitStepStateRequestType,
+  BaseQueryFunctionType
+> = async (arg, { dispatch, queryFulfilled }) => {
+  const { habit_id, habit_step_id, date, status, completed } = arg;
+  const nextStatus: StepStatusType =
+    status ?? (completed ? 'completed' : 'incomplete');
+
+  const patch = dispatch(
+    habitsApi.util.updateQueryData(
+      'getHabitOccurrenceSteps',
+      { habit_id, date },
+      (draft) => {
+        const step = draft.steps.find((s) => s.habit_step_id === habit_step_id);
+        if (!step) return;
+        step.status = nextStatus;
+        step.completed = nextStatus === 'completed';
+        draft.steps_completed = draft.steps.filter(
+          (s) => s.status !== 'incomplete',
+        ).length;
+        draft.is_completed =
+          draft.steps.length > 0 &&
+          draft.steps_completed === draft.steps.length;
+      },
+    ),
+  );
+
+  try {
+    const { data } = await queryFulfilled;
+    // Reconcile the today list so the row's progress badge and completed state
+    // match without a full refetch.
+    dispatch(
+      habitsApi.util.updateQueryData(
+        'getTodayHabits',
+        undefined,
+        (draft: GetTodayHabitsResponseType) => {
+          const habit = draft.find((h) => h.habit_id === habit_id);
+          if (!habit) return;
+          habit.steps_total = data.steps_total;
+          habit.steps_completed = data.steps_completed;
+          habit.is_completed = data.is_completed;
+        },
+      ),
+    );
+    // Completion changed, so streaks/history/day views are stale.
+    dispatch(
+      habitsApi.util.invalidateTags([
+        { type: 'Habits', id: `COMPLETIONS-${habit_id}` },
+        { type: 'Habits', id: `STATS-${habit_id}` },
+        ...(date ? [{ type: 'Habits' as const, id: `DATE-${date}` }] : []),
+      ]),
+    );
+  } catch {
+    patch.undo();
+  }
+};
+
 export const habitsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     createHabit: builder.mutation<
@@ -357,6 +440,89 @@ export const habitsApi = api.injectEndpoints({
         { type: 'Habits', id: `STATS-${habitId}` },
       ],
     }),
+
+    // --- Step DEFINITIONS on the recurring template -------------------------
+
+    getHabitSteps: builder.query<HabitStepType[], string>({
+      query: (habitId) => `/habits/${habitId}/steps`,
+      providesTags: (_result, _error, habitId) => [
+        { type: 'Habits', id: `STEPS-${habitId}` },
+      ],
+    }),
+
+    createHabitStep: builder.mutation<
+      HabitStepType,
+      CreateHabitStepRequestType
+    >({
+      query: ({ habit_id, ...body }) => ({
+        url: `/habits/${habit_id}/steps`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
+    }),
+
+    updateHabitStep: builder.mutation<
+      HabitStepType,
+      UpdateHabitStepRequestType
+    >({
+      query: ({ habit_id, habit_step_id, ...body }) => ({
+        url: `/habits/${habit_id}/steps/${habit_step_id}`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
+    }),
+
+    deleteHabitStep: builder.mutation<void, DeleteHabitStepRequestType>({
+      query: ({ habit_id, habit_step_id }) => ({
+        url: `/habits/${habit_id}/steps/${habit_step_id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
+    }),
+
+    reorderHabitSteps: builder.mutation<
+      HabitStepType[],
+      ReorderHabitStepsRequestType
+    >({
+      query: ({ habit_id, step_ids }) => ({
+        url: `/habits/${habit_id}/steps/reorder`,
+        method: 'POST',
+        body: { step_ids },
+      }),
+      invalidatesTags: (_r, _e, { habit_id }) => habitStepTags(habit_id),
+    }),
+
+    // --- Step STATE for one dated occurrence --------------------------------
+
+    getHabitOccurrenceSteps: builder.query<
+      HabitOccurrenceStepsType,
+      GetHabitOccurrenceStepsRequestType
+    >({
+      query: ({ habit_id, date }) => ({
+        url: `/habits/${habit_id}/occurrence/steps`,
+        params: date ? { date } : undefined,
+      }),
+      providesTags: (_result, _error, { habit_id, date }) => [
+        { type: 'Habits', id: `OCCURRENCE-${habit_id}-${date ?? 'today'}` },
+      ],
+    }),
+
+    // The server returns the whole recomputed occurrence, so the parent's
+    // completed state and the progress counters arrive with the toggle rather
+    // than needing a follow-up read.
+    setHabitStepState: builder.mutation<
+      HabitOccurrenceStepsType,
+      SetHabitStepStateRequestType
+    >({
+      query: ({ habit_id, habit_step_id, ...body }) => ({
+        url: `/habits/${habit_id}/occurrence/steps/${habit_step_id}`,
+        method: 'PATCH',
+        body,
+      }),
+      onQueryStarted: onSetHabitStepStateQueryStarted,
+    }),
   }),
   overrideExisting: true,
 });
@@ -382,4 +548,14 @@ export const {
   useLazyGetHabitQuery,
   useLazyGetHabitCompletionsQuery,
   useLazyGetHabitStatsQuery,
+  // Multi-step recurring items
+  useGetHabitStepsQuery,
+  useCreateHabitStepMutation,
+  useUpdateHabitStepMutation,
+  useDeleteHabitStepMutation,
+  useReorderHabitStepsMutation,
+  useGetHabitOccurrenceStepsQuery,
+  useSetHabitStepStateMutation,
+  useLazyGetHabitStepsQuery,
+  useLazyGetHabitOccurrenceStepsQuery,
 } = habitsApi;
