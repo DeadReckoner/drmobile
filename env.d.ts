@@ -7,7 +7,6 @@ declare namespace NodeJS {
     EXPO_OS: 'android' | 'ios' | 'web';
     EXPO_PUBLIC_API_URL: string;
     EXPO_PUBLIC_STORE_UNIVERSAL_LINK: string;
-    EXPO_PUBLIC_FEEDBACK_MAIL: string;
     EXPO_PUBLIC_REVENUECAT_API_KEY_IOS: string;
     EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID: string;
     EXPO_PUBLIC_ENTITLEMENT_ID: string;

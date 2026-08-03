@@ -5,31 +5,72 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { TranslatedTextInput } from '@/components/TranslatedTextInput';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useMail } from '@/hooks/useMail';
+import { useToast } from '@/hooks/useToast';
+import { useSubmitFeedbackMutation } from '@/store/apis/feedbackApi';
+import { getDeviceInfo } from '@/utils/device.utils';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import {
   KeyboardAwareScrollView,
   KeyboardGestureArea,
   KeyboardToolbar,
 } from 'react-native-keyboard-controller';
 
+/** Mirrors the min=10 binding on CreateFeedbackRequest server-side. */
+const MIN_MESSAGE_LENGTH = 10;
+
 export const ContactSupport = () => {
-  const { sendFeedbackEmail } = useMail();
   const { t } = useLocalization();
+  const { showToast } = useToast();
+  const [submitFeedback, { isLoading }] = useSubmitFeedbackMutation();
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
 
-  const onSendMessage = () => {
-    if (!subject || !message) {
-      Alert.alert(
-        t('common.error_occurred'),
-        t('app_feedback.fill_subject_message'),
-      );
+  const onSendMessage = async () => {
+    const trimmedSubject = subject.trim();
+    const trimmedMessage = message.trim();
+
+    if (!trimmedSubject || !trimmedMessage) {
+      showToast({
+        type: 'warning',
+        message: t('app_feedback.fill_subject_message'),
+      });
       return;
     }
 
-    sendFeedbackEmail({ subject, body: message });
+    if (trimmedMessage.length < MIN_MESSAGE_LENGTH) {
+      showToast({
+        type: 'warning',
+        message: t('app_feedback.validation.message_min_length'),
+      });
+      return;
+    }
+
+    try {
+      const deviceInfo = getDeviceInfo();
+
+      await submitFeedback({
+        category: 'support',
+        subject: trimmedSubject,
+        message: trimmedMessage,
+        app_version: deviceInfo.appVersion,
+        os: deviceInfo.os,
+        device: deviceInfo.device,
+      }).unwrap();
+
+      showToast({
+        type: 'success',
+        message: t('app_feedback.success_message'),
+      });
+
+      router.back();
+    } catch {
+      showToast({
+        type: 'warning',
+        message: t('app_feedback.error_message'),
+      });
+    }
   };
 
   return (
@@ -60,8 +101,11 @@ export const ContactSupport = () => {
                 onChangeText={setMessage}
               />
               <PrimaryButton
-                label="app_feedback.review_and_send"
+                label="app_feedback.send_message"
                 onPress={onSendMessage}
+                isLoading={isLoading}
+                shouldShowLoader
+                disabled={isLoading}
               />
             </AppView>
           </KeyboardAwareScrollView>
