@@ -158,10 +158,10 @@ const Create = () => {
         contentContainerStyle={styles.scrollContent}>
         <Divider />
         <TranslatedText h2 translationKey="tabs.create" />
-        <Divider />
-        <AppView gap-28>
+        <Divider margin-4 />
+        <AppView gap-20>
           {CREATE_PAGE_SECTIONS.map((section) => (
-            <AppView key={section.id} gap-12>
+            <AppView key={section.id} gap-8>
               <TranslatedText
                 caption
                 color={Colors.secondary}
@@ -171,6 +171,7 @@ const Create = () => {
               {section.options.map((option) => (
                 <CreateTabListItem
                   key={option.id}
+                  compact
                   treatment={option.treatment}
                   titleKey={option.titleKey}
                   descriptionKey={option.descriptionKey}
@@ -231,7 +232,7 @@ const Create = () => {
 };
 
 const styles = StyleSheet.create({
-  scrollContent: { paddingBottom: 32 },
+  scrollContent: { paddingBottom: 24 },
   sectionHeading: { textTransform: 'uppercase', letterSpacing: 1.2 },
 });
 

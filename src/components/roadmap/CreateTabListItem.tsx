@@ -11,6 +11,13 @@ interface TaskAndRoadmapCreationItem {
   descriptionKey: TranslationKeysType;
   /** 'ai' overlays the purple AI background on the icon tile. */
   treatment?: 'ai' | 'standard';
+  /**
+   * Tighter internal spacing, opted into by the Create page so its six cards
+   * fit one screen. Spacing only — no fixed heights, so text still wraps and
+   * grows with accessibility font scaling. Other screens keep the roomier
+   * default.
+   */
+  compact?: boolean;
   onPress: () => void;
   icon?: JSX.Element;
 }
@@ -19,12 +26,17 @@ export const CreateTabListItem = ({
   titleKey,
   descriptionKey,
   treatment = 'standard',
+  compact = false,
   onPress,
   icon,
 }: TaskAndRoadmapCreationItem) => {
   return (
-    <AppCard onPress={onPress}>
-      <AppView row gap-16 centerV>
+    <AppCard onPress={onPress} style={compact ? styles.compactCard : undefined}>
+      <AppView
+        row
+        gap-16
+        centerV
+        style={compact ? styles.compactRow : undefined}>
         <AppView bg-accent br30 center style={styles.iconContainer}>
           {treatment === 'ai' && (
             <AppImage
@@ -34,7 +46,7 @@ export const CreateTabListItem = ({
           )}
           {icon}
         </AppView>
-        <AppView flex gap-6>
+        <AppView flex gap-6 style={compact ? styles.compactCopy : undefined}>
           <TranslatedText body1 translationKey={titleKey} />
           <TranslatedText xsm translationKey={descriptionKey} />
         </AppView>
@@ -43,6 +55,11 @@ export const CreateTabListItem = ({
   );
 };
 
+// The compact styles sit last in each element's style array, so they override
+// the modifier defaults above them (padding-16, gap-16, gap-6).
 const styles = StyleSheet.create({
   iconContainer: { width: 50, height: 50 },
+  compactCard: { paddingVertical: 12, paddingHorizontal: 12 },
+  compactRow: { gap: 12 },
+  compactCopy: { gap: 4 },
 });
