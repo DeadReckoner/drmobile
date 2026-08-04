@@ -503,9 +503,7 @@
       "add_step": "Ajouter une étape",
       "step_placeholder": "Décrivez cette étape",
       "optional_hint": "Facultatif",
-      "empty_hint": "Ajoutez des étapes pour en faire une liste. Sans étapes, il se termine en un seul geste.",
-      "all_steps_done": "Toutes les étapes sont faites : marqué comme terminé.",
-      "complete_all_to_finish": "Terminez toutes les étapes pour le finir."
+      "empty_hint": "Ajoutez des étapes pour en faire une liste. Sans étapes, il se termine en un seul geste."
     },
     "title_label": "Titre de l'habitude",
     "title_placeholder": "Entrez le titre de l'habitude",
@@ -551,7 +549,6 @@
     "no_archived_habits": "Aucune habitude archivée",
     "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici",
     "details": {
-      "label": "Détails",
       "started": "Commencé le",
       "ends": "Se termine le",
       "due": "Échéance",

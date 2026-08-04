@@ -40,10 +40,10 @@ export const shouldRenderDescription = (
 ): boolean => Boolean(description && description.trim().length > 0);
 
 /**
- * Whether the secondary "Details" block renders at all.
+ * Whether the secondary metadata block renders at all.
  *
- * False for an item carrying none of it, so the section label never appears
- * over nothing.
+ * False for an item carrying none of it, so its top margin never opens a gap
+ * below the checklist with nothing under it.
  */
 export const shouldRenderDetails = ({
   isWeekly,

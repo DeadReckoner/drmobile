@@ -143,19 +143,9 @@ export const HabitStepsChecklist = ({
           </AppView>
         ))}
       </AppCard>
-      {!readonly && (
-        <AppView marginT-8>
-          <TranslatedText
-            xsm
-            secondary
-            translationKey={
-              occurrence.is_completed
-                ? 'habits.steps.all_steps_done'
-                : 'habits.steps.complete_all_to_finish'
-            }
-          />
-        </AppView>
-      )}
+      {/* No helper line under the checklist: the "n/total" counter above
+          already says how much is left, and the completed variant flashed for
+          the moment between the last step landing and the screen closing. */}
     </AppView>
   );
 };

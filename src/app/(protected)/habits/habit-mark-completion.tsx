@@ -211,11 +211,12 @@ const HabitMarkCompletion = () => {
           )}
 
           {/* Dates and cadence detail are reference material, not the task, so
-              they sit below the checklist as compact muted lines. */}
+              they sit below the checklist as compact muted lines. No heading:
+              "Started Aug 04, 2026" already says what it is, and a label over
+              one muted line cost more space than it earned. The margin is what
+              keeps the date from reading as another checklist row. */}
           {hasDetails && (
             <AppView marginT-24>
-              <TranslatedText body1 translationKey="habits.details.label" />
-
               {isWeekly && (
                 <AppView marginT-8>
                   <WeekdaySelector disabled value={habit.days_of_week!} />
