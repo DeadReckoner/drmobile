@@ -19,6 +19,28 @@ export type AIRoadmapCreationStatus =
   | 'completed'
   | 'error';
 
+/**
+ * Which creation flow started the roadmap this slice is tracking.
+ *
+ * This slice is SHARED: goal discovery hands its final roadmap to the same
+ * pending/result machinery the chat flow uses, which is what lets it reuse the
+ * Progress banner, the websocket reconnect, the app-resume refetch, and the
+ * completion navigation instead of growing a parallel copy of all of it.
+ *
+ * The cost of sharing is that `status === 'creating'` alone no longer tells you
+ * where the user came from — and every "Continue" affordance built on it used
+ * to send them to the chat screen. A user who never saw a chat would be dropped
+ * into one, looking at a loader for a conversation they never had.
+ *
+ * So the source travels with the job. Every consumer that routes on this
+ * slice's status must branch on it.
+ */
+export type RoadmapCreationSource = 'known_goal_chat' | 'goal_discovery_form';
+
+/** What an unlabelled roadmap creation means. */
+export const DEFAULT_ROADMAP_CREATION_SOURCE: RoadmapCreationSource =
+  'known_goal_chat';
+
 export type JobStatusResponseType = {
   type: 'status';
   job_id: string;
@@ -39,6 +61,16 @@ interface AIRoadmapCreationState {
   createdRoadmap: RoadmapType | null;
   aiRoadmapCreationJobResponse: RoadmapCreationJobResponse | null;
   jobStatusResponse?: JobStatusResponseType | null;
+  /**
+   * Which flow started the roadmap currently being tracked. Persisted with the
+   * rest of the slice, so a source-aware Continue survives an app restart.
+   *
+   * Optional in the type because a draft persisted by an older build has no
+   * such field; every read goes through `selectRoadmapCreationSource`, which
+   * substitutes the chat default so restored state behaves exactly as it did
+   * before.
+   */
+  pendingSource?: RoadmapCreationSource;
 }
 
 const initialState: AIRoadmapCreationState = {
@@ -52,6 +84,7 @@ const initialState: AIRoadmapCreationState = {
   createdAt: null,
   createdRoadmap: null,
   aiRoadmapCreationJobResponse: null,
+  pendingSource: DEFAULT_ROADMAP_CREATION_SOURCE,
 };
 
 const aiRoadmapCreationSlice = createSlice({
@@ -60,6 +93,10 @@ const aiRoadmapCreationSlice = createSlice({
   reducers: {
     startCreationSessionAction: (state) => {
       state.status = 'collecting';
+      // Opening the chat flow claims the slice for chat. Without this, a draft
+      // left over from a goal-discovery roadmap would keep routing the chat
+      // user's own Continue back into goal discovery.
+      state.pendingSource = 'known_goal_chat';
       state.messages = [];
       state.currentPromptIndex = 0;
       state.isTyping = false;
@@ -107,11 +144,22 @@ const aiRoadmapCreationSlice = createSlice({
       state.formData[action.payload.key] = action.payload.value;
     },
 
-    startRoadmapCreationAction: (state) => {
+    /**
+     * Begin tracking a roadmap generation.
+     *
+     * The payload names the flow that started it. It is optional so the
+     * existing chat call sites keep working untouched and keep meaning
+     * "known_goal_chat".
+     */
+    startRoadmapCreationAction: (
+      state,
+      action: PayloadAction<RoadmapCreationSource | undefined>,
+    ) => {
       state.status = 'creating';
       state.error = null;
       state.aiRoadmapCreationJobResponse = null;
       state.jobStatusResponse = null;
+      state.pendingSource = action.payload ?? DEFAULT_ROADMAP_CREATION_SOURCE;
     },
 
     completeRoadmapCreationAction: (
@@ -212,6 +260,32 @@ export const selectCreatedRoadmap = createAppSelector(
 
 export const selectJobStatusResponse = createAppSelector(
   (state) => state.aiRoadmapCreation.jobStatusResponse,
+);
+
+/**
+ * Which flow started the roadmap currently being tracked.
+ *
+ * Falls back to the chat source, so state persisted by a build without this
+ * field — or any code path that never set it — behaves exactly as it did
+ * before. Every routing decision made on this slice's status must consult this.
+ */
+export const selectRoadmapCreationSource = createAppSelector(
+  (state) =>
+    state.aiRoadmapCreation.pendingSource ?? DEFAULT_ROADMAP_CREATION_SOURCE,
+);
+
+/**
+ * True when the roadmap being generated came from goal discovery.
+ *
+ * Consumers use this to keep a goal-discovery user out of the chat screen: a
+ * roadmap they started from a form must never resume into a conversation.
+ */
+export const selectIsGoalDiscoveryRoadmapPending = createAppSelector(
+  (state) =>
+    (state.aiRoadmapCreation.pendingSource ??
+      DEFAULT_ROADMAP_CREATION_SOURCE) === 'goal_discovery_form' &&
+    (state.aiRoadmapCreation.status === 'creating' ||
+      state.aiRoadmapCreation.status === 'error'),
 );
 
 export const selectShouldShowAIRoadmapBanner = createAppSelector((state) => {

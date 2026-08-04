@@ -13,6 +13,7 @@ import {
   useClearNotificationsMutation,
   useGetNotificationsQuery,
 } from '@/hooks/notifications';
+import { resolveEntry, routeForEntry } from '@/hooks/goalDiscovery/draft';
 import {
   useAcceptAnchorRequestMutation,
   useRejectAnchorRequestMutation,
@@ -31,7 +32,9 @@ import {
   FriendRequestData,
   NotificationType,
 } from '@/store/apis/types/notificationsApi.types';
-import { useAppDispatch } from '@/store/hooks/store.hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { selectUser } from '@/store/slices/authSlice';
+import { selectGoalDiscoveryDraft } from '@/store/slices/goalDiscoverySlice';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
@@ -56,6 +59,8 @@ const Notifications = () => {
     useClearNotificationsMutation();
 
   const dispatch = useAppDispatch();
+  const goalDiscoveryDraft = useAppSelector(selectGoalDiscoveryDraft);
+  const user = useAppSelector(selectUser);
   const [refreshing, setRefreshing] = useState(false);
   const [acceptFriendRequest] = useAcceptFriendRequestMutation();
   const [rejectFriendRequest] = useRejectFriendRequestMutation();
@@ -242,8 +247,23 @@ const Notifications = () => {
           },
         });
       }
+
+      // Goal discovery outcomes resolve through the SAME entry rule the Create
+      // page uses, rather than hard-coding the options screen. The notification
+      // only says "something happened to your discovery draft"; where that
+      // should land depends on the draft's current state — which may have moved
+      // on (a goal chosen, a roadmap submitted) since the push was sent.
+      if (
+        notification.type === 'goal_options_complete' ||
+        notification.type === 'goal_options_failed' ||
+        notification.type === 'goal_options_unavailable'
+      ) {
+        router.navigate(
+          routeForEntry(resolveEntry(goalDiscoveryDraft, user.id)),
+        );
+      }
     },
-    [dispatch],
+    [dispatch, goalDiscoveryDraft, user.id],
   );
 
   const renderNotificationItem = useCallback(
@@ -284,7 +304,10 @@ const Notifications = () => {
         type === 'anchor_accepted' ||
         type === 'anchor_rejected' ||
         type === 'friend_accepted' ||
-        type === 'friend_rejected';
+        type === 'friend_rejected' ||
+        type === 'goal_options_complete' ||
+        type === 'goal_options_failed' ||
+        type === 'goal_options_unavailable';
 
       return (
         <AppCard

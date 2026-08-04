@@ -296,3 +296,64 @@ describe('safety-blocked generation', () => {
     expect(state.draft.options).toHaveLength(0);
   });
 });
+
+// ─── re-selecting the SAME goal ──────────────────────────────────────────────
+
+describe('selectGoalOptionAction on an unchanged selection', () => {
+  // Found on the emulator: tapping "Choose this goal" on the card already
+  // chosen ran the switch-goal re-prefill, which deliberately clears the pace.
+  // The user lost their pace choice with no confirmation and no way to tell.
+  it('keeps the idempotency key when the option is unchanged', () => {
+    let state = goalDiscoveryReducer(undefined, { type: '@@INIT' } as never);
+    state = goalDiscoveryReducer(state, claimGoalDiscoveryDraftAction(USER));
+    state = goalDiscoveryReducer(
+      state,
+      selectGoalOptionAction({
+        optionId: 'opt-1',
+        stage2: emptyStage2Values(),
+      }),
+    );
+    state = goalDiscoveryReducer(
+      state,
+      setRoadmapIdempotencyKeyAction('key-1'),
+    );
+
+    state = goalDiscoveryReducer(
+      state,
+      selectGoalOptionAction({
+        optionId: 'opt-1',
+        stage2: emptyStage2Values(),
+      }),
+    );
+
+    expect(state.draft.roadmapIdempotencyKey).toBe('key-1');
+  });
+
+  // A genuine switch still invalidates it: reusing a key across two different
+  // goals would return the roadmap built for the goal they abandoned.
+  it('drops the idempotency key when the option changes', () => {
+    let state = goalDiscoveryReducer(undefined, { type: '@@INIT' } as never);
+    state = goalDiscoveryReducer(state, claimGoalDiscoveryDraftAction(USER));
+    state = goalDiscoveryReducer(
+      state,
+      selectGoalOptionAction({
+        optionId: 'opt-1',
+        stage2: emptyStage2Values(),
+      }),
+    );
+    state = goalDiscoveryReducer(
+      state,
+      setRoadmapIdempotencyKeyAction('key-1'),
+    );
+
+    state = goalDiscoveryReducer(
+      state,
+      selectGoalOptionAction({
+        optionId: 'opt-2',
+        stage2: emptyStage2Values(),
+      }),
+    );
+
+    expect(state.draft.roadmapIdempotencyKey).toBeNull();
+  });
+});

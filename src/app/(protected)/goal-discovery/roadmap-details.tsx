@@ -161,8 +161,15 @@ const GoalDiscoveryRoadmapDetails = () => {
       // Progress-tab banner polls this job, reconnects its websocket, restores
       // after an app resume, and navigates to the finished roadmap. Feeding that
       // slice is what makes goal discovery reuse it rather than grow a parallel
-      // pending UI — and it never opens the chat screen.
-      dispatch(startRoadmapCreationAction());
+      // pending UI.
+      //
+      // The SOURCE is what keeps that reuse safe. The slice is shared with the
+      // chat flow, and every "Continue" built on its status used to open the
+      // chat screen — so a user who only ever saw this form would land in a
+      // conversation they never had. Tagging the job routes them back here
+      // instead, and the tag is persisted with the slice so it survives a
+      // restart.
+      dispatch(startRoadmapCreationAction('goal_discovery_form'));
       dispatch(setAIRoadmapJobCreationResponseAction(response));
 
       // The draft is deliberately NOT cleared here. It is cleared only once the
@@ -173,7 +180,10 @@ const GoalDiscoveryRoadmapDetails = () => {
           forceRefetch: true,
         }),
       );
-      router.replace('/progress');
+      // Land on goal discovery's OWN pending state rather than the Progress
+      // tab. The Progress banner still tracks the same job — this just means
+      // the user watches it from the flow they were in.
+      router.replace('/goal-discovery/pending');
     } catch (error) {
       showToast({ type: 'failure', message: getApiErrorMessage(error) });
     } finally {
@@ -422,12 +432,19 @@ const GoalDiscoveryRoadmapDetails = () => {
             }
             multiline
           />
-          {isConstraintDetailsRequired(values) && (
-            <TranslatedText
-              xsm
-              translationKey="goal_discovery.errors.details_required"
-            />
-          )}
+          {/* The requirement is announced only while it is UNMET, and only
+              while the validation error is not already saying the same thing.
+              Showing it whenever "Other" is selected left a permanent warning
+              under a field the user had already filled in — and, after a failed
+              submit, printed the identical sentence twice. */}
+          {isConstraintDetailsRequired(values) &&
+            !values.constraintDetails.trim() &&
+            !errors.constraintDetails && (
+              <TranslatedText
+                xsm
+                translationKey="goal_discovery.errors.details_required"
+              />
+            )}
         </FormQuestion>
 
         <FormQuestion

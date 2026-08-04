@@ -2,6 +2,7 @@ import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { resolveEntry, routeForEntry } from '@/hooks/goalDiscovery/draft';
 import { useGetJobStatusQuery } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
@@ -14,10 +15,12 @@ import {
   selectAIRoadmapCreationStatus,
   selectCreatedRoadmap,
   selectIsAIRoadmapInDraft,
+  selectRoadmapCreationSource,
   setAiJobStatusAction,
   setCreationErrorAction,
 } from '@/store/slices/aiRoadmapCreationSlice';
 import { selectUser } from '@/store/slices/authSlice';
+import { selectGoalDiscoveryDraft } from '@/store/slices/goalDiscoverySlice';
 import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
@@ -31,6 +34,8 @@ export const InProgressAIRoadmapBanner = () => {
   const status = useAppSelector(selectAIRoadmapCreationStatus);
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const isInDraft = useAppSelector(selectIsAIRoadmapInDraft);
+  const creationSource = useAppSelector(selectRoadmapCreationSource);
+  const goalDiscoveryDraft = useAppSelector(selectGoalDiscoveryDraft);
   const { t } = useLocalization();
   const isCompleted = status === 'completed';
   const wsRef = useRef<WebSocket | null>(null);
@@ -201,6 +206,8 @@ export const InProgressAIRoadmapBanner = () => {
   }, [status, refetchJobStatus]);
 
   const handlePress = () => {
+    // A finished roadmap opens through the existing roadmap destination
+    // whichever flow produced it.
     if (isCompleted && createdRoadmap) {
       dispatch(
         roadmapApi.endpoints.getRoadmaps.initiate(undefined, {
@@ -210,9 +217,18 @@ export const InProgressAIRoadmapBanner = () => {
       dispatch(setDraftRoadmapAction(createdRoadmap));
       dispatch(resetCreationStateAction());
       router.navigate('/roadmap/roadmap-execution');
-    } else {
-      router.navigate('/roadmap/create-ai-roadmap');
+      return;
     }
+
+    // Still generating (or failed). This banner is driven by the SHARED
+    // creation slice, which goal discovery also feeds — so status alone cannot
+    // decide the destination. Sending a goal-discovery user here to
+    // /roadmap/create-ai-roadmap dropped them into a chat they never had.
+    if (creationSource === 'goal_discovery_form') {
+      router.navigate(routeForEntry(resolveEntry(goalDiscoveryDraft, user.id)));
+      return;
+    }
+    router.navigate('/roadmap/create-ai-roadmap');
   };
 
   const getBannerConfig = () => {
@@ -241,6 +257,16 @@ export const InProgressAIRoadmapBanner = () => {
         titleKey: 'ai_roadmap.error_banner.title' as TranslationKeysType,
         descriptionKey:
           'ai_roadmap.error_banner.description' as TranslationKeysType,
+      };
+    }
+    if (creationSource === 'goal_discovery_form') {
+      return {
+        backgroundColor: undefined,
+        iconName: 'compass' as const,
+        titleKey:
+          'ai_roadmap.in_progress_banner.goal_discovery_title' as TranslationKeysType,
+        descriptionKey:
+          'ai_roadmap.in_progress_banner.goal_discovery_description' as TranslationKeysType,
       };
     }
     return {

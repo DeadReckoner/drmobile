@@ -160,7 +160,9 @@
     },
     "in_progress_banner": {
       "title": "Creating your roadmap",
-      "description": "Your personalized roadmap is being created. Tap to view progress."
+      "description": "Your personalized roadmap is being created. Tap to view progress.",
+      "goal_discovery_title": "Building your Goal Discovery roadmap",
+      "goal_discovery_description": "We're turning the goal you chose into a plan. Tap to view progress."
     },
     "draft_banner": {
       "title": "Draft roadmap",
@@ -181,7 +183,10 @@
       "completed_subtitle": "You have a completed AI roadmap. Do you want to view it or create a new one?",
       "reset_button": "Reset",
       "continue_button": "Continue",
-      "view_button": "View Roadmap"
+      "view_button": "View Roadmap",
+      "goal_discovery_title": "Goal Discovery roadmap in progress",
+      "goal_discovery_subtitle": "You're already building a roadmap from Goal Discovery. Go back to it, or reset and start a new AI roadmap from scratch.",
+      "goal_discovery_button": "Back to Goal Discovery"
     },
     "resuming_creation": "Resuming your roadmap creation...",
     "creation_in_progress": "Your roadmap is being created. This may take a few minutes.",
@@ -383,6 +388,16 @@
       "constraint_details_placeholder": "Work schedule, family obligations, travel, budget, equipment, experience level, or anything else that could affect the plan.",
       "extra_label": "Anything else before we build your roadmap?",
       "extra_placeholder": "Add any extra context that would help make the roadmap more accurate."
+    },
+    "roadmap_pending": {
+      "header": "Building your roadmap",
+      "title": "Building your roadmap",
+      "body": "This may take 2 to 3 minutes. We will notify you when it’s ready.",
+      "leave_hint": "You can leave this screen. We will keep working and save your progress.",
+      "goal_label": "Your goal",
+      "failed_title": "That didn’t go through",
+      "failed_body": "We couldn’t build your roadmap. Everything you entered was saved.",
+      "retry": "Review and try again"
     }
   },
   "settings": {

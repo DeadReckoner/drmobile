@@ -89,7 +89,9 @@
     },
     "in_progress_banner": {
       "title": "Creando tu hoja de ruta",
-      "description": "Tu hoja de ruta personalizada se está creando. Toca para ver el progreso."
+      "description": "Tu hoja de ruta personalizada se está creando. Toca para ver el progreso.",
+      "goal_discovery_title": "Creando tu hoja de ruta de Descubrimiento de metas",
+      "goal_discovery_description": "Estamos convirtiendo la meta que elegiste en un plan. Toca para ver el progreso."
     },
     "draft_banner": {
       "title": "Borrador de hoja de ruta",
@@ -110,7 +112,10 @@
       "completed_subtitle": "Tienes una hoja de ruta IA completada. ¿Quieres verla o crear una nueva?",
       "reset_button": "Reiniciar",
       "continue_button": "Continuar",
-      "view_button": "Ver Hoja de Ruta"
+      "view_button": "Ver Hoja de Ruta",
+      "goal_discovery_title": "Hoja de ruta de Descubrimiento de metas en curso",
+      "goal_discovery_subtitle": "Ya estás creando una hoja de ruta desde Descubrimiento de metas. Vuelve a ella o reinicia y empieza una nueva hoja de ruta con IA.",
+      "goal_discovery_button": "Volver a Descubrimiento de metas"
     },
     "resuming_creation": "Reanudando la creación de tu hoja de ruta...",
     "creation_in_progress": "Tu hoja de ruta se está creando. Esto puede tardar unos minutos.",
@@ -383,6 +388,16 @@
       "constraint_details_placeholder": "Horario de trabajo, obligaciones familiares, viajes, presupuesto, equipo, nivel de experiencia o cualquier otra cosa que pueda afectar al plan.",
       "extra_label": "¿Algo más antes de crear tu hoja de ruta?",
       "extra_placeholder": "Añade cualquier contexto extra que ayude a que la hoja de ruta sea más precisa."
+    },
+    "roadmap_pending": {
+      "header": "Creando tu hoja de ruta",
+      "title": "Creando tu hoja de ruta",
+      "body": "Esto puede tardar de 2 a 3 minutos. Te avisaremos cuando esté lista.",
+      "leave_hint": "Puedes salir de esta pantalla. Seguiremos trabajando y guardaremos tu progreso.",
+      "goal_label": "Tu meta",
+      "failed_title": "Eso no funcionó",
+      "failed_body": "No pudimos crear tu hoja de ruta. Todo lo que escribiste se guardó.",
+      "retry": "Revisar e intentar de nuevo"
     }
   },
   "settings": {

@@ -141,11 +141,19 @@ const goalDiscoverySlice = createSlice({
         stage2: GoalDiscoveryStage2Values;
       }>,
     ) => {
+      const isSameOption =
+        state.draft.selectedOptionId === action.payload.optionId;
+
       state.draft.selectedOptionId = action.payload.optionId;
       state.draft.stage2 = action.payload.stage2;
       state.draft.stage = 'stage2';
-      // A new selection invalidates any key minted for the previous one.
-      state.draft.roadmapIdempotencyKey = null;
+      // A DIFFERENT selection invalidates any key minted for the previous one.
+      // Re-entering stage 2 for the same goal must keep it: discarding the key
+      // there would make a retried submit create a second roadmap instead of
+      // returning the one already created.
+      if (!isSameOption) {
+        state.draft.roadmapIdempotencyKey = null;
+      }
       state.draft.updatedAt = Date.now();
     },
 

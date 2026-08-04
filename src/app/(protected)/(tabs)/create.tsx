@@ -5,7 +5,7 @@ import { Divider } from '@/components/Divider';
 import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
-import { resolveEntry } from '@/hooks/goalDiscovery/draft';
+import { resolveEntry, routeForEntry } from '@/hooks/goalDiscovery/draft';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -13,6 +13,7 @@ import {
   selectAIRoadmapCreationStatus,
   selectAIRoadmapMessages,
   selectCreatedRoadmap,
+  selectRoadmapCreationSource,
 } from '@/store/slices/aiRoadmapCreationSlice';
 import { selectUser } from '@/store/slices/authSlice';
 import { selectGoalDiscoveryDraft } from '@/store/slices/goalDiscoverySlice';
@@ -31,18 +32,45 @@ const Create = () => {
   const aiRoadmapStatus = useAppSelector(selectAIRoadmapCreationStatus);
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const messages = useAppSelector(selectAIRoadmapMessages);
+  const creationSource = useAppSelector(selectRoadmapCreationSource);
   const goalDiscoveryDraft = useAppSelector(selectGoalDiscoveryDraft);
   const user = useAppSelector(selectUser);
   const [isAIDraftDialogOpen, setIsAIDraftDialogOpen] = useState(false);
 
   const hasUserMessage = messages.some((msg) => msg.type === 'user');
 
+  /**
+   * Whether the shared creation slice is tracking a GOAL DISCOVERY roadmap.
+   *
+   * Both flows write to that slice, so its status alone cannot decide where a
+   * "Continue" leads. Without this distinction, a roadmap started from the
+   * goal discovery FORM made this card offer a Continue that opened the chat
+   * screen — a conversation the user never had, showing a loader.
+   */
+  const isGoalDiscoveryRoadmapPending =
+    creationSource === 'goal_discovery_form' &&
+    (aiRoadmapStatus === 'creating' ||
+      aiRoadmapStatus === 'completed' ||
+      aiRoadmapStatus === 'error');
+
   const hasAIDraftInProgress =
     aiRoadmapStatus === 'completed' ||
     aiRoadmapStatus === 'creating' ||
     (aiRoadmapStatus === 'collecting' && hasUserMessage);
 
+  /** Where the goal discovery entry point should go right now. */
+  const goToGoalDiscovery = () => {
+    router.navigate(routeForEntry(resolveEntry(goalDiscoveryDraft, user.id)));
+  };
+
   const onAIRoadmapPress = () => {
+    // A goal discovery roadmap in flight gets its OWN dialog, whose only
+    // forward action returns to goal discovery. Starting a fresh chat is still
+    // offered; opening the chat screen as a "continue" is not.
+    if (isGoalDiscoveryRoadmapPending) {
+      setIsAIDraftDialogOpen(true);
+      return;
+    }
     if (hasAIDraftInProgress) {
       setIsAIDraftDialogOpen(true);
     } else {
@@ -58,6 +86,10 @@ const Create = () => {
 
   const handleGoToRoadmap = () => {
     setIsAIDraftDialogOpen(false);
+
+    // A completed roadmap opens through the existing roadmap destination
+    // whichever flow produced it — the result of goal discovery is an ordinary
+    // roadmap.
     if (aiRoadmapStatus === 'completed' && createdRoadmap) {
       dispatch(setDraftRoadmapAction(createdRoadmap));
       dispatch(resetCreationStateAction());
@@ -67,9 +99,15 @@ const Create = () => {
         }),
       );
       router.navigate('/roadmap/roadmap-execution');
-    } else {
-      router.navigate('/roadmap/create-ai-roadmap');
+      return;
     }
+
+    // Still generating: the source decides the destination.
+    if (isGoalDiscoveryRoadmapPending) {
+      goToGoalDiscovery();
+      return;
+    }
+    router.navigate('/roadmap/create-ai-roadmap');
   };
 
   /**
@@ -77,18 +115,7 @@ const Create = () => {
    * one, and otherwise starts at the form. It never enters the chat flow, and
    * never starts a generation just from being opened.
    */
-  const onGoalDiscoveryPress = () => {
-    const entry = resolveEntry(goalDiscoveryDraft, user.id);
-    if (entry.route === 'options') {
-      router.navigate('/goal-discovery/options');
-      return;
-    }
-    if (entry.route === 'stage2') {
-      router.navigate('/goal-discovery/roadmap-details');
-      return;
-    }
-    router.navigate('/goal-discovery');
-  };
+  const onGoalDiscoveryPress = goToGoalDiscovery;
 
   const onCustomRoadmapPress = () => {
     dispatch(resetDraftAction());
@@ -154,12 +181,16 @@ const Create = () => {
         title={
           aiRoadmapStatus === 'completed'
             ? 'ai_roadmap.draft_dialog.completed_title'
-            : 'ai_roadmap.draft_dialog.in_progress_title'
+            : isGoalDiscoveryRoadmapPending
+              ? 'ai_roadmap.draft_dialog.goal_discovery_title'
+              : 'ai_roadmap.draft_dialog.in_progress_title'
         }
         subtitle={
           aiRoadmapStatus === 'completed'
             ? 'ai_roadmap.draft_dialog.completed_subtitle'
-            : 'ai_roadmap.draft_dialog.in_progress_subtitle'
+            : isGoalDiscoveryRoadmapPending
+              ? 'ai_roadmap.draft_dialog.goal_discovery_subtitle'
+              : 'ai_roadmap.draft_dialog.in_progress_subtitle'
         }
         onPositivePress={handleResetAndStart}
         onNegativePress={handleGoToRoadmap}
@@ -167,7 +198,9 @@ const Create = () => {
         negativeText={
           aiRoadmapStatus === 'completed'
             ? 'ai_roadmap.draft_dialog.view_button'
-            : 'ai_roadmap.draft_dialog.continue_button'
+            : isGoalDiscoveryRoadmapPending
+              ? 'ai_roadmap.draft_dialog.goal_discovery_button'
+              : 'ai_roadmap.draft_dialog.continue_button'
         }
         positiveButtonIcon={
           <AppIcon

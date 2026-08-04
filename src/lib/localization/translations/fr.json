@@ -89,7 +89,9 @@
     },
     "in_progress_banner": {
       "title": "Création de ta feuille de route",
-      "description": "Votre feuille de route personnalisée est en cours de création. Appuyez pour voir la progression."
+      "description": "Votre feuille de route personnalisée est en cours de création. Appuyez pour voir la progression.",
+      "goal_discovery_title": "Création de votre feuille de route Découverte d’objectifs",
+      "goal_discovery_description": "Nous transformons l’objectif choisi en plan. Touchez pour voir la progression."
     },
     "draft_banner": {
       "title": "Brouillon de feuille de route",
@@ -110,7 +112,10 @@
       "completed_subtitle": "Vous avez une feuille de route IA complétée. Voulez-vous la voir ou en créer une nouvelle?",
       "reset_button": "Réinitialiser",
       "continue_button": "Continuer",
-      "view_button": "Voir la Feuille de Route"
+      "view_button": "Voir la Feuille de Route",
+      "goal_discovery_title": "Feuille de route Découverte d’objectifs en cours",
+      "goal_discovery_subtitle": "Vous créez déjà une feuille de route depuis Découverte d’objectifs. Revenez-y, ou réinitialisez pour démarrer une nouvelle feuille de route IA.",
+      "goal_discovery_button": "Retour à Découverte d’objectifs"
     },
     "resuming_creation": "Reprise de la création de ta feuille de route...",
     "creation_in_progress": "Ta feuille de route est en cours de création. Cela peut prendre quelques minutes.",
@@ -383,6 +388,16 @@
       "constraint_details_placeholder": "Horaires de travail, obligations familiales, déplacements, budget, matériel, niveau d’expérience, ou tout autre élément pouvant influer sur le plan.",
       "extra_label": "Autre chose avant de construire votre feuille de route ?",
       "extra_placeholder": "Ajoutez tout contexte supplémentaire qui rendrait la feuille de route plus précise."
+    },
+    "roadmap_pending": {
+      "header": "Création de votre feuille de route",
+      "title": "Création de votre feuille de route",
+      "body": "Cela peut prendre 2 à 3 minutes. Nous vous préviendrons dès que ce sera prêt.",
+      "leave_hint": "Vous pouvez quitter cet écran. Nous continuons et sauvegardons votre progression.",
+      "goal_label": "Votre objectif",
+      "failed_title": "Cela n’a pas abouti",
+      "failed_body": "Nous n’avons pas pu créer votre feuille de route. Tout ce que vous avez saisi a été enregistré.",
+      "retry": "Vérifier et réessayer"
     }
   },
   "settings": {

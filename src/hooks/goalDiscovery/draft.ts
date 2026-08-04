@@ -136,17 +136,34 @@ export const hasStage1Input = (values: GoalDiscoveryStage1Values): boolean =>
 export type GoalDiscoveryEntry =
   | { route: 'stage1' }
   | { route: 'options' }
-  | { route: 'stage2' };
+  | { route: 'stage2' }
+  | { route: 'pending' };
+
+/**
+ * True once the final roadmap has been submitted for this draft.
+ *
+ * Both ids are required: the roadmap id is what the draft is cleared against on
+ * completion, so a draft holding only a job id is not yet a submitted roadmap.
+ */
+export const hasSubmittedRoadmap = (draft: GoalDiscoveryDraft): boolean =>
+  Boolean(draft.roadmapJobId && draft.roadmapId);
 
 /**
  * Where tapping Goal Discovery should land.
  *
- * Resuming is only offered for a draft this user owns. An in-flight or completed
- * options job goes to the options screen (which shows the pending state or the
- * result); a chosen goal goes to stage 2; anything else starts at the form.
+ * Resuming is only offered for a draft this user owns. Order matters:
+ *
+ *   1. A submitted roadmap goes to the goal discovery PENDING state. Without
+ *      this branch the user is returned to the stage-2 form they already
+ *      submitted, where the only visible action is to submit it again.
+ *   2. An in-flight or completed options job goes to the options screen.
+ *   3. A chosen goal goes to stage 2.
+ *   4. Anything else starts at the form.
  *
  * Note the deliberate absence of any branch that starts a generation: opening
- * the feature must never spend a credit on its own.
+ * the feature must never spend a credit on its own. Note also that no branch
+ * ever names a chat route — a goal reached through a form is never resumed as
+ * a conversation.
  */
 export const resolveEntry = (
   draft: GoalDiscoveryDraft | null | undefined,
@@ -154,6 +171,9 @@ export const resolveEntry = (
 ): GoalDiscoveryEntry => {
   if (!isDraftUsable(draft, userId) || !draft) return { route: 'stage1' };
 
+  if (hasSubmittedRoadmap(draft)) {
+    return { route: 'pending' };
+  }
   if (draft.stage === 'stage2' && draft.selectedOptionId) {
     return { route: 'stage2' };
   }
@@ -162,6 +182,22 @@ export const resolveEntry = (
   }
   return { route: 'stage1' };
 };
+
+/** The expo-router path for an entry. Single source of truth for both the
+ *  Create page and the shared AI-roadmap surfaces. */
+export const GOAL_DISCOVERY_ROUTES = {
+  stage1: '/goal-discovery',
+  options: '/goal-discovery/options',
+  stage2: '/goal-discovery/roadmap-details',
+  pending: '/goal-discovery/pending',
+} as const;
+
+/** The literal union, so expo-router still type-checks every destination. */
+export type GoalDiscoveryRoute =
+  (typeof GOAL_DISCOVERY_ROUTES)[keyof typeof GOAL_DISCOVERY_ROUTES];
+
+export const routeForEntry = (entry: GoalDiscoveryEntry): GoalDiscoveryRoute =>
+  GOAL_DISCOVERY_ROUTES[entry.route];
 
 /**
  * Whether the options screen should be polling.

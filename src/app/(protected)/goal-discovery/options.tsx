@@ -11,6 +11,7 @@ import {
 import { GoalOptionCard } from '@/components/goal-discovery/GoalOptionCard';
 import { RegenerateDialog } from '@/components/goal-discovery/RegenerateDialog';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
+import { PrimaryButtonContainer } from '@/components/PrimaryButtonContainer';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useCreateGoalOptionsMutation } from '@/hooks/goalDiscovery';
@@ -106,9 +107,18 @@ const GoalDiscoveryOptions = () => {
   const goToStage2 = (option: GoalOption) => {
     if (!draft.submittedAnswers) return;
 
-    const stage2 = draft.stage2
-      ? reselectOption(draft.stage2, option, draft.submittedAnswers)
-      : prefillStage2(option, draft.submittedAnswers);
+    // Re-entering stage 2 for the goal ALREADY selected must change nothing.
+    // Running the re-prefill here as well meant tapping "Choose this goal" on
+    // the card you had already chosen silently cleared your pace — the one
+    // field reselectOption deliberately discards — with no confirmation and no
+    // way to tell it had happened.
+    const isSameOption = draft.selectedOptionId === option.id;
+    const stage2 =
+      draft.stage2 && isSameOption
+        ? draft.stage2
+        : draft.stage2
+          ? reselectOption(draft.stage2, option, draft.submittedAnswers)
+          : prefillStage2(option, draft.submittedAnswers);
 
     dispatch(selectGoalOptionAction({ optionId: option.id, stage2 }));
     router.push('/goal-discovery/roadmap-details');
@@ -128,6 +138,10 @@ const GoalDiscoveryOptions = () => {
 
   const renderBody = () => {
     if (draft.safetyMessage) {
+      // A blocked result is a dead end unless the user is given somewhere to
+      // go. Three empty option cards are never rendered — `options` is empty in
+      // this branch — and both ways forward are offered here rather than
+      // leaving "start over" in the header as the only escape.
       return (
         <AppCard paddingV-20 disabled testID="goal-discovery-safety">
           <AppView row centerV gap-8>
@@ -145,6 +159,24 @@ const GoalDiscoveryOptions = () => {
           <AppText xsm marginT-8 textColor>
             {draft.safetyMessage}
           </AppText>
+
+          <Divider margin-8 />
+          <PrimaryButtonContainer
+            onPress={() => router.replace('/goal-discovery')}>
+            <TranslatedText
+              textOnPrimary
+              buttonLable
+              translationKey="goal_discovery.pending.edit_answers"
+            />
+          </PrimaryButtonContainer>
+          <AppView marginT-12 center>
+            <TranslatedText
+              body2
+              translationKey="goal_discovery.start_over_confirm"
+              onPress={() => setIsStartOverOpen(true)}
+              testID="goal-discovery-safety-start-over"
+            />
+          </AppView>
         </AppCard>
       );
     }

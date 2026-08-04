@@ -445,3 +445,143 @@ describe('effortFor', () => {
     ).toBeUndefined();
   });
 });
+
+// ─── remediation coverage ────────────────────────────────────────────────────
+
+describe('constraint details requirement lifecycle', () => {
+  // The requirement must appear AND disappear. A one-way rule leaves the user
+  // blocked by a field the form no longer shows as relevant.
+  it('drops the requirement when "Other" is deselected', () => {
+    const withOther = toggleConstraint(filled(), 'other');
+    expect(isConstraintDetailsRequired(withOther)).toBe(true);
+
+    const withoutOther = toggleConstraint(withOther, 'other');
+    expect(isConstraintDetailsRequired(withoutOther)).toBe(false);
+    expect(
+      validateStage2({ ...withoutOther, constraintDetails: '' }, TODAY)
+        .constraintDetails,
+    ).toBeUndefined();
+  });
+
+  // The screen only announces the requirement while it is UNMET; filled details
+  // must satisfy it rather than leaving a permanent warning under the field.
+  it('is satisfied by real details', () => {
+    const values = {
+      ...filled(),
+      constraints: ['other' as const],
+      constraintDetails: 'I travel for work three weeks a month',
+    };
+    expect(validateStage2(values, TODAY).constraintDetails).toBeUndefined();
+  });
+});
+
+describe('pace payload discriminators', () => {
+  // Every mode must serialize with the discriminator the server switches on.
+  // A wrong tag silently changes which branch of the generator prompt runs.
+  it('tags a generated lane', () => {
+    const payload = toPacePayload(
+      selectGeneratedPace(filled(), 'focused').pace,
+    );
+    expect(payload).toEqual({ mode: 'generated', selected_pace: 'focused' });
+  });
+
+  it('tags an ideal deadline', () => {
+    const values = {
+      ...filled(),
+      pace: {
+        ...emptyStage2Values().pace,
+        isCustom: true,
+        control: 'deadline' as const,
+        targetDate: '2026-12-01',
+      },
+    };
+    expect(toPacePayload(values.pace)).toEqual({
+      mode: 'ideal_deadline',
+      target_date: '2026-12-01',
+    });
+  });
+
+  it('tags a weekly preset without inventing an hours number', () => {
+    const values = {
+      ...filled(),
+      pace: {
+        ...emptyStage2Values().pace,
+        isCustom: true,
+        control: 'weekly' as const,
+        weeklyPreset: 'two_to_three_sessions_week' as const,
+      },
+    };
+    expect(toPacePayload(values.pace)).toEqual({
+      mode: 'weekly_limit',
+      preset: 'two_to_three_sessions_week',
+    });
+  });
+
+  it('tags weekly custom and carries the description', () => {
+    const values = {
+      ...filled(),
+      pace: {
+        ...emptyStage2Values().pace,
+        isCustom: true,
+        control: 'weekly' as const,
+        weeklyPreset: 'custom' as const,
+        customWeeklyDescription: '  45 minutes on weekdays  ',
+      },
+    };
+    expect(toPacePayload(values.pace)).toEqual({
+      mode: 'weekly_limit',
+      preset: 'custom',
+      custom_description: '45 minutes on weekdays',
+    });
+  });
+});
+
+describe('switching to a different goal', () => {
+  const OTHER_OPTION: GoalOption = {
+    ...OPTION,
+    id: 'option-2',
+    goal_title: 'Publish a weekly newsletter',
+    target_outcome: 'Eight issues published on schedule.',
+  };
+
+  // The pace numbers belong to the option they were generated for. Carrying
+  // them across would submit an estimate for a goal the user just rejected.
+  it('never lets a previous option’s pace reach the payload', () => {
+    const chosen = selectGeneratedPace(filled(), 'focused');
+    const switched = reselectOption(chosen, OTHER_OPTION, ANSWERS);
+
+    expect(switched.pace.selectedPace).toBeNull();
+    expect(switched.pace.isCustom).toBe(false);
+    // And the form now refuses to submit until a pace is chosen for the NEW
+    // goal, rather than silently sending the old one.
+    expect(validateStage2(switched, TODAY).pace).toBe(
+      'goal_discovery.errors.pace_required',
+    );
+  });
+
+  it('replaces the goal and definition of done', () => {
+    const switched = reselectOption(filled(), OTHER_OPTION, ANSWERS);
+
+    expect(switched.selectedGoal).toBe(OTHER_OPTION.goal_title);
+    expect(switched.completionDefinition).toBe(OTHER_OPTION.target_outcome);
+  });
+
+  it('keeps every field the user wrote about themselves', () => {
+    const authored = {
+      ...filled(),
+      whyNow: 'Because I keep putting it off',
+      baseline: 'I have never done this before',
+      constraints: ['limited_time' as const, 'other' as const],
+      constraintDetails: 'I travel for work',
+      additionalContext: 'Please avoid weekends',
+    };
+
+    const switched = reselectOption(authored, OTHER_OPTION, ANSWERS);
+
+    expect(switched.whyNow).toBe(authored.whyNow);
+    expect(switched.baseline).toBe(authored.baseline);
+    expect(switched.constraints).toEqual(authored.constraints);
+    expect(switched.constraintDetails).toBe(authored.constraintDetails);
+    expect(switched.additionalContext).toBe(authored.additionalContext);
+  });
+});
