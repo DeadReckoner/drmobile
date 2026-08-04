@@ -5,6 +5,11 @@ import { Divider } from '@/components/Divider';
 import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import {
+  CREATE_OPTION_ROUTES,
+  CREATE_PAGE_SECTIONS,
+  CreateOptionId,
+} from '@/hooks/createTab/createTabCatalog';
 import { resolveEntry, routeForEntry } from '@/hooks/goalDiscovery/draft';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
@@ -23,9 +28,18 @@ import {
   setSelectedHabit,
 } from '@/store/slices/roadmapDraftSlice';
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView } from 'react-native';
+import { JSX, useState } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
+
+const OPTION_ICONS: Record<CreateOptionId, JSX.Element> = {
+  build_with_ai: <AppIcon set="Feather" name="map" color={Colors.white} />,
+  goal_discovery: <AppIcon set="Feather" name="compass" color={Colors.white} />,
+  templates: <AppIcon set="Feather" name="layers" color={Colors.white} />,
+  build_a_roadmap: <AppIcon set="Feather" name="map" color={Colors.white} />,
+  import_plan: <AppIcon name="export" color={Colors.white} />,
+  add_task_or_habit: <AppIcon name="addfile" color={Colors.white} />,
+};
 
 const Create = () => {
   const dispatch = useAppDispatch();
@@ -74,14 +88,14 @@ const Create = () => {
     if (hasAIDraftInProgress) {
       setIsAIDraftDialogOpen(true);
     } else {
-      router.navigate('/roadmap/create-ai-roadmap');
+      router.navigate(CREATE_OPTION_ROUTES.build_with_ai);
     }
   };
 
   const handleResetAndStart = () => {
     dispatch(resetCreationStateAction());
     setIsAIDraftDialogOpen(false);
-    router.navigate('/roadmap/create-ai-roadmap');
+    router.navigate(CREATE_OPTION_ROUTES.build_with_ai);
   };
 
   const handleGoToRoadmap = () => {
@@ -107,72 +121,65 @@ const Create = () => {
       goToGoalDiscovery();
       return;
     }
-    router.navigate('/roadmap/create-ai-roadmap');
+    router.navigate(CREATE_OPTION_ROUTES.build_with_ai);
   };
-
-  /**
-   * Goal Discovery resumes this user's saved draft or pending job when there is
-   * one, and otherwise starts at the form. It never enters the chat flow, and
-   * never starts a generation just from being opened.
-   */
-  const onGoalDiscoveryPress = goToGoalDiscovery;
 
   const onCustomRoadmapPress = () => {
     dispatch(resetDraftAction());
-    router.navigate('/roadmap/add-edit-custom-roadmap');
+    router.navigate(CREATE_OPTION_ROUTES.build_a_roadmap);
   };
+
   const onAddNewHabitPress = () => {
     dispatch(setSelectedHabit(null));
-    router.navigate('/habits/add-edit-habits-task');
+    router.navigate(CREATE_OPTION_ROUTES.add_task_or_habit);
   };
-  const navigateToComingSoon = () => {
-    router.navigate('/coming-soon');
+
+  /**
+   * What tapping each catalog option does. Options with pending-flow or draft
+   * rules keep their dedicated handlers; the rest just open their route.
+   * Goal Discovery resumes this user's saved draft or pending job when there
+   * is one, and otherwise starts at the form. It never enters the chat flow,
+   * and never starts a generation just from being opened.
+   */
+  const onPressByOption: Record<CreateOptionId, () => void> = {
+    build_with_ai: onAIRoadmapPress,
+    goal_discovery: goToGoalDiscovery,
+    templates: () => router.navigate(CREATE_OPTION_ROUTES.templates),
+    build_a_roadmap: onCustomRoadmapPress,
+    import_plan: () => router.navigate(CREATE_OPTION_ROUTES.import_plan),
+    add_task_or_habit: onAddNewHabitPress,
   };
+
   return (
     <AppScreen>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentInsetAdjustmentBehavior="always">
+        contentInsetAdjustmentBehavior="always"
+        contentContainerStyle={styles.scrollContent}>
         <Divider />
         <TranslatedText h2 translationKey="tabs.create" />
         <Divider />
-        <AppView gap-16>
-          <CreateTabListItem
-            type="ai"
-            titleKey="tabs.create_tab.build_roadmap_ai"
-            descriptionKey="tabs.create_tab.build_roadmap_ai_desc"
-            onPress={onAIRoadmapPress}
-            icon={<AppIcon set="Feather" name="map" color={Colors.white} />}
-          />
-          <CreateTabListItem
-            type="ai"
-            titleKey="tabs.create_tab.goal_discovery"
-            descriptionKey="tabs.create_tab.goal_discovery_desc"
-            onPress={onGoalDiscoveryPress}
-            icon={<AppIcon set="Feather" name="compass" color={Colors.white} />}
-          />
-          <CreateTabListItem
-            type="custom"
-            titleKey="tabs.create_tab.build_roadmap_custom"
-            descriptionKey="tabs.create_tab.build_roadmap_custom_desc"
-            onPress={onCustomRoadmapPress}
-            icon={<AppIcon set="Feather" name="map" color={Colors.white} />}
-          />
-          <CreateTabListItem
-            type="task"
-            titleKey="tabs.create_tab.add_new_task_or_habit"
-            descriptionKey="tabs.create_tab.add_new_task_desc"
-            icon={<AppIcon name="addfile" color={Colors.white} />}
-            onPress={onAddNewHabitPress}
-          />
-          <CreateTabListItem
-            type="import_plan"
-            titleKey="tabs.create_tab.import_plan"
-            descriptionKey="tabs.create_tab.import_plan_desc"
-            onPress={navigateToComingSoon}
-            icon={<AppIcon name="export" color={Colors.white} />}
-          />
-          <Divider />
+        <AppView gap-28>
+          {CREATE_PAGE_SECTIONS.map((section) => (
+            <AppView key={section.id} gap-12>
+              <TranslatedText
+                caption
+                color={Colors.secondary}
+                style={styles.sectionHeading}
+                translationKey={section.labelKey}
+              />
+              {section.options.map((option) => (
+                <CreateTabListItem
+                  key={option.id}
+                  treatment={option.treatment}
+                  titleKey={option.titleKey}
+                  descriptionKey={option.descriptionKey}
+                  onPress={onPressByOption[option.id]}
+                  icon={OPTION_ICONS[option.id]}
+                />
+              ))}
+            </AppView>
+          ))}
         </AppView>
       </ScrollView>
       <ConfirmationDialog
@@ -222,5 +229,10 @@ const Create = () => {
     </AppScreen>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollContent: { paddingBottom: 32 },
+  sectionHeading: { textTransform: 'uppercase', letterSpacing: 1.2 },
+});
 
 export default Create;

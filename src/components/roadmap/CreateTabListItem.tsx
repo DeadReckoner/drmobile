@@ -9,7 +9,8 @@ import { Assets } from 'react-native-ui-lib';
 interface TaskAndRoadmapCreationItem {
   titleKey: TranslationKeysType;
   descriptionKey: TranslationKeysType;
-  type?: 'ai' | 'custom' | 'task' | 'import_plan';
+  /** 'ai' overlays the purple AI background on the icon tile. */
+  treatment?: 'ai' | 'standard';
   onPress: () => void;
   icon?: JSX.Element;
 }
@@ -17,15 +18,15 @@ interface TaskAndRoadmapCreationItem {
 export const CreateTabListItem = ({
   titleKey,
   descriptionKey,
-  type = 'task',
+  treatment = 'standard',
   onPress,
   icon,
 }: TaskAndRoadmapCreationItem) => {
   return (
-    <AppCard paddingV-20 onPress={onPress}>
-      <AppView row gap-16>
+    <AppCard onPress={onPress}>
+      <AppView row gap-16 centerV>
         <AppView bg-accent br30 center style={styles.iconContainer}>
-          {type === 'ai' && (
+          {treatment === 'ai' && (
             <AppImage
               style={[StyleSheet.absoluteFillObject]}
               source={Assets.logo.aiRoadmapBG}

@@ -83,8 +83,17 @@
       "no_habits_description": "Create recurring habits to build consistency in your daily routine."
     },
     "create_tab": {
-      "build_roadmap_ai": "Use AI to Build My Roadmap",
-      "build_roadmap_ai_desc": "Let our AI generate a step-by-step roadmap based on your objectives and priorities.",
+      "section_ai_guided": "AI-Guided",
+      "section_starting_points": "Starting Points",
+      "section_quick_add": "Quick Add",
+      "build_with_ai": "Build with AI",
+      "build_with_ai_desc": "Tell us your goal. AI will build a step-by-step roadmap.",
+      "templates": "Templates",
+      "templates_desc": "Start with a ready-made roadmap or routine, then make it yours.",
+      "build_a_roadmap": "Build a Roadmap",
+      "build_a_roadmap_desc": "Create your own roadmap, milestones, and tasks from scratch.",
+      "add_task_or_habit": "Add a Task or Habit",
+      "add_task_or_habit_desc": "Create a custom task or recurring habit from scratch.",
       "build_roadmap_custom": "Create My Own Roadmap",
       "build_roadmap_custom_desc": "Design your own roadmap from scratch, tailoring every step to your unique vision.",
       "add_new_task_or_habit": "Add a New Task or Habit",
@@ -99,10 +108,10 @@
       "update_step": "Update Step",
       "add_new_task_desc": "Create a one-time task or set a recurring habit, whatever you need to keep moving forward.",
       "add_milestone_task_desc": "Add a new task to the milestone to better manage your roadmap goal.",
-      "import_plan": "Import an Existing Plan",
-      "import_plan_desc": "Upload any existing roadmap, program, or outline and AI will translate it into a structured, editable plan.",
+      "import_plan": "Import a Plan",
+      "import_plan_desc": "Turn an existing plan or program into an editable roadmap.",
       "goal_discovery": "Goal Discovery",
-      "goal_discovery_desc": "Not sure where to start? Get clear on what matters and choose a target worth committing to.",
+      "goal_discovery_desc": "Not sure what to pursue? Find a goal worth committing to.",
       "ai_roadmap": "AI Roadmap",
       "custom_roadmap": "Custom Roadmap",
       "goal_name_label": "Goal Name",
@@ -697,6 +706,12 @@
       "no_tasks_description": "No tasks yet. Create a roadmap or recurring habit to populate your day.",
       "go_to_create": "Go to Create"
     }
+  },
+  "templates": {
+    "header": "Templates",
+    "intro": "Start with a ready-made roadmap or routine, then make it yours.",
+    "empty_title": "Templates are coming soon",
+    "empty_description": "Ready-made routines and roadmaps will appear here as they are added."
   },
   "coming_soon": {
     "title": "Coming Soon",

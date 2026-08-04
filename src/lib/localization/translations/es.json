@@ -144,8 +144,17 @@
       "no_habits_description": "Crea hábitos recurrentes para construir consistencia en tu rutina diaria."
     },
     "create_tab": {
-      "build_roadmap_ai": "Usar IA para Crear mi Hoja de Ruta",
-      "build_roadmap_ai_desc": "Deja que nuestra IA genere una hoja de ruta paso a paso basada en tus objetivos y prioridades.",
+      "section_ai_guided": "Guiado por IA",
+      "section_starting_points": "Puntos de partida",
+      "section_quick_add": "Añadir rápido",
+      "build_with_ai": "Crear con IA",
+      "build_with_ai_desc": "Cuéntanos tu objetivo. La IA construirá una hoja de ruta paso a paso.",
+      "templates": "Plantillas",
+      "templates_desc": "Empieza con una hoja de ruta o rutina lista para usar y hazla tuya.",
+      "build_a_roadmap": "Crear una Hoja de Ruta",
+      "build_a_roadmap_desc": "Crea tu propia hoja de ruta, hitos y tareas desde cero.",
+      "add_task_or_habit": "Añadir Tarea o Hábito",
+      "add_task_or_habit_desc": "Crea una tarea personalizada o un hábito recurrente desde cero.",
       "build_roadmap_custom": "Crear mi propia Hoja de Ruta",
       "build_roadmap_custom_desc": "Diseña tu propia hoja de ruta desde cero, adaptando cada paso a tu visión.",
       "add_new_task_or_habit": "Añadir nueva tarea o hábito",
@@ -160,10 +169,10 @@
       "update_step": "Actualizar paso",
       "add_new_task_desc": "Crea una tarea única o un hábito recurrente, lo que necesites para seguir avanzando.",
       "add_milestone_task_desc": "Añade una nueva tarea al hito para gestionar mejor tu objetivo.",
-      "import_plan": "Importar un Plan Existente",
-      "import_plan_desc": "Sube cualquier hoja de ruta, programa o esquema existente y la IA lo traducirá en un plan estructurado y editable.",
+      "import_plan": "Importar un Plan",
+      "import_plan_desc": "Convierte un plan o programa existente en una hoja de ruta editable.",
       "goal_discovery": "Descubrir mi Objetivo",
-      "goal_discovery_desc": "¿No sabes por dónde empezar? Aclara lo que importa y elige una meta que valga la pena.",
+      "goal_discovery_desc": "¿No sabes qué perseguir? Encuentra una meta con la que valga la pena comprometerse.",
       "ai_roadmap": "Hoja de Ruta IA",
       "custom_roadmap": "Hoja de Ruta Personalizada",
       "goal_name_label": "Nombre del Objetivo",
@@ -697,6 +706,12 @@
       "no_tasks_description": "Aún no hay tareas. Crea una hoja de ruta o un hábito recurrente para llenar tu día.",
       "go_to_create": "Ir a Crear"
     }
+  },
+  "templates": {
+    "header": "Plantillas",
+    "intro": "Empieza con una hoja de ruta o rutina lista para usar y hazla tuya.",
+    "empty_title": "Las plantillas llegarán pronto",
+    "empty_description": "Las rutinas y hojas de ruta listas para usar aparecerán aquí a medida que se añadan."
   },
   "coming_soon": {
     "title": "Próximamente",

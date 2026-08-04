@@ -53,9 +53,7 @@ describe('goal discovery copy', () => {
     ).toBe('Goal Discovery');
     expect(
       lookup(en as unknown as Dict, 'tabs.create_tab.goal_discovery_desc'),
-    ).toBe(
-      'Not sure where to start? Get clear on what matters and choose a target worth committing to.',
-    );
+    ).toBe('Not sure what to pursue? Find a goal worth committing to.');
   });
 
   it.each(LOCALES)('resolves every choice label in %s', (name, dict) => {

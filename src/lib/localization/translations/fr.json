@@ -144,8 +144,17 @@
       "no_habits_description": "Créez des habitudes récurrentes pour établir une cohérence dans votre routine quotidienne."
     },
     "create_tab": {
-      "build_roadmap_ai": "Utiliser l’IA pour Créer ma Feuille de Route",
-      "build_roadmap_ai_desc": "Laissez notre IA générer une feuille de route étape par étape basée sur vos objectifs et priorités.",
+      "section_ai_guided": "Guidé par l’IA",
+      "section_starting_points": "Points de départ",
+      "section_quick_add": "Ajout rapide",
+      "build_with_ai": "Créer avec l’IA",
+      "build_with_ai_desc": "Dites-nous votre objectif. L’IA construira une feuille de route étape par étape.",
+      "templates": "Modèles",
+      "templates_desc": "Commencez avec une feuille de route ou une routine prête à l’emploi, puis personnalisez-la.",
+      "build_a_roadmap": "Créer une Feuille de Route",
+      "build_a_roadmap_desc": "Créez votre propre feuille de route, vos jalons et vos tâches à partir de zéro.",
+      "add_task_or_habit": "Ajouter une Tâche ou une Habitude",
+      "add_task_or_habit_desc": "Créez une tâche personnalisée ou une habitude récurrente à partir de zéro.",
       "build_roadmap_custom": "Créer ma Propre Feuille de Route",
       "build_roadmap_custom_desc": "Concevez votre propre feuille de route, en adaptant chaque étape à votre vision.",
       "add_new_task_or_habit": "Ajouter une nouvelle tâche ou habitude",
@@ -160,10 +169,10 @@
       "update_step": "Mettre à jour l’étape",
       "add_new_task_desc": "Créez une tâche ponctuelle ou une habitude récurrente, selon vos besoins pour progresser.",
       "add_milestone_task_desc": "Ajoutez une nouvelle tâche au jalon pour mieux gérer votre objectif.",
-      "import_plan": "Importer un Plan Existant",
-      "import_plan_desc": "Importez une feuille de route, un programme ou un plan existant et l’IA le transformera en plan structuré et éditable.",
+      "import_plan": "Importer un Plan",
+      "import_plan_desc": "Transformez un plan ou un programme existant en une feuille de route éditable.",
       "goal_discovery": "Trouver mon Objectif",
-      "goal_discovery_desc": "Vous ne savez pas par où commencer ? Clarifiez ce qui compte et choisissez un objectif qui en vaut la peine.",
+      "goal_discovery_desc": "Vous ne savez pas quoi poursuivre ? Trouvez un objectif qui mérite votre engagement.",
       "ai_roadmap": "Feuille de Route IA",
       "custom_roadmap": "Feuille de Route Personnalisée",
       "goal_name_label": "Nom de l’Objectif",
@@ -697,6 +706,12 @@
       "no_tasks_description": "Pas encore de tâches. Créez une feuille de route ou une habitude récurrente pour remplir votre journée.",
       "go_to_create": "Aller à Créer"
     }
+  },
+  "templates": {
+    "header": "Modèles",
+    "intro": "Commencez avec une feuille de route ou une routine prête à l’emploi, puis personnalisez-la.",
+    "empty_title": "Les modèles arrivent bientôt",
+    "empty_description": "Les routines et feuilles de route prêtes à l’emploi apparaîtront ici au fur et à mesure de leur ajout."
   },
   "coming_soon": {
     "title": "Bientôt disponible",
