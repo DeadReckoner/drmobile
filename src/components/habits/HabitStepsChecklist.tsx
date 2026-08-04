@@ -5,6 +5,7 @@ import { Loader } from '@/components/Loader';
 import { StepRow } from '@/components/StepRow';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
+import { StepToggleOutcome } from '@/hooks/habits/stepCompletion';
 import { useToast } from '@/hooks/useToast';
 import {
   useGetHabitOccurrenceStepsQuery,
@@ -21,6 +22,13 @@ interface HabitStepsChecklistProps {
   readonly?: boolean;
   /** Notified when the parent occurrence's completed state flips. */
   onOccurrenceCompletedChange?: (_isCompleted: boolean) => void;
+  /**
+   * Reports a toggle the USER performed, with the parent's state either side of
+   * it. Only ever called from a real tap — never from a refetch — which is what
+   * lets a caller distinguish "this interaction finished the occurrence" from
+   * "the occurrence happens to be finished".
+   */
+  onStepToggleOutcome?: (_outcome: StepToggleOutcome) => void;
 }
 
 /**
@@ -40,6 +48,7 @@ export const HabitStepsChecklist = ({
   date,
   readonly,
   onOccurrenceCompletedChange,
+  onStepToggleOutcome,
 }: HabitStepsChecklistProps) => {
   const { showToast } = useToast();
   const [pendingStepId, setPendingStepId] = useState<string | null>(null);
@@ -53,6 +62,11 @@ export const HabitStepsChecklist = ({
   const [setStepState] = useSetHabitStepStateMutation();
 
   const onToggle = async (habitStepId: string, value: boolean) => {
+    // Read the parent's state NOW. The mutation patches the cache
+    // optimistically, so after the await this value has already flipped and the
+    // transition would be invisible.
+    const wasCompleteBefore = occurrence?.is_completed ?? false;
+
     setPendingStepId(habitStepId);
     try {
       const result = await setStepState({
@@ -62,6 +76,13 @@ export const HabitStepsChecklist = ({
         status: value ? 'completed' : 'incomplete',
       }).unwrap();
       onOccurrenceCompletedChange?.(result.is_completed);
+      // Reported only on success: a failed toggle is rolled back by the
+      // mutation's own patch.undo(), and must not look like a completion.
+      onStepToggleOutcome?.({
+        isChecking: value,
+        wasCompleteBefore,
+        isCompleteAfter: result.is_completed,
+      });
     } catch (error) {
       showToast({ type: 'failure', message: getApiErrorMessage(error) });
     } finally {

@@ -549,7 +549,14 @@
     "archived_habits": "Habitudes archivées",
     "delete_habit": "Supprimer l'habitude",
     "no_archived_habits": "Aucune habitude archivée",
-    "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici"
+    "no_archived_habits_description": "Vos habitudes archivées apparaîtront ici",
+    "details": {
+      "label": "Détails",
+      "started": "Commencé le",
+      "ends": "Se termine le",
+      "due": "Échéance",
+      "day_of_month": "Jour du mois"
+    }
   },
   "common": {
     "or": "Ou",
