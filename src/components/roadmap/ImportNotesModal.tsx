@@ -54,10 +54,10 @@ export const ImportNotesModal = () => {
       setIsVisible={(visible) => {
         if (!visible) handleDismiss();
       }}
-      snapPoints={['70%']}>
+      snapPoints={['90%']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <AppView gap-16 paddingB-24>
-          <TranslatedText h3 translationKey="plan_import.notes.title" />
+          <TranslatedText subtitle1 translationKey="plan_import.notes.title" />
 
           {/* Fidelity Badge */}
           <AppView
