@@ -126,7 +126,7 @@ export const PaywallContent = ({ feature, message }: PaywallContentProps) => {
                 />
               </AppView>
               {message ? (
-                <AppText style={styles.text} xsm>
+                <AppText style={styles.text} textColor xsm>
                   {message}
                 </AppText>
               ) : (

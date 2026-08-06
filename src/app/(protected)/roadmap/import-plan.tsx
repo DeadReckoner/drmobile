@@ -103,6 +103,8 @@ const ImportPlan = () => {
   const [isContextExpanded, setIsContextExpanded] = useState(false);
 
   const handlePickDocument = async () => {
+    if (isImporting) return;
+
     const result = await DocumentPicker.getDocumentAsync({
       type: 'application/pdf',
       copyToCacheDirectory: true,
@@ -127,7 +129,7 @@ const ImportPlan = () => {
   };
 
   const handleStartImport = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || isImporting) return;
 
     dispatch(startUploadAction());
 
@@ -181,80 +183,81 @@ const ImportPlan = () => {
   };
 
   return (
-    <AppKeyboardController
-      scrollViewProps={{
-        bottomOffset: 100,
-      }}>
+    <>
       {isImporting && <PlanImportLoader />}
-      <AppView paddingH-0>
-        <HeaderWithBack headerKey="plan_import.title" />
-      </AppView>
-      <Divider />
+      <AppKeyboardController
+        scrollViewProps={{
+          bottomOffset: 100,
+        }}>
+        <AppView paddingH-0>
+          <HeaderWithBack headerKey="plan_import.title" />
+        </AppView>
+        <Divider />
 
-      <AppView paddingH-0 gap-16>
-        <AppCard onPress={handlePickDocument} disabled={isImporting}>
-          {selectedFile ? (
-            <AppView row centerV spread>
-              <AppView row centerV gap-12 flex-1>
+        <AppView paddingH-0 gap-16>
+          <AppCard onPress={handlePickDocument}>
+            {selectedFile ? (
+              <AppView row centerV spread>
+                <AppView row centerV gap-12 flex-1>
+                  <AppView
+                    bg-accent
+                    br100
+                    center
+                    style={styles.fileIconContainer}>
+                    <AppIcon
+                      set="Ionicons"
+                      name="document-text"
+                      size={20}
+                      color={Colors.white}
+                    />
+                  </AppView>
+                  <AppView flex-1>
+                    <AppText textColor body2 numberOfLines={1}>
+                      {selectedFile.name}
+                    </AppText>
+                    <AppText textColor xsm textSecondary>
+                      {formatFileSize(selectedFile.size)}
+                    </AppText>
+                  </AppView>
+                </AppView>
+                <AppButton onPress={() => dispatch(clearSelectedFileAction())}>
+                  <AppIcon
+                    set="Feather"
+                    name="x"
+                    size={20}
+                    color={Colors.error}
+                  />
+                </AppButton>
+              </AppView>
+            ) : (
+              <AppView center paddingV-24 gap-12>
                 <AppView
                   bg-accent
                   br100
                   center
-                  style={styles.fileIconContainer}>
+                  style={styles.uploadIconContainer}>
                   <AppIcon
-                    set="Ionicons"
-                    name="document-text"
-                    size={20}
+                    set="Feather"
+                    name="upload"
+                    size={24}
                     color={Colors.white}
                   />
                 </AppView>
-                <AppView flex-1>
-                  <AppText textColor body2 numberOfLines={1}>
-                    {selectedFile.name}
-                  </AppText>
-                  <AppText textColor xsm textSecondary>
-                    {formatFileSize(selectedFile.size)}
-                  </AppText>
-                </AppView>
-              </AppView>
-              <AppButton
-                onPress={() => dispatch(clearSelectedFileAction())}
-                disabled={isImporting}>
-                <AppIcon
-                  set="Feather"
-                  name="x"
-                  size={20}
-                  color={Colors.error}
+                <TranslatedText
+                  body1
+                  translationKey="plan_import.select_file"
                 />
-              </AppButton>
-            </AppView>
-          ) : (
-            <AppView center paddingV-24 gap-12>
-              <AppView
-                bg-accent
-                br100
-                center
-                style={styles.uploadIconContainer}>
-                <AppIcon
-                  set="Feather"
-                  name="upload"
-                  size={24}
-                  color={Colors.white}
+                <TranslatedText
+                  xsm
+                  textSecondary
+                  center
+                  translationKey="plan_import.select_file_desc"
                 />
               </AppView>
-              <TranslatedText body1 translationKey="plan_import.select_file" />
-              <TranslatedText
-                xsm
-                textSecondary
-                center
-                translationKey="plan_import.select_file_desc"
-              />
-            </AppView>
-          )}
-        </AppCard>
+            )}
+          </AppCard>
 
-        <AppCard>
-          <AppButton onPress={() => setIsContextExpanded(!isContextExpanded)}>
+          <AppCard onPress={() => setIsContextExpanded(!isContextExpanded)}>
             <AppView row centerV spread>
               <AppView flex-1>
                 <TranslatedText
@@ -275,103 +278,104 @@ const ImportPlan = () => {
                 color={Colors.textSecondary}
               />
             </AppView>
-          </AppButton>
 
-          {isContextExpanded && (
+            {isContextExpanded && (
+              <AppView marginT-16 reanimated>
+                {CONTEXT_FIELDS.map((field) => (
+                  <TranslatedTextInput
+                    key={field.key}
+                    labelKey={field.labelKey as any}
+                    placeholderKey={field.placeholderKey as any}
+                    value={context[field.key] || ''}
+                    onChangeText={(value: string) =>
+                      handleContextChange(field.key, value)
+                    }
+                    editable
+                  />
+                ))}
+              </AppView>
+            )}
+          </AppCard>
+
+          {status === 'error' && (
             <AppView
-              marginT-16
               reanimated
-              entering={Animations.Entry.FadeInDown()}
+              entering={Animations.Entry.FadeInDownWithSpring()}
               exiting={Animations.Exit.FadeOutDown()}>
-              {CONTEXT_FIELDS.map((field) => (
-                <TranslatedTextInput
-                  key={field.key}
-                  labelKey={field.labelKey as any}
-                  placeholderKey={field.placeholderKey as any}
-                  value={context[field.key] || ''}
-                  onChangeText={(value: string) =>
-                    handleContextChange(field.key, value)
-                  }
-                  editable={!isImporting}
+              <AppButton
+                onPress={handleRetry}
+                backgroundColor={Colors.error}
+                paddingH-20
+                paddingV-12
+                br40
+                row
+                centerV
+                gap-8>
+                <AppIcon
+                  set="Feather"
+                  name="refresh-cw"
+                  size={16}
+                  color={Colors.white}
                 />
-              ))}
+                <Divider />
+                <AppView flex>
+                  <AppText body2 light lightregular textColor>
+                    {error}
+                  </AppText>
+                  <TranslatedText
+                    body2
+                    light
+                    translationKey="ai_roadmap.retry_creation"
+                    color={Colors.white}
+                  />
+                </AppView>
+              </AppButton>
             </AppView>
           )}
-        </AppCard>
 
-        {status === 'error' && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <AppButton
-              onPress={handleRetry}
-              backgroundColor={Colors.error}
-              paddingH-20
-              paddingV-12
-              br40
-              row
-              centerV
-              gap-8>
-              <AppIcon
-                set="Feather"
-                name="refresh-cw"
-                size={16}
-                color={Colors.white}
-              />
-              <Divider />
-              <AppView flex>
-                <AppText body2 light lightregular textColor>
-                  {error}
-                </AppText>
-                <TranslatedText
-                  body2
-                  light
-                  translationKey="ai_roadmap.retry_creation"
-                  color={Colors.white}
-                />
-              </AppView>
-            </AppButton>
-          </AppView>
-        )}
-
-        {status === 'completed' && createdRoadmap && (
-          <AppView
-            reanimated
-            entering={Animations.Entry.FadeInDownWithSpring()}
-            exiting={Animations.Exit.FadeOutDown()}>
-            <AppButton onPress={handleNavigateToRoadmap}>
-              <AppView row gap-8 center bg-success br100 padding-12 paddingH-24>
-                <TranslatedText
-                  body2
-                  translationKey="plan_import.view_roadmap"
-                />
-                <AppIcon
-                  set="Ionicons"
-                  name="arrow-forward-circle-outline"
-                  size={24}
-                  color={Colors.white}
-                />
-              </AppView>
-            </AppButton>
-          </AppView>
-        )}
-      </AppView>
-      <Divider />
-
-      {status !== 'completed' && (
-        <AppView paddingB-32>
-          <PrimaryButton
-            label="plan_import.start_import"
-            onPress={handleStartImport}
-            disabled={!selectedFile || isImporting}
-            isLoading={isImporting}
-            shouldShowLoader
-          />
+          {status === 'completed' && createdRoadmap && (
+            <AppView
+              reanimated
+              entering={Animations.Entry.FadeInDownWithSpring()}
+              exiting={Animations.Exit.FadeOutDown()}>
+              <AppButton onPress={handleNavigateToRoadmap}>
+                <AppView
+                  row
+                  gap-8
+                  center
+                  bg-success
+                  br30
+                  padding-12
+                  paddingH-24>
+                  <TranslatedText
+                    body2
+                    translationKey="plan_import.view_roadmap"
+                  />
+                  <AppIcon
+                    set="Ionicons"
+                    name="arrow-forward-circle-outline"
+                    size={24}
+                    color={Colors.white}
+                  />
+                </AppView>
+              </AppButton>
+            </AppView>
+          )}
         </AppView>
-      )}
-      <Divider margin-60 />
-    </AppKeyboardController>
+        <Divider />
+
+        {status !== 'completed' && (
+          <AppView paddingB-32>
+            <PrimaryButton
+              label="plan_import.start_import"
+              onPress={handleStartImport}
+              disabled={!selectedFile}
+            />
+          </AppView>
+        )}
+        <Divider margin-60 />
+      </AppKeyboardController>
+    </>
   );
 };
 

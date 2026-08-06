@@ -1,7 +1,7 @@
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetProps,
-  BottomSheetView,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
@@ -29,7 +29,18 @@ export const AppModal = ({
   ...props
 }: AppModalProps) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const initialIndex = snapPoints.length - 1;
+
+  const validatedSnapPoints = snapPoints.map((point) => {
+    if (typeof point === 'string' && point.includes('%')) {
+      const percentage = parseInt(point);
+      return percentage > 90 ? '90%' : point;
+    } else if (typeof point === 'number' && point > 0.9) {
+      return 0.9;
+    }
+    return point;
+  });
+
+  const initialIndex = validatedSnapPoints.length - 1;
 
   useEffect(() => {
     if (visible) {
@@ -65,7 +76,7 @@ export const AppModal = ({
     <BottomSheet
       ref={bottomSheetRef}
       index={visible ? initialIndex : -1}
-      snapPoints={snapPoints}
+      snapPoints={validatedSnapPoints}
       onChange={handleSheetChanges}
       enablePanDownToClose={dismissible ? enablePanDownToClose : false}
       backdropComponent={renderBackdrop}
@@ -75,14 +86,14 @@ export const AppModal = ({
         { backgroundColor: Colors.textColor },
       ]}
       {...props}>
-      <BottomSheetView
+      <BottomSheetScrollView
         style={StyleSheet.flatten([
           styles.contentContainer,
           { backgroundColor: Colors.cardBG },
           contentContainerStyle,
         ])}>
         {children}
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheet>
   );
 };

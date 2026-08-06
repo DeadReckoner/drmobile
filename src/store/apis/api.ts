@@ -39,6 +39,23 @@ const baseQueryWithReauth = fetchBaseQuery({
   },
 });
 
+let refreshPromise: Promise<Awaited<
+  ReturnType<typeof refreshUserSession>
+> | null> | null = null;
+
+const signOutUser = (apiQuery: BaseQueryApi) => {
+  apiQuery.dispatch(api.util.resetApiState());
+  apiQuery.dispatch(
+    showToastAction({
+      toastProps: {
+        type: 'failure',
+        message: i18nConfig.t('authentication.errors.session_expired'),
+      },
+    }),
+  );
+  supabaseClient.auth.signOut().catch(() => {});
+};
+
 export const createBaseQueryWithReauth = () => {
   return async (
     args: FetchArgs | string,
@@ -70,9 +87,14 @@ export const createBaseQueryWithReauth = () => {
     }
 
     if (hasTokenError) {
-      try {
-        const newSession = await refreshUserSession();
+      if (!refreshPromise) {
+        refreshPromise = refreshUserSession().finally(() => {
+          refreshPromise = null;
+        });
+      }
 
+      try {
+        const newSession = await refreshPromise;
         if (newSession?.access_token) {
           const currentUser = (apiQuery.getState() as RootStateType).auth.user;
           apiQuery.dispatch(
@@ -82,27 +104,10 @@ export const createBaseQueryWithReauth = () => {
             }),
           );
 
-          const retryResult = await baseQueryWithReauth(
-            args,
-            apiQuery,
-            extraOptions,
-          );
-          return retryResult;
+          return baseQueryWithReauth(args, apiQuery, extraOptions);
         }
+        signOutUser(apiQuery);
       } catch {}
-      apiQuery.dispatch(api.util.resetApiState());
-      apiQuery.dispatch(
-        showToastAction({
-          toastProps: {
-            type: 'failure',
-            message: i18nConfig.t('authentication.errors.session_expired'),
-          },
-        }),
-      );
-      supabaseClient.auth
-        .signOut()
-        .then(() => {})
-        .catch(() => {});
     }
 
     return result;

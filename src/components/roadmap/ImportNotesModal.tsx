@@ -54,7 +54,7 @@ export const ImportNotesModal = () => {
       setIsVisible={(visible) => {
         if (!visible) handleDismiss();
       }}
-      snapPoints={['55%', '85%']}>
+      snapPoints={['70%']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <AppView gap-16 paddingB-24>
           <TranslatedText h3 translationKey="plan_import.notes.title" />
@@ -77,8 +77,8 @@ export const ImportNotesModal = () => {
               color={fidelityConfig.color}
             />
             <TranslatedText
-              body2
-              style={{ color: fidelityConfig.color }}
+              flex-1
+              xsm
               translationKey={fidelityConfig.translationKey as any}
             />
           </AppView>
@@ -88,10 +88,10 @@ export const ImportNotesModal = () => {
             <AppView gap-4>
               <TranslatedText
                 body2
-                semibold
+                regular
                 translationKey="plan_import.notes.source_summary"
               />
-              <AppText body2 textSecondary>
+              <AppText xsm light textColor>
                 {importNotes.source_summary}
               </AppText>
             </AppView>
@@ -102,7 +102,6 @@ export const ImportNotesModal = () => {
             <AppView gap-8>
               <TranslatedText
                 body2
-                semibold
                 translationKey="plan_import.notes.inferred"
               />
               {importNotes.inferred.map((item, index) => (
@@ -113,7 +112,7 @@ export const ImportNotesModal = () => {
                     size={16}
                     color={Colors.warning}
                   />
-                  <AppText body2 textSecondary flex-1>
+                  <AppText xsm textColor flex-1>
                     {item}
                   </AppText>
                 </AppView>
@@ -126,20 +125,24 @@ export const ImportNotesModal = () => {
             <AppView gap-8>
               <TranslatedText
                 body2
-                semibold
+                regular
                 translationKey="plan_import.notes.dropped"
               />
               {importNotes.dropped.map((item, index) => (
                 <AppView key={index} row gap-8 paddingL-4>
-                  <AppIcon
-                    set="Ionicons"
-                    name="remove-circle-outline"
-                    size={16}
-                    color={Colors.textSecondary}
-                  />
-                  <AppText body2 textSecondary flex-1>
-                    {item}
-                  </AppText>
+                  <AppView marginT-2>
+                    <AppIcon
+                      set="Ionicons"
+                      name="remove-circle-outline"
+                      size={16}
+                      color={Colors.textColor}
+                    />
+                  </AppView>
+                  <AppView flex={true}>
+                    <AppText xsm light textColor>
+                      {item}
+                    </AppText>
+                  </AppView>
                 </AppView>
               ))}
             </AppView>
