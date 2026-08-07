@@ -11,6 +11,7 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { AnchorCard } from '@/components/roadmap/AnchorCard';
 import { AnchorSelectionModal } from '@/components/roadmap/AnchorSelectionModal';
 import { BadgeInfoContent } from '@/components/roadmap/BadgeInfoContent';
+import { ImportNotesModal } from '@/components/roadmap/ImportNotesModal';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
 import { RoadmapHighlightOverlay } from '@/components/roadmap/RoadmapHighlightOverlay';
 import { RoadmapIntroContent } from '@/components/roadmap/RoadmapIntroContent';
@@ -101,7 +102,9 @@ const RoadmapExecution = () => {
   const [createRoadmap, { isLoading: isCreatingRoadmap }] =
     useCreateRoadmapMutation();
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
-    useStartRoadmapMutation();
+    useStartRoadmapMutation({
+      fixedCacheKey: `roadmap-${draftRoadmap?.roadmap_id}`,
+    });
 
   const [firstTabSelected, setFirstTabSelected] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -323,7 +326,7 @@ const RoadmapExecution = () => {
   const StartRoadmapButton = () => {
     if (!hasMilestones) return null;
     if (isRoadmapLoading || isRoadmapStarted(roadmap)) return null;
-    if (isRoadmapFetching)
+    if (isRoadmapFetching || isStartingRoadmap)
       return (
         <Loader
           transparent
@@ -335,7 +338,7 @@ const RoadmapExecution = () => {
         <PrimaryButton
           label="common.start_roadmap"
           shouldShowLoader
-          isLoading={isStartingRoadmap || isCreatingRoadmap}
+          isLoading={isCreatingRoadmap}
           onPress={onStartRoadmap}
         />
       </AppView>
@@ -363,6 +366,7 @@ const RoadmapExecution = () => {
         onScrollEndDrag={onScrollEnd}
         refreshControl={
           <RefreshControl
+            tintColor={Colors.secondary}
             refreshing={
               hasSeenHighlight
                 ? (!roadmap.roadmap_id && isRoadmapFetching) || isRefreshing
@@ -513,6 +517,7 @@ const RoadmapExecution = () => {
         isAnchorSheetVisible={isAnchorModalVisible}
         setIsAnchorSheetVisible={setIsAnchorModalVisible}
       />
+      <ImportNotesModal />
     </AppScreen>
   );
 };

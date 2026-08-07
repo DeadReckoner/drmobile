@@ -829,6 +829,55 @@
     "manage_roadmap_title": "Gérer la feuille de route",
     "manage_roadmap_message": "Touchez le menu pour gérer votre feuille de route. Vous pouvez la mettre en pause ou la redémarrer, décaler ou réaligner les dates, l'archiver, gérer votre lien de partage, et plus encore."
   },
+  "plan_import": {
+    "title": "Importer un plan",
+    "select_file": "Sélectionner un fichier PDF",
+    "select_file_desc": "Appuyez pour choisir un fichier PDF (max 10 Mo)",
+    "file_too_large": "Le fichier doit faire moins de 10 Mo",
+    "add_context": "Ajouter du contexte (optionnel)",
+    "add_context_desc": "Fournissez des indices pour aider l'IA à mieux comprendre votre plan",
+    "start_import": "Démarrer l'importation",
+    "view_roadmap": "Voir la feuille de route",
+    "loading_texts": "Lecture de votre plan…|Extraction des informations clés…|Identification des jalons…|Transposition de votre plan en feuille de route…|Organisation des tâches et des étapes…|Enregistrement de votre feuille de route…|Finalisation…",
+    "context_fields": {
+      "goal_name": "Nom de l'objectif",
+      "goal_name_placeholder": "ex. : Courir un marathon en moins de 4h",
+      "target_date": "Date cible d'achèvement",
+      "target_date_placeholder": "ex. : 6 mois",
+      "weekly_commitment": "Engagement hebdomadaire",
+      "weekly_commitment_placeholder": "ex. : 8 heures",
+      "work_frequency": "Fréquence de travail",
+      "work_frequency_placeholder": "ex. : Quotidien",
+      "skill_level": "Niveau de compétence actuel",
+      "skill_level_placeholder": "ex. : J'ai couru un semi-marathon",
+      "constraints": "Contraintes",
+      "constraints_placeholder": "ex. : Voyage de deux semaines en mars",
+      "additional_context": "Contexte supplémentaire",
+      "additional_context_placeholder": "ex. : Je reviens d'une blessure au genou"
+    },
+    "in_progress_banner": {
+      "title": "Importation de votre plan",
+      "description": "Votre plan est en cours de conversion en feuille de route. Appuyez pour voir la progression."
+    },
+    "success_banner": {
+      "title": "Importation terminée !",
+      "description": "Votre feuille de route importée est prête. Appuyez pour la consulter."
+    },
+    "error_banner": {
+      "title": "Échec de l'importation",
+      "description": "Une erreur s'est produite lors de l'importation de votre plan."
+    },
+    "notes": {
+      "title": "Résumé de l'importation",
+      "fidelity_high": "Haute fidélité — correspond étroitement à votre plan original",
+      "fidelity_medium": "Fidélité moyenne — une certaine interprétation était nécessaire",
+      "fidelity_low": "Faible fidélité — interprétation significative requise, veuillez vérifier attentivement",
+      "source_summary": "Résumé de la source",
+      "inferred": "Déduit par l'IA",
+      "dropped": "N'a pas pu être importé",
+      "dismiss": "Compris"
+    }
+  },
   "coming_soon": {
     "title": "Bientôt disponible",
     "description": "Nous travaillons dur pour vous apporter cette fonctionnalité. Restez à l'écoute pour les mises à jour !"

@@ -23,11 +23,11 @@ const UNSET_DATE = '0001-01-01T00:00:00Z';
 
 export const isRoadmapStarted = (roadmap: RoadmapType): boolean => {
   const milestones = getAllMilestones(roadmap);
-  return (
+  return !!(
+    roadmap.start_date &&
     roadmap.start_date !== UNSET_DATE &&
-    roadmap.start_date !== null &&
-    milestones?.[0]?.date !== UNSET_DATE &&
-    milestones?.[0]?.date !== null
+    milestones?.[0]?.date &&
+    milestones?.[0]?.date !== UNSET_DATE
   );
 };
 

@@ -829,6 +829,55 @@
     "manage_roadmap_title": "Gestionar hoja de ruta",
     "manage_roadmap_message": "Toca el menú para gestionar tu hoja de ruta. Desde aquí puedes pausarla o reiniciarla, desplazar o realinear fechas, archivarla, gestionar tu enlace para compartir y mucho más."
   },
+  "plan_import": {
+    "title": "Importar plan",
+    "select_file": "Seleccionar archivo PDF",
+    "select_file_desc": "Toca para elegir un archivo PDF (máx. 10 MB)",
+    "file_too_large": "El archivo debe ser menor de 10 MB",
+    "add_context": "Agregar contexto (opcional)",
+    "add_context_desc": "Proporciona pistas para ayudar a la IA a entender mejor tu plan",
+    "start_import": "Iniciar importación",
+    "view_roadmap": "Ver hoja de ruta",
+    "loading_texts": "Leyendo tu plan…|Extrayendo información clave…|Identificando hitos…|Transponiendo tu plan a una hoja de ruta…|Organizando tareas y pasos…|Guardando tu hoja de ruta…|Finalizando…",
+    "context_fields": {
+      "goal_name": "Nombre del objetivo",
+      "goal_name_placeholder": "ej.: Correr un maratón en menos de 4 horas",
+      "target_date": "Fecha objetivo de finalización",
+      "target_date_placeholder": "ej.: 6 meses",
+      "weekly_commitment": "Compromiso semanal",
+      "weekly_commitment_placeholder": "ej.: 8 horas",
+      "work_frequency": "Frecuencia de trabajo",
+      "work_frequency_placeholder": "ej.: Diario",
+      "skill_level": "Nivel de habilidad actual",
+      "skill_level_placeholder": "ej.: Corrí un medio maratón",
+      "constraints": "Restricciones",
+      "constraints_placeholder": "ej.: Viaje de dos semanas en marzo",
+      "additional_context": "Contexto adicional",
+      "additional_context_placeholder": "ej.: Recuperándome de una lesión de rodilla"
+    },
+    "in_progress_banner": {
+      "title": "Importando tu plan",
+      "description": "Tu plan está siendo convertido en una hoja de ruta. Toca para ver el progreso."
+    },
+    "success_banner": {
+      "title": "¡Importación completada!",
+      "description": "Tu hoja de ruta importada está lista. Toca para revisarla."
+    },
+    "error_banner": {
+      "title": "Error en la importación",
+      "description": "Algo salió mal al importar tu plan."
+    },
+    "notes": {
+      "title": "Resumen de importación",
+      "fidelity_high": "Alta fidelidad — se ajusta fielmente a tu plan original",
+      "fidelity_medium": "Fidelidad media — fue necesaria algo de interpretación",
+      "fidelity_low": "Baja fidelidad — se requirió interpretación significativa, revisa cuidadosamente",
+      "source_summary": "Resumen de la fuente",
+      "inferred": "Inferido por la IA",
+      "dropped": "No se pudo importar",
+      "dismiss": "Entendido"
+    }
+  },
   "coming_soon": {
     "title": "Próximamente",
     "description": "Estamos trabajando arduamente para traerte esta función. ¡Mantente atento a las actualizaciones!"

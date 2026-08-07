@@ -153,7 +153,11 @@ const BlockedUsers = () => {
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={renderEmpty}
           refreshControl={
-            <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+            <RefreshControl
+              tintColor={Colors.secondary}
+              refreshing={isFetching}
+              onRefresh={refetch}
+            />
           }
         />
       )}

@@ -14,6 +14,7 @@ import {
   selectAIRoadmapMessages,
   selectCreatedRoadmap,
 } from '@/store/slices/aiRoadmapCreationSlice';
+import { resetPlanImportAction } from '@/store/slices/planImportSlice';
 import {
   resetDraftAction,
   setDraftRoadmapAction,
@@ -87,8 +88,10 @@ const Create = () => {
     dispatch(setSelectedHabit(null));
     router.navigate('/habits/add-edit-habits-task');
   };
-  const navigateToComingSoon = () => {
-    router.navigate('/coming-soon');
+  const onImportPlanPress = () => {
+    if (gate('active_roadmaps')) return;
+    dispatch(resetPlanImportAction());
+    router.navigate('/roadmap/import-plan');
   };
   return (
     <AppScreen>
@@ -124,7 +127,7 @@ const Create = () => {
             type="import_plan"
             titleKey="tabs.create_tab.import_plan"
             descriptionKey="tabs.create_tab.import_plan_desc"
-            onPress={navigateToComingSoon}
+            onPress={onImportPlanPress}
             icon={<AppIcon name="export" color={Colors.white} />}
           />
           <Divider />

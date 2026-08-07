@@ -480,6 +480,7 @@ export const roadmapApi = api.injectEndpoints({
           method: 'PUT',
         };
       },
+      invalidatesTags: ['Tasks', { type: 'Habits', id: 'TODAY' }],
       onQueryStarted: onStartRoadmapQueryStarted,
     }),
 

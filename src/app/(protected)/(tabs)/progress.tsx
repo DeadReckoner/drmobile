@@ -4,6 +4,7 @@ import { Divider } from '@/components/Divider';
 import { HabitsList } from '@/components/HabitsList';
 import { Loader } from '@/components/Loader';
 import { InProgressAIRoadmapBanner } from '@/components/roadmap/ai-roamap/InProgressAIRoadmapBanner';
+import { InProgressPlanImportBanner } from '@/components/roadmap/ai-roamap/InProgressPlanImportBanner';
 import { RoadmapList } from '@/components/roadmap/RoadmapList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
@@ -13,6 +14,7 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { useGetHabitsQuery } from '@/store/apis/habitsApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { selectShouldShowAIRoadmapBanner } from '@/store/slices/aiRoadmapCreationSlice';
+import { selectShouldShowPlanImportBanner } from '@/store/slices/planImportSlice';
 import {
   setDraftRoadmapAction,
   setSelectedRoadmapIndex,
@@ -36,6 +38,9 @@ const Progress = () => {
   const [manualRefreshing, setManualRefreshing] = useState(false);
   const shouldShowAIRoadmapBanner = useAppSelector(
     selectShouldShowAIRoadmapBanner,
+  );
+  const shouldShowPlanImportBanner = useAppSelector(
+    selectShouldShowPlanImportBanner,
   );
   const [selectedTab, setSelectedTab] = useState('roadmaps');
 
@@ -93,6 +98,11 @@ const Progress = () => {
         <AppView
           style={{ display: shouldShowAIRoadmapBanner ? 'flex' : 'none' }}>
           <InProgressAIRoadmapBanner />
+          <Divider />
+        </AppView>
+        <AppView
+          style={{ display: shouldShowPlanImportBanner ? 'flex' : 'none' }}>
+          <InProgressPlanImportBanner />
           <Divider />
         </AppView>
         <AppSegmentControl

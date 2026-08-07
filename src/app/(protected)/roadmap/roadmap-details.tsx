@@ -64,7 +64,9 @@ const RoadmapDetailsPage = () => {
     useCreateRoadmapMutation();
 
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
-    useStartRoadmapMutation();
+    useStartRoadmapMutation({
+      fixedCacheKey: `roadmap-${selectedRoadmap?.roadmap_id}`,
+    });
 
   const { data: friendsData, isLoading: isLoadingFriends } = useGetFriendsQuery(
     undefined,
@@ -289,8 +291,8 @@ const RoadmapDetailsPage = () => {
 
   const StartRoadmapButton = () => {
     if (!hasMilestones) return null;
-    if (isRoadmapLoading || isRoadmapStarted(roadmap)) return null;
-    if (isRoadmapFetching)
+    if (isRoadmapStarted(roadmap)) return null;
+    if (isRoadmapFetching || isStartingRoadmap)
       return (
         <Loader
           marginT-16

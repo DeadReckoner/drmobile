@@ -829,6 +829,55 @@
     "manage_roadmap_title": "Manage Roadmap",
     "manage_roadmap_message": "Tap the menu to manage your roadmap. From here you can pause or restart it, shift or realign dates, archive it, manage your share link, and more."
   },
+  "plan_import": {
+    "title": "Import Plan",
+    "select_file": "Select PDF File",
+    "select_file_desc": "Tap to choose a PDF file (max 10MB)",
+    "file_too_large": "File must be less than 10MB",
+    "add_context": "Add Context (Optional)",
+    "add_context_desc": "Provide hints to help AI understand your plan better",
+    "start_import": "Start Import",
+    "view_roadmap": "View Roadmap",
+    "loading_texts": "Reading your plan…|Extracting key information…|Identifying milestones…|Transposing your plan onto a roadmap…|Organizing tasks and steps…|Saving your roadmap…|Finalizing…",
+    "context_fields": {
+      "goal_name": "Goal Name",
+      "goal_name_placeholder": "e.g., Run a sub-4 marathon",
+      "target_date": "Target Completion Date",
+      "target_date_placeholder": "e.g., 6 months",
+      "weekly_commitment": "Weekly Time Commitment",
+      "weekly_commitment_placeholder": "e.g., 8 hours",
+      "work_frequency": "Work Frequency",
+      "work_frequency_placeholder": "e.g., Daily",
+      "skill_level": "Current Skill Level",
+      "skill_level_placeholder": "e.g., Ran one half marathon",
+      "constraints": "Constraints",
+      "constraints_placeholder": "e.g., Travel two weeks in March",
+      "additional_context": "Additional Context",
+      "additional_context_placeholder": "e.g., Coming back from a knee injury"
+    },
+    "in_progress_banner": {
+      "title": "Importing Your Plan",
+      "description": "Your plan is being converted into a roadmap. Tap to view progress."
+    },
+    "success_banner": {
+      "title": "Plan Import Complete!",
+      "description": "Your imported roadmap is ready. Tap to review it."
+    },
+    "error_banner": {
+      "title": "Plan Import Failed",
+      "description": "Something went wrong while importing your plan."
+    },
+    "notes": {
+      "title": "Import Summary",
+      "fidelity_high": "High fidelity — closely matches your original plan",
+      "fidelity_medium": "Medium fidelity — some interpretation was needed",
+      "fidelity_low": "Low fidelity — significant interpretation required, please review carefully",
+      "source_summary": "Source Summary",
+      "inferred": "Inferred by AI",
+      "dropped": "Could Not Be Imported",
+      "dismiss": "Got It"
+    }
+  },
   "coming_soon": {
     "title": "Coming Soon",
     "description": "We're working hard to bring you this feature. Stay tuned for updates!"
