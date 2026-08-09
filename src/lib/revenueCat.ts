@@ -2,6 +2,7 @@ import {
   REVENUECAT_API_KEY_ANDROID,
   REVENUECAT_API_KEY_IOS,
 } from '@/constants/iap';
+import * as Sentry from '@sentry/react-native';
 import { Platform } from 'react-native';
 import Purchases, { LOG_LEVEL } from 'react-native-purchases';
 
@@ -17,7 +18,41 @@ export const initializeRevenueCat = (): void => {
     Purchases.setLogLevel(LOG_LEVEL.ERROR);
   }
 
-  Purchases.configure({ apiKey });
+  // Purchases.configure throws synchronously on a missing or malformed key,
+  // and this function is called at module scope in app/_layout.tsx — above any
+  // error boundary. An uncaught throw there doesn't disable purchases, it stops
+  // the app mounting at all, with an undismissable red screen. Degraded
+  // purchases are bad; an app that won't start is worse.
+  try {
+    Purchases.configure({ apiKey });
+  } catch (error) {
+    // Deliberately NOT silent, unlike the other helpers in this file. They
+    // swallow because a single failed call is recoverable; this one failing
+    // means every purchase, entitlement and restore call is dead for the whole
+    // session, and the user sees no error — they just can't buy anything.
+    // That's revenue-affecting and needs to reach us.
+    Sentry.captureException(error, {
+      tags: { area: 'revenuecat', phase: 'configure' },
+      extra: {
+        platform: Platform.OS,
+        // Never log the key itself. Presence alone separates "misconfigured
+        // environment" from "key rejected by RevenueCat", which are different
+        // problems with different fixes.
+        hasApiKey: Boolean(apiKey),
+      },
+    });
+
+    if (__DEV__) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[revenueCat] configure() failed — purchases are disabled for this session. ' +
+          (apiKey
+            ? 'The key was rejected; check it matches the platform (iOS keys start with "appl_").'
+            : 'No API key found. Set EXPO_PUBLIC_REVENUECAT_API_KEY_IOS / _ANDROID in .env — ' +
+              'note the EXPO_PUBLIC_ prefix, without it Expo will not expose the value to the app.'),
+      );
+    }
+  }
 };
 
 /**
