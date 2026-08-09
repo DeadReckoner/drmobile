@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "node init && expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
@@ -15,7 +15,7 @@
     "prebuild:android": "expo prebuild --platform android",
     "prebuild": "expo prebuild",
     "typecheck": "tsc --noEmit",
-    "dev-build:ios": "npx eas-cli build --profile development --platform ios",
+    "dev-build:ios": "node init && npx eas-cli build --profile development --platform ios",
     "postinstall": "patch-package"
   },
   "dependencies": {

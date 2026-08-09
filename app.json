@@ -8,7 +8,7 @@
     "scheme": "deadreckoner",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.deadreckoner.deadreckoner",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
