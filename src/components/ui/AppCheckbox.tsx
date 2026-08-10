@@ -41,7 +41,7 @@ export function AppCheckbox({
 const styles = StyleSheet.create({
   checkbox: {
     borderRadius: 4,
-    borderWidth: 2,
+    borderWidth: 4,
     padding: 4,
     margin: 2,
   },
