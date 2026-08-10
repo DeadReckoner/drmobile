@@ -90,11 +90,13 @@ export const SignupForm = () => {
       />
       <AppView row centerV gap-8>
         <AppCheckbox
-          containerStyle={{
-            borderColor: showCheckError ? Colors.error : Colors.primary,
+          color={showCheckError ? Colors.error : Colors.primary}
+          style={{
             backgroundColor: showCheckError
               ? Colors.transparent
               : Colors.primary,
+            borderColor: showCheckError ? Colors.error : Colors.primary,
+            borderWidth: 1,
           }}
           value={isChecked}
           onValueChange={(v) => {
