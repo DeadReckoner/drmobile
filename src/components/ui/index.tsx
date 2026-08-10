@@ -1,7 +1,6 @@
 import AppRNUIView from '@/components/AppRNUIView';
 import { SegmentedControl } from 'react-native-ui-lib';
 import ActionSheet from 'react-native-ui-lib/actionSheet';
-import Checkbox from 'react-native-ui-lib/checkbox';
 import Dialog from 'react-native-ui-lib/dialog';
 import ExpandableSection from 'react-native-ui-lib/expandableSection';
 import { Toast } from 'react-native-ui-lib/incubator';
@@ -11,11 +10,11 @@ import Text from 'react-native-ui-lib/text';
 import TextField from 'react-native-ui-lib/textField';
 import TouchableOpacity from 'react-native-ui-lib/touchableOpacity';
 
+export { AppCheckbox } from '@/components/ui/AppCheckbox';
 export { AppProgressBar } from '@/components/AppProgressBar';
 export { Image as AppImage } from 'expo-image';
 export {
   ActionSheet as AppActionSheet,
-  Checkbox as AppCheckbox,
   ExpandableSection as AppExpandableSection,
   Dialog as AppRNUIDialog,
   Modal as AppRNUIModal,

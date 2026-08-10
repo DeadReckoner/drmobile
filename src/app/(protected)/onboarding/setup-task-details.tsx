@@ -73,7 +73,6 @@ const SetupStepRow = ({
         value={isChecked}
         onValueChange={onToggleCheck}
         color={Colors.primary}
-        style={styles.checkbox}
       />
       <AppView flex marginL-12>
         <TranslatedText
