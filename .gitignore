@@ -40,7 +40,6 @@ app-example
 .eslintcache
 android
 ios
-.env
 
 docs/
 config.bat
