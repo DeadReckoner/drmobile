@@ -1,4 +1,5 @@
 import { Env } from '@/constants/Env';
+import { clientHeaders } from '@/lib/analytics';
 import i18nConfig from '@/lib/localization/i18nConfig';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { setAuthUserAction } from '@/store/slices/authSlice';
@@ -35,6 +36,16 @@ const baseQueryWithReauth = fetchBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootStateType).auth.user.access_token;
     if (token) headers.set('Authorization', `Bearer ${token}`);
+
+    // Client build metadata on every request. Attached here rather than per
+    // endpoint so none can be missed: the server stamps these onto the access
+    // log and every product event, so anything that skips them is invisible
+    // to per-version error-rate and funnel analysis — and that cannot be
+    // reconstructed after the fact.
+    Object.entries(clientHeaders()).forEach(([key, value]) => {
+      headers.set(key, value);
+    });
+
     return headers;
   },
 });
