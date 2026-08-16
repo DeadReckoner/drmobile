@@ -3,6 +3,7 @@ import { Loader } from '@/components/Loader';
 import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { Env } from '@/constants/Env';
+import { useAnalyticsLifecycle } from '@/hooks/useAnalyticsLifecycle';
 import { useBillingPaywall } from '@/hooks/useBillingPaywall';
 import { useBillingStatusSync } from '@/hooks/useBillingStatusSync';
 import { useEntitlementCheck } from '@/hooks/useEntitlementCheck';
@@ -51,6 +52,8 @@ function AppWithEntitlementCheck() {
   // and open the paywall when a 402 sets the trigger.
   useBillingStatusSync({ register: true });
   useBillingPaywall();
+  // Starts the product-event pipeline and records app open / session start.
+  useAnalyticsLifecycle();
 
   useEffect(() => {
     checkEntitlementStatus();
