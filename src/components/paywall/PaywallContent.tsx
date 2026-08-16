@@ -11,6 +11,7 @@ import { AppURLs } from '@/constants/AppURLs.constants';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
 import { useToast } from '@/hooks/useToast';
+import { AnalyticsEvent, track } from '@/lib/analytics';
 import { FeatureKeyType } from '@/store/types/billing.types';
 import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
@@ -65,6 +66,15 @@ export const PaywallContent = ({ feature, message }: PaywallContentProps) => {
 
   const handleUpgrade = async () => {
     if (!selectedPackage) return;
+
+    // Recorded before the store sheet opens, not after. The purchase result
+    // arrives server-side via the RevenueCat webhook, so what only the client
+    // can report is the intent — and the gap between intent and completed
+    // purchase is exactly where store-sheet abandonment shows up.
+    track(AnalyticsEvent.CheckoutStarted, {
+      plan_type: selectedPackage.identifier,
+    });
+
     const success = await purchasePackage(selectedPackage);
     if (success) {
       showToast({

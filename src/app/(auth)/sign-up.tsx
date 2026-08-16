@@ -4,6 +4,8 @@ import { SignupForm } from '@/components/auth/SignupForm';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { AnalyticsEvent, track } from '@/lib/analytics';
+import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import {
   KeyboardAwareScrollView,
@@ -12,6 +14,13 @@ import {
 } from 'react-native-keyboard-controller';
 
 const SignUp = () => {
+  // Pairs with the server's `signup_completed` to give signup-screen →
+  // account-created conversion. The server only ever sees accounts that were
+  // created, so abandonment on this screen is invisible without this event.
+  useEffect(() => {
+    track(AnalyticsEvent.SignupStarted);
+  }, []);
+
   return (
     <>
       <AppScreen>
