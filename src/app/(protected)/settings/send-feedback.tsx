@@ -25,18 +25,18 @@ import { Colors } from 'react-native-ui-lib';
 const FEEDBACK_CATEGORIES: {
   value: FeedbackCategoryType;
   labelKey: TranslationKeysType;
-  icon: 'bug' | 'bulb1' | 'message1';
+  icon: 'bug' | 'bulb' | 'message';
 }[] = [
   { value: 'bug', labelKey: 'app_feedback.categories.bug', icon: 'bug' },
   {
     value: 'feature',
     labelKey: 'app_feedback.categories.feature',
-    icon: 'bulb1',
+    icon: 'bulb',
   },
   {
     value: 'general',
     labelKey: 'app_feedback.categories.general',
-    icon: 'message1',
+    icon: 'message',
   },
 ];
 
@@ -118,7 +118,7 @@ const SendFeedbackPage = () => {
                     <AppView center>
                       {category.value === 'bug' && (
                         <AppIcon
-                          name="exclamationcircleo"
+                          name="exclamation-circle"
                           size={24}
                           color={
                             isSelected ? Colors.textOnPrimary : Colors.textColor
@@ -127,7 +127,7 @@ const SendFeedbackPage = () => {
                       )}
                       {category.value === 'feature' && (
                         <AppIcon
-                          name="bulb1"
+                          name="bulb"
                           size={24}
                           color={
                             isSelected ? Colors.textOnPrimary : Colors.textColor
@@ -136,7 +136,7 @@ const SendFeedbackPage = () => {
                       )}
                       {category.value === 'general' && (
                         <AppIcon
-                          name="message1"
+                          name="message"
                           size={24}
                           color={
                             isSelected ? Colors.textOnPrimary : Colors.textColor
@@ -180,9 +180,7 @@ const SendFeedbackPage = () => {
         </AppView>
 
         <PrimaryButton
-          label={
-            isLoading ? 'app_feedback.submitting' : 'app_feedback.submit_button'
-          }
+          label={'app_feedback.submit_button'}
           onPress={formik.handleSubmit}
           shouldShowLoader
           isLoading={isLoading}

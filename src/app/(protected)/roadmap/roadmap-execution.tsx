@@ -3,38 +3,46 @@ import { AppButton } from '@/components/AppButton';
 import { AppIcon } from '@/components/AppIcon';
 import { AppScreen } from '@/components/AppScreen';
 import { AppSegmentControl } from '@/components/AppSegmentControl';
-import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { Divider } from '@/components/Divider';
+import { GradientBackdrop } from '@/components/GradientBackdrop';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { AnchorCard } from '@/components/roadmap/AnchorCard';
 import { AnchorSelectionModal } from '@/components/roadmap/AnchorSelectionModal';
+import { BadgeInfoContent } from '@/components/roadmap/BadgeInfoContent';
+import { ImportNotesModal } from '@/components/roadmap/ImportNotesModal';
 import { RoadmapCurrentStateOverview } from '@/components/roadmap/RoadmapCurrentStateOverview';
+import { RoadmapHighlightOverlay } from '@/components/roadmap/RoadmapHighlightOverlay';
+import { RoadmapIntroContent } from '@/components/roadmap/RoadmapIntroContent';
 import { TodayTab } from '@/components/roadmap/TodayTab';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
 import {
   useCreateRoadmapMutation,
-  useDeleteRoadmapMutation,
   useGetRoadmapByIdQuery,
   useStartRoadmapMutation,
 } from '@/hooks/roadmap';
 import { useLocalization } from '@/hooks/useLocalization';
+import { useRoadmapHighlightController } from '@/hooks/useRoadmapHighlightController';
+import { useRoadmapMenuOptions } from '@/hooks/useRoadmapMenuOptions';
 import { useToast } from '@/hooks/useToast';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
+import { selectIsNextMilestoneGenerating } from '@/store/slices/nextMilestoneGenerationSlice';
 import {
-  resetDraftAction,
   selectCurrentMilestone,
   selectDraftRoadmap,
+  selectFirstUngeneratedMilestone,
+  selectMilestoneBeforeId,
   setDraftRoadmapAction,
 } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { getApiErrorMessage } from '@/utils/apiErrors.utils';
-import { DateUtils } from '@/utils/date.utils';
 import { getAllMilestones, isRoadmapStarted } from '@/utils/roadmap.utils';
+import { storeMilestone } from '@/utils/roadmapTransfer';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
@@ -42,6 +50,26 @@ const RoadmapExecution = () => {
   const dispatch = useAppDispatch();
   const draftRoadmap = useAppSelector(selectDraftRoadmap);
   const currentMilestone = useAppSelector(selectCurrentMilestone);
+  const firstUngeneratedMilestone = useAppSelector(
+    selectFirstUngeneratedMilestone,
+  );
+  const isGeneratingForUngenerated = useAppSelector(
+    selectIsNextMilestoneGenerating(
+      firstUngeneratedMilestone?.milestone_id ?? '',
+    ),
+  );
+  const previousMilestone = useAppSelector(
+    selectMilestoneBeforeId(firstUngeneratedMilestone?.milestone_id ?? ''),
+  );
+  const previousMilestoneComplete =
+    !previousMilestone ||
+    (previousMilestone.tasks.length > 0 &&
+      previousMilestone.tasks.every((t) => t.status === 'completed'));
+  const shouldShowGenerateMilestone =
+    !!firstUngeneratedMilestone &&
+    !isGeneratingForUngenerated &&
+    previousMilestoneComplete;
+  const isCustomRoadmap = draftRoadmap?.type === 'custom_made';
   const {
     data,
     isLoading: isRoadmapLoading,
@@ -51,27 +79,62 @@ const RoadmapExecution = () => {
     skip: !draftRoadmap?.roadmap_id,
     refetchOnMountOrArgChange: true,
   });
+  const {
+    isVisible: isHighlightVisible,
+    currentStep,
+    steps: highlightSteps,
+    totalSteps,
+    hasSeenHighlight,
+    isPendingHighlightStart,
+    startHighlight,
+    moveNext,
+    scrollViewRef,
+    scrollContentRef,
+    highlightFrame,
+    handleTargetLayout,
+    onScrollEnd,
+  } = useRoadmapHighlightController(
+    isCustomRoadmap,
+    isRoadmapLoading || isRoadmapFetching,
+  );
   const roadmap = data ?? draftRoadmap;
   const { showToast } = useToast();
-  const [deleteRoadmap] = useDeleteRoadmapMutation();
   const [createRoadmap, { isLoading: isCreatingRoadmap }] =
     useCreateRoadmapMutation();
-
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
-    useStartRoadmapMutation();
+    useStartRoadmapMutation({
+      fixedCacheKey: `roadmap-${draftRoadmap?.roadmap_id}`,
+    });
 
   const [firstTabSelected, setFirstTabSelected] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const { menuOptions, menuDialogs } = useRoadmapMenuOptions({
+    roadmap,
+    onMenuClose: () => setIsMenuVisible(false),
+  });
   const [isAnchorModalVisible, setIsAnchorModalVisible] = useState(false);
 
-  const todayTasks = useMemo(
+  useEffect(() => {
+    if (!isHighlightVisible) {
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+    }
+  }, [isHighlightVisible, scrollViewRef]);
+
+  const stepContentOverrides = useMemo<Record<number, React.ReactNode>>(
     () =>
-      (currentMilestone?.tasks || []).filter(
-        (task) => task.date && DateUtils.isSameDate(task.date, new Date()),
-      ),
-    [currentMilestone],
+      isCustomRoadmap
+        ? {
+            0: <RoadmapIntroContent />,
+            2: <BadgeInfoContent />,
+          }
+        : {
+            0: <RoadmapIntroContent />,
+            2: <BadgeInfoContent showPhase />,
+            3: <BadgeInfoContent />,
+          },
+    [isCustomRoadmap],
   );
 
   useEffect(() => {
@@ -115,9 +178,14 @@ const RoadmapExecution = () => {
           pathname: '/roadmap/phase-details',
           params: { phaseId: phase.phase_id },
         });
+      } else {
+        showToast({
+          type: 'warning',
+          message: t('ai_roadmap.no_active_phase_description'),
+        });
       }
     },
-    [roadmap.type],
+    [roadmap.type, showToast, t],
   );
 
   const handlePhasePress = useCallback(
@@ -160,6 +228,7 @@ const RoadmapExecution = () => {
     ) => {
       const phaseLabel = phase?.order_index;
       const milestoneNumber = milestone.order_index;
+      storeMilestone(milestone);
       router.navigate({
         pathname: '/roadmap/phase-milestones-tasks',
         params: {
@@ -230,25 +299,6 @@ const RoadmapExecution = () => {
     }
   };
 
-  const onDeleteRoadmap = async () => {
-    try {
-      await deleteRoadmap(roadmap.roadmap_id).unwrap();
-      dispatch(resetDraftAction());
-      showToast({
-        type: 'success',
-        message: t('common.deleted_successfully'),
-      });
-      router.replace('/progress');
-    } catch (error) {
-      showToast({
-        type: 'failure',
-        message: getApiErrorMessage(error),
-      });
-    } finally {
-      setIsDeleteDialogOpen(false);
-    }
-  };
-
   const milestones = getAllMilestones(roadmap);
   const hasMilestones = milestones.length > 0;
 
@@ -276,23 +326,19 @@ const RoadmapExecution = () => {
   const StartRoadmapButton = () => {
     if (!hasMilestones) return null;
     if (isRoadmapLoading || isRoadmapStarted(roadmap)) return null;
-    if (isRoadmapFetching)
+    if (isRoadmapFetching || isStartingRoadmap)
       return (
         <Loader
-          marginT-16
           transparent
           containerStyle={{ position: 'relative', marginTop: 16 }}
         />
       );
     return (
-      <AppView
-        marginT-16
-        reanimated
-        entering={Animations.Entry.FadeInDownWithSpring()}>
+      <AppView marginT-16>
         <PrimaryButton
           label="common.start_roadmap"
           shouldShowLoader
-          isLoading={isStartingRoadmap || isCreatingRoadmap}
+          isLoading={isCreatingRoadmap}
           onPress={onStartRoadmap}
         />
       </AppView>
@@ -301,64 +347,89 @@ const RoadmapExecution = () => {
 
   return (
     <AppScreen safeArea>
+      {(isRoadmapLoading || (!hasSeenHighlight && isPendingHighlightStart)) && (
+        <Loader />
+      )}
+
       <ScrollView
+        pointerEvents={
+          !(!hasSeenHighlight && isPendingHighlightStart) ? 'auto' : 'none'
+        }
+        ref={scrollViewRef}
         contentInsetAdjustmentBehavior="always"
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.scrollContainer,
+          { paddingBottom: isHighlightVisible ? 400 : 60 },
+        ]}
         showsVerticalScrollIndicator={false}
+        onMomentumScrollEnd={onScrollEnd}
+        onScrollEndDrag={onScrollEnd}
         refreshControl={
           <RefreshControl
-            refreshing={isRefreshing}
+            tintColor={Colors.secondary}
+            refreshing={
+              hasSeenHighlight
+                ? (!roadmap.roadmap_id && isRoadmapFetching) || isRefreshing
+                : false
+            }
             onRefresh={onManuallyRefresh}
           />
         }>
-        <AppView row spread centerV>
-          <HeaderWithBack />
-          <AppView>
-            {!!roadmap?.roadmap_id && (
-              <AppButton onPress={() => setIsMenuVisible(true)}>
-                <AppIcon set="Feather" name="more-vertical" size={22} />
-              </AppButton>
-            )}
+        <View ref={scrollContentRef} collapsable={false}>
+          <AppView row spread centerV>
+            <HeaderWithBack />
+            <AppView row gap-8 centerV>
+              {!!roadmap.paused_at && (
+                <AppView paddingV-4 paddingH-8 br40 bg-warning center>
+                  <TranslatedText
+                    sm
+                    semibold
+                    translationKey="roadmap.pause.badge"
+                  />
+                </AppView>
+              )}
+              {!!roadmap?.roadmap_id && (
+                <AppView paddingT-4 ref={(ref) => handleTargetLayout(4, ref)}>
+                  <AppButton onPress={() => setIsMenuVisible(true)}>
+                    <AppIcon set="Feather" name="more-vertical" size={22} />
+                  </AppButton>
+                </AppView>
+              )}
+            </AppView>
           </AppView>
-        </AppView>
-        <Divider />
-        <AppSegmentControl
-          segments={[t('tabs.today'), t('common.overview')]}
-          selectedIndex={firstTabSelected ? 0 : 1}
-          onSegmentChange={(index) => setFirstTabSelected(index === 0)}
-        />
+          <Divider />
+          <AppSegmentControl
+            segments={[t('tabs.today'), t('settings.roadmaps').slice(0, 7)]}
+            selectedIndex={firstTabSelected ? 0 : 1}
+            onSegmentChange={(index) => setFirstTabSelected(index === 0)}
+          />
 
-        <AppView reanimated layout={Animations.Layout.Springify()}>
-          {firstTabSelected ? (
-            <>
-              <Divider />
-              <TodayTab
-                roadmap={roadmap}
-                currentMilestone={currentMilestone}
-                todayTasks={todayTasks}
-                isRoadmapFeching={isRoadmapFetching}
-                onRoadmapOverviewCardPress={onRoadmapOverviewCardPress}
-              />
-            </>
-          ) : (
-            <AppView
-              key="overview-tab"
-              flex
-              gap-12
-              useSafeArea
-              reanimated
-              entering={Animations.Entry.FadeInDown()}
-              exiting={Animations.Exit.FadeOutDown()}>
-              <RoadmapCurrentStateOverview
-                key={roadmap.roadmap_id}
-                roadmap={roadmap}
-                roadmapCreateStartControls={
-                  <>
-                    {isRoadmapFetching &&
-                    roadmap.goal &&
-                    roadmap?.type !== 'ai_generated' ? (
-                      <Loader marginV-16 transparent />
-                    ) : (
+          <AppView reanimated layout={Animations.Layout.Springify()}>
+            {firstTabSelected ? (
+              <>
+                <Divider />
+                <TodayTab
+                  roadmap={roadmap}
+                  currentMilestone={currentMilestone}
+                  onRoadmapOverviewCardPress={onRoadmapOverviewCardPress}
+                />
+              </>
+            ) : (
+              <AppView
+                key="overview-tab"
+                flex
+                gap-12
+                reanimated
+                entering={Animations.Entry.FadeInDown()}
+                exiting={Animations.Exit.FadeOutDown()}>
+                <RoadmapCurrentStateOverview
+                  key={roadmap.roadmap_id}
+                  roadmap={roadmap}
+                  onOverviewCardRef={(ref) => handleTargetLayout(0, ref)}
+                  onPhaseCardRef={(ref) => handleTargetLayout(2, ref)}
+                  onMilestoneCardRef={(ref) => handleTargetLayout(3, ref)}
+                  roadmapCreateStartControls={
+                    <>
                       <AppView
                         reanimated
                         entering={Animations.Entry.FadeInDownWithSpring()}
@@ -366,57 +437,87 @@ const RoadmapExecution = () => {
                         <CreateRoadmapButton />
                         <StartRoadmapButton />
                       </AppView>
-                    )}
-                    <Divider />
-                    <AnchorCard
-                      onAddAnchor={() => setIsAnchorModalVisible(true)}
-                      onManageAnchor={() => setIsAnchorModalVisible(true)}
-                      anchorName={roadmap?.anchor?.name}
-                    />
-                  </>
-                }
-                onOverviewPress={handleOverviewPress}
-                onPhasePress={handlePhasePress}
-                onMilestonePress={handleMilestonePress}
-              />
-            </AppView>
-          )}
-        </AppView>
+                      <Divider />
+                      <View
+                        onLayout={() => startHighlight()}
+                        ref={(ref) => handleTargetLayout(1, ref)}>
+                        <AnchorCard
+                          onAddAnchor={() => setIsAnchorModalVisible(true)}
+                          onManageAnchor={() => setIsAnchorModalVisible(true)}
+                          anchorName={roadmap?.anchor?.name}
+                        />
+                      </View>
+                    </>
+                  }
+                  onOverviewPress={handleOverviewPress}
+                  onPhasePress={handlePhasePress}
+                  onMilestonePress={handleMilestonePress}
+                />
+              </AppView>
+            )}
+          </AppView>
+        </View>
       </ScrollView>
+
+      {firstTabSelected && shouldShowGenerateMilestone && (
+        <AppView
+          bg-transparent
+          pointerEvents="box-none"
+          style={StyleSheet.absoluteFill}>
+          <GradientBackdrop />
+          <AppView center style={styles.floatingButton}>
+            <AppButton
+              onPress={() => {
+                router.navigate({
+                  pathname: '/roadmap/generate-next-milestone',
+                  params: {
+                    milestoneId: firstUngeneratedMilestone!.milestone_id,
+                  },
+                });
+              }}>
+              <AppView row gap-8 center bg-accent br100 padding-12 paddingH-24>
+                <TranslatedText
+                  body2
+                  translationKey="ai_roadmap.generate_milestone"
+                />
+                <AppIcon
+                  set="Ionicons"
+                  name="arrow-forward-circle-outline"
+                  size={24}
+                  color={Colors.white}
+                />
+              </AppView>
+            </AppButton>
+          </AppView>
+        </AppView>
+      )}
+
+      <RoadmapHighlightOverlay
+        visible={isHighlightVisible}
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        steps={highlightSteps}
+        contentOverrides={stepContentOverrides}
+        highlightFrame={highlightFrame}
+        nextLabel={t('feature_highlight.next')}
+        doneLabel={t('feature_highlight.got_it')}
+        onNext={moveNext}
+      />
+
       <AppActionSheetModal
-        options={[
-          {
-            label: t('roadmap.delete_roadmap_label'),
-            onPress: () => {
-              setIsMenuVisible(false);
-              setTimeout(() => setIsDeleteDialogOpen(true), 400);
-            },
-            icon: <AppIcon name="delete" color={Colors.error} size={20} />,
-          },
-        ]}
+        options={menuOptions}
         title={t('roadmap.options')}
         visible={isMenuVisible}
         onDismiss={() => setIsMenuVisible(false)}
       />
-      <ConfirmationDialog
-        isDialogOpen={isDeleteDialogOpen}
-        title="common.are_you_sure"
-        subtitle="common.delete_roadmap"
-        onPositivePress={onDeleteRoadmap}
-        onNegativePress={() => setIsDeleteDialogOpen(false)}
-        onDismiss={() => setIsDeleteDialogOpen(false)}
-        negativeText="common.cancel"
-        positiveText="common.remove"
-        positiveButtonIcon={
-          <AppIcon name="delete" color={Colors.textOnPrimary} size={14} />
-        }
-      />
+      {menuDialogs}
       <AnchorSelectionModal
         isLoading={isRoadmapLoading || isRoadmapFetching}
         roadmapId={roadmap?.roadmap_id || draftRoadmap?.roadmap_id}
         isAnchorSheetVisible={isAnchorModalVisible}
         setIsAnchorSheetVisible={setIsAnchorModalVisible}
       />
+      <ImportNotesModal />
     </AppScreen>
   );
 };
@@ -427,5 +528,16 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
     paddingBottom: 100,
+  },
+  highlightLoader: {
+    ...StyleSheet.absoluteFill,
+    zIndex: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 80,
+    width: '100%',
   },
 });

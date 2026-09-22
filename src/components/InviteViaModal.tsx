@@ -2,6 +2,7 @@ import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
 import { AppModal } from '@/components/AppModal';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
@@ -130,7 +131,7 @@ export const InviteViaModal: React.FC<InviteViaModalProps> = ({
     {
       label: t('settings.invite_via_sms'),
       onPress: handleSMS,
-      icon: <AppIcon set="AntDesign" name="message1" size={20} />,
+      icon: <AppIcon set="AntDesign" name="message" size={20} />,
     },
     {
       label: t('settings.invite_via_whatsapp'),
@@ -140,7 +141,7 @@ export const InviteViaModal: React.FC<InviteViaModalProps> = ({
     {
       label: t('settings.invite_via_other'),
       onPress: handleOther,
-      icon: <AppIcon set="AntDesign" name="sharealt" size={20} />,
+      icon: <AppIcon set="AntDesign" name="share-alt" size={20} />,
     },
   ];
 
@@ -154,9 +155,10 @@ export const InviteViaModal: React.FC<InviteViaModalProps> = ({
       contentContainerStyle={styles.contentContainer}>
       <AppView>
         <AppView row centerV spread marginB-24>
-          <AppText textColor subtitle2>
-            {t('settings.invite_via_title')}
-          </AppText>
+          <TranslatedText
+            subtitle2
+            translationKey="settings.invite_via_title"
+          />
           <AppButton onPress={onDismiss}>
             <AppIcon set="AntDesign" name="close" size={24} />
           </AppButton>

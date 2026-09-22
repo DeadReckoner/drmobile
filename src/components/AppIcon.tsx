@@ -1,11 +1,18 @@
 import { useAppTheme } from '@/hooks/useAppTheme';
-import { AntDesign, Feather, Ionicons } from '@expo/vector-icons';
+import {
+  AntDesign,
+  Feather,
+  Ionicons,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
 import { StyleProp, TextStyle } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 type AntDesignGlyphsType = keyof typeof AntDesign.glyphMap;
 type FeatherGlyphsType = keyof typeof Feather.glyphMap;
 type IoniconsGlyphsType = keyof typeof Ionicons.glyphMap;
+type MaterialCommunityIconsGlyphsType =
+  keyof typeof MaterialCommunityIcons.glyphMap;
 
 type UnifiedIconProps =
   | {
@@ -25,6 +32,13 @@ type UnifiedIconProps =
   | {
       set: 'Ionicons';
       name: IoniconsGlyphsType;
+      size?: number;
+      color?: string;
+      style?: StyleProp<TextStyle>;
+    }
+  | {
+      set: 'MaterialCommunityIcons';
+      name: MaterialCommunityIconsGlyphsType;
       size?: number;
       color?: string;
       style?: StyleProp<TextStyle>;
@@ -53,6 +67,17 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
     return (
       <Ionicons
         name={name as IoniconsGlyphsType}
+        size={size}
+        color={color || (theme === 'dark' ? Colors.white : Colors.primary)}
+        style={style}
+      />
+    );
+  }
+
+  if (set === 'MaterialCommunityIcons') {
+    return (
+      <MaterialCommunityIcons
+        name={name as MaterialCommunityIconsGlyphsType}
         size={size}
         color={color || (theme === 'dark' ? Colors.white : Colors.primary)}
         style={style}

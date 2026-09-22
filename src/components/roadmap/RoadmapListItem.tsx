@@ -1,5 +1,6 @@
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { TranslatedText } from '@/components/TranslatedText';
 import { AppImage, AppProgressBar, AppText, AppView } from '@/components/ui';
 import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useAppTheme } from '@/hooks/useAppTheme';
@@ -12,9 +13,14 @@ import { Assets, Colors } from 'react-native-ui-lib';
 interface RoadmapListItemProps {
   onPress: (_roadmap: RoadmapType) => void;
   roadmap: RoadmapType;
+  showProgress?: boolean;
 }
 
-export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
+export const RoadmapListItem = ({
+  onPress,
+  roadmap,
+  showProgress,
+}: RoadmapListItemProps) => {
   const { t } = useLocalization();
   const { theme } = useAppTheme();
 
@@ -24,7 +30,7 @@ export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
         <AppView bg-primary br30 center style={styles.iconContainer}>
           {roadmap.type === 'ai_generated' && (
             <AppImage
-              style={[StyleSheet.absoluteFillObject]}
+              style={[StyleSheet.absoluteFill]}
               source={Assets.logo.aiRoadmapBG}
             />
           )}
@@ -34,27 +40,51 @@ export const RoadmapListItem = ({ onPress, roadmap }: RoadmapListItemProps) => {
           <AppText body1 textColor>
             {roadmap.goal}
           </AppText>
+          {!!roadmap.paused_at && (
+            <AppView
+              br40
+              paddingH-8
+              paddingV-3
+              bg-warning
+              style={styles.pausedBadge}>
+              <TranslatedText
+                sm
+                semibold
+                translationKey="roadmap.pause.badge"
+              />
+            </AppView>
+          )}
           <AppText xsm textColor>
             {t('common.next_milestone')}:{' '}
             {roadmap.daysRemainingTillNextMilestone || 0} {t('common.days')}
           </AppText>
           <AppView row centerV>
-            <AppView row gap-8 centerV flex-1>
-              <AppProgressBar
-                style={[
-                  styles.roadmapProgressBar,
-                  { backgroundColor: Colors.outline },
-                ]}
-                fullWidth={true}
-                progress={roadmap.progress}
-                progressColor={theme === 'dark' ? Colors.white : Colors.primary}
-              />
-              <AppText xsm textColor>
-                {roadmap.progress || 0}%
-              </AppText>
-            </AppView>
+            {showProgress && (
+              <AppView row gap-8 centerV flex-1>
+                <AppProgressBar
+                  style={[
+                    styles.roadmapProgressBar,
+                    { backgroundColor: Colors.outline },
+                    !!roadmap.paused_at && styles.progressBarPaused,
+                  ]}
+                  fullWidth={true}
+                  progress={roadmap.progress}
+                  progressColor={
+                    roadmap.paused_at
+                      ? Colors.warning
+                      : theme === 'dark'
+                        ? Colors.white
+                        : Colors.primary
+                  }
+                />
+
+                <AppText xsm textColor>
+                  {roadmap.progress || 0}%
+                </AppText>
+              </AppView>
+            )}
             {!isRoadmapStarted(roadmap) && (
-              <AppIcon name="clockcircleo" size={20} />
+              <AppIcon name="clock-circle" size={20} />
             )}
           </AppView>
         </AppView>
@@ -68,5 +98,11 @@ const styles = StyleSheet.create({
   roadmapProgressBar: {
     height: 5,
     width: '60%',
+  },
+  pausedBadge: {
+    alignSelf: 'flex-start',
+  },
+  progressBarPaused: {
+    opacity: 0.6,
   },
 });

@@ -8,6 +8,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 const initialState: OnboardingStateType = {
   hasSeenIntroModal: false,
   isSetupTaskCompleted: false,
+  hasSeenRoadmapHighlight: false,
   setupSteps: {
     reviewToday: true,
     createOrReviewRoadmap: false,
@@ -23,6 +24,9 @@ const onboardingSlice = createSlice({
   reducers: {
     markIntroModalSeenAction(state) {
       state.hasSeenIntroModal = true;
+    },
+    markRoadmapHighlightSeenAction(state) {
+      state.hasSeenRoadmapHighlight = true;
     },
     toggleSetupStepAction(
       state,
@@ -41,16 +45,20 @@ const onboardingSlice = createSlice({
     completeSetupTaskAction(state) {
       state.isSetupTaskCompleted = true;
     },
-    resetOnboardingAction: () => initialState,
+    resetOnboardingFromServerAction(state) {
+      state.hasSeenIntroModal = false;
+      state.isSetupTaskCompleted = false;
+    },
   },
 });
 
 export const {
   markIntroModalSeenAction,
+  markRoadmapHighlightSeenAction,
   toggleSetupStepAction,
   setSetupStepAction,
   completeSetupTaskAction,
-  resetOnboardingAction,
+  resetOnboardingFromServerAction,
 } = onboardingSlice.actions;
 
 export const selectHasSeenIntroModal = createAppSelector(
@@ -59,6 +67,10 @@ export const selectHasSeenIntroModal = createAppSelector(
 
 export const selectIsSetupTaskCompleted = createAppSelector(
   (state) => state.onboarding.isSetupTaskCompleted,
+);
+
+export const selectHasSeenRoadmapHighlight = createAppSelector(
+  (state) => state.onboarding.hasSeenRoadmapHighlight,
 );
 
 export const selectSetupSteps = createAppSelector(

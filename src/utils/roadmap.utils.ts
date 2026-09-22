@@ -23,11 +23,11 @@ const UNSET_DATE = '0001-01-01T00:00:00Z';
 
 export const isRoadmapStarted = (roadmap: RoadmapType): boolean => {
   const milestones = getAllMilestones(roadmap);
-  return (
+  return !!(
+    roadmap.start_date &&
     roadmap.start_date !== UNSET_DATE &&
-    roadmap.start_date !== null &&
-    milestones?.[0]?.date !== UNSET_DATE &&
-    milestones?.[0]?.date !== null
+    milestones?.[0]?.date &&
+    milestones?.[0]?.date !== UNSET_DATE
   );
 };
 
@@ -75,7 +75,7 @@ export const buildBadgeLabel = ({
   if (isValidValue(phase)) parts.push(`P${phase}`);
   if (isValidValue(milestone)) parts.push(`M${milestone}`);
   if (isValidValue(task)) parts.push(`T${task}`);
-  return parts.join('-');
+  return parts.join(' · ');
 };
 
 /**
@@ -164,7 +164,6 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
     return { ...roadmap, milestones: roadmap.milestones || [] };
   }
 
-  // Support both new status field and legacy reached field
   const activeMilestone = milestones.find(
     (m) => m.status !== 'completed' && !m.reached,
   );
@@ -176,7 +175,6 @@ export const transformRoadmap = (roadmap: RoadmapType): RoadmapType => {
     };
   }
   const allTasks = milestones.flatMap((m) => m.tasks);
-  // Support both new status field and legacy completed field
   const completedTasks = allTasks.filter(
     (t) => t.status === 'completed' || t.completed,
   );

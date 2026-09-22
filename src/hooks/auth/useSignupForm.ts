@@ -48,9 +48,14 @@ type SignupSchemaType = Yup.InferType<
 interface SignupFormHookProps {
   onSuccess?: (_user: SessionLessUserType) => void;
   onError?: (_error: AuthErrorType) => void;
+  isTermsAccepted?: boolean;
 }
 
-export const useSignupForm = ({ onSuccess, onError }: SignupFormHookProps) => {
+export const useSignupForm = ({
+  onSuccess,
+  onError,
+  isTermsAccepted = false,
+}: SignupFormHookProps) => {
   const { t } = useLocalization();
   const schema = createSignupValidationSchema(t);
 
@@ -64,6 +69,10 @@ export const useSignupForm = ({ onSuccess, onError }: SignupFormHookProps) => {
     firstName,
     lastName,
   }: SignupSchemaType) => {
+    if (!isTermsAccepted) {
+      onError?.(new Error('privacy_not_accepted'));
+      return;
+    }
     setIsLoading(true);
 
     const { data, error } = await signUpEmailWithAuthProvider(email, password, {

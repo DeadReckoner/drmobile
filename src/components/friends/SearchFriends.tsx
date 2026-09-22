@@ -36,7 +36,7 @@ export const SearchFriends = ({ onClose }: SearchFriendsProps) => {
     if (!searchData || !debouncedQuery) return [];
     return searchData.map((u) => ({
       id: u.user_id,
-      name: `${u.first_name} ${u.last_name}`,
+      name: `${u.first_name} ${u.last_name || ''}`,
       avatar: undefined, //TODO: map avatar url when available
       email: u.email,
       friendship_status: u.friendship_status,
@@ -76,7 +76,7 @@ export const SearchFriends = ({ onClose }: SearchFriendsProps) => {
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingHorizontal: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 0 }}
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="always">
       <AppView
@@ -97,7 +97,6 @@ export const SearchFriends = ({ onClose }: SearchFriendsProps) => {
             autoCapitalize="none"
             returnKeyType="search"
             body2
-            multiline
           />
         </AppView>
         <AppButton onPress={onClose}>

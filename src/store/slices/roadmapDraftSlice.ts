@@ -12,6 +12,7 @@ import {
   assignRoadmapIds,
   findOngoingMilestone,
   findOngoingPhase,
+  getAllMilestones,
   transformRoadmap,
 } from '@/utils/roadmap.utils';
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
@@ -173,6 +174,7 @@ const roadmapDraftSlice = createSlice({
         steps: [],
         day: 0,
         status: 'not_started',
+        roadmap_id: state.roadmap.roadmap_id,
       });
     },
 
@@ -238,6 +240,7 @@ const roadmapDraftSlice = createSlice({
       } else {
         step.completed = action.payload.completed;
       }
+      step.status = action.payload.status ?? step.status;
       step.number = action.payload.number ?? step.number;
       task.status = deriveTaskStatus(task);
       const milestone = findSelectedMilestone(state);
@@ -344,9 +347,13 @@ const roadmapDraftSlice = createSlice({
 
     updateStepByIdAction(
       state,
-      action: PayloadAction<Pick<StepType, 'step_id' | 'completed'>>,
+      action: PayloadAction<
+        Pick<StepType, 'step_id' | 'completed'> & {
+          status?: StepType['status'];
+        }
+      >,
     ) {
-      const { step_id, completed } = action.payload;
+      const { step_id, completed, status } = action.payload;
 
       // Helper that patches the step inside a milestones array
       const patchInMilestones = (milestones: MilestoneType[]) => {
@@ -355,6 +362,7 @@ const roadmapDraftSlice = createSlice({
             const step = task.steps?.find((s) => s.step_id === step_id);
             if (step) {
               step.completed = completed;
+              if (status !== undefined) step.status = status;
               task.status = deriveTaskStatus(task);
               milestone.status = deriveMilestoneStatus(milestone);
               return true;
@@ -461,19 +469,45 @@ export const selectPhaseMilestones = (phaseId: string) =>
 export const selectMilestoneTasks = (milestoneId: string) =>
   createAppSelector((state) => {
     const roadmap = state.roadmapDraft.roadmap;
-    // Search in phases first
     for (const phase of roadmap.phases ?? []) {
       const milestone = (phase.milestones ?? []).find(
         (m) => m.milestone_id === milestoneId,
       );
       if (milestone) return milestone.tasks ?? [];
     }
-    // Fallback to top-level milestones
     const milestone = (roadmap.milestones ?? []).find(
       (m) => m.milestone_id === milestoneId,
     );
     return milestone?.tasks ?? [];
   });
+
+/** Returns the milestone immediately after the given milestoneId, or null. */
+export const selectNextMilestoneAfter = (milestoneId: string) =>
+  createAppSelector((state) => {
+    const allMilestones = getAllMilestones(state.roadmapDraft.roadmap);
+    const idx = allMilestones.findIndex((m) => m.milestone_id === milestoneId);
+    if (idx === -1 || idx >= allMilestones.length - 1) return null;
+    return allMilestones[idx + 1];
+  });
+
+/** Returns the milestone immediately before the given milestoneId, or null. */
+export const selectMilestoneBeforeId = (milestoneId: string) =>
+  createAppSelector((state) => {
+    const allMilestones = getAllMilestones(state.roadmapDraft.roadmap);
+    const idx = allMilestones.findIndex((m) => m.milestone_id === milestoneId);
+    if (idx <= 0) return null;
+    return allMilestones[idx - 1];
+  });
+
+/** Returns the first milestone with no tasks yet (AI roadmap only), or null. */
+export const selectFirstUngeneratedMilestone = createAppSelector((state) => {
+  const roadmap = state.roadmapDraft.roadmap;
+  if (roadmap.type !== 'ai_generated') return null;
+  return (
+    getAllMilestones(roadmap).find((m) => !m.tasks || m.tasks.length === 0) ??
+    null
+  );
+});
 
 export const draftRoadmapReducer = roadmapDraftSlice.reducer;
 export const roadmapDraftSlicePath = roadmapDraftSlice.reducerPath;

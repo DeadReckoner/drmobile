@@ -1,10 +1,19 @@
+import { ErrorFallback } from '@/components/ErrorBoundary';
 import { Loader } from '@/components/Loader';
 import { RootNavigator } from '@/components/RootNavigation';
 import { SplashScreenController } from '@/components/SplashScreenController';
 import { Env } from '@/constants/Env';
+import { useBillingPaywall } from '@/hooks/useBillingPaywall';
+import { useBillingStatusSync } from '@/hooks/useBillingStatusSync';
+import { useEntitlementCheck } from '@/hooks/useEntitlementCheck';
+import { initializeRevenueCat } from '@/lib/revenueCat';
 import { persistedStore, store } from '@/store/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import * as Sentry from '@sentry/react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { AppState, type AppStateStatus } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import 'react-native-reanimated';
 import { Provider } from 'react-redux';
@@ -21,16 +30,71 @@ GoogleSignin.configure({
   iosClientId: Env.EXPO_PUBLIC_GOOGLE_AUTH_IOS_CLIENT_ID,
 });
 
+if (Env.EXPO_PUBLIC_SENTRY_DSN) {
+  Sentry.init({
+    dsn: Env.EXPO_PUBLIC_SENTRY_DSN,
+    sendDefaultPii: true,
+    enableLogs: true,
+    integrations: [Sentry.mobileReplayIntegration()],
+    environment: __DEV__ ? 'development' : 'production',
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+    spotlight: __DEV__,
+  });
+}
+
+initializeRevenueCat();
+
+function AppWithEntitlementCheck() {
+  const { checkEntitlementStatus } = useEntitlementCheck();
+  // Keep the backend's authoritative plan state in sync (mount + foreground)
+  // and open the paywall when a 402 sets the trigger.
+  useBillingStatusSync({ register: true });
+  useBillingPaywall();
+
+  useEffect(() => {
+    checkEntitlementStatus();
+  }, [checkEntitlementStatus]);
+
+  // Re-check entitlement whenever the app comes back to the foreground.
+  // Registered here (once) instead of inside useEntitlementCheck to avoid
+  // duplicate listeners when the hook is composed into multiple sub-hooks.
+  useEffect(() => {
+    const handleAppStateChange = (nextState: AppStateStatus) => {
+      if (nextState === 'active') {
+        checkEntitlementStatus();
+      }
+    };
+
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange,
+    );
+    return () => subscription.remove();
+  }, [checkEntitlementStatus]);
+
+  return (
+    <KeyboardProvider>
+      <SplashScreenController>
+        <RootNavigator />
+      </SplashScreenController>
+    </KeyboardProvider>
+  );
+}
+
 export default function RootLayout() {
   return (
-    <Provider store={store}>
-      <PersistGate loading={<Loader />} persistor={persistedStore}>
-        <KeyboardProvider>
-          <SplashScreenController>
-            <RootNavigator />
-          </SplashScreenController>
-        </KeyboardProvider>
-      </PersistGate>
-    </Provider>
+    <Sentry.GlobalErrorBoundary
+      fallback={({ resetError, eventId }) => (
+        <ErrorFallback onReset={resetError} eventId={eventId} />
+      )}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Provider store={store}>
+          <PersistGate loading={<Loader />} persistor={persistedStore}>
+            <AppWithEntitlementCheck />
+          </PersistGate>
+        </Provider>
+      </GestureHandlerRootView>
+    </Sentry.GlobalErrorBoundary>
   );
 }

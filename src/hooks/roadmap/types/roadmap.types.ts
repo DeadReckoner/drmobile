@@ -3,6 +3,10 @@ export type FormRoadmapType = Pick<
   'goal' | 'description' | 'days' | 'reason'
 >;
 
+// 'edit' - User can edit the info of the roadmap, milestone, task or step
+// 'create' - Used when user is creating a new roadmap, milestone, task or step
+// 'view' - User can view and perform action of completing the step of a task
+// 'readonly' - Used when we share the roadmap to other user or when Anchor is seeing the roadmap
 export type FormEditModeType = 'edit' | 'create' | 'view' | 'readonly';
 
 export type RoadmapExecutionStatusType =
@@ -11,17 +15,23 @@ export type RoadmapExecutionStatusType =
   | 'completed'
   | 'overdue';
 
+export type StepStatusType = 'incomplete' | 'completed' | 'skipped';
+
 export interface StepType {
   step_id: string;
   task_id: string;
   description: string;
+
+  /** @deprecated Use `status` instead. Will be removed in a future API version. */
   completed: boolean;
   number: number;
+  status?: StepStatusType;
 }
 
 export interface TaskType {
   task_id: string;
   milestone_id: string;
+  roadmap_id: string;
   user_id?: string;
   title: string;
   description: string;
@@ -36,6 +46,10 @@ export interface TaskType {
   confidence?: string;
 
   status: RoadmapExecutionStatusType;
+
+  phase_number?: number;
+  milestone_number?: number;
+  task_number?: number;
 }
 
 export interface MilestoneType {
@@ -50,7 +64,6 @@ export interface MilestoneType {
   tasks: TaskType[];
   date?: string;
 
-  // Strategic fields (from former MacroMilestone)
   phase_id?: string;
   acceptance_test?: string;
   duration_days_min?: number;
@@ -58,7 +71,6 @@ export interface MilestoneType {
   order_index?: number;
   resources_forecast?: string; // JSON stringified object
 
-  // Related data (from former MacroMilestone)
   spikes?: Spike[];
   risks?: Risk[];
 
@@ -98,6 +110,10 @@ export interface RoadmapType {
     name: string;
     email: string;
   };
+
+  archived?: boolean;
+  paused_at?: string | null; // ISO 8601 UTC timestamp; null = not paused
+  share_token?: string | null; // present on owned roadmaps; null = not shared
 }
 
 export interface Phase {
@@ -142,4 +158,76 @@ export interface RoadmapCreationJobStatusResponse {
   result?: {
     roadmap_id: string;
   };
+}
+
+// ─── Plan Import ─────────────────────────────────────────────────────────────
+
+export type ImportFidelityType = 'high' | 'medium' | 'low';
+
+export interface ImportNotesType {
+  source_summary: string;
+  fidelity: ImportFidelityType;
+  inferred: string[];
+  dropped: string[];
+}
+
+export interface ImportPlanContextType {
+  goalName?: string;
+  targetCompletionDate?: string;
+  weeklyTimeCommitment?: string;
+  workFrequency?: string;
+  currentSkillLevel?: string;
+  constraints?: string;
+  additionalContext?: string;
+}
+
+// ─── Next Milestone Generation ────────────────────────────────────────────────
+
+export interface MilestoneReviewAnswers {
+  completionStatus?: string;
+  whatWorked?: string;
+  whatDidntWork?: string;
+  obstacles?: string;
+  paceFeedback?: string;
+  clarityFeedback?: string;
+  goingForward?: string;
+}
+
+export interface GenerateNextMilestoneRequest {
+  goalName: string;
+  goalDescription: string;
+  goalImportance: string;
+  targetCompletionDate: string;
+  weeklyTimeCommitment: string;
+  workFrequency: string;
+  constraints: string;
+  currentSkillLevel: string;
+  additionalContext: string;
+  review: MilestoneReviewAnswers;
+}
+
+export interface NextMilestoneJobResponse {
+  job_id: string;
+  milestone_id: string;
+  roadmap_id: string;
+  status: RoadmapGenerationStatusType;
+  message: string;
+  ws_url: string;
+}
+
+export interface MilestoneJobProgressData {
+  adjusted?: boolean;
+  rationale?: string;
+  milestone_id?: string;
+  roadmap_id?: string;
+  error?: string;
+}
+
+export interface MilestoneJobStatusFrameType {
+  type: 'status' | 'progress' | 'complete' | 'error' | 'pong';
+  job_id: string;
+  status: RoadmapGenerationStatusType | 'failed';
+  progress: number;
+  message: string;
+  data?: MilestoneJobProgressData;
 }

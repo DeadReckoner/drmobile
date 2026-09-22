@@ -1,8 +1,11 @@
+import { AppActionSheetModal } from '@/components/AppActionSheetModal';
 import { AppAvatar } from '@/components/AppAvatar';
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
+import { AppSegmentControl } from '@/components/AppSegmentControl';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
 import { Loader } from '@/components/Loader';
 import { TranslatedText } from '@/components/TranslatedText';
@@ -11,19 +14,17 @@ import { RoadmapType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useToast } from '@/hooks/useToast';
 import {
+  useBlockFriendMutation,
   useGetFriendProfileQuery,
   useRemoveFriendMutation,
   useSendFriendRequestMutation,
 } from '@/store/apis/friendsApi';
+import { HabitType } from '@/store/apis/types/habitsApi.types';
+import { getApiErrorMessage } from '@/utils/apiErrors.utils';
+import { storeHabit, storeRoadmap } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { Alert, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const FriendDetails = () => {
@@ -40,6 +41,7 @@ const FriendDetails = () => {
     data: friendProfileData,
     isLoading,
     error,
+    isFetching,
   } = useGetFriendProfileQuery(friendId, {
     skip: !friendId,
     refetchOnMountOrArgChange: true,
@@ -54,13 +56,20 @@ const FriendDetails = () => {
     friendProfileData?.user.email?.trim() ||
     (params['friendEmail'] as string | undefined);
 
+  const [isSettingsSheetVisible, setIsSettingsSheetVisible] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'roadmaps' | 'habits'>(
+    'roadmaps',
+  );
+
   const [localFriendshipStatus, setLocalFriendshipStatus] = useState<
     'none' | 'pending' | 'accepted' | null
   >(null);
 
   const roadmaps = friendProfileData?.allowed_roadmaps || [];
+  const habits = friendProfileData?.allowed_habits || [];
 
   const [removeFriend, { isLoading: isRemoving }] = useRemoveFriendMutation();
+  const [blockFriend, { isLoading: isBlocking }] = useBlockFriendMutation();
   const [sendFriendRequest, { isLoading: isSendingRequest }] =
     useSendFriendRequestMutation();
 
@@ -104,17 +113,50 @@ const FriendDetails = () => {
         type: 'success',
         message: t('settings.friend_request_sent'),
       });
-    } catch {
+    } catch (e: unknown) {
       showToast({
         type: 'failure',
-        message: t('common.error_occurred'),
+        message: getApiErrorMessage(e) || t('common.error_occurred'),
       });
     }
   }, [friendId, sendFriendRequest, showToast, t]);
 
+  const handleBlockFriend = useCallback(async () => {
+    try {
+      await blockFriend(friendId).unwrap();
+      setLocalFriendshipStatus('none');
+
+      showToast({
+        type: 'success',
+        message: t('settings.friend_blocked'),
+      });
+      router.back();
+    } catch (e: unknown) {
+      showToast({
+        type: 'failure',
+        message: getApiErrorMessage(e) || t('common.error_occurred'),
+      });
+    }
+  }, [blockFriend, friendId, showToast, t]);
+
+  const confirmRemoveAndBlock = useCallback(() => {
+    Alert.alert(
+      t('settings.remove_and_block'),
+      t('settings.remove_and_block_description'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('settings.remove_and_block'),
+          style: 'destructive',
+          onPress: handleBlockFriend,
+        },
+      ],
+    );
+  }, [handleBlockFriend, t]);
+
   const handleRemoveFriend = useCallback(() => {
     Alert.alert(
-      t('settings.remove_friend'),
+      t('settings.remove'),
       t('settings.remove_friend_confirmation'),
       [
         {
@@ -133,10 +175,10 @@ const FriendDetails = () => {
                 type: 'success',
                 message: t('settings.friend_removed'),
               });
-            } catch {
+            } catch (e: unknown) {
               showToast({
                 type: 'failure',
-                message: t('common.error_occurred'),
+                message: getApiErrorMessage(e) || t('common.error_occurred'),
               });
             }
           },
@@ -177,12 +219,58 @@ const FriendDetails = () => {
     );
   }, []);
 
+  const renderEmptyHabits = useCallback(() => {
+    return (
+      <AppCard paddingV-48 center>
+        <AppView center gap-20>
+          <TranslatedText body2 translationKey="settings.no_habits_shared" />
+        </AppView>
+      </AppCard>
+    );
+  }, []);
+
+  const renderHabitItem = useCallback(
+    ({ item: habit }: { item: HabitType }) => {
+      return (
+        <AppCard
+          paddingV-20
+          marginB-16
+          onPress={() => {
+            storeHabit(habit);
+            router.navigate({ pathname: '/settings/readonly-habit-details' });
+          }}>
+          <AppView row centerV flex-1 gap-4>
+            <AppText body2 textColor flex-1>
+              {habit.title}
+            </AppText>
+            <AppView bg-accent paddingH-8 paddingV-4 br100>
+              <AppText
+                white
+                xsm
+                regular
+                style={{ textTransform: 'capitalize' }}>
+                {habit.recurrence_type === 'none'
+                  ? t('habits.recurrence.none')
+                  : habit.recurrence_type}
+              </AppText>
+            </AppView>
+          </AppView>
+          {habit.description ? (
+            <AppText xsm textColor marginT-4>
+              {habit.description}
+            </AppText>
+          ) : null}
+        </AppCard>
+      );
+    },
+    [t],
+  );
+
   const handleRoadmapPress = useCallback((roadmap: RoadmapType) => {
+    storeRoadmap(roadmap);
     router.navigate({
       pathname: '/settings/readonly-roadmap-details',
-      params: {
-        roadmap: JSON.stringify(roadmap),
-      },
+      params: { roadmapId: roadmap.roadmap_id },
     });
   }, []);
 
@@ -197,7 +285,7 @@ const FriendDetails = () => {
             <AppView bg-primary br30 center style={styles.roadmapIcon}>
               <AppIcon set="Feather" name="map" color={Colors.white} />
             </AppView>
-            <AppView flex gap-8>
+            <AppView flex gap-4>
               <AppText body2 textColor numberOfLines={2}>
                 {roadmap.goal}
               </AppText>
@@ -211,23 +299,12 @@ const FriendDetails = () => {
     },
     [handleRoadmapPress],
   );
-  const renderHeader = () => (
-    <AppView marginT-24 row gap-8>
-      <TranslatedText
-        body1
-        textColor
-        translationKey="settings.roadmaps"
-        marginB-16
-      />
-    </AppView>
-  );
 
   if (isLoading) {
     return (
-      <AppScreen paddingH-0 paddingT-60>
-        <HeaderWithBack marginH-16 marginT-8 />
-        <AppView flex marginT-40>
-          <ActivityIndicator size="small" color={Colors.primary} />
+      <AppScreen>
+        <AppView flex height={40}>
+          <Loader transparent size="small" />
         </AppView>
       </AppScreen>
     );
@@ -270,7 +347,7 @@ const FriendDetails = () => {
               </AppView>
               {friendshipStatus === '' && (
                 <AppView>
-                  <AppIcon name="message1" />
+                  <AppIcon name="message" />
                 </AppView>
               )}
               <AppView centerH flex centerV>
@@ -278,10 +355,11 @@ const FriendDetails = () => {
                   onPress={handleFriendshipRequest}
                   disabled={
                     isRemoving ||
+                    isBlocking ||
                     isSendingRequest ||
                     friendshipStatus === 'pending'
                   }>
-                  {isRemoving || isSendingRequest ? (
+                  {isRemoving || isBlocking || isSendingRequest ? (
                     <AppView center>
                       <Loader
                         transparent
@@ -295,7 +373,7 @@ const FriendDetails = () => {
                         textColor
                         translationKey={
                           friendshipStatus === 'accepted'
-                            ? 'settings.remove_friend'
+                            ? 'settings.remove'
                             : friendshipStatus === 'pending'
                               ? 'settings.pending_request'
                               : 'settings.send_friend_request'
@@ -357,7 +435,7 @@ const FriendDetails = () => {
       <AppScreen paddingH-0 paddingT-60>
         <HeaderWithBack marginH-16 marginT-8 />
         <AppView flex center paddingH-32>
-          <AppIcon name="exclamationcircleo" size={48} color={Colors.error} />
+          <AppIcon name="exclamation-circle" size={48} color={Colors.error} />
           <TranslatedText
             body2
             textColor
@@ -375,7 +453,17 @@ const FriendDetails = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="always">
-        <HeaderWithBack marginH-16 />
+        <AppView row centerV spread>
+          <HeaderWithBack marginH-16 />
+          <AppButton marginH-16 onPress={() => setIsSettingsSheetVisible(true)}>
+            <AppIcon set="Feather" name="settings" size={20} />
+          </AppButton>
+        </AppView>
+        {isFetching && (
+          <AppView flex height={40}>
+            <Loader transparent size="small" />
+          </AppView>
+        )}
         <AppView centerH marginT-20>
           <AppAvatar size={40} />
           <AppText body1 textColor marginT-18 center>
@@ -412,8 +500,7 @@ const FriendDetails = () => {
                     style={styles.statLabel}
                     marginB-8
                   />
-
-                  <AppIcon name="message1" size={20} />
+                  <AppIcon name="message" size={20} />
                 </AppView>
               </AppButton>
             )}
@@ -424,10 +511,11 @@ const FriendDetails = () => {
                 onPress={handleFriendshipRequest}
                 disabled={
                   isRemoving ||
+                  isBlocking ||
                   isSendingRequest ||
                   friendshipStatus === 'pending'
                 }>
-                {isRemoving || isSendingRequest ? (
+                {isRemoving || isBlocking || isSendingRequest ? (
                   <AppView center>
                     <Loader
                       transparent
@@ -441,7 +529,7 @@ const FriendDetails = () => {
                       textColor
                       translationKey={
                         friendshipStatus === 'accepted'
-                          ? 'settings.remove_friend'
+                          ? 'settings.remove'
                           : friendshipStatus === 'pending'
                             ? 'settings.pending_request'
                             : 'settings.send_friend_request'
@@ -470,16 +558,80 @@ const FriendDetails = () => {
           </AppView>
         </AppCard>
 
-        <AppView paddingH-16>
-          <FlatList
-            scrollEnabled={false}
-            data={roadmaps || []}
-            ListHeaderComponent={renderHeader}
-            ListEmptyComponent={renderEmptyRoadmaps}
-            renderItem={renderRoadmapItem}
+        <AppView marginH-16 marginT-24>
+          <AppSegmentControl
+            segments={[
+              t('settings.roadmaps'),
+              `${t('settings.habits')}/${t('common.tasks')}`,
+            ]}
+            selectedIndex={selectedTab === 'roadmaps' ? 0 : 1}
+            onSegmentChange={(index) =>
+              setSelectedTab(index === 0 ? 'roadmaps' : 'habits')
+            }
           />
         </AppView>
+        <AppView paddingH-16 marginT-16>
+          {selectedTab === 'roadmaps' ? (
+            <AppList
+              scrollEnabled={false}
+              data={roadmaps}
+              ListEmptyComponent={renderEmptyRoadmaps}
+              renderItem={renderRoadmapItem}
+            />
+          ) : (
+            <AppList
+              scrollEnabled={false}
+              data={habits}
+              ListEmptyComponent={renderEmptyHabits}
+              renderItem={renderHabitItem}
+            />
+          )}
+        </AppView>
       </ScrollView>
+      <AppActionSheetModal
+        title={t('settings.settings')}
+        visible={isSettingsSheetVisible}
+        onDismiss={() => setIsSettingsSheetVisible(false)}
+        options={[
+          {
+            label: t('notifications.settings_title'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/settings/friend-notification-override',
+                params: { friendId, friendName: friendNameParam },
+              });
+            },
+            icon: <AppIcon set="Feather" name="bell" size={20} />,
+          },
+          {
+            label: t('settings.report'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              router.navigate({
+                pathname: '/report',
+                params: { friendId },
+              });
+            },
+            icon: <AppIcon name="exclamation-circle" size={20} />,
+          },
+          {
+            label: t('settings.remove_and_block'),
+            onPress: () => {
+              setIsSettingsSheetVisible(false);
+              confirmRemoveAndBlock();
+            },
+            icon: (
+              <AppIcon
+                set="MaterialCommunityIcons"
+                name="account-cancel-outline"
+                size={20}
+                color={Colors.error}
+              />
+            ),
+          },
+        ]}
+      />
     </AppScreen>
   );
 };

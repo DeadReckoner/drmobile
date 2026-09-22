@@ -1,15 +1,16 @@
 import { Env } from '@/constants/Env';
+import { useHaptics } from '@/hooks/useHaptics';
 import { BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
 import { PlatformPressable } from '@react-navigation/elements';
-import * as Haptics from 'expo-haptics';
 
 export const HapticTab = (props: BottomTabBarButtonProps) => {
+  const { impactAsync } = useHaptics();
   return (
     <PlatformPressable
       {...props}
       onPressIn={(ev) => {
         if (Env.EXPO_OS === 'ios') {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          impactAsync();
         }
         props.onPressIn?.(ev);
       }}

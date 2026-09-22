@@ -1,10 +1,12 @@
 import { useUpdateUserMutation } from '@/hooks/user';
 import { useToast } from '@/hooks/useToast';
+import { loginRevenueCat } from '@/lib/revenueCat';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
 import { setAuthUserAction } from '@/store/slices/authSlice';
 import { persistedStore } from '@/store/store';
 import { getApiErrorMessage, handleSignout } from '@/utils/apiErrors.utils';
+import * as Sentry from '@sentry/react-native';
 import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useCallback, useEffect } from 'react';
 import { AppState } from 'react-native';
@@ -50,15 +52,18 @@ export const useSupabaseAutoRefresh = () => {
   const handleUserInformation = useCallback(
     (sessionUser: User, access_token: string) => {
       if (!sessionUser) return;
+      const email = sessionUser.user_metadata?.email || sessionUser.email || '';
+      const name =
+        sessionUser.user_metadata?.full_name ||
+        sessionUser.user_metadata?.name ||
+        '';
+      Sentry.setUser({ email: email, id: sessionUser.id, username: name });
       dispatch(
         setAuthUserAction({
           access_token: access_token,
-          email: sessionUser.user_metadata?.email || sessionUser.email || '',
+          email,
           id: sessionUser.id,
-          name:
-            sessionUser.user_metadata?.full_name ||
-            sessionUser.user_metadata?.name ||
-            '',
+          name: name,
           avatar: sessionUser.user_metadata?.avatar_url || '',
         }),
       );
@@ -74,13 +79,25 @@ export const useSupabaseAutoRefresh = () => {
           return;
         }
         if (session?.user && session?.access_token) {
+          if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+            await loginRevenueCat(session.user.id);
+          }
           if (event === 'USER_UPDATED') {
             const { first_name, last_name } = getFirstAndLastName(session.user);
             try {
-              await updateUser({
+              const payload: {
+                first_name: string;
+                last_name: string;
+                email?: string;
+              } = {
                 first_name,
                 last_name,
-              }).unwrap();
+              };
+              if (session.user.user_metadata?.email) {
+                payload['email'] =
+                  session.user.user_metadata?.email || session.user.email || '';
+              }
+              await updateUser(payload).unwrap();
             } catch (error) {
               showToast({
                 type: 'failure',

@@ -66,7 +66,7 @@ export const FollowOnSocialMedia = ({
   };
   return (
     <>
-      <AppIcon name="globe" set="Feather" size={24} />
+      <AppIcon name="globe" set="Feather" size={22} />
 
       <AppActionSheetModal
         options={SOCIAL_MEDIA.map((option) => ({

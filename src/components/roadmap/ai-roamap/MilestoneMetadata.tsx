@@ -1,6 +1,7 @@
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import type { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
+import { useLocalization } from '@/hooks/useLocalization';
 import React from 'react';
 
 interface MilestoneMetadataProps {
@@ -16,6 +17,7 @@ export const MilestoneMetadata = ({ milestone }: MilestoneMetadataProps) => {
     risks,
     acceptance_test,
   } = milestone;
+  const { t } = useLocalization();
 
   const parseResourcesForecast = () => {
     try {
@@ -59,8 +61,8 @@ export const MilestoneMetadata = ({ milestone }: MilestoneMetadataProps) => {
           />
           <AppText body2 light textColor>
             {duration_days_min === duration_days_max
-              ? `${duration_days_min} days`
-              : `${duration_days_min} - ${duration_days_max} days`}
+              ? `${duration_days_min} ${t('common.days')}`
+              : `${duration_days_min} - ${duration_days_max} ${t('common.days')}`}
           </AppText>
         </AppView>
       )}
@@ -95,7 +97,7 @@ export const MilestoneMetadata = ({ milestone }: MilestoneMetadataProps) => {
           {spikes.map((spike) => (
             <AppView key={spike.spike_id}>
               <AppText body2 light textColor>
-                • {spike.description} ({spike.timebox_days} days)
+                • {spike.description} ({spike.timebox_days} {t('common.days')})
               </AppText>
             </AppView>
           ))}

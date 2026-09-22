@@ -37,16 +37,6 @@ export const useAppTheme = () => {
       labelColor: Colors.textColor,
       placeholderTextColor: Colors.secondary,
     });
-    ThemeManager.setComponentTheme('Checkbox', {
-      color: Colors.primary,
-      style: {
-        borderRadius: 4,
-      },
-      containerStyle: {
-        backgroundColor: Colors.primary,
-        borderWidth: 0,
-      },
-    });
   };
 
   const initializeTheme = () => {

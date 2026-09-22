@@ -9,6 +9,7 @@ interface OnboardingStepState {
 interface OnboardingStateType {
   hasSeenIntroModal: boolean;
   isSetupTaskCompleted: boolean;
+  hasSeenRoadmapHighlight: boolean;
   setupSteps: OnboardingStepState;
 }
 

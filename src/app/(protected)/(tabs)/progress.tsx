@@ -4,6 +4,7 @@ import { Divider } from '@/components/Divider';
 import { HabitsList } from '@/components/HabitsList';
 import { Loader } from '@/components/Loader';
 import { InProgressAIRoadmapBanner } from '@/components/roadmap/ai-roamap/InProgressAIRoadmapBanner';
+import { InProgressPlanImportBanner } from '@/components/roadmap/ai-roamap/InProgressPlanImportBanner';
 import { RoadmapList } from '@/components/roadmap/RoadmapList';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
@@ -13,6 +14,7 @@ import { useLocalization } from '@/hooks/useLocalization';
 import { useGetHabitsQuery } from '@/store/apis/habitsApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import { selectShouldShowAIRoadmapBanner } from '@/store/slices/aiRoadmapCreationSlice';
+import { selectShouldShowPlanImportBanner } from '@/store/slices/planImportSlice';
 import {
   setDraftRoadmapAction,
   setSelectedRoadmapIndex,
@@ -37,6 +39,9 @@ const Progress = () => {
   const shouldShowAIRoadmapBanner = useAppSelector(
     selectShouldShowAIRoadmapBanner,
   );
+  const shouldShowPlanImportBanner = useAppSelector(
+    selectShouldShowPlanImportBanner,
+  );
   const [selectedTab, setSelectedTab] = useState('roadmaps');
 
   const onItemPress = (roadmap: RoadmapType, index: number) => {
@@ -48,12 +53,6 @@ const Progress = () => {
     );
     dispatch(setSelectedRoadmapIndex(index));
     dispatch(setShouldSyncWithServerAction(true));
-
-    // if (!isRoadmapStarted(roadmap)) {
-    //   router.navigate('/roadmap/roadmap-details');
-    // } else {
-    //   router.navigate('/roadmap/roadmap-execution');
-    // }
     router.navigate('/roadmap/roadmap-execution');
   };
 
@@ -101,6 +100,11 @@ const Progress = () => {
           <InProgressAIRoadmapBanner />
           <Divider />
         </AppView>
+        <AppView
+          style={{ display: shouldShowPlanImportBanner ? 'flex' : 'none' }}>
+          <InProgressPlanImportBanner />
+          <Divider />
+        </AppView>
         <AppSegmentControl
           segments={[
             t('settings.roadmaps'),
@@ -128,6 +132,7 @@ const Progress = () => {
                   <RoadmapList
                     data={visibleRoadmaps}
                     onItemPress={onItemPress}
+                    showProgress={true}
                   />
                 </AppView>
               )}

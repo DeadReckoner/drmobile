@@ -2,7 +2,8 @@ import { Env } from '@/constants/Env';
 import i18nConfig from '@/lib/localization/i18nConfig';
 import { supabaseClient } from '@/lib/supabase/supabaseClient';
 import { setAuthUserAction } from '@/store/slices/authSlice';
-import { showToastAction } from '@/store/slices/settingsSlice';
+import { showToastAction } from '@/store/slices/toastSlice';
+import { PlanLimitError } from '@/store/types/billing.types';
 import { RootStateType } from '@/store/types/store.types';
 import { isTokenError, refreshUserSession } from '@/utils/auth.utils';
 import {
@@ -15,12 +16,18 @@ import {
 export const ApiCacheTags = Object.freeze({
   Roadmaps: 'Roadmaps',
   Friends: 'Friends',
+  BlockedUsers: 'BlockedUsers',
   Threads: 'Threads',
   Tasks: 'Tasks',
   AnchorRequests: 'AnchorRequests',
   Notifications: 'Notifications',
   FriendsRequests: 'FriendsRequests',
   Habits: 'Habits',
+  Billing: 'Billing',
+  NotificationSettings: 'NotificationSettings',
+  NotificationOverrides: 'NotificationOverrides',
+  Anchoring: 'Anchoring',
+  UserStats: 'UserStats',
 });
 
 const baseQueryWithReauth = fetchBaseQuery({
@@ -31,6 +38,23 @@ const baseQueryWithReauth = fetchBaseQuery({
     return headers;
   },
 });
+
+let refreshPromise: Promise<Awaited<
+  ReturnType<typeof refreshUserSession>
+> | null> | null = null;
+
+const signOutUser = (apiQuery: BaseQueryApi) => {
+  apiQuery.dispatch(api.util.resetApiState());
+  apiQuery.dispatch(
+    showToastAction({
+      toastProps: {
+        type: 'failure',
+        message: i18nConfig.t('authentication.errors.session_expired'),
+      },
+    }),
+  );
+  supabaseClient.auth.signOut().catch(() => {});
+};
 
 export const createBaseQueryWithReauth = () => {
   return async (
@@ -45,10 +69,32 @@ export const createBaseQueryWithReauth = () => {
       typeof result?.error?.status === 'number' ? result.error.status : 0;
     const hasTokenError = isTokenError(status, errorData);
 
-    if (hasTokenError) {
-      try {
-        const newSession = await refreshUserSession();
+    // Handle plan/limit errors (402) separately to avoid logging users out on session expiration (401)
+    if (status === 402) {
+      const planError = errorData as Partial<PlanLimitError> | undefined;
+      if (planError?.feature) {
+        apiQuery.dispatch({
+          type: 'billing/setPaywallTrigger',
+          payload: {
+            feature: planError.feature,
+            limit: planError.limit ?? 0,
+            current: planError.current ?? 0,
+            message: planError.message,
+          },
+        });
+      }
+      return result;
+    }
 
+    if (hasTokenError) {
+      if (!refreshPromise) {
+        refreshPromise = refreshUserSession().finally(() => {
+          refreshPromise = null;
+        });
+      }
+
+      try {
+        const newSession = await refreshPromise;
         if (newSession?.access_token) {
           const currentUser = (apiQuery.getState() as RootStateType).auth.user;
           apiQuery.dispatch(
@@ -58,27 +104,10 @@ export const createBaseQueryWithReauth = () => {
             }),
           );
 
-          const retryResult = await baseQueryWithReauth(
-            args,
-            apiQuery,
-            extraOptions,
-          );
-          return retryResult;
+          return baseQueryWithReauth(args, apiQuery, extraOptions);
         }
+        signOutUser(apiQuery);
       } catch {}
-      apiQuery.dispatch(api.util.resetApiState());
-      apiQuery.dispatch(
-        showToastAction({
-          toastProps: {
-            type: 'failure',
-            message: i18nConfig.t('authentication.errors.session_expired'),
-          },
-        }),
-      );
-      supabaseClient.auth
-        .signOut()
-        .then(() => {})
-        .catch(() => {});
     }
 
     return result;
@@ -89,6 +118,6 @@ export const api = createApi({
   baseQuery: createBaseQueryWithReauth(),
   tagTypes: [...Object.values(ApiCacheTags)],
   endpoints: () => ({}),
-  keepUnusedDataFor: 86400,
+  keepUnusedDataFor: 3600,
   refetchOnReconnect: true,
 });

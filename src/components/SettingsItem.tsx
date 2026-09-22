@@ -7,22 +7,36 @@ import { StyleSheet } from 'react-native';
 interface SettingsItemProps {
   translationKey: TranslationKeysType;
   rightElement?: React.ReactNode;
+  leftElement?: React.ReactNode;
+  centerElement?: React.ReactNode;
+  textColor?: string;
 }
 
 export const SettingsItem = ({
   translationKey,
+  leftElement,
+  centerElement,
   rightElement,
+  textColor,
 }: SettingsItemProps) => {
   return (
     <AppView
       row
       centerV
-      spread
       paddingH-16
       paddingV-16
+      gap-16
       style={styles.container}>
-      <TranslatedText body2 translationKey={translationKey} />
-      <AppView right>{rightElement}</AppView>
+      {leftElement && <AppView left>{leftElement}</AppView>}
+      <AppView flex gap-4>
+        <TranslatedText
+          body2
+          color={textColor}
+          translationKey={translationKey}
+        />
+        {centerElement}
+      </AppView>
+      {rightElement && <AppView right>{rightElement}</AppView>}
     </AppView>
   );
 };

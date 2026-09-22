@@ -1,11 +1,10 @@
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetProps,
-  BottomSheetView,
+  BottomSheetScrollView,
 } from '@gorhom/bottom-sheet';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Colors } from 'react-native-ui-lib';
 
 interface AppModalProps extends Omit<BottomSheetProps, 'visible'> {
@@ -30,7 +29,26 @@ export const AppModal = ({
   ...props
 }: AppModalProps) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const initialIndex = snapPoints.length - 1;
+
+  const validatedSnapPoints = snapPoints.map((point) => {
+    if (typeof point === 'string' && point.includes('%')) {
+      const percentage = parseInt(point);
+      return percentage > 90 ? '90%' : point;
+    } else if (typeof point === 'number' && point > 0.9) {
+      return 0.9;
+    }
+    return point;
+  });
+
+  const initialIndex = validatedSnapPoints.length - 1;
+
+  useEffect(() => {
+    if (visible) {
+      bottomSheetRef.current?.expand();
+    } else {
+      bottomSheetRef.current?.close();
+    }
+  }, [visible]);
 
   const handleSheetChanges = useCallback(
     (index: number) => {
@@ -54,35 +72,29 @@ export const AppModal = ({
     [dismissible],
   );
 
-  if (!visible) {
-    return null;
-  }
-
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={initialIndex}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        enablePanDownToClose={dismissible ? enablePanDownToClose : false}
-        backdropComponent={renderBackdrop}
-        backgroundStyle={[{ backgroundColor: Colors.cardBG }, backgroundStyle]}
-        handleIndicatorStyle={[
-          styles.indicatorStyle,
-          { backgroundColor: Colors.textColor },
-        ]}
-        {...props}>
-        <BottomSheetView
-          style={StyleSheet.flatten([
-            styles.contentContainer,
-            { backgroundColor: Colors.cardBG },
-            contentContainerStyle,
-          ])}>
-          {children}
-        </BottomSheetView>
-      </BottomSheet>
-    </GestureHandlerRootView>
+    <BottomSheet
+      ref={bottomSheetRef}
+      index={visible ? initialIndex : -1}
+      snapPoints={validatedSnapPoints}
+      onChange={handleSheetChanges}
+      enablePanDownToClose={dismissible ? enablePanDownToClose : false}
+      backdropComponent={renderBackdrop}
+      backgroundStyle={[{ backgroundColor: Colors.cardBG }, backgroundStyle]}
+      handleIndicatorStyle={[
+        styles.indicatorStyle,
+        { backgroundColor: Colors.textColor },
+      ]}
+      {...props}>
+      <BottomSheetScrollView
+        style={StyleSheet.flatten([
+          styles.contentContainer,
+          { backgroundColor: Colors.cardBG },
+          contentContainerStyle,
+        ])}>
+        {children}
+      </BottomSheetScrollView>
+    </BottomSheet>
   );
 };
 

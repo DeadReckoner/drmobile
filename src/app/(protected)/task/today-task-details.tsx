@@ -21,8 +21,7 @@ const TodayTaskDetails = () => {
   const task = useAppSelector(selectSelectedTask);
   const { showToast } = useToast();
   const { t } = useLocalization();
-  const [completeAllSteps, { isLoading: isCompletingAll }] =
-    useCompleteAllStepsMutation();
+  const [completeAllSteps] = useCompleteAllStepsMutation();
 
   const dependencies = useMemo(() => {
     if (!task?.dependencies) return 'N/A';
@@ -37,11 +36,11 @@ const TodayTaskDetails = () => {
   const handleCompleteAll = useCallback(async () => {
     try {
       if (!task?.task_id) return;
-      await completeAllSteps(task.task_id).unwrap();
       showToast({
         type: 'success',
         message: t('roadmap.complete_all_steps_success'),
       });
+      await completeAllSteps(task.task_id).unwrap();
     } catch (error) {
       showToast({
         type: 'failure',
@@ -100,8 +99,6 @@ const TodayTaskDetails = () => {
                 <PrimaryButton
                   label="roadmap.complete_all_steps"
                   onPress={handleCompleteAll}
-                  isLoading={isCompletingAll}
-                  shouldShowLoader
                 />
               )}
             </AppView>

@@ -10,6 +10,7 @@ import { StyleSheet } from 'react-native';
 import { ViewProps } from 'react-native-ui-lib';
 
 interface ConfirmationDialogProps {
+  disabled?: boolean;
   isDialogOpen: boolean;
   title: TranslationKeysType;
   subtitle: TranslationKeysType;
@@ -27,6 +28,7 @@ interface ConfirmationDialogProps {
 }
 
 export const ConfirmationDialog = ({
+  disabled,
   isDialogOpen,
   title,
   subtitle,
@@ -40,7 +42,10 @@ export const ConfirmationDialog = ({
   styles: propStyles,
 }: ConfirmationDialogProps) => {
   return (
-    <AppDialog visible={isDialogOpen} onDismiss={onDismiss}>
+    <AppDialog
+      ignoreBackgroundPress={disabled}
+      visible={isDialogOpen}
+      onDismiss={onDismiss}>
       <AppCard padding-20 bg-cardBG>
         <TranslatedText subtitle2 textColor translationKey={title} />
         <Divider margin-4 />
@@ -48,6 +53,7 @@ export const ConfirmationDialog = ({
         <Divider margin-12 />
         <AppView row centerV gap-8>
           <AppButton
+            disabled={disabled}
             bg-primary
             br20
             center
@@ -66,6 +72,7 @@ export const ConfirmationDialog = ({
           </AppButton>
 
           <AppButton
+            disabled={disabled}
             br20
             bg-error
             center

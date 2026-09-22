@@ -1,5 +1,7 @@
 import {
+  AnchoringResponse,
   ApiResponse,
+  BlockedUser,
   FriendProfileResponse,
   FriendResponse,
   Friendship,
@@ -197,6 +199,7 @@ export const friendsApi = api.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, friendId) => [
         'Friends',
+        'Threads',
         { type: 'Friends', id: friendId },
       ],
       async onQueryStarted(friendId, { dispatch, queryFulfilled, getState }) {
@@ -234,6 +237,91 @@ export const friendsApi = api.injectEndpoints({
       },
     }),
 
+    blockFriend: builder.mutation<MessageResponse, string>({
+      query: (friendId) => ({
+        url: `/friends/${friendId}/block`,
+        method: 'POST',
+      }),
+      invalidatesTags: (_result, _error, friendId) => [
+        'Friends',
+        'BlockedUsers',
+        'Threads',
+        { type: 'Friends', id: friendId },
+      ],
+      async onQueryStarted(friendId, { dispatch, queryFulfilled, getState }) {
+        const searchUsersPatchResults: any[] = [];
+        try {
+          await queryFulfilled;
+          const state = getState() as any;
+          const searchUsersQueries = state.api.queries;
+
+          Object.keys(searchUsersQueries).forEach((key) => {
+            if (key.startsWith('searchUsers(')) {
+              const patchResult = dispatch(
+                friendsApi.util.updateQueryData(
+                  'searchUsers',
+                  searchUsersQueries[key].originalArgs,
+                  (draft) => {
+                    const userIndex = draft.findIndex(
+                      (u) => u.user_id === friendId,
+                    );
+
+                    if (userIndex !== -1) {
+                      draft[userIndex].friendship_status = 'none';
+                    }
+                  },
+                ),
+              );
+              searchUsersPatchResults.push(patchResult);
+            }
+          });
+        } catch {
+          searchUsersPatchResults.forEach((patchResult) => {
+            patchResult.undo();
+          });
+        }
+      },
+    }),
+
+    getBlockedUsers: builder.query<BlockedUser[], void>({
+      query: () => ({
+        url: '/friends/blocked',
+        method: 'GET',
+      }),
+      providesTags: ['BlockedUsers'],
+    }),
+
+    unblockFriend: builder.mutation<MessageResponse, string>({
+      query: (friendId) => ({
+        url: `/friends/${friendId}/block`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, friendId) => [
+        'Friends',
+        'BlockedUsers',
+        { type: 'Friends', id: friendId },
+      ],
+      async onQueryStarted(friendId, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          friendsApi.util.updateQueryData(
+            'getBlockedUsers',
+            undefined,
+            (draft) => {
+              const index = draft.findIndex((u) => u.user_id === friendId);
+              if (index !== -1) {
+                draft.splice(index, 1);
+              }
+            },
+          ),
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
+
     getFriends: builder.query<FriendResponse[], void>({
       query: () => ({
         url: '/friends',
@@ -252,6 +340,15 @@ export const friendsApi = api.injectEndpoints({
         { type: 'Friends', id: friendId },
       ],
     }),
+
+    getAnchoring: builder.query<AnchoringResponse, void>({
+      query: () => ({
+        url: '/friends/anchoring',
+        method: 'GET',
+      }),
+      keepUnusedDataFor: 900,
+      providesTags: ['Anchoring'],
+    }),
   }),
   overrideExisting: true,
 });
@@ -265,6 +362,10 @@ export const {
   useAcceptFriendRequestMutation,
   useRejectFriendRequestMutation,
   useRemoveFriendMutation,
+  useBlockFriendMutation,
+  useUnblockFriendMutation,
+  useGetBlockedUsersQuery,
   useGetFriendsQuery,
   useGetFriendProfileQuery,
+  useGetAnchoringQuery,
 } = friendsApi;

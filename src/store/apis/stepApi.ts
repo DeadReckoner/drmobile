@@ -1,7 +1,12 @@
-import { StepType, TaskType } from '@/hooks/roadmap/types/roadmap.types';
+import {
+  StepStatusType,
+  StepType,
+  TaskType,
+} from '@/hooks/roadmap/types/roadmap.types';
 import { api } from '@/store/apis/api';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { taskApi } from '@/store/apis/taskApi';
+import { userApi } from '@/store/apis/userApi';
 import { BaseQueryFunctionType } from '@/store/apis/types/api.types';
 import {
   addStepAction,
@@ -76,11 +81,63 @@ const onCreateStepQueryStarted: TypedMutationOnQueryStarted<
   } catch {}
 };
 
+const isStepDone = (s: StepType) =>
+  s.status === 'completed' || s.completed || s.status === 'skipped';
+
+const recalcTaskStatus = (
+  tasks: StepType[],
+  stepId: string,
+  newCompleted: boolean,
+  newStatus: StepStatusType,
+) => {
+  const updatedSteps = tasks.map((s) =>
+    s.step_id === stepId
+      ? { ...s, completed: newCompleted, status: newStatus }
+      : s,
+  );
+  const allDone = updatedSteps.length > 0 && updatedSteps.every(isStepDone);
+  return allDone ? ('completed' as const) : ('in_progress' as const);
+};
+
 const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
   StepType,
   StepType & { task_id: string },
   BaseQueryFunctionType
-> = async (_task, { dispatch, queryFulfilled, getState }) => {
+> = async (stepArg, { dispatch, queryFulfilled, getState }) => {
+  // Capture original task status before optimistic update
+  let originalTaskStatus: string | undefined;
+
+  // Optimistic update — runs immediately before the server responds
+  const patchResult = dispatch(
+    taskApi.util.updateQueryData(
+      'getUserTasksByStartDate',
+      DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+      (tasks) => {
+        const taskIdx = tasks.findIndex((t) => t.task_id === stepArg.task_id);
+        if (taskIdx === -1) return;
+        const task = tasks[taskIdx];
+        originalTaskStatus = task.status;
+        const stepIdx = task.steps?.findIndex(
+          (s) => s.step_id === stepArg.step_id,
+        );
+        if (!task.steps || stepIdx === undefined || stepIdx === -1) return;
+
+        task.steps[stepIdx].completed = stepArg.completed ?? false;
+        task.steps[stepIdx].status = stepArg.status ?? 'incomplete';
+
+        const newTaskStatus = recalcTaskStatus(
+          task.steps as StepType[],
+          stepArg.step_id!,
+          stepArg.completed ?? false,
+          stepArg.status ?? 'incomplete',
+        );
+        if (newTaskStatus === 'completed' || task.status === 'completed') {
+          task.status = newTaskStatus;
+        }
+      },
+    ),
+  );
+
   try {
     const { data } = await queryFulfilled;
     const state = getState() as unknown as RootStateType;
@@ -89,24 +146,42 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
     const taskIdx = state.roadmapDraft.selectedTaskIndex;
     const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
 
+    // Reconcile with real server data
+    let reconciledTaskStatus: string | undefined;
     dispatch(
       taskApi.util.updateQueryData(
         'getUserTasksByStartDate',
         DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
         (tasks) => {
-          const taskIdx = tasks.findIndex((t) => t.task_id === data.task_id);
-          if (taskIdx !== -1) {
-            const task = tasks[taskIdx];
-            const stepIdx = task.steps?.findIndex(
-              (s) => s.step_id === data.step_id,
-            );
-            if (stepIdx !== -1) {
-              task.steps[stepIdx] = data;
-            }
+          const tIdx = tasks.findIndex((t) => t.task_id === data.task_id);
+          if (tIdx === -1) return;
+          const task = tasks[tIdx];
+          const stepIdx = task.steps?.findIndex(
+            (s) => s.step_id === data.step_id,
+          );
+          if (!task.steps || stepIdx === undefined || stepIdx === -1) return;
+          task.steps[stepIdx] = data;
+          const newTaskStatus = recalcTaskStatus(
+            task.steps as StepType[],
+            data.step_id,
+            data.completed,
+            data.status ?? 'incomplete',
+          );
+          reconciledTaskStatus = newTaskStatus;
+          if (newTaskStatus === 'completed' || task.status === 'completed') {
+            task.status = newTaskStatus;
           }
         },
       ),
     );
+
+    if (reconciledTaskStatus !== originalTaskStatus) {
+      dispatch(
+        userApi.endpoints.getUserStats.initiate(undefined, {
+          forceRefetch: true,
+        }),
+      );
+    }
 
     if (roadmapIdx === -1 || milestoneIdx === -1 || taskIdx === -1) {
       return;
@@ -144,7 +219,9 @@ const onUpdateStepQueryStarted: TypedMutationOnQueryStarted<
         ),
       );
     }
-  } catch {}
+  } catch {
+    patchResult.undo();
+  }
 };
 
 const onDeleteStepQueryStarted: TypedMutationOnQueryStarted<
@@ -230,38 +307,48 @@ const onCompleteAllStepsQueryStarted: TypedMutationOnQueryStarted<
   string,
   BaseQueryFunctionType
 > = async (taskId, { dispatch, queryFulfilled, getState }) => {
-  try {
-    await queryFulfilled;
-    const state = getState() as unknown as RootStateType;
-    const roadmapId = state.roadmapDraft.roadmap?.roadmap_id;
-    const selectedTask = state.roadmapDraft.selectedTask;
+  const state = getState() as unknown as RootStateType;
+  const selectedTask = state.roadmapDraft.selectedTask;
 
-    if (selectedTask) {
-      const updatedTask: TaskType = {
-        ...selectedTask,
-        status: 'completed',
-        steps:
-          selectedTask.steps?.map((s) => ({ ...s, completed: true })) ?? [],
-      };
-      dispatch(setSelectedTaskAction({ task: updatedTask }));
-    }
-
-    dispatch(
-      taskApi.util.updateQueryData(
-        'getUserTasksByStartDate',
-        DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
-        (tasks) => {
-          const idx = tasks.findIndex((t) => t.task_id === taskId);
-          if (idx !== -1) {
-            tasks[idx].status = 'completed';
-            tasks[idx].steps = tasks[idx].steps?.map((s) => ({
+  // Optimistic update — apply immediately before the server responds
+  const patchResult = dispatch(
+    taskApi.util.updateQueryData(
+      'getUserTasksByStartDate',
+      DateUtils.formatDate(DateUtils.createDate(), 'YYYY-MM-DD'),
+      (tasks) => {
+        const idx = tasks.findIndex((t) => t.task_id === taskId);
+        if (idx !== -1) {
+          tasks[idx].status = 'completed';
+          if (tasks[idx].steps) {
+            tasks[idx].steps = tasks[idx].steps.map((s) => ({
               ...s,
               completed: true,
+              status: 'completed' as const,
             }));
           }
-        },
-      ),
-    );
+        }
+      },
+    ),
+  );
+
+  if (selectedTask) {
+    const updatedTask: TaskType = {
+      ...selectedTask,
+      status: 'completed',
+      steps:
+        selectedTask.steps?.map((s) => ({
+          ...s,
+          completed: true,
+          status: 'completed',
+        })) ?? [],
+    };
+    dispatch(setSelectedTaskAction({ task: updatedTask }));
+  }
+
+  try {
+    await queryFulfilled;
+    const roadmapId = (getState() as unknown as RootStateType).roadmapDraft
+      .roadmap?.roadmap_id;
 
     if (roadmapId) {
       dispatch(
@@ -270,7 +357,15 @@ const onCompleteAllStepsQueryStarted: TypedMutationOnQueryStarted<
         }),
       );
     }
-  } catch {}
+
+    dispatch(
+      userApi.endpoints.getUserStats.initiate(undefined, {
+        forceRefetch: true,
+      }),
+    );
+  } catch {
+    patchResult.undo();
+  }
 };
 
 export const stepApi = api.injectEndpoints({

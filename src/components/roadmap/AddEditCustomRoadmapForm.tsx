@@ -143,7 +143,7 @@ export const AddEditCustomRoadmapForm = ({
       />
       {mode !== 'edit' && (
         <AppDateTimePicker
-          style={[StyleSheet.absoluteFillObject]}
+          style={[StyleSheet.absoluteFill]}
           renderInput={renderCustomDateInput}
           mode={'date'}
           minimumDate={DateUtils.createDate().toDate()}

@@ -7,7 +7,7 @@ import { LevelBadge } from '@/components/roadmap/LevelBadge';
 import { AppProgressBar, AppText, AppView } from '@/components/ui';
 import { MilestoneType } from '@/hooks/roadmap/types/roadmap.types';
 import { useLocalization } from '@/hooks/useLocalization';
-import { useScrollToCurrentItem } from '@/hooks/useScrollToCurrentItem';
+import { useScrollToCurrentIndex } from '@/hooks/useScrollToCurrentItem';
 import { useAppSelector } from '@/store/hooks/store.hooks';
 import {
   selectDraftRoadmap,
@@ -19,9 +19,10 @@ import {
   calculateMilestoneProgress,
   findOngoingMilestone,
 } from '@/utils/roadmap.utils';
+import { storeMilestone } from '@/utils/roadmapTransfer';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useMemo } from 'react';
-import { LayoutChangeEvent, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const PhaseMilestones = () => {
@@ -50,8 +51,17 @@ const PhaseMilestones = () => {
     [milestones],
   );
 
-  const { scrollViewRef, onCurrentItemLayout } =
-    useScrollToCurrentItem(!!currentMilestone);
+  const currentMilestoneIndex = useMemo(() => {
+    if (!currentMilestone) return -1;
+    return milestones.findIndex(
+      (m) => m.milestone_id === currentMilestone.milestone_id,
+    );
+  }, [milestones, currentMilestone]);
+
+  const { listRef } = useScrollToCurrentIndex(
+    currentMilestoneIndex,
+    milestones.length,
+  );
 
   const renderMilestoneItem = ({
     item,
@@ -70,6 +80,7 @@ const PhaseMilestones = () => {
     const itemProgress = calculateMilestoneProgress(item);
 
     const onMilestonePress = () => {
+      storeMilestone(item);
       router.navigate({
         pathname: '/roadmap/phase-milestones-tasks',
         params: {
@@ -122,24 +133,16 @@ const PhaseMilestones = () => {
     );
   };
 
-  const onLayout: ((_event: LayoutChangeEvent) => void) | undefined =
-    currentMilestone
-      ? (e) => {
-          const { y, height } = e.nativeEvent.layout;
-          onCurrentItemLayout(y, height);
-        }
-      : undefined;
-
   return (
     <AppScreen safeArea>
       <HeaderWithBack headerKey="common.milestones" />
       <Divider />
       <AppList
         keyExtractor={(i) => i.milestone_id}
-        refScrollView={scrollViewRef}
+        ref={listRef}
         data={milestones}
+        contentContainerStyle={styles.scrollContainer}
         ItemSeparatorComponent={() => <Divider />}
-        onLayout={onLayout}
         renderItem={renderMilestoneItem}
       />
     </AppScreen>
@@ -152,5 +155,8 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 6,
+  },
+  scrollContainer: {
+    paddingBottom: 120,
   },
 });

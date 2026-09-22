@@ -13,6 +13,7 @@ import { PrimaryButton } from '@/components/PrimaryButton';
 import { AddEditCustomRoadmapForm } from '@/components/roadmap/AddEditCustomRoadmapForm';
 import { AIRoadmapDetails } from '@/components/roadmap/ai-roamap/AIRoadmapDetails';
 import { RoadmapDetails } from '@/components/roadmap/RoadmapDetails';
+import { ShareRoadmapModal } from '@/components/roadmap/ShareRoadmapModal';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
 import { useGetFriendsQuery } from '@/hooks/friends';
@@ -53,6 +54,7 @@ const RoadmapDetailsPage = () => {
   const [isDeleteMilestoneDialogOpen, setIsDeleteMilestoneDialogOpen] =
     useState(false);
   const [isAnchorSheetVisible, setIsAnchorSheetVisible] = useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
 
   const { t } = useLocalization();
   const { showToast } = useToast();
@@ -62,7 +64,9 @@ const RoadmapDetailsPage = () => {
     useCreateRoadmapMutation();
 
   const [startRoadmap, { isLoading: isStartingRoadmap }] =
-    useStartRoadmapMutation();
+    useStartRoadmapMutation({
+      fixedCacheKey: `roadmap-${selectedRoadmap?.roadmap_id}`,
+    });
 
   const { data: friendsData, isLoading: isLoadingFriends } = useGetFriendsQuery(
     undefined,
@@ -287,8 +291,8 @@ const RoadmapDetailsPage = () => {
 
   const StartRoadmapButton = () => {
     if (!hasMilestones) return null;
-    if (isRoadmapLoading || isRoadmapStarted(roadmap)) return null;
-    if (isRoadmapFetching)
+    if (isRoadmapStarted(roadmap)) return null;
+    if (isRoadmapFetching || isStartingRoadmap)
       return (
         <Loader
           marginT-16
@@ -329,7 +333,7 @@ const RoadmapDetailsPage = () => {
           </AppView>
           <AppView flex gap-4>
             <AppText body2 textColor>
-              {item.friend.first_name} {item.friend.last_name}
+              {item.friend.first_name} {item.friend.last_name || ''}
             </AppText>
             {item.friend.email && (
               <AppText xsm secondary>
@@ -347,7 +351,7 @@ const RoadmapDetailsPage = () => {
               ? onRemoveAnchor()
               : onSelectAnchor(
                   item.friend.user_id,
-                  `${item.friend.first_name} ${item.friend.last_name}`,
+                  `${item.friend.first_name} ${item.friend.last_name || ''}`,
                 )
           }>
           {isLoading ? (
@@ -382,6 +386,11 @@ const RoadmapDetailsPage = () => {
             {!isEditing && !!roadmap?.roadmap_id && (
               <AppButton onPress={onAnchorPress}>
                 <AppIcon set="Feather" name="anchor" size={20} />
+              </AppButton>
+            )}
+            {!isEditing && !!roadmap?.roadmap_id && (
+              <AppButton onPress={() => setIsShareModalVisible(true)}>
+                <AppIcon set="Feather" name="share-2" size={20} />
               </AppButton>
             )}
             {isEditing && (
@@ -420,6 +429,29 @@ const RoadmapDetailsPage = () => {
               reanimated
               entering={Animations.Entry.FadeInDownWithSpring().delay(200)}
               exiting={Animations.Exit.FadeOutDown()}>
+              {!!roadmap?.paused_at && (
+                <AppView
+                  row
+                  centerV
+                  gap-8
+                  padding-12
+                  marginB-12
+                  br10
+                  style={styles.pausedBanner}>
+                  <AppIcon
+                    set="MaterialCommunityIcons"
+                    name="pause-circle-outline"
+                    color={Colors.warning}
+                    size={20}
+                  />
+                  <TranslatedText
+                    xsm
+                    flex
+                    style={{ color: Colors.warning }}
+                    translationKey="roadmap.pause.banner"
+                  />
+                </AppView>
+              )}
               {roadmap?.type === 'ai_generated' ? (
                 <AIRoadmapDetails
                   roadmap={roadmap}
@@ -517,6 +549,14 @@ const RoadmapDetailsPage = () => {
           </AppView>
         </AppView>
       </AppModal>
+      {!!roadmap?.roadmap_id && (
+        <ShareRoadmapModal
+          roadmapId={roadmap.roadmap_id}
+          shareToken={roadmap.share_token}
+          visible={isShareModalVisible}
+          onDismiss={() => setIsShareModalVisible(false)}
+        />
+      )}
     </AppView>
   );
 };
@@ -534,6 +574,10 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
+  },
+  pausedBanner: {
+    borderWidth: 1,
+    borderColor: Colors.warning,
   },
 });
 

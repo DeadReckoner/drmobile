@@ -75,7 +75,7 @@ export default function TabLayout() {
           options={{
             title: t('tabs.progress'),
             tabBarIcon: ({ color }) => (
-              <AppIcon name="barschart" size={28} color={color} />
+              <AppIcon name="bar-chart" size={28} color={color} />
             ),
           }}
           listeners={{
@@ -109,7 +109,7 @@ export default function TabLayout() {
             title: t('tabs.messages'),
             tabBarIcon: ({ color }) => (
               <AppView>
-                <AppIcon size={24} name="message1" color={color} />
+                <AppIcon size={24} name="message" color={color} />
                 {hadUnreadMessages && <AppView style={styles.customBadge} />}
               </AppView>
             ),

@@ -5,6 +5,7 @@ import { AppIcon } from '@/components/AppIcon';
 import { Divider } from '@/components/Divider';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
+import { useLocalization } from '@/hooks/useLocalization';
 import { TranslationKeysType } from '@/lib/localization/types/i18n.types';
 import { Platform } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
@@ -26,6 +27,7 @@ export const PermissionDeniedModal = ({
   description = 'permissions.contacts_denied_description',
   permissionType = 'Contacts',
 }: PermissionDeniedModalProps) => {
+  const { t } = useLocalization();
   const platformText = Platform.OS === 'ios' ? 'iOS' : 'Android';
 
   return (
@@ -49,11 +51,11 @@ export const PermissionDeniedModal = ({
         <AppView bg-lightCardBG padding-12 br10 marginV-12>
           <AppText xsm textColor>
             <AppText xsm textColor style={{ fontWeight: '600' }}>
-              {`${platformText} ${permissionType} Permission:\n`}
+              {`${t('permissions.instructions_header', { platform: platformText, permissionType })}\n`}
             </AppText>
             {Platform.OS === 'ios'
-              ? `1. Tap "Open Settings" below\n2. Tap "${permissionType}"\n3. Enable access for Dead Reckoner\n4. Return to the app`
-              : `1. Tap "Open Settings" below\n2. Tap "Permissions"\n3. Tap "${permissionType}"\n4. Select "Allow"\n5. Return to the app`}
+              ? t('permissions.ios_steps', { permissionType })
+              : t('permissions.android_steps', { permissionType })}
           </AppText>
         </AppView>
 

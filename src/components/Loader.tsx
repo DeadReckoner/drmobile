@@ -23,9 +23,8 @@ export const Loader = ({
     <AppView
       reanimated={shouldAnimate}
       entering={Animations.Entry.FadeInDownWithSpring()}
-      exiting={Animations.Exit.FadeOutDown()}
       style={[
-        StyleSheet.absoluteFillObject,
+        StyleSheet.absoluteFill,
         styles.loader,
         !transparent && { backgroundColor: Colors.dialogOverlay },
         containerStyle,

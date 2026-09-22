@@ -1,6 +1,7 @@
 import { AppButton } from '@/components/AppButton';
 import { AppCard } from '@/components/AppCard';
 import { AppIcon } from '@/components/AppIcon';
+import { AppList } from '@/components/AppList';
 import { AppScreen } from '@/components/AppScreen';
 import { Divider } from '@/components/Divider';
 import { HeaderWithBack } from '@/components/HeaderWithBack';
@@ -27,8 +28,10 @@ import {
 import {
   AnchorAcceptedData,
   AnchorRequestData,
+  FollowOnMilestoneReadyData,
   FriendAcceptedData,
   FriendRequestData,
+  MilestoneGenerationCompleteData,
   NotificationType,
 } from '@/store/apis/types/notificationsApi.types';
 import { useAppDispatch } from '@/store/hooks/store.hooks';
@@ -36,8 +39,7 @@ import { setDraftRoadmapAction } from '@/store/slices/roadmapDraftSlice';
 import { Animations } from '@/utils/animation.utils';
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Alert, Linking, StyleSheet } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { Alert, Linking, RefreshControl, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const Notifications = () => {
@@ -242,6 +244,44 @@ const Notifications = () => {
           },
         });
       }
+
+      if (notification.type === 'follow_on_milestone_ready') {
+        const data = notification.data as FollowOnMilestoneReadyData;
+        dispatch(
+          setDraftRoadmapAction({
+            roadmap_id: data.roadmap_id,
+            goal: '',
+            description: '',
+            days: 0,
+            completed: false,
+            start_date: '',
+            milestones: [],
+            reason: '',
+          }),
+        );
+        router.navigate('/roadmap/roadmap-execution');
+      }
+      if (notification.type === 'next_milestone_complete') {
+        const data = notification.data as MilestoneGenerationCompleteData;
+        dispatch(
+          setDraftRoadmapAction({
+            roadmap_id: data.roadmap_id,
+            goal: '',
+            description: '',
+            days: 0,
+            completed: false,
+            start_date: '',
+            milestones: [],
+            reason: '',
+          }),
+        );
+        router.navigate({
+          pathname: '/roadmap/phase-milestones-tasks',
+          params: {
+            milestoneId: data.milestone_id,
+          },
+        });
+      }
     },
     [dispatch],
   );
@@ -284,7 +324,9 @@ const Notifications = () => {
         type === 'anchor_accepted' ||
         type === 'anchor_rejected' ||
         type === 'friend_accepted' ||
-        type === 'friend_rejected';
+        type === 'friend_rejected' ||
+        type === 'next_milestone_complete' ||
+        type === 'follow_on_milestone_ready';
 
       return (
         <AppCard
@@ -435,14 +477,20 @@ const Notifications = () => {
           </AppView>
         )}
       </AppView>
-      <Animated.FlatList
+      <AppList
         data={notifications || []}
+        extraData={processingIds}
         contentInsetAdjustmentBehavior="always"
         renderItem={renderNotificationItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
+        refreshControl={
+          <RefreshControl
+            tintColor={Colors.secondary}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
         ItemSeparatorComponent={() => <Divider margin-4 />}
         ListEmptyComponent={renderEmptyComponent}
       />

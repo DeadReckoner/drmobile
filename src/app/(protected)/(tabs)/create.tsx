@@ -5,6 +5,7 @@ import { Divider } from '@/components/Divider';
 import { CreateTabListItem } from '@/components/roadmap/CreateTabListItem';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppView } from '@/components/ui';
+import { usePlanGate } from '@/hooks/usePlanGate';
 import { roadmapApi } from '@/store/apis/roadmapApi';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
@@ -13,11 +14,13 @@ import {
   selectAIRoadmapMessages,
   selectCreatedRoadmap,
 } from '@/store/slices/aiRoadmapCreationSlice';
+import { resetPlanImportAction } from '@/store/slices/planImportSlice';
 import {
   resetDraftAction,
   setDraftRoadmapAction,
   setSelectedHabit,
 } from '@/store/slices/roadmapDraftSlice';
+import { FeatureKeyType } from '@/store/types/billing.types';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -28,7 +31,14 @@ const Create = () => {
   const aiRoadmapStatus = useAppSelector(selectAIRoadmapCreationStatus);
   const createdRoadmap = useAppSelector(selectCreatedRoadmap);
   const messages = useAppSelector(selectAIRoadmapMessages);
+  const { isAtLimit } = usePlanGate();
   const [isAIDraftDialogOpen, setIsAIDraftDialogOpen] = useState(false);
+
+  const gate = (feature: FeatureKeyType): boolean => {
+    if (!isAtLimit(feature)) return false;
+    router.navigate({ pathname: '/paywall', params: { feature } });
+    return true;
+  };
 
   const hasUserMessage = messages.some((msg) => msg.type === 'user');
 
@@ -41,6 +51,7 @@ const Create = () => {
     if (hasAIDraftInProgress) {
       setIsAIDraftDialogOpen(true);
     } else {
+      if (gate('active_roadmaps')) return;
       router.navigate('/roadmap/create-ai-roadmap');
     }
   };
@@ -68,15 +79,19 @@ const Create = () => {
   };
 
   const onCustomRoadmapPress = () => {
+    if (gate('active_roadmaps')) return;
     dispatch(resetDraftAction());
     router.navigate('/roadmap/add-edit-custom-roadmap');
   };
   const onAddNewHabitPress = () => {
+    if (gate('active_habits')) return;
     dispatch(setSelectedHabit(null));
     router.navigate('/habits/add-edit-habits-task');
   };
-  const navigateToComingSoon = () => {
-    router.navigate('/coming-soon');
+  const onImportPlanPress = () => {
+    if (gate('active_roadmaps')) return;
+    dispatch(resetPlanImportAction());
+    router.navigate('/roadmap/import-plan');
   };
   return (
     <AppScreen>
@@ -105,14 +120,14 @@ const Create = () => {
             type="task"
             titleKey="tabs.create_tab.add_new_task_or_habit"
             descriptionKey="tabs.create_tab.add_new_task_desc"
-            icon={<AppIcon name="addfile" color={Colors.white} />}
+            icon={<AppIcon name="file-add" color={Colors.white} />}
             onPress={onAddNewHabitPress}
           />
           <CreateTabListItem
             type="import_plan"
             titleKey="tabs.create_tab.import_plan"
             descriptionKey="tabs.create_tab.import_plan_desc"
-            onPress={navigateToComingSoon}
+            onPress={onImportPlanPress}
             icon={<AppIcon name="export" color={Colors.white} />}
           />
           <Divider />

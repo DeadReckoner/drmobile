@@ -38,7 +38,6 @@ const FULL_DAY_LABELS: string[] = [
   'Saturday',
 ];
 
-// Convert bitmask to array of WeekdayIndex
 const bitmaskToDays = (bitmask: number): WeekdayIndex[] => {
   const days: WeekdayIndex[] = [];
   for (let i = 0; i <= 6; i++) {
@@ -50,7 +49,6 @@ const bitmaskToDays = (bitmask: number): WeekdayIndex[] => {
   return days;
 };
 
-// Convert array of WeekdayIndex to bitmask
 const daysToBitmask = (days: WeekdayIndex[]): number => {
   return days.reduce((mask, day) => mask | DAY_TO_BITMASK[day], 0 as number);
 };

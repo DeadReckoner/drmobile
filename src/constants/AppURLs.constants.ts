@@ -1,5 +1,6 @@
 export const AppURLs = Object.freeze({
   PRIVACY_POLICY: 'https://www.deadreckoner.io/privacy-policy',
+  TERMS_AND_SERVICE: 'https://www.deadreckoner.io/terms-of-service',
   HELP_SUPPORT: 'mailto:info@deadreckoner.io',
   WEBSITE: 'https://deadreckoner.io',
 

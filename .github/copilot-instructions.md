@@ -4,6 +4,8 @@
 
 **Dead Reckoner** is a React Native (0.79.5) + Expo SDK 53 mobile app for goal tracking and roadmap management with hierarchical structure (Roadmaps → Milestones → Tasks → Steps). Supports iOS, Android, and Web with Google/Apple authentication via Supabase.
 
+**IMPORTANT NOTE**: Do not explain your steps when generating the output to reduce the output token usage, just perform the actions without any commentary. Also, Do not put unnecessary comments in the code, only add comments when it adds value and clarity to the code.
+
 **Stack**: TypeScript 5.8.3 (strict), Redux Toolkit + Persist, Expo Router, React Native UI Lib, Formik + Yup, i18n-js (en/es/fr)
 
 ## Critical Rules

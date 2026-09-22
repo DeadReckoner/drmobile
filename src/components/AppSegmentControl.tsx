@@ -33,7 +33,7 @@ export const AppSegmentControl = ({
         translateX.value = newX;
         isFirstLayout.current = false;
       } else {
-        translateX.value = withSpring(newX, { damping: 20, stiffness: 150 });
+        translateX.value = withSpring(newX, { damping: 50, stiffness: 350 });
       }
     }
   }, [selectedIndex, segmentWidth, translateX]);
@@ -82,8 +82,6 @@ export const AppSegmentControl = ({
     </AppView>
   );
 };
-
-export default AppSegmentControl;
 
 const styles = StyleSheet.create({
   container: {

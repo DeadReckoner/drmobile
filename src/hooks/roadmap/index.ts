@@ -11,10 +11,30 @@ export const {
   useDeleteRoadmapMutation,
 
   useStartRoadmapMutation,
+
+  useGetAnchorRoadmapsQuery,
+  useNudgeRoadmapMutation,
+
+  useArchiveRoadmapMutation,
+  useRestoreRoadmapMutation,
+  usePauseRoadmapMutation,
+  useResumeRoadmapMutation,
+  useRestartRoadmapMutation,
+  useShiftRoadmapDatesMutation,
+  useRealignRoadmapDatesMutation,
+
+  useGenerateShareLinkMutation,
+  useRevokeShareLinkMutation,
+  useGetSharedRoadmapQuery,
+  useCopySharedRoadmapMutation,
 } = roadmapApi;
 
-export const { useCreateAIRoadmapMutation, useGetJobStatusQuery } =
-  aiRoadmapApi;
+export const {
+  useCreateAIRoadmapMutation,
+  useGetJobStatusQuery,
+  useGenerateNextMilestoneMutation,
+  useImportPlanMutation,
+} = aiRoadmapApi;
 
 export const {
   useCreateAnchorRequestMutation,

@@ -3,7 +3,7 @@ import { Divider } from '@/components/Divider';
 import { SetupCompletionProgress } from '@/components/onboarding/SetupCompletionProgress';
 import { TranslatedText } from '@/components/TranslatedText';
 import { AppText, AppView } from '@/components/ui';
-import { useLocalization } from '@/hooks/useLocalization';
+import { useUpdateUserMutation } from '@/hooks/user';
 import { useAppDispatch, useAppSelector } from '@/store/hooks/store.hooks';
 import {
   completeSetupTaskAction,
@@ -19,8 +19,8 @@ import { Colors } from 'react-native-ui-lib';
 type CompletionPhase = 'idle' | 'progress' | 'message';
 
 export const OnboardingSetupTask = () => {
-  const { t } = useLocalization();
   const dispatch = useAppDispatch();
+  const [updateUser] = useUpdateUserMutation();
   const setupSteps = useAppSelector(selectSetupSteps);
   const allStepsCompleted = useAppSelector(selectAreAllSetupStepsCompleted);
   const [phase, setPhase] = useState<CompletionPhase>('idle');
@@ -46,6 +46,7 @@ export const OnboardingSetupTask = () => {
       setPhase('message');
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       dispatch(completeSetupTaskAction());
+      updateUser({ onboarding_completed: true });
     }, 1600);
   };
 
@@ -71,9 +72,11 @@ export const OnboardingSetupTask = () => {
           <AppView flex>
             {(phase === 'message' || phase === 'progress') && (
               <AppView row flex center>
-                <AppText flex body2 textColor center>
-                  {t('onboarding.setup_task.completion_message')}
-                </AppText>
+                <TranslatedText
+                  flex
+                  center
+                  translationKey="onboarding.setup_task.completion_message"
+                />
                 <AppView>
                   {phase === 'progress' && (
                     <SetupCompletionProgress

@@ -196,6 +196,16 @@ export const taskApi = api.injectEndpoints({
       keepUnusedDataFor: 600,
       providesTags: ['Tasks'],
     }),
+    getTasksByRange: builder.query<
+      CreateTaskResponseType[],
+      { startDate: string; endDate: string }
+    >({
+      query: ({ startDate, endDate }) => ({
+        url: `/tasks/user?start_date=${startDate}&end_date=${endDate}`,
+        method: 'GET',
+      }),
+      keepUnusedDataFor: 300,
+    }),
     getTasksById: builder.query<CreateTaskResponseType, string>({
       query: (taskId) => ({
         url: `/tasks/${taskId}`,

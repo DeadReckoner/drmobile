@@ -23,6 +23,23 @@ export const saveAppleUserName = async (
   } catch {}
 };
 
+export const saveAppleAuthCode = async (
+  authCode?: string | null,
+): Promise<void> => {
+  if (!authCode) return;
+  try {
+    await AsyncStorage.setItem('@apple_auth_code', authCode);
+  } catch {}
+};
+
+export const getAppleAuthCode = async (): Promise<string | null> => {
+  try {
+    return await AsyncStorage.getItem('@apple_auth_code');
+  } catch {
+    return null;
+  }
+};
+
 /**
  * Retrieve Apple user's full name from local storage
  * Returns the stored name or null if not found
@@ -42,9 +59,7 @@ export const getAppleUserName = async (): Promise<string | null> => {
 export const clearAppleUserName = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(STORAGE_KEYS.APPLE_USER_NAME);
-  } catch {
-    // Silently fail - storage errors shouldn't block operations
-  }
+  } catch {}
 };
 
 export const saveExpoPushTokenStorage = async (
@@ -61,4 +76,10 @@ export const getExpoPushTokenStorage = async (): Promise<string | null> => {
   } catch {
     return null;
   }
+};
+
+export const clearExpoPushTokenStorage = async (): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEYS.EXPO_PUSH_TOKEN);
+  } catch {}
 };
