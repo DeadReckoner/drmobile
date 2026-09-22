@@ -78,12 +78,20 @@ run_local: install prebuild-ios pods ios
 # Deterministic install straight from package-lock.json. Plain `npm install` can
 # leave node_modules drifted from the lockfile, which shows up as bogus type
 # errors (renamed icon glyphs, missing modules) and blocks the pre-commit hook.
+#
+# .npmrc sets ignore-scripts=true for supply-chain safety, which means npm never
+# fires the postinstall (patch-package) or prepare (husky) lifecycle scripts. Both
+# are run explicitly below. Without patch-package the react-native-ui-lib patch is
+# missing and tsc fails on AppDateTimePicker's pickerStyle prop; without husky a
+# fresh clone has no pre-commit hook at all.
 prep:
 	npm ci
+	npx patch-package
+	npx husky
 	npx expo customize tsconfig.json
 	npm run typecheck
 	@echo ""
-	@echo "OK  deps match package-lock.json, router types regenerated, typecheck clean"
+	@echo "OK  deps patched, hooks installed, router types regenerated, typecheck clean"
 
 # ios/ is gitignored and disposable. Regenerating it from scratch avoids stale
 # native config that app.json no longer describes (e.g. a leftover Expo.plist
