@@ -6,6 +6,7 @@ import { Env } from '@/constants/Env';
 import { useBillingPaywall } from '@/hooks/useBillingPaywall';
 import { useBillingStatusSync } from '@/hooks/useBillingStatusSync';
 import { useEntitlementCheck } from '@/hooks/useEntitlementCheck';
+import { initializeMetaSdk } from '@/lib/metaSdk';
 import { initializeRevenueCat } from '@/lib/revenueCat';
 import { persistedStore, store } from '@/store/store';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -55,6 +56,11 @@ function AppWithEntitlementCheck() {
   useEffect(() => {
     checkEntitlementStatus();
   }, [checkEntitlementStatus]);
+
+  // Shows the ATT prompt on iOS, then starts the Meta SDK for ad attribution.
+  useEffect(() => {
+    initializeMetaSdk();
+  }, []);
 
   // Re-check entitlement whenever the app comes back to the foreground.
   // Registered here (once) instead of inside useEntitlementCheck to avoid
