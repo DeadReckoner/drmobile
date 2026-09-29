@@ -17,7 +17,7 @@
       },
       "usesAppleSignIn": true,
       "privacyManifests": {
-        "NSPrivacyTracking": false,
+        "NSPrivacyTracking": true,
         "NSPrivacyCollectedDataTypes": [
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeEmailAddress",
@@ -195,6 +195,24 @@
               }
             ]
           }
+        }
+      ],
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "1115987581108854",
+          "clientToken": "4ad211447a1cc845cf556de9425da747",
+          "displayName": "Dead Reckoner",
+          "isAutoInitEnabled": false,
+          "autoLogAppEventsEnabled": true,
+          "advertiserIDCollectionEnabled": true,
+          "iosUserTrackingPermission": false
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Dead Reckoner uses this to measure which of our ads bring new people to the app. We never sell your data."
         }
       ]
     ],
