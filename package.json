@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "node init && expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
@@ -15,7 +15,7 @@
     "prebuild:android": "expo prebuild --platform android",
     "prebuild": "expo prebuild",
     "typecheck": "tsc --noEmit",
-    "dev-build:ios": "npx eas-cli build --profile development --platform ios",
+    "dev-build:ios": "node init && npx eas-cli build --profile development --platform ios",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -26,7 +26,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.6.0",
     "@react-native-google-signin/google-signin": "^15.0.0",
-    "@react-native-menu/menu": "^1.2.4",
+    "@react-native-menu/menu": "^2.0.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
