@@ -1,4 +1,4 @@
-.PHONY: install start ios android web lint format typecheck prebuild prebuild-ios prebuild-android clean check help run_local pods typegen
+.PHONY: install start ios android web lint format typecheck prebuild prebuild-ios prebuild-android clean check help run_local pods typegen prep prep-ios doctor
 
 # Default target
 help:
@@ -19,6 +19,11 @@ help:
 	@echo "  pods             - Install CocoaPods dependencies"
 	@echo "  typegen          - Regenerate Expo Router typed routes"
 	@echo "  run_local        - Install, prebuild iOS, pods, and run on simulator"
+	@echo ""
+	@echo "Prep / recovery:"
+	@echo "  prep             - Restore a known-good JS state (run before committing)"
+	@echo "  prep-ios         - prep + regenerate ios/ from scratch, then pods"
+	@echo "  doctor           - Diagnose dep/config drift without changing anything"
 
 install:
 	npm install
@@ -69,3 +74,45 @@ typegen:
 	npx expo customize tsconfig.json
 
 run_local: install prebuild-ios pods ios
+
+# Deterministic install straight from package-lock.json. Plain `npm install` can
+# leave node_modules drifted from the lockfile, which shows up as bogus type
+# errors (renamed icon glyphs, missing modules) and blocks the pre-commit hook.
+#
+# .npmrc sets ignore-scripts=true for supply-chain safety, which means npm never
+# fires the postinstall (patch-package) or prepare (husky) lifecycle scripts. Both
+# are run explicitly below. Without patch-package the react-native-ui-lib patch is
+# missing and tsc fails on AppDateTimePicker's pickerStyle prop; without husky a
+# fresh clone has no pre-commit hook at all.
+prep:
+	npm ci
+	npx patch-package
+	npx husky
+	npx expo customize tsconfig.json
+	npm run typecheck
+	@echo ""
+	@echo "OK  deps patched, hooks installed, router types regenerated, typecheck clean"
+
+# ios/ is gitignored and disposable. Regenerating it from scratch avoids stale
+# native config that app.json no longer describes (e.g. a leftover Expo.plist
+# runtimeVersion), which makes prebuild fail to reconcile.
+prep-ios: prep
+	rm -rf ios
+	npx expo prebuild --platform ios --no-install
+	$(MAKE) pods
+	@echo ""
+	@echo "OK  ios/ regenerated from app.json"
+
+doctor:
+	@echo "== staged env files =="
+	@staged="$$(git diff --cached --name-only | grep -E '(^|/)\.env(\.|$$)' | grep -v '\.example$$' || true)"; \
+	if [ -n "$$staged" ]; then \
+		echo "  WARNING - staged for commit:"; \
+		echo "$$staged" | sed 's/^/    /'; \
+		echo "  fix: git rm --cached <file>"; \
+	else \
+		echo "  none staged - ok"; \
+	fi
+	@echo ""
+	@echo "== dependency / config drift =="
+	npx expo-doctor
