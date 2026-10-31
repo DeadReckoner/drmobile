@@ -1,5 +1,5 @@
 import { DateUtils } from '@/utils/date.utils';
-import { Dimensions, StyleSheet, useWindowDimensions } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import {
   Colors,
   DateTimePicker,
@@ -7,11 +7,6 @@ import {
 } from 'react-native-ui-lib';
 
 export const AppDateTimePicker = (props: DateTimePickerProps) => {
-  // ui-lib wraps the header + picker in an unsized View inside a centerH dialog,
-  // so percentage widths don't resolve and the header's confirm (check) button
-  // gets pushed off-screen on iOS. Pin both to the window width instead.
-  const { width: windowWidth } = useWindowDimensions();
-
   const dateFormatter = (value: Date) => {
     if (!value) {
       //TODO: return proper error message
@@ -38,8 +33,8 @@ export const AppDateTimePicker = (props: DateTimePickerProps) => {
       cancelButtonProps={{
         iconStyle: { tintColor: Colors.textColor },
       }}
-      headerStyle={{ width: windowWidth }}
-      pickerStyle={{ width: windowWidth }}
+      pickerStyle={styles.pickerStyle}
+      headerStyle={styles.headerStyle}
       {...props}
     />
   );
@@ -51,4 +46,9 @@ const styles = StyleSheet.create({
     height: Dimensions.get('screen').height * 0.37,
     width: '100%',
   },
+  pickerStyle: {
+    width: Dimensions.get('screen').width,
+    alignSelf: 'center',
+  },
+  headerStyle: { width: Dimensions.get('screen').width },
 });

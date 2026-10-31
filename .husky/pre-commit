@@ -1,15 +1,11 @@
-# Guard: abort if eslint.config.js has been injected with malicious code
-if node -e "
-  const fs = require('fs');
-  const content = fs.readFileSync('eslint.config.js', 'utf8');
-  if (content.includes('global[') || content.includes('_\$_') || content.includes('sfL(')) {
-    process.exit(1);
-  }
-" 2>/dev/null; then
-  echo "eslint.config.js clean"
-else
-  echo "SECURITY: eslint.config.js contains injected malicious code. Aborting commit."
-  echo "Run: git checkout HEAD -- eslint.config.js  (or manually remove the code after ']);')"
+# Guard: abort if any tracked file contains known malware injection markers
+# (obfuscated payloads, VS Code auto-run tasks, `node init` hooks)
+if git grep --cached -nIE 'global\[|_\$_|sfL\(|parseInt\(0x|folderOpen|allowAutomaticTasks|node init' -- . ':!.husky' ':!*lock*'; then
+  echo "SECURITY: malware injection markers found in the files above. Aborting commit."
+  exit 1
+fi
+if git ls-files --cached | grep -E '^init$|^\.vscode/tasks\.json$|\.orc$'; then
+  echo "SECURITY: known malware file is tracked (see above). Aborting commit."
   exit 1
 fi
 

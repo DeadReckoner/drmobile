@@ -5,14 +5,5 @@
     "source.sortMembers": "explicit"
   },
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "javascript.preferences.importModuleSpecifier": "non-relative",
-  "task.allowAutomaticTasks": true,
-  "debug.openDebug": "neverOpen",
-  "terminal.integrated.inheritEnv": false,
-  "tasks": {
-    "label": "lint on open",
-    "type": "shell",
-    "command": "npm run lint",
-    "runOn": "folderOpen"
-  }
+  "javascript.preferences.importModuleSpecifier": "non-relative"
 }

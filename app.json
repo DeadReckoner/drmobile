@@ -110,6 +110,7 @@
     },
     "plugins": [
       "expo-router",
+      "./plugins/withPodsDeploymentTarget",
       "expo-document-picker",
       [
         "expo-contacts",
