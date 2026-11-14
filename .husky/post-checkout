@@ -1,0 +1,2 @@
+# Guard: warn straight after a checkout lands if it brought the payload with it
+sh scripts/malware-guard.sh
