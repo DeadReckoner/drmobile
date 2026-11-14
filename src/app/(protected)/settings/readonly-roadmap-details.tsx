@@ -35,12 +35,13 @@ import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
+import type { ScrollViewInstance } from 'react-native';
 
 const ReadonlyRoadmapDetails = () => {
   const { t } = useLocalization();
   const params = useLocalSearchParams<{ roadmap?: string }>();
   const user = useAppSelector(selectUser);
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<ScrollViewInstance>(null);
   const [isSettingsSheetVisible, setIsSettingsSheetVisible] = useState(false);
 
   const [finalRoadmap] = useState<RoadmapType | null>(() => {

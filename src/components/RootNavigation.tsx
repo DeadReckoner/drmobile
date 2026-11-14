@@ -17,7 +17,10 @@ export const RootNavigator = () => {
   return (
     <>
       <Stack screenOptions={resetStackScreenOptions}>
-        <Stack.Protected guard={!!user?.id}>
+        {/* `/` is served by (protected)/(tabs)/index, so a signed-out launch
+            needs an explicit destination: expo-router 58 no longer falls
+            back to the (auth) stack's initial route on its own. */}
+        <Stack.Protected guard={!!user?.id} redirectTo="/login">
           <Stack.Screen name="(protected)" />
         </Stack.Protected>
 
@@ -31,7 +34,6 @@ export const RootNavigator = () => {
       <AppToast />
       <StatusBar
         barStyle={theme === 'light' ? 'dark-content' : 'light-content'}
-        translucent
       />
     </>
   );

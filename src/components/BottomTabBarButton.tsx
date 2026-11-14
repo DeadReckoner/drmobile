@@ -10,7 +10,7 @@ export const BottomTabBarButton = (props: PressableProps) => {
         impactAsync();
         props.onPress?.(e);
       }}
-      android_ripple={null}>
+      android_ripple={undefined}>
       {props.children}
     </Pressable>
   );

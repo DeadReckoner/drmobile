@@ -5,7 +5,8 @@ import {
   selectHasSeenRoadmapHighlight,
 } from '@/store/slices/onboardingSlice';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ImageSourcePropType, View } from 'react-native';
+import type { ImageProps } from 'expo-image';
+import type { ViewInstance } from 'react-native';
 
 const TOTAL_STEPS = 6;
 const TOTAL_STEPS_CUSTOM = TOTAL_STEPS - 1;
@@ -33,7 +34,7 @@ const STEP_TARGET_INDEX_CUSTOM: Record<number, number | null> = {
 interface HighlightStep {
   title: string;
   message: string;
-  image?: ImageSourcePropType;
+  image?: ImageProps['source'];
 }
 
 export const useRoadmapFeatureHighlight = (
@@ -48,16 +49,19 @@ export const useRoadmapFeatureHighlight = (
   const [isVisible, setIsVisible] = useState(false);
   const [isPendingHighlightStart, setIsPendingHighlightStart] = useState(false);
 
-  const targets = useRef<Record<number, View | null>>({});
+  const targets = useRef<Record<number, ViewInstance | null>>({});
 
   const stepTargetIndex = isCustomRoadmap
     ? STEP_TARGET_INDEX_CUSTOM
     : STEP_TARGET_INDEX;
   const totalSteps = isCustomRoadmap ? TOTAL_STEPS_CUSTOM : TOTAL_STEPS;
 
-  const setTargetRef = useCallback((index: number, ref: View | null) => {
-    targets.current[index] = ref;
-  }, []);
+  const setTargetRef = useCallback(
+    (index: number, ref: ViewInstance | null) => {
+      targets.current[index] = ref;
+    },
+    [],
+  );
 
   const getTarget = useCallback(() => {
     const targetIndex = stepTargetIndex[currentStep];
@@ -89,7 +93,7 @@ export const useRoadmapFeatureHighlight = (
     {
       title: t('feature_highlight.manage_roadmap_title'),
       message: t('feature_highlight.manage_roadmap_message'),
-      image: require('assets/images/manage_roadmap.png') as ImageSourcePropType,
+      image: require('assets/images/manage_roadmap.png'),
     },
   ];
 

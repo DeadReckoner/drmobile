@@ -1,13 +1,8 @@
 import { AppButton } from '@/components/AppButton';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  ImageSourcePropType,
-  Modal,
-  StyleSheet,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import type { ImageProps } from 'expo-image';
+import { Modal, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -27,7 +22,7 @@ export interface HighlightFrame {
 export interface HighlightStep {
   title: string;
   message: string;
-  image?: ImageSourcePropType;
+  image?: ImageProps['source'];
 }
 
 interface RoadmapHighlightOverlayProps {

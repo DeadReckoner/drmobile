@@ -5,7 +5,7 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
-import { StyleProp, TextStyle } from 'react-native';
+import { ColorValue, StyleProp, TextStyle } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 type AntDesignGlyphsType = keyof typeof AntDesign.glyphMap;
@@ -19,33 +19,35 @@ type UnifiedIconProps =
       set?: 'AntDesign';
       name: AntDesignGlyphsType;
       size?: number;
-      color?: string;
+      color?: ColorValue;
       style?: StyleProp<TextStyle>;
     }
   | {
       set: 'Feather';
       name: FeatherGlyphsType;
       size?: number;
-      color?: string;
+      color?: ColorValue;
       style?: StyleProp<TextStyle>;
     }
   | {
       set: 'Ionicons';
       name: IoniconsGlyphsType;
       size?: number;
-      color?: string;
+      color?: ColorValue;
       style?: StyleProp<TextStyle>;
     }
   | {
       set: 'MaterialCommunityIcons';
       name: MaterialCommunityIconsGlyphsType;
       size?: number;
-      color?: string;
+      color?: ColorValue;
       style?: StyleProp<TextStyle>;
     };
 
 export const AppIcon: React.FC<UnifiedIconProps> = ({
-  set = 'AntDesign',
+  // Bound to a local name: the Hermes version in React Native 0.88 fails to
+  // parse a destructured `set = ...` default (`set` is a contextual keyword).
+  set: iconSet = 'AntDesign',
   name,
   size = 24,
   color,
@@ -53,7 +55,7 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
 }) => {
   const { theme } = useAppTheme();
 
-  if (set === 'Feather') {
+  if (iconSet === 'Feather') {
     return (
       <Feather
         name={name as FeatherGlyphsType}
@@ -63,7 +65,7 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
       />
     );
   }
-  if (set === 'Ionicons') {
+  if (iconSet === 'Ionicons') {
     return (
       <Ionicons
         name={name as IoniconsGlyphsType}
@@ -74,7 +76,7 @@ export const AppIcon: React.FC<UnifiedIconProps> = ({
     );
   }
 
-  if (set === 'MaterialCommunityIcons') {
+  if (iconSet === 'MaterialCommunityIcons') {
     return (
       <MaterialCommunityIcons
         name={name as MaterialCommunityIconsGlyphsType}
