@@ -1,17 +1,5 @@
-# Guard: abort if eslint.config.js has been injected with malicious code
-if node -e "
-  const fs = require('fs');
-  const content = fs.readFileSync('eslint.config.js', 'utf8');
-  if (content.includes('global[') || content.includes('_\$_') || content.includes('sfL(')) {
-    process.exit(1);
-  }
-" 2>/dev/null; then
-  echo "eslint.config.js clean"
-else
-  echo "SECURITY: eslint.config.js contains injected malicious code. Aborting commit."
-  echo "Run: git checkout HEAD -- eslint.config.js  (or manually remove the code after ']);')"
-  exit 1
-fi
+# Guard: abort if the repo carries the eslint.config.js / tasks.json payload
+sh scripts/malware-guard.sh || exit 1
 
 npx lint-staged
 npm run typecheck
