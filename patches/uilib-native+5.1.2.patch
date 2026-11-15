@@ -1,0 +1,36 @@
+diff --git a/node_modules/uilib-native/android/build.gradle b/node_modules/uilib-native/android/build.gradle
+index 543abd2..70bae9f 100644
+--- a/node_modules/uilib-native/android/build.gradle
++++ b/node_modules/uilib-native/android/build.gradle
+@@ -22,7 +22,7 @@ android {
+     buildTypes {
+         release {
+             minifyEnabled false
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+         }
+     }
+ }
+diff --git a/node_modules/uilib-native/react-native.config.js b/node_modules/uilib-native/react-native.config.js
+index 955d9de..74461d4 100644
+--- a/node_modules/uilib-native/react-native.config.js
++++ b/node_modules/uilib-native/react-native.config.js
+@@ -8,12 +8,13 @@ module.exports = {
+       // },
+       android: {
+         sourceDir: './android/',
+-        packageImportPath: `import com.wix.reactnativeuilib.dynamicfont.DynamicFontPackage;
+-import com.wix.reactnativeuilib.highlighterview.HighlighterViewPackage;
+-import com.wix.reactnativeuilib.keyboardinput.KeyboardInputPackage;`,
++        // React Native's autolinking only keeps the first import and rewrites
++        // that one class to its fully-qualified name, so the other two
++        // packages have to be fully qualified here.
++        packageImportPath: 'import com.wix.reactnativeuilib.dynamicfont.DynamicFontPackage;',
+         packageInstance: `new DynamicFontPackage(),
+-      new HighlighterViewPackage(),
+-      new KeyboardInputPackage(getApplication())`
++      new com.wix.reactnativeuilib.highlighterview.HighlighterViewPackage(),
++      new com.wix.reactnativeuilib.keyboardinput.KeyboardInputPackage(getApplication())`
+       }
+     }
+   }
