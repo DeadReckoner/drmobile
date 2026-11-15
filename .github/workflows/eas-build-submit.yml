@@ -39,3 +39,46 @@ jobs:
       # Build and Submit to TestFlight
       - name: 📱 Build and Submit to TestFlight
         run: eas build --platform ios --profile production --non-interactive --auto-submit
+
+  # Android: build and send to the Play Store internal testing track
+  # (submit.production.android in eas.json).
+  #
+  # Off by default. It needs a Google service account key assigned in EAS
+  # under "Play Store Submissions" (eas credentials -p android); without one
+  # the submit step fails. Once the key is there, turn this job on by setting
+  # the repository variable ANDROID_AUTO_SUBMIT to "true"
+  # (Settings > Secrets and variables > Actions > Variables).
+  build-and-submit-android:
+    name: EAS Build and Submit Android
+    if: vars.ANDROID_AUTO_SUBMIT == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: 🏗 Checkout repository
+        uses: actions/checkout@v3
+
+      # Setup Node.js
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
+          cache: "npm"
+
+      # Install dependencies
+      - name: 📦 Install dependencies
+        run: npm ci
+      - name: 🧹 Apply patches
+        run: npx patch-package
+
+      # Setup Expo
+      - name: 🏗 Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+          packager: npm
+
+      # Build and Submit to Play internal testing
+      - name: 🤖 Build and Submit to Play internal testing
+        run: eas build --platform android --profile production --non-interactive --auto-submit
