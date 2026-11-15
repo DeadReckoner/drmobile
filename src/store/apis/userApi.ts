@@ -177,14 +177,37 @@ export const userApi = api.injectEndpoints({
         const currentUser = (getState() as RootStateType).auth.user;
         try {
           const { data } = await queryFulfilled;
+          const profileName =
+            `${data.first_name || ''} ${data.last_name || ''}`.trim();
+          // The name the auth provider gave us at sign-in (signup form,
+          // Google or Apple). The backend row can be missing it: the row is
+          // created by a database trigger that only reads `firstName` /
+          // `lastName` from the auth metadata, while sign-in providers send
+          // `full_name`.
+          const knownName = (currentUser.name || '').trim();
           dispatch(
             setAuthUserAction({
               ...currentUser,
-              name: `${data.first_name || ''} ${data.last_name || ''}`.trim(),
+              // Never replace a name we know with an empty one; doing so is
+              // what made the "Complete your profile" sheet appear for users
+              // who had already given their name.
+              name: profileName || knownName,
               email: data.email,
               avatar: data.profile_image_url || currentUser.avatar,
             }),
           );
+          if (!profileName && knownName) {
+            // Backfill the backend row so friends and notifications see the
+            // name too. Best effort: if it fails, the next profile fetch
+            // tries again.
+            const [firstName, ...rest] = knownName.split(/\s+/);
+            dispatch(
+              userApi.endpoints.updateUser.initiate({
+                first_name: firstName,
+                last_name: rest.join(' '),
+              }),
+            );
+          }
           if (data.onboarding_completed === true) {
             dispatch(completeSetupTaskAction());
           } else if (data.onboarding_completed === false) {

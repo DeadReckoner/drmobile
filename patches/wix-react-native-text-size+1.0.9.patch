@@ -1,0 +1,13 @@
+diff --git a/node_modules/wix-react-native-text-size/android/src/main/java/com/wix/rntextsize/RNTextSizeModule.java b/node_modules/wix-react-native-text-size/android/src/main/java/com/wix/rntextsize/RNTextSizeModule.java
+index e238d89..8d168d7 100644
+--- a/node_modules/wix-react-native-text-size/android/src/main/java/com/wix/rntextsize/RNTextSizeModule.java
++++ b/node_modules/wix-react-native-text-size/android/src/main/java/com/wix/rntextsize/RNTextSizeModule.java
+@@ -433,7 +433,7 @@ class RNTextSizeModule extends ReactContextBaseJavaModule {
+      */
+     @SuppressWarnings("deprecation")
+     private float getCurrentDensity() {
+-        return DisplayMetricsHolder.getWindowDisplayMetrics().density;
++        return DisplayMetricsHolder.getScreenDisplayMetrics().density;
+     }
+ 
+     private static final String[] FILE_EXTENSIONS = {".ttf", ".otf"};

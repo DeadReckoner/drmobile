@@ -77,6 +77,10 @@ export const useSignupForm = ({
 
     const { data, error } = await signUpEmailWithAuthProvider(email, password, {
       full_name: `${firstName} ${lastName}`.trim(),
+      // The database trigger that creates the user's row reads these two
+      // keys; without them the row is created with no name.
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
     });
     setIsLoading(false);
 
