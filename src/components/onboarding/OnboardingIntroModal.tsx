@@ -17,6 +17,7 @@ import Animated, {
   Extrapolation,
   interpolate,
   runOnJS,
+  useAnimatedReaction,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -37,11 +38,19 @@ const PAGES = [
 
 interface PageCtaProps {
   animatedStyle: AnimatedStyle<ViewStyle>;
+  /** Whether this is the CTA for the page currently on screen. */
+  active: boolean;
   children: React.ReactNode;
 }
 
-const PageCta = ({ animatedStyle, children }: PageCtaProps) => (
-  <Animated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
+// Both pages' CTAs are stacked in the same box and cross-faded with opacity.
+// Opacity does not affect hit-testing, so the hidden CTA must be made
+// untouchable explicitly; otherwise the page 2 CTA (rendered last, so on top)
+// swallows taps meant for page 1's "Next" and starts roadmap creation.
+const PageCta = ({ animatedStyle, active, children }: PageCtaProps) => (
+  <Animated.View
+    style={[StyleSheet.absoluteFill, animatedStyle]}
+    pointerEvents={active ? 'box-none' : 'none'}>
     {children}
   </Animated.View>
 );
@@ -54,6 +63,20 @@ export const OnboardingIntroModal = () => {
   const scrollRef = useRef<Animated.ScrollView>(null);
   const scrollX = useSharedValue(0);
   const fadeOpacity = useSharedValue(1);
+  const [activePage, setActivePage] = useState(0);
+  // Set once a closing CTA is pressed, so a second tap during the fade-out
+  // cannot fire another action.
+  const isClosing = useRef(false);
+
+  // Follows the same half-way point at which the CTAs cross-fade.
+  useAnimatedReaction(
+    () => (scrollX.value >= SCREEN_WIDTH * 0.5 ? 1 : 0),
+    (page, previousPage) => {
+      if (page !== previousPage) {
+        runOnJS(setActivePage)(page);
+      }
+    },
+  );
 
   const fadeStyle = useAnimatedStyle(() => ({
     opacity: fadeOpacity.value,
@@ -106,9 +129,12 @@ export const OnboardingIntroModal = () => {
   useEffect(() => {
     if (user?.id && !hasSeenIntroModal) {
       fadeOpacity.value = 1;
+      scrollX.value = 0;
+      isClosing.current = false;
+      setActivePage(0);
       setVisible(true);
     }
-  }, [user?.id, hasSeenIntroModal, fadeOpacity]);
+  }, [user?.id, hasSeenIntroModal, fadeOpacity, scrollX]);
 
   const completeStartRoadmap = () => {
     dispatch(markIntroModalSeenAction());
@@ -123,6 +149,8 @@ export const OnboardingIntroModal = () => {
   };
 
   const handleStartRoadmap = () => {
+    if (isClosing.current) return;
+    isClosing.current = true;
     fadeOpacity.value = withTiming(0, { duration: 300 }, (finished) => {
       if (finished) {
         runOnJS(completeStartRoadmap)();
@@ -131,6 +159,8 @@ export const OnboardingIntroModal = () => {
   };
 
   const handleSkipToApp = () => {
+    if (isClosing.current) return;
+    isClosing.current = true;
     fadeOpacity.value = withTiming(0, { duration: 300 }, (finished) => {
       if (finished) {
         runOnJS(completeSkipToApp)();
@@ -208,7 +238,7 @@ export const OnboardingIntroModal = () => {
 
           <AppView paddingH-24>
             <AppView style={styles.ctaContainer} center>
-              <PageCta animatedStyle={page1CtaStyle}>
+              <PageCta animatedStyle={page1CtaStyle} active={activePage === 0}>
                 <PrimaryButtonContainer
                   paddingV-18
                   style={{ borderRadius: 40 }}
@@ -222,7 +252,7 @@ export const OnboardingIntroModal = () => {
                 </PrimaryButtonContainer>
               </PageCta>
 
-              <PageCta animatedStyle={page2CtaStyle}>
+              <PageCta animatedStyle={page2CtaStyle} active={activePage === 1}>
                 <PrimaryButtonContainer
                   paddingV-12
                   style={{ borderRadius: 40 }}

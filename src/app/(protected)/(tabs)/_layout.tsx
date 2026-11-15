@@ -3,6 +3,7 @@ import { AppScreen } from '@/components/AppScreen';
 import { CompleteProfile } from '@/components/auth/CompleteProfile';
 import { BottomTabBarButton } from '@/components/BottomTabBarButton';
 import { OnboardingIntroModal } from '@/components/onboarding/OnboardingIntroModal';
+import { AiRoadmapGenerationManager } from '@/components/roadmap/ai-roamap/AiRoadmapGenerationManager';
 import { AppView } from '@/components/ui';
 import { useLocalization } from '@/hooks/useLocalization';
 import { useGetThreadsQuery } from '@/store/apis/messagesApi';
@@ -116,6 +117,7 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
+      <AiRoadmapGenerationManager />
       <CompleteProfile />
       <OnboardingIntroModal />
     </AppScreen>
