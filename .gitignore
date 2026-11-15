@@ -44,3 +44,7 @@ ios
 
 docs/
 config.bat
+
+# Firebase config for Android push. This repo is public; EAS gets the file
+# from the GOOGLE_SERVICES_JSON file variable instead (see app.config.js).
+google-services.json
