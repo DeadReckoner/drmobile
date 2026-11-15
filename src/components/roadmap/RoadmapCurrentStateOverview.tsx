@@ -16,6 +16,7 @@ import {
 } from '@/utils/roadmap.utils';
 import { JSX, useMemo } from 'react';
 import { View } from 'react-native';
+import type { ViewInstance } from 'react-native';
 
 interface RoadmapCurrentStateOverviewProps {
   roadmap: RoadmapType;
@@ -23,9 +24,9 @@ interface RoadmapCurrentStateOverviewProps {
   onOverviewPress?: (_currentPhase?: Phase) => void;
   onPhasePress?: (_phase: Phase) => void;
   onMilestonePress?: (_milestone: MilestoneType, _currentPhase?: Phase) => void;
-  onOverviewCardRef?: (_ref: View | null) => void;
-  onPhaseCardRef?: (_ref: View | null) => void;
-  onMilestoneCardRef?: (_ref: View | null) => void;
+  onOverviewCardRef?: (_ref: ViewInstance | null) => void;
+  onPhaseCardRef?: (_ref: ViewInstance | null) => void;
+  onMilestoneCardRef?: (_ref: ViewInstance | null) => void;
 }
 
 export const RoadmapCurrentStateOverview = ({

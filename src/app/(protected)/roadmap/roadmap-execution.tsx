@@ -43,6 +43,7 @@ import { storeMilestone } from '@/utils/roadmapTransfer';
 import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import type { ViewInstance } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 
 const RoadmapExecution = () => {
@@ -389,7 +390,13 @@ const RoadmapExecution = () => {
                 </AppView>
               )}
               {!!roadmap?.roadmap_id && (
-                <AppView paddingT-4 ref={(ref) => handleTargetLayout(4, ref)}>
+                <AppView
+                  paddingT-4
+                  // react-native-ui-lib still types View refs with the
+                  // component type; React Native 0.88 refs are instances.
+                  ref={(ref) =>
+                    handleTargetLayout(4, ref as unknown as ViewInstance | null)
+                  }>
                   <AppButton onPress={() => setIsMenuVisible(true)}>
                     <AppIcon set="Feather" name="more-vertical" size={22} />
                   </AppButton>

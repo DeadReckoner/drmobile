@@ -156,7 +156,9 @@ const BlockedUsers = () => {
             <RefreshControl
               tintColor={Colors.secondary}
               refreshing={isFetching}
-              onRefresh={refetch}
+              onRefresh={() => {
+                refetch();
+              }}
             />
           }
         />

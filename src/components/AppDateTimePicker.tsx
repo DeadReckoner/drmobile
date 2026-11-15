@@ -33,8 +33,8 @@ export const AppDateTimePicker = (props: DateTimePickerProps) => {
       cancelButtonProps={{
         iconStyle: { tintColor: Colors.textColor },
       }}
-      headerStyle={styles.headerStyle}
       pickerStyle={styles.pickerStyle}
+      headerStyle={styles.headerStyle}
       {...props}
     />
   );
@@ -46,9 +46,13 @@ const styles = StyleSheet.create({
     height: Dimensions.get('screen').height * 0.37,
     width: '100%',
   },
-  headerStyle: { width: '100%' },
+  // Pinned to the screen width, not '100%': ui-lib renders the header and
+  // spinner inside an unsized, centred View, so a percentage width resolved
+  // against that shrink-wrapped parent and pushed the confirm button off the
+  // right edge on iOS.
   pickerStyle: {
-    width: '100%',
+    width: Dimensions.get('screen').width,
     alignSelf: 'center',
   },
+  headerStyle: { width: Dimensions.get('screen').width },
 });

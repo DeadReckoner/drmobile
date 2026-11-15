@@ -1,7 +1,7 @@
 import { HighlightFrame } from '@/components/roadmap/RoadmapHighlightOverlay';
 import { useRoadmapFeatureHighlight } from '@/hooks/useRoadmapFeatureHighlight';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import type { ScrollViewInstance, ViewInstance } from 'react-native';
 
 export const useRoadmapHighlightController = (
   isCustomRoadmap?: boolean,
@@ -10,8 +10,8 @@ export const useRoadmapHighlightController = (
   const highlight = useRoadmapFeatureHighlight(isCustomRoadmap, isLoading);
   const { isVisible, currentStep, getTarget, setTargetRef } = highlight;
 
-  const scrollViewRef = useRef<ScrollView>(null);
-  const scrollContentRef = useRef<View>(null);
+  const scrollViewRef = useRef<ScrollViewInstance>(null);
+  const scrollContentRef = useRef<ViewInstance>(null);
   // undefined = still measuring | null = confirmed no target | HighlightFrame = has target
   const [highlightFrame, setHighlightFrame] = useState<
     HighlightFrame | null | undefined
@@ -22,7 +22,7 @@ export const useRoadmapHighlightController = (
   );
 
   const handleTargetLayout = useCallback(
-    (index: number, ref: View | null) => {
+    (index: number, ref: ViewInstance | null) => {
       setTargetRef(index, ref);
     },
     [setTargetRef],
@@ -31,7 +31,7 @@ export const useRoadmapHighlightController = (
   const measureAndSetFrame = useCallback(() => {
     const target = getTarget();
     if (target) {
-      (target as View).measureInWindow((x, y, width, height) => {
+      target.measureInWindow((x, y, width, height) => {
         setHighlightFrame({ x, y, width, height });
       });
     } else {
@@ -57,7 +57,7 @@ export const useRoadmapHighlightController = (
       measureAndSetFrame();
       return;
     }
-    (target as View).measureLayout(
+    target.measureLayout(
       scrollContentRef.current,
       (_x: number, y: number) => {
         pendingMeasure.current = true;

@@ -1,6 +1,6 @@
 import { AppScreen } from '@/components/AppScreen';
 import { AppView } from '@/components/ui';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import {
   KeyboardAwareScrollView,
@@ -11,7 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ViewProps } from 'react-native-ui-lib';
 
-interface AppKeyboardControllerProps extends PropsWithChildren, ViewProps {
+interface AppKeyboardControllerProps extends ViewProps {
   containerStyle?: StyleProp<ViewStyle>;
   scrollViewProps?: KeyboardAwareScrollViewProps;
 }

@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { Colors } from 'react-native-ui-lib';
 import { HOUR_ITEM_HEIGHT } from './constants';
+import type { ScrollViewInstance } from 'react-native';
 
 type Props = {
   visible: boolean;
@@ -23,7 +24,7 @@ export const HourPickerModal = ({
   onClose,
   onConfirm,
 }: Props) => {
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const [pickerHour, setPickerHour] = useState(currentHour24 % 12 || 12);
   const [pickerPeriod, setPickerPeriod] = useState<'AM' | 'PM'>(
     currentHour24 >= 12 ? 'PM' : 'AM',

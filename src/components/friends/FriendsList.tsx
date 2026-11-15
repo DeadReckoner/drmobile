@@ -41,7 +41,9 @@ export const FriendsList = () => {
       refreshControl={
         <RefreshControl
           refreshing={isLoading || (friends?.length === 0 && isFetching)}
-          onRefresh={refetch}
+          onRefresh={() => {
+            refetch();
+          }}
           tintColor={Colors.secondary}
         />
       }

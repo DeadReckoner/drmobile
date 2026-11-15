@@ -1,6 +1,7 @@
 import { LegendListRef } from '@legendapp/list';
 import { useCallback, useLayoutEffect, useRef } from 'react';
-import { Dimensions, ScrollView } from 'react-native';
+import { Dimensions } from 'react-native';
+import type { ScrollViewInstance } from 'react-native';
 
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 
@@ -35,7 +36,7 @@ const runWhenIdle = (callback: () => void): IdleCleanupType => {
  * and an `onLayout` handler to attach to the current item's wrapper.
  */
 export const useScrollToCurrentItem = (isActive: boolean) => {
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<ScrollViewInstance>(null);
 
   const onCurrentItemLayout = useCallback(
     (y: number, height: number) => {

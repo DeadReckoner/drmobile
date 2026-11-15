@@ -13,8 +13,8 @@ import {
 } from '@/store/slices/roadmapDraftSlice';
 import { selectTheme } from '@/store/slices/settingsSlice';
 import { store } from '@/store/store';
-import { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import { Tabs } from 'expo-router';
+import type { BottomTabNavigationOptions } from 'expo-router/js-tabs';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { Colors, Typography } from 'react-native-ui-lib';
