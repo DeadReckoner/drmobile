@@ -17,8 +17,10 @@ import { store } from '@/store/store';
 import { Tabs } from 'expo-router';
 import type { BottomTabNavigationOptions } from 'expo-router/js-tabs';
 import { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { Colors, Typography } from 'react-native-ui-lib';
+
+const TAB_BAR_HEIGHT_ANDROID = 72;
 
 export default function TabLayout() {
   const { t } = useLocalization();
@@ -28,7 +30,10 @@ export default function TabLayout() {
     () => ({
       tabBarStyle: {
         backgroundColor: Colors.bottomTabBar,
-        height: 100,
+        // 100 leaves room for the iOS home indicator under the labels. On
+        // Android the app is already inset above the navigation buttons, so
+        // that allowance is just empty space taken from every tab's content.
+        height: Platform.OS === 'android' ? TAB_BAR_HEIGHT_ANDROID : 100,
         paddingTop: 8,
       },
       tabBarInactiveTintColor: Colors.tabInactiveColor,

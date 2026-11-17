@@ -6,6 +6,7 @@ import type {
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: OnboardingStateType = {
+  userId: null,
   hasSeenIntroModal: false,
   isSetupTaskCompleted: false,
   hasSeenRoadmapHighlight: false,
@@ -45,9 +46,35 @@ const onboardingSlice = createSlice({
     completeSetupTaskAction(state) {
       state.isSetupTaskCompleted = true;
     },
-    resetOnboardingFromServerAction(state) {
-      state.hasSeenIntroModal = false;
-      state.isSetupTaskCompleted = false;
+    /**
+     * Reconcile the device's onboarding state with the profile the server
+     * just returned. Runs on every profile fetch.
+     *
+     * The welcome screens are a per-device, per-account "seen" flag. This used
+     * to clear that flag whenever the server said onboarding was not complete,
+     * so anyone who had not finished the setup checklist got the welcome
+     * screens again on every app launch and every profile refetch. The flag is
+     * now only reset when a different account signs in on this device.
+     */
+    syncOnboardingWithServerAction(
+      state,
+      action: PayloadAction<{ userId: string; onboardingCompleted?: boolean }>,
+    ) {
+      const { userId, onboardingCompleted } = action.payload;
+
+      if (state.userId && state.userId !== userId) {
+        // Another account's onboarding state is still in memory.
+        state.hasSeenIntroModal = initialState.hasSeenIntroModal;
+        state.hasSeenRoadmapHighlight = initialState.hasSeenRoadmapHighlight;
+        state.setupSteps = { ...initialState.setupSteps };
+      }
+      state.userId = userId;
+
+      if (onboardingCompleted === true) {
+        state.isSetupTaskCompleted = true;
+      } else if (onboardingCompleted === false) {
+        state.isSetupTaskCompleted = false;
+      }
     },
   },
 });
@@ -58,7 +85,7 @@ export const {
   toggleSetupStepAction,
   setSetupStepAction,
   completeSetupTaskAction,
-  resetOnboardingFromServerAction,
+  syncOnboardingWithServerAction,
 } = onboardingSlice.actions;
 
 export const selectHasSeenIntroModal = createAppSelector(

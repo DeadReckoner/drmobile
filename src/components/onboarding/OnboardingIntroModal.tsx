@@ -11,7 +11,7 @@ import {
 } from '@/store/slices/onboardingSlice';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Dimensions, StyleSheet, ViewStyle } from 'react-native';
+import { Dimensions, Platform, StyleSheet, ViewStyle } from 'react-native';
 import Animated, {
   AnimatedStyle,
   Extrapolation,
@@ -191,7 +191,10 @@ export const OnboardingIntroModal = () => {
           />
         </AppView>
 
-        <AppView flex useSafeArea>
+        {/* Android is already inset above and below the system bars at the
+            root (AndroidSystemBarsInset); applying the safe area here as well
+            padded this screen twice and squeezed the illustration. */}
+        <AppView flex useSafeArea={Platform.OS === 'ios'}>
           <Animated.ScrollView
             ref={scrollRef}
             horizontal
@@ -224,12 +227,16 @@ export const OnboardingIntroModal = () => {
                     }
                   />
                 </AppView>
-                <AppView flex center marginV-16>
+                {/* The illustration fills whatever height is left under the
+                    text, up to its natural size. With a fixed height it
+                    overflowed on shorter screens and was drawn over the text
+                    above and the button below. */}
+                <AppView flex center marginV-16 style={styles.imageContainer}>
                   <AppImage
                     source={page.image}
                     contentFit="contain"
                     transition={350}
-                    style={[styles.image, { height: 350 }]}
+                    style={styles.image}
                   />
                 </AppView>
               </AppView>
@@ -298,9 +305,14 @@ const styles = StyleSheet.create({
   bodyText: {
     lineHeight: 22,
   },
+  imageContainer: {
+    minHeight: 0,
+    overflow: 'hidden',
+  },
   image: {
     width: '100%',
     height: '100%',
+    maxHeight: 350,
   },
   backgroundImage: {
     width: '100%',
