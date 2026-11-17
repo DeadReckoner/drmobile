@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import {
+  EdgeInsets,
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
@@ -9,6 +10,25 @@ import { Colors } from 'react-native-ui-lib';
 interface AndroidSystemBarsInsetProps {
   children: React.ReactNode;
 }
+
+const SystemBarInsetsContext = createContext<EdgeInsets | null>(null);
+
+/**
+ * The real system-bar insets, for content that is NOT inside the padded root.
+ *
+ * A React Native <Modal> opens its own window, which Android draws
+ * edge-to-edge like the main one, but it still sits under
+ * AndroidSystemBarsInset in the React tree and so sees top and bottom insets
+ * of zero from useSafeAreaInsets(). Anything positioned inside a Modal has to
+ * use this hook to stay clear of the status bar and navigation buttons.
+ *
+ * On iOS this is the same as useSafeAreaInsets().
+ */
+export const useSystemBarInsets = (): EdgeInsets => {
+  const realInsets = useContext(SystemBarInsetsContext);
+  const safeAreaInsets = useSafeAreaInsets();
+  return realInsets ?? safeAreaInsets;
+};
 
 /**
  * Keeps the whole app clear of Android's status bar and navigation bar.
@@ -51,9 +71,11 @@ export const AndroidSystemBarsInset = ({
           backgroundColor: Colors.screenBG,
         },
       ]}>
-      <SafeAreaInsetsContext.Provider value={consumedInsets}>
-        {children}
-      </SafeAreaInsetsContext.Provider>
+      <SystemBarInsetsContext.Provider value={insets}>
+        <SafeAreaInsetsContext.Provider value={consumedInsets}>
+          {children}
+        </SafeAreaInsetsContext.Provider>
+      </SystemBarInsetsContext.Provider>
     </View>
   );
 };
