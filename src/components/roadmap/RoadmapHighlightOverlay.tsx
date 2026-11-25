@@ -1,3 +1,4 @@
+import { useSystemBarInsets } from '@/components/AndroidSystemBarsInset';
 import { AppButton } from '@/components/AppButton';
 import { AppImage, AppText, AppView } from '@/components/ui';
 import React, { useEffect, useRef, useState } from 'react';
@@ -40,7 +41,8 @@ interface RoadmapHighlightOverlayProps {
 const PAD = 8;
 const OVERLAY_BG = 'rgba(0,0,0,0.72)';
 const CARD_MARGIN = 16;
-const CARD_BOTTOM_MARGIN = 200;
+// Height assumed for the card until it has been measured.
+const CARD_ESTIMATED_HEIGHT = 200;
 
 const SMOOTH = { duration: 450, easing: Easing.out(Easing.cubic) };
 const FADE_IN = { duration: 600, easing: Easing.out(Easing.quad) };
@@ -57,7 +59,12 @@ export const RoadmapHighlightOverlay = ({
   doneLabel,
   onNext,
 }: RoadmapHighlightOverlayProps) => {
-  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const { width: screenWidth, height: windowHeight } = useWindowDimensions();
+  const insets = useSystemBarInsets();
+  // The Modal's own height, once laid out. It is what the card is positioned
+  // in, and on Android it is not guaranteed to match the window height.
+  const [overlayHeight, setOverlayHeight] = useState(0);
+  const screenHeight = overlayHeight || windowHeight;
 
   const spotX = useSharedValue(0);
   const spotY = useSharedValue(0);
@@ -139,17 +146,36 @@ export const RoadmapHighlightOverlay = ({
     height: spotH.value - PAD,
   }));
 
+  // The card must always be fully on screen: it holds the only button that
+  // advances or ends the walkthrough. It used to be placed below the
+  // highlighted item and merely kept 200pt off the bottom edge, so a card
+  // taller than that (long text on a narrow screen, or the legend step) put
+  // the button below the screen with no way to scroll to it.
+  const measuredCardHeight = cardHeight || CARD_ESTIMATED_HEIGHT;
+  const minCardTop = insets.top + CARD_MARGIN;
+  const maxCardTop = Math.max(
+    minCardTop,
+    screenHeight - insets.bottom - CARD_MARGIN - measuredCardHeight,
+  );
+
+  const getCardTopForFrame = (frame: HighlightFrame) => {
+    const below = frame.y + frame.height + PAD + CARD_MARGIN;
+    if (below <= maxCardTop) return below;
+
+    // No room below the highlighted item: put the card above it if it fits
+    // there, otherwise pin it to the bottom, overlapping the item.
+    const above = frame.y - PAD - CARD_MARGIN - measuredCardHeight;
+    return above >= minCardTop ? above : maxCardTop;
+  };
+
   const cardTop =
     highlightFrame === null
       ? cardHeight > 0
-        ? (screenHeight - cardHeight) / 2
+        ? Math.max(minCardTop, (screenHeight - cardHeight) / 2)
         : screenHeight
       : highlightFrame
-        ? Math.min(
-            highlightFrame.y + highlightFrame.height + PAD + CARD_MARGIN,
-            screenHeight - CARD_BOTTOM_MARGIN,
-          )
-        : screenHeight * 0.55;
+        ? getCardTopForFrame(highlightFrame)
+        : Math.min(screenHeight * 0.55, maxCardTop);
 
   const step = steps[currentStep];
   const customContent = contentOverrides?.[currentStep];
@@ -160,7 +186,10 @@ export const RoadmapHighlightOverlay = ({
       visible={visible}
       animationType="fade"
       statusBarTranslucent>
-      <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      <View
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+        onLayout={(e) => setOverlayHeight(e.nativeEvent.layout.height)}>
         <Animated.View style={[styles.seg, styles.segTop, topSeg]} />
         <Animated.View style={[styles.seg, styles.segBottom, bottomSeg]} />
         <Animated.View style={[styles.seg, leftSeg]} />

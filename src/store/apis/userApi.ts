@@ -9,10 +9,7 @@ import {
   UserStatsResponseType,
 } from '@/store/apis/types/userApi.types';
 import { setAuthUserAction } from '@/store/slices/authSlice';
-import {
-  completeSetupTaskAction,
-  resetOnboardingFromServerAction,
-} from '@/store/slices/onboardingSlice';
+import { syncOnboardingWithServerAction } from '@/store/slices/onboardingSlice';
 import { RootStateType } from '@/store/types/store.types';
 import { getAppleAuthCode } from '@/utils/storage.utils';
 
@@ -208,10 +205,13 @@ export const userApi = api.injectEndpoints({
               }),
             );
           }
-          if (data.onboarding_completed === true) {
-            dispatch(completeSetupTaskAction());
-          } else if (data.onboarding_completed === false) {
-            dispatch(resetOnboardingFromServerAction());
+          if (currentUser.id) {
+            dispatch(
+              syncOnboardingWithServerAction({
+                userId: currentUser.id,
+                onboardingCompleted: data.onboarding_completed,
+              }),
+            );
           }
         } catch {}
       },
