@@ -18,6 +18,7 @@
       "usesAppleSignIn": true,
       "privacyManifests": {
         "NSPrivacyTracking": true,
+        "NSPrivacyTrackingDomains": ["ep1.facebook.com"],
         "NSPrivacyCollectedDataTypes": [
           {
             "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeEmailAddress",
